@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, Variants } from 'framer-motion';
-import { ExternalLink, ListChecks } from 'lucide-react';
+import { ExternalLink, ListChecks, Zap, ArrowRight, QrCode, Mail, FileText } from 'lucide-react';
 import QRCodePanel from '@/components/setup/QRCodePanel';
 import ScriptBlock from '@/components/setup/ScriptBlock';
 
@@ -28,12 +28,40 @@ export default function SetupPage() {
       className="max-w-[1000px] pb-12"
     >
       <motion.div variants={itemVariants} className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-text-primary dark:text-text-primary-dark tracking-tight">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
+          <Zap className="w-6 h-6 text-blue-accent" />
           Automation Setup
         </h1>
-        <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-0.5">
-          Connect Google Forms to receive automated email notifications when a new member registers.
+        <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-1">
+          Connect Google Forms for automated seat allotment and email notifications.
         </p>
+      </motion.div>
+
+      {/* Automation Flow Diagram */}
+      <motion.div variants={itemVariants} className="mb-8">
+        <div className="card-premium accent-blue rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-6 overflow-hidden">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-text-tertiary dark:text-text-tertiary-dark mb-5">
+            How It Works — Zero Manual Work
+          </h3>
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+            {[
+              { icon: <QrCode className="w-5 h-5" />, label: 'Member Scans QR', color: 'bg-blue-accent/10 text-blue-accent' },
+              { icon: <FileText className="w-5 h-5" />, label: 'Fills Google Form', color: 'bg-green-accent/10 text-green-accent' },
+              { icon: <Zap className="w-5 h-5" />, label: 'Script Runs Auto', color: 'bg-amber-accent/10 text-amber-accent' },
+              { icon: <Mail className="w-5 h-5" />, label: 'You Get Email', color: 'bg-red-accent/10 text-red-accent' },
+            ].map((step, i) => (
+              <div key={i} className="flex items-center gap-3 sm:gap-4">
+                <div className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl ${step.color} border border-current/10`}>
+                  {step.icon}
+                  <span className="text-[10px] font-bold whitespace-nowrap">{step.label}</span>
+                </div>
+                {i < 3 && (
+                  <ArrowRight className="w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark shrink-0 hidden sm:block" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
       </motion.div>
 
       {/* QR Code and Sharing Actions */}
@@ -43,7 +71,7 @@ export default function SetupPage() {
 
       {/* Instruction Guide */}
       <motion.div variants={itemVariants} className="mt-8">
-        <h2 className="text-lg font-bold text-text-primary dark:text-text-primary-dark mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-extrabold text-text-primary dark:text-text-primary-dark mb-4 flex items-center gap-2">
           <ListChecks className="w-5 h-5 text-blue-accent" />
           4-Step Integration Guide
         </h2>
@@ -51,17 +79,17 @@ export default function SetupPage() {
         <div className="space-y-4">
           
           {/* Step 1 */}
-          <div className="p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
+          <div className="card-premium accent-blue p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-blue-accent text-white flex items-center justify-center font-bold text-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full gradient-blue text-white flex items-center justify-center font-bold text-sm shadow-sm">
                 1
               </div>
               <div>
                 <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark">Create your Google Form</h3>
                 <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-1">
-                  Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-blue-accent hover:underline flex items-center gap-1 inline-flex">Google Forms <ExternalLink className="w-3 h-3" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
+                  Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-blue-accent hover:underline inline-flex items-center gap-1">Google Forms <ExternalLink className="w-3 h-3" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
                 </p>
-                <ol className="list-decimal list-inside mt-2 text-xs font-mono bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark p-3 rounded-md text-text-tertiary dark:text-text-tertiary-dark">
+                <ol className="list-decimal list-inside mt-2 text-xs font-mono bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark p-3 rounded-lg text-text-tertiary dark:text-text-tertiary-dark">
                   <li>Full Name</li>
                   <li>Phone Number (Short answer)</li>
                   <li>Join Date (Date)</li>
@@ -74,9 +102,9 @@ export default function SetupPage() {
           </div>
 
           {/* Step 2 */}
-          <div className="p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
+          <div className="card-premium accent-green p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-blue-accent text-white flex items-center justify-center font-bold text-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full gradient-green text-white flex items-center justify-center font-bold text-sm shadow-sm">
                 2
               </div>
               <div>
@@ -89,9 +117,9 @@ export default function SetupPage() {
           </div>
 
           {/* Step 3 */}
-          <div className="p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
+          <div className="card-premium accent-amber p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-blue-accent text-white flex items-center justify-center font-bold text-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full gradient-amber text-white flex items-center justify-center font-bold text-sm shadow-sm">
                 3
               </div>
               <div className="w-full">
@@ -106,9 +134,9 @@ export default function SetupPage() {
           </div>
 
           {/* Step 4 */}
-          <div className="p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
+          <div className="card-premium accent-purple p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-blue-accent text-white flex items-center justify-center font-bold text-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full gradient-purple text-white flex items-center justify-center font-bold text-sm shadow-sm">
                 4
               </div>
               <div>
@@ -116,7 +144,7 @@ export default function SetupPage() {
                 <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-1">
                   In Apps Script, click the <strong>Clock icon (Triggers)</strong> on the left side. Add a new trigger:
                 </p>
-                <ul className="list-disc list-inside mt-2 text-xs font-mono bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark p-3 rounded-md text-text-tertiary dark:text-text-tertiary-dark leading-loose">
+                <ul className="list-disc list-inside mt-2 text-xs font-mono bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark p-3 rounded-lg text-text-tertiary dark:text-text-tertiary-dark leading-loose">
                   <li>Function to run: <strong className="text-blue-accent">onFormSubmit</strong></li>
                   <li>Event source: <strong className="text-blue-accent">From spreadsheet</strong></li>
                   <li>Event type: <strong className="text-blue-accent">On form submit</strong></li>

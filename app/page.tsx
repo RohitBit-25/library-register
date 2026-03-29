@@ -7,7 +7,7 @@ import StatCard from '@/components/ui/StatCard';
 import Badge from '@/components/ui/Badge';
 import { getSeatStatus, fmtDate, daysUntilExpiry } from '@/lib/utils';
 import { type Member } from '@/lib/types';
-import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw } from 'lucide-react';
+import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw, TrendingUp, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
 
@@ -16,7 +16,7 @@ const pageVariants: Variants = {
   animate: { 
     opacity: 1, 
     y: 0,
-    transition: { staggerChildren: 0.1 }
+    transition: { staggerChildren: 0.08 }
   }
 };
 
@@ -57,6 +57,12 @@ export default function DashboardPage() {
     addToast('success', `Seat ${seat} — fee marked as paid`);
   };
 
+  const alertBorderColors: Record<string, string> = {
+    expired: 'border-l-expired-border',
+    due: 'border-l-due-border',
+    expiring: 'border-l-expiring-border',
+  };
+
   return (
     <motion.div 
       variants={pageVariants}
@@ -64,13 +70,20 @@ export default function DashboardPage() {
       animate="animate"
     >
       {/* Page header */}
-      <motion.div variants={itemVariants} className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-text-primary dark:text-text-primary-dark tracking-tight">
-          Dashboard
-        </h1>
-        <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-0.5">
-          {dateStr}
-        </p>
+      <motion.div variants={itemVariants} className="mb-6 flex items-end justify-between">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
+            Dashboard
+            <Sparkles className="w-5 h-5 text-blue-accent" />
+          </h1>
+          <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-0.5">
+            {dateStr}
+          </p>
+        </div>
+        <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-text-tertiary dark:text-text-tertiary-dark bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-lg px-3 py-1.5">
+          <TrendingUp className="w-3.5 h-3.5 text-active-border" />
+          {Math.round((stats.occupied / 95) * 100)}% Occupied
+        </div>
       </motion.div>
 
       {/* Stat cards */}
@@ -107,13 +120,13 @@ export default function DashboardPage() {
 
       {/* Alert banner */}
       {alerts.length > 0 && (
-        <motion.div variants={itemVariants} className="mb-6 rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-card-border dark:border-card-border-dark bg-bg dark:bg-bg-dark">
-            <h2 className="text-sm font-semibold text-text-primary dark:text-text-primary-dark flex items-center gap-2">
+        <motion.div variants={itemVariants} className="mb-6 card-premium accent-amber rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-card-border dark:border-card-border-dark bg-bg/50 dark:bg-bg-dark/50">
+            <h2 className="text-sm font-bold text-text-primary dark:text-text-primary-dark flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-due-border" />
               Alerts
-              <span className="text-xs font-normal text-text-tertiary dark:text-text-tertiary-dark">
-                ({alerts.length})
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-due-fill dark:bg-due-fill-dark text-due-text dark:text-due-text-dark">
+                {alerts.length}
               </span>
             </h2>
           </div>
@@ -121,14 +134,14 @@ export default function DashboardPage() {
             {alerts.map(m => (
               <div
                 key={`alert-${m.seat}`}
-                className="flex items-center justify-between px-4 py-3 hover:bg-bg/50 dark:hover:bg-bg-dark/50 transition-colors"
+                className={`flex items-center justify-between px-4 py-3 hover:bg-bg/50 dark:hover:bg-bg-dark/50 transition-colors border-l-[3px] ${alertBorderColors[m.alertType]}`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-xs font-mono font-semibold text-text-tertiary dark:text-text-tertiary-dark shrink-0">
-                    #{m.seat}
+                  <span className="text-xs font-mono font-bold text-text-tertiary dark:text-text-tertiary-dark shrink-0 w-7 h-7 flex items-center justify-center rounded-lg bg-bg dark:bg-bg-dark">
+                    {m.seat}
                   </span>
                   <div className="min-w-0">
-                    <span className="text-sm font-medium text-text-primary dark:text-text-primary-dark truncate block">
+                    <span className="text-sm font-semibold text-text-primary dark:text-text-primary-dark truncate block">
                       {m.name}
                     </span>
                     <span className="text-xs text-text-tertiary dark:text-text-tertiary-dark">
@@ -142,7 +155,7 @@ export default function DashboardPage() {
                   {m.alertType === 'due' ? (
                     <button
                       onClick={() => handleMarkPaid(m.seat)}
-                      className="cursor-pointer flex items-center gap-1 rounded-md bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark px-2.5 py-1.5 text-xs font-medium hover:shadow-sm transition-all"
+                      className="cursor-pointer flex items-center gap-1 rounded-lg bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark px-3 py-1.5 text-xs font-bold hover:shadow-sm transition-all active:scale-95"
                     >
                       <Check className="w-3 h-3" />
                       Mark paid
@@ -150,7 +163,7 @@ export default function DashboardPage() {
                   ) : (
                     <button
                       onClick={() => router.push(`/seat-grid?seat=${m.seat}`)}
-                      className="cursor-pointer flex items-center gap-1 rounded-md bg-blue-accent/10 text-blue-accent px-2.5 py-1.5 text-xs font-medium hover:shadow-sm transition-all"
+                      className="cursor-pointer flex items-center gap-1 rounded-lg bg-blue-accent/10 text-blue-accent px-3 py-1.5 text-xs font-bold hover:shadow-sm transition-all active:scale-95"
                     >
                       <RefreshCw className="w-3 h-3" />
                       Renew
@@ -166,17 +179,17 @@ export default function DashboardPage() {
       {/* Bottom row: Sparkline + Priority table */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         {/* Sparkline */}
-        <div className="lg:col-span-2 rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-4">
-          <h3 className="text-sm font-semibold text-text-primary dark:text-text-primary-dark mb-3">
+        <div className="lg:col-span-2 card-premium accent-blue rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-5">
+          <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark mb-3">
             Occupancy This Month
           </h3>
           <Sparkline data={occupancyData} />
         </div>
 
         {/* Priority table */}
-        <div className="lg:col-span-3 rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden">
-          <div className="px-4 py-3 border-b border-card-border dark:border-card-border-dark">
-            <h3 className="text-sm font-semibold text-text-primary dark:text-text-primary-dark">
+        <div className="lg:col-span-3 card-premium accent-red rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden">
+          <div className="px-4 py-3 border-b border-card-border dark:border-card-border-dark bg-bg/30 dark:bg-bg-dark/30">
+            <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark">
               Priority Members
             </h3>
           </div>
@@ -193,7 +206,7 @@ export default function DashboardPage() {
               <tbody className="divide-y divide-card-border/30 dark:divide-card-border-dark/30">
                 {priorityMembers.map(m => (
                   <tr key={m.seat} className="hover:bg-bg/50 dark:hover:bg-bg-dark/50 transition-colors">
-                    <td className="px-4 py-2.5 font-mono font-medium text-text-primary dark:text-text-primary-dark">
+                    <td className="px-4 py-2.5 font-mono font-bold text-text-primary dark:text-text-primary-dark">
                       {m.seat}
                     </td>
                     <td className="px-4 py-2.5 font-medium text-text-primary dark:text-text-primary-dark">
@@ -210,7 +223,12 @@ export default function DashboardPage() {
                 {priorityMembers.length === 0 && (
                   <tr>
                     <td colSpan={4} className="px-4 py-8 text-center text-text-tertiary dark:text-text-tertiary-dark">
-                      No alerts — everything looks good!
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-12 h-12 rounded-full bg-active-fill dark:bg-active-fill-dark flex items-center justify-center">
+                          <Check className="w-6 h-6 text-active-border" />
+                        </div>
+                        <span className="font-medium">No alerts — everything looks good!</span>
+                      </div>
                     </td>
                   </tr>
                 )}
@@ -259,18 +277,26 @@ function Sparkline({ data }: { data: number[] }) {
           />
         );
       })}
-      {/* Fill */}
-      <path d={fillD} fill="url(#sparkGrad)" opacity={0.15} />
+      {/* Gradient Fill */}
+      <path d={fillD} fill="url(#sparkGrad)" opacity={0.2} />
       {/* Line */}
-      <path d={pathD} fill="none" stroke="#2563EB" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+      <path d={pathD} fill="none" stroke="url(#sparkLineGrad)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
       {/* Current dot */}
       <circle
         cx={pad + ((data.length - 1) / (data.length - 1)) * (w - pad * 2)}
         cy={h - pad - ((data[data.length - 1] - min) / (max - min || 1)) * (h - pad * 2)}
-        r={4}
+        r={5}
         fill="#2563EB"
         stroke="white"
-        strokeWidth={2}
+        strokeWidth={2.5}
+      />
+      {/* Outer glow */}
+      <circle
+        cx={pad + ((data.length - 1) / (data.length - 1)) * (w - pad * 2)}
+        cy={h - pad - ((data[data.length - 1] - min) / (max - min || 1)) * (h - pad * 2)}
+        r={10}
+        fill="#2563EB"
+        opacity={0.15}
       />
       {/* Labels */}
       <text x={pad} y={h - 1} fontSize={10} fill="currentColor" opacity={0.4} className="font-mono">
@@ -283,6 +309,10 @@ function Sparkline({ data }: { data: number[] }) {
         <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#2563EB" />
           <stop offset="100%" stopColor="#2563EB" stopOpacity={0} />
+        </linearGradient>
+        <linearGradient id="sparkLineGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#3B82F6" />
+          <stop offset="100%" stopColor="#2563EB" />
         </linearGradient>
       </defs>
     </svg>

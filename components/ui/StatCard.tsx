@@ -2,95 +2,93 @@
 
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { useEffect, useState, useRef } from 'react';
 
 interface StatCardProps {
   value: number;
   label: string;
-  accent: 'blue' | 'green' | 'amber' | 'red' | 'gray';
-  onClick?: () => void;
+  accent: 'blue' | 'gray' | 'amber' | 'red' | 'green';
   icon: React.ReactNode;
+  onClick?: () => void;
 }
 
-const accentStyles = {
-  blue: {
-    border: 'border-blue-accent/30 dark:border-blue-accent/20',
-    bg: 'bg-blue-accent/5 dark:bg-blue-accent/10',
-    text: 'text-blue-accent',
-    bar: 'bg-blue-accent',
-  },
-  green: {
-    border: 'border-active-border/30 dark:border-active-border/20',
-    bg: 'bg-active-fill dark:bg-active-fill-dark',
-    text: 'text-active-text dark:text-active-text-dark',
-    bar: 'bg-active-border',
-  },
-  amber: {
-    border: 'border-due-border/30 dark:border-due-border/20',
-    bg: 'bg-due-fill dark:bg-due-fill-dark',
-    text: 'text-due-text dark:text-due-text-dark',
-    bar: 'bg-due-border',
-  },
-  red: {
-    border: 'border-expired-border/30 dark:border-expired-border/20',
-    bg: 'bg-expired-fill dark:bg-expired-fill-dark',
-    text: 'text-expired-text dark:text-expired-text-dark',
-    bar: 'bg-expired-border',
-  },
-  gray: {
-    border: 'border-card-border dark:border-card-border-dark',
-    bg: 'bg-vacant-fill dark:bg-vacant-fill-dark',
-    text: 'text-vacant-text dark:text-vacant-text-dark',
-    bar: 'bg-vacant-border',
-  },
+function AnimatedCounter({ value, duration = 800 }: { value: number; duration?: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+  const prevValueRef = useRef(0);
+  
+  useEffect(() => {
+    const start = prevValueRef.current;
+    const end = value;
+    if (start === end) {
+      setDisplayValue(end);
+      return;
+    }
+    const startTime = Date.now();
+    const step = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Math.round(start + (end - start) * eased));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    prevValueRef.current = value;
+  }, [value, duration]);
+
+  return <>{displayValue}</>;
+}
+
+const accentGradients: Record<string, string> = {
+  blue: 'from-blue-500 to-blue-400',
+  gray: 'from-gray-400 to-gray-300',
+  amber: 'from-amber-500 to-amber-400',
+  red: 'from-red-500 to-red-400',
+  green: 'from-green-500 to-green-400',
 };
 
-export default function StatCard({ value, label, accent, onClick, icon }: StatCardProps) {
-  const styles = accentStyles[accent];
+const accentBgOverlays: Record<string, string> = {
+  blue: 'bg-blue-accent/5 dark:bg-blue-accent/10',
+  gray: 'bg-gray-accent/5 dark:bg-gray-accent/10',
+  amber: 'bg-amber-accent/5 dark:bg-amber-accent/10',
+  red: 'bg-red-accent/5 dark:bg-red-accent/10',
+  green: 'bg-green-accent/5 dark:bg-green-accent/10',
+};
+
+export default function StatCard({ value, label, accent, icon, onClick }: StatCardProps) {
   return (
     <motion.button
-      onClick={onClick}
-      whileHover={{ y: -4, scale: 1.01 }}
+      whileHover={{ y: -3, scale: 1.01 }}
       whileTap={{ scale: 0.98 }}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      onClick={onClick}
       className={cn(
-        'relative overflow-hidden rounded-xl border-2 p-4 text-left transition-shadow duration-200 cursor-pointer',
-        'hover:shadow-lg',
-        styles.border,
-        'bg-surface dark:bg-surface-dark',
+        'card-premium text-left w-full rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-5 shadow-sm cursor-pointer group',
+        `accent-${accent}`,
       )}
-      aria-label={`${value} ${label}`}
     >
-      {/* Top accent bar */}
-      <motion.div 
-        className={cn('absolute top-0 left-0 right-0 h-1', styles.bar)} 
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      />
-      <div className="flex items-start justify-between gap-3 pt-1">
-        <div>
-          <motion.p 
-            className={cn('text-3xl font-bold font-mono', styles.text)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            {value}
-          </motion.p>
-          <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-1">
-            {label}
-          </p>
-        </div>
-        <motion.div 
-          className={cn('rounded-lg p-2', styles.bg)}
-          whileHover={{ rotate: 10 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          {icon}
-        </motion.div>
+      {/* Decorative corner overlay */}
+      <div className={cn(
+        'absolute top-0 right-0 w-20 h-20 rounded-bl-[60px] opacity-60 pointer-events-none transition-opacity group-hover:opacity-100',
+        accentBgOverlays[accent],
+      )} />
+      
+      {/* Icon container */}
+      <div className={cn(
+        'w-10 h-10 rounded-xl flex items-center justify-center mb-3 relative z-10 shadow-sm',
+        accentBgOverlays[accent],
+      )}>
+        {icon}
       </div>
+
+      {/* Number with animated counter */}
+      <p className="text-3xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight relative z-10 animate-count-up">
+        <AnimatedCounter value={value} />
+      </p>
+      
+      {/* Label */}
+      <p className="text-[11px] font-bold uppercase tracking-wider text-text-tertiary dark:text-text-tertiary-dark mt-1 relative z-10">
+        {label}
+      </p>
     </motion.button>
   );
 }

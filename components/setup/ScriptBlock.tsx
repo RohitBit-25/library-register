@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Copy, Check, Info } from 'lucide-react';
+import { Copy, Check, Info, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import { motion } from 'framer-motion';
 
@@ -124,34 +124,42 @@ export default function ScriptBlock() {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1, type: "spring", stiffness: 300, damping: 24 }}
-      className="mt-8 bg-[#1e1e1e] border-2 border-gray-800 rounded-xl overflow-hidden shadow-sm"
+      className="mt-8 bg-[#1a1b26] border border-[#2a2b3d] rounded-2xl overflow-hidden shadow-lg"
     >
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-[#121210]">
+      {/* Code editor header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#2a2b3d] bg-[#13141f]">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-          <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
-          <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-          <span className="ml-2 text-xs font-mono text-gray-400">Code.gs</span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors" />
+            <div className="w-3 h-3 rounded-full bg-amber-500/80 hover:bg-amber-500 transition-colors" />
+            <div className="w-3 h-3 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors" />
+          </div>
+          <span className="ml-3 text-xs font-mono text-gray-400 flex items-center gap-1.5">
+            <Shield className="w-3 h-3" />
+            Code.gs
+          </span>
         </div>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+          className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold text-gray-300 hover:text-white hover:bg-white/10 transition-all border border-transparent hover:border-white/10"
         >
-          {copied ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
-          {copied ? 'Copied' : 'Copy Code'}
+          {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+          {copied ? 'Copied!' : 'Copy Code'}
         </button>
       </div>
       
-      <div className="p-4 overflow-x-auto">
-        <pre className="text-xs font-mono leading-relaxed text-[#d4d4d4]">
+      {/* Code content */}
+      <div className="p-5 overflow-x-auto max-h-[400px] overflow-y-auto">
+        <pre className="text-[13px] font-mono leading-relaxed text-[#d4d4d4]">
           <code>{APPS_SCRIPT_TEMPLATE}</code>
         </pre>
       </div>
 
-      <div className="bg-blue-900/40 border-t border-blue-900/60 p-4 flex items-start gap-3">
+      {/* Info footer */}
+      <div className="bg-blue-900/30 border-t border-blue-900/40 p-4 flex items-start gap-3">
         <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-        <p className="text-sm text-blue-200">
-          Make sure to change the <strong>ADMIN_EMAIL</strong> at the top of the script so you receive the notifications.
+        <p className="text-sm text-blue-200/90">
+          <strong className="text-blue-100">Important:</strong> Change the <code className="px-1.5 py-0.5 bg-blue-900/50 rounded text-blue-300 font-mono text-xs">ADMIN_EMAIL</code> at the top of the script to your own email address.
         </p>
       </div>
     </motion.div>
