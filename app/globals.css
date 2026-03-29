@@ -1,7 +1,7 @@
-@import "tailwindcss";
-
 /* ─── Fonts ──────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
 
 /* ─── Dark Mode via .dark class ──────────────────────────────── */
 @custom-variant dark (&:where(.dark, .dark *));
