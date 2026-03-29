@@ -9,6 +9,21 @@ import { getSeatStatus, fmtDate, daysUntilExpiry } from '@/lib/utils';
 import { type Member } from '@/lib/types';
 import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { motion, Variants } from 'framer-motion';
+
+const pageVariants: Variants = {
+  initial: { opacity: 0, y: 10 },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const itemVariants: Variants = {
+  initial: { opacity: 0, y: 15 },
+  animate: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
 
 export default function DashboardPage() {
   const { members, update } = useMembers();
@@ -43,19 +58,23 @@ export default function DashboardPage() {
   };
 
   return (
-    <div>
+    <motion.div 
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+    >
       {/* Page header */}
-      <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-text-primary dark:text-text-primary-dark">
+      <motion.div variants={itemVariants} className="mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-text-primary dark:text-text-primary-dark tracking-tight">
           Dashboard
         </h1>
-        <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5">
+        <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-0.5">
           {dateStr}
         </p>
-      </div>
+      </motion.div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <StatCard
           value={stats.occupied}
           label="Occupied Seats"
@@ -84,11 +103,11 @@ export default function DashboardPage() {
           icon={<CalendarX className="w-5 h-5 text-expired-border" />}
           onClick={() => router.push('/members?filter=expired')}
         />
-      </div>
+      </motion.div>
 
       {/* Alert banner */}
       {alerts.length > 0 && (
-        <div className="mb-6 rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden">
+        <motion.div variants={itemVariants} className="mb-6 rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden shadow-sm">
           <div className="px-4 py-3 border-b border-card-border dark:border-card-border-dark bg-bg dark:bg-bg-dark">
             <h2 className="text-sm font-semibold text-text-primary dark:text-text-primary-dark flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-due-border" />
@@ -145,7 +164,7 @@ export default function DashboardPage() {
       )}
 
       {/* Bottom row: Sparkline + Priority table */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         {/* Sparkline */}
         <div className="lg:col-span-2 rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-4">
           <h3 className="text-sm font-semibold text-text-primary dark:text-text-primary-dark mb-3">
@@ -199,8 +218,8 @@ export default function DashboardPage() {
             </table>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
