@@ -22,7 +22,7 @@ export function useAttendance() {
     } catch {
       // Keep default
     }
-    setHistory(initialHistory);
+    setTimeout(() => setHistory(initialHistory), 0);
   }, []);
 
   // Generic save wrapper

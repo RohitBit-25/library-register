@@ -31,11 +31,11 @@ export default function AnalyticsPage() {
   const mockOccupancy = useMemo(() => {
     const data = [];
     let current = stats.occupied;
-    // deterministic seeded random would be better, but we just want one run
     for (let i = 0; i < 30; i++) {
       data.unshift(current);
-      // Math.random inside useMemo is safe to prevent render churn
-      current = Math.max(0, current + Math.floor(Math.random() * 5) - 2); 
+      // use deterministic pseudo-random to prevent render churn
+      const pseudoRand = Math.abs(Math.sin(i * 12.345));
+      current = Math.max(0, current + Math.floor(pseudoRand * 5) - 2); 
     }
     return data;
   }, [stats.occupied]);
