@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { type Member, type Duration, type Shift, type FeeStatus } from '@/lib/types';
 import { calcExpiry, todayISO, fmtDate, cn } from '@/lib/utils';
 import { Zap, Upload, CheckCircle2 } from 'lucide-react';
-import QRCodePanel from '@/components/setup/QRCodePanel';
+import { QRCodeCanvas } from 'qrcode.react';
 
 interface AddMemberFormProps {
   vacantSeats: number[];
@@ -263,7 +263,14 @@ export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormPr
           <div className="bg-bg dark:bg-bg-dark rounded-xl p-6 flex flex-col items-center justify-center border border-card-border dark:border-card-border-dark mt-2 text-center animate-in fade-in zoom-in-95 duration-200 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
             <p className="text-[13px] font-black tracking-wide text-text-primary dark:text-text-primary-dark mb-4 uppercase">Scan to pay via UPI</p>
-            <QRCodePanel upiId="9462572575@axl" name="KAMLESH SINGH ASDLIYA" defaultAmount={0} isOverlay={false} />
+            <div className="p-3 bg-white rounded-xl shadow-sm">
+              <QRCodeCanvas 
+                value={`upi://pay?pa=9462572575@axl&pn=KAMLESH%20SINGH%20ASDLIYA&cu=INR`}
+                size={160}
+                level="H"
+                includeMargin={true}
+              />
+            </div>
             <p className="text-[11px] font-bold text-text-secondary dark:text-text-secondary-dark mt-4 px-4 py-1.5 bg-surface dark:bg-surface-dark border rounded-full">UPI ID: 9462572575@axl</p>
           </div>
         )}
