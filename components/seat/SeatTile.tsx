@@ -3,6 +3,7 @@
 import { type Member, type SeatStatus } from '@/lib/types';
 import { getSeatStatus, firstName, daysUntilExpiry, cn } from '@/lib/utils';
 import { Sun, Moon, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface SeatTileProps {
   member: Member;
@@ -38,11 +39,20 @@ export default function SeatTile({ member, onClick, compact = false }: SeatTileP
     : `Seat ${member.seat}, ${member.name}, ${status === 'due' ? 'Fee Due' : status}`;
 
   return (
-    <button
+    <motion.button
       onClick={() => onClick(member.seat)}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ scale: 1.05, y: -2 }}
+      whileTap={{ scale: 0.95 }}
+      transition={{ 
+        type: "spring", 
+        stiffness: 400, 
+        damping: 25,
+      }}
       className={cn(
-        'relative flex flex-col items-center justify-between rounded-lg border-2 transition-all duration-200 cursor-pointer',
-        'hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97]',
+        'relative flex flex-col items-center justify-between rounded-lg border-2 transition-colors duration-200 cursor-pointer',
+        'hover:shadow-lg',
         tileClass[status],
         compact ? 'w-[56px] h-[56px] p-1' : 'w-[72px] h-[72px] p-1.5',
       )}
@@ -87,8 +97,13 @@ export default function SeatTile({ member, onClick, compact = false }: SeatTileP
 
       {/* Warning indicator for due/expired */}
       {(status === 'due' || status === 'expired') && (
-        <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-expired-border border-2 border-surface dark:border-surface-dark" />
+        <motion.span 
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 500, delay: 0.2 }}
+          className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-expired-border border-2 border-surface dark:border-surface-dark" 
+        />
       )}
-    </button>
+    </motion.button>
   );
 }

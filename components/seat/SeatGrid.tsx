@@ -4,11 +4,23 @@ import { useState, useMemo } from 'react';
 import { type Member, type Shift } from '@/lib/types';
 import { getSeatStatus, cn } from '@/lib/utils';
 import SeatTile from './SeatTile';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface SeatGridProps {
   members: Member[];
   onSeatClick: (seat: number) => void;
 }
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.02,
+      delayChildren: 0.1,
+    }
+  }
+};
 
 export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
   const [shiftFilter, setShiftFilter] = useState<Shift | 'all'>('all');
@@ -104,16 +116,34 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-5 sm:grid-cols-7 lg:grid-cols-10 gap-2 sm:gap-2.5 justify-items-center">
-        {(shiftFilter === 'all' ? members : filtered).map(m => (
-          <SeatTile
-            key={m.seat}
-            member={m}
-            onClick={onSeatClick}
-            compact={false}
-          />
-        ))}
-      </div>
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        key={shiftFilter} // re-animate on filter change
+        className="grid grid-cols-5 sm:grid-cols-7 lg:grid-cols-10 gap-2 sm:gap-2.5 justify-items-center"
+      >
+        <AnimatePresence mode="popLayout">
+          {(shiftFilter === 'all' ? members : filtered).map(m => (
+            <motion.div
+              layout
+              key={m.seat}
+              variants={{
+                hidden: { opacity: 0, scale: 0.8 },
+                visible: { opacity: 1, scale: 1 }
+              }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            >
+              <SeatTile
+                member={m}
+                onClick={onSeatClick}
+                compact={false}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 }

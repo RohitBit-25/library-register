@@ -6,7 +6,8 @@ import { getSeatStatus, fmtDate, durationLabel, shiftLabel, calcExpiry, todayISO
 import Badge from '@/components/ui/Badge';
 import BottomSheet from '@/components/ui/BottomSheet';
 import Modal from '@/components/ui/Modal';
-import { Phone, Calendar, Clock, Sun, Moon, Zap } from 'lucide-react';
+import { Phone, Calendar, Clock, Sun, Moon, Zap, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface SeatDetailPanelProps {
   member: Member | null;
@@ -194,25 +195,34 @@ export default function SeatDetailPanel({
   }
 
   // Desktop: right panel
-  if (!open) return null;
   return (
-    <div className="fixed top-0 right-0 h-screen w-[320px] bg-surface dark:bg-surface-dark border-l border-card-border dark:border-card-border-dark shadow-xl z-20 overflow-y-auto animate-slide-in-right">
-      <div className="p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-bold text-text-primary dark:text-text-primary-dark font-mono">
-            Seat {String(member.seat).padStart(2, '0')}
-          </h3>
-          <button
-            onClick={() => { setRenewMode(false); onClose(); }}
-            className="cursor-pointer text-text-tertiary dark:text-text-tertiary-dark hover:text-text-primary dark:hover:text-text-primary-dark transition-colors text-lg leading-none"
-            aria-label="Close panel"
-          >
-            ✕
-          </button>
-        </div>
-        {content}
-      </div>
-    </div>
+    <AnimatePresence>
+      {open && (
+        <motion.div 
+          initial={{ x: '100%', opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: '100%', opacity: 0 }}
+          transition={{ type: "spring", stiffness: 350, damping: 30 }}
+          className="fixed top-0 right-0 h-screen w-[320px] bg-surface dark:bg-surface-dark border-l border-card-border dark:border-card-border-dark shadow-2xl z-40 overflow-y-auto"
+        >
+          <div className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-text-primary dark:text-text-primary-dark font-mono">
+                Seat {String(member.seat).padStart(2, '0')}
+              </h3>
+              <button
+                onClick={() => { setRenewMode(false); onClose(); }}
+                className="cursor-pointer rounded-lg p-1.5 text-text-tertiary dark:text-text-tertiary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors"
+                aria-label="Close panel"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            {content}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
