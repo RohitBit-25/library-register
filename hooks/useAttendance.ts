@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { AttendanceEntry, Member } from '@/lib/types';
+import { type AttendanceEntry } from '@/lib/types';
 import { useMembers } from '@/hooks/useMembers';
 
 // Fallback empty arr to prevent undefined
@@ -13,16 +13,16 @@ export function useAttendance() {
 
   // Load from localStorage on mount
   useEffect(() => {
+    let initialHistory = DEFAULT_ATTENDANCE;
     try {
       const stored = localStorage.getItem('library_attendance');
       if (stored) {
-        setHistory(JSON.parse(stored));
-      } else {
-        setHistory(DEFAULT_ATTENDANCE);
+        initialHistory = JSON.parse(stored);
       }
     } catch {
-      setHistory(DEFAULT_ATTENDANCE);
+      // Keep default
     }
+    setHistory(initialHistory);
   }, []);
 
   // Generic save wrapper
@@ -68,7 +68,7 @@ export function useAttendance() {
 
   const markPresent = (dateStr: string, seat: number) => {
     const existingIndex = history.findIndex(h => h.date === dateStr);
-    let newHistory = [...history];
+    const newHistory = [...history];
 
     if (existingIndex >= 0) {
       const entry = newHistory[existingIndex];
@@ -84,7 +84,7 @@ export function useAttendance() {
   const markAbsent = (dateStr: string, seat: number) => {
     const existingIndex = history.findIndex(h => h.date === dateStr);
     if (existingIndex >= 0) {
-      let newHistory = [...history];
+      const newHistory = [...history];
       newHistory[existingIndex] = {
         ...newHistory[existingIndex],
         seats: newHistory[existingIndex].seats.filter(s => s !== seat)
@@ -98,7 +98,7 @@ export function useAttendance() {
     const occupiedSeats = members.filter(m => !m.vacant).map(m => m.seat);
     
     const existingIndex = history.findIndex(h => h.date === dateStr);
-    let newHistory = [...history];
+    const newHistory = [...history];
     if (existingIndex >= 0) {
       newHistory[existingIndex] = { date: dateStr, seats: occupiedSeats };
     } else {

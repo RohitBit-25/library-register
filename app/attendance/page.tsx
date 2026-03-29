@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import { useState } from 'react';
 
-const containerVariants = {
+const containerVariants: any = {
   initial: { opacity: 0, y: 10 },
   animate: { 
     opacity: 1, y: 0, 
@@ -16,7 +16,7 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: any = {
   initial: { opacity: 0, scale: 0.95 },
   animate: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };

@@ -16,6 +16,8 @@ interface MemberTableProps {
   onRemove: (seat: number) => void;
   onBulkMarkPaid: (seats: number[]) => void;
   onBulkRemove: (seats: number[]) => void;
+  onBulkExport: (seats: number[]) => void;
+  onBulkWhatsApp: (seats: number[]) => void;
 }
 
 type SortField = 'seat' | 'name' | 'expiry' | 'joinDate';
@@ -34,6 +36,8 @@ export default function MemberTable({
   onRemove,
   onBulkMarkPaid,
   onBulkRemove,
+  onBulkExport,
+  onBulkWhatsApp,
 }: MemberTableProps) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
@@ -137,6 +141,18 @@ export default function MemberTable({
             className="cursor-pointer rounded-md bg-expired-border px-3 py-1.5 text-xs font-medium text-white hover:opacity-90 transition-opacity"
           >
             Remove
+          </button>
+          <button
+            onClick={() => onBulkWhatsApp(Array.from(selected))}
+            className="cursor-pointer rounded-md bg-[#25D366] px-3 py-1.5 text-xs font-medium text-white hover:opacity-90 transition-opacity"
+          >
+            WhatsApp
+          </button>
+          <button
+            onClick={() => onBulkExport(Array.from(selected))}
+            className="cursor-pointer rounded-md bg-active-fill px-3 py-1.5 text-xs font-medium text-text-primary hover:bg-active-border hover:text-white transition-colors"
+          >
+            Export CSV
           </button>
           <button
             onClick={() => setSelected(new Set())}
