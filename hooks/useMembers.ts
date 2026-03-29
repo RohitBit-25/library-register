@@ -58,7 +58,7 @@ export function useMembers() {
     setMembers(prev => {
       const next = prev.map(m =>
         m.seat === seat
-          ? { ...m, name: '', phone: '', joinDate: '', duration: '' as const, expiry: '', fee: '' as const, shift: 'morning' as const, vacant: true }
+          ? { ...m, name: '', phone: '', joinDate: '', duration: '' as const, expiry: '', fee: '' as const, shift: 'morning' as const, vacant: true, paymentMode: undefined, documentStatus: undefined, termsAccepted: undefined }
           : m,
       );
       saveMembers(next);
@@ -66,21 +66,21 @@ export function useMembers() {
     });
   }, []);
 
-  const add = useCallback((data: Omit<Member, 'seat' | 'vacant'>): number => {
-    let allottedSeat = -1;
+  const add = useCallback((seatNumber: number, data: Omit<Member, 'seat' | 'vacant'>): boolean => {
+    let success = false;
     setMembers(prev => {
-      const vacantIdx = prev.findIndex(m => m.vacant);
-      if (vacantIdx === -1) return prev;
-      allottedSeat = prev[vacantIdx].seat;
+      const targetIdx = prev.findIndex(m => m.seat === seatNumber && m.vacant);
+      if (targetIdx === -1) return prev;
+      success = true;
       const next = prev.map(m =>
-        m.seat === allottedSeat
-          ? { ...m, ...data, seat: allottedSeat, vacant: false }
+        m.seat === seatNumber
+          ? { ...m, ...data, seat: seatNumber, vacant: false }
           : m,
       );
       saveMembers(next);
       return next;
     });
-    return allottedSeat;
+    return success;
   }, []);
 
   const renew = useCallback((seat: number, joinDate: string, duration: '1M' | '3M' | '6M' | '1Y') => {
@@ -107,7 +107,7 @@ export function useMembers() {
     setMembers(prev => {
       const next = prev.map(m =>
         seats.includes(m.seat)
-          ? { ...m, name: '', phone: '', joinDate: '', duration: '' as const, expiry: '', fee: '' as const, shift: 'morning' as const, vacant: true }
+          ? { ...m, name: '', phone: '', joinDate: '', duration: '' as const, expiry: '', fee: '' as const, shift: 'morning' as const, vacant: true, paymentMode: undefined, documentStatus: undefined, termsAccepted: undefined }
           : m,
       );
       saveMembers(next);

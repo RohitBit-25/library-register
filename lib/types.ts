@@ -13,6 +13,9 @@ export interface Member {
   fee: FeeStatus;
   shift: Shift;        // morning / evening / full
   vacant: boolean;
+  paymentMode?: 'upi' | 'cash';
+  documentStatus?: string;
+  termsAccepted?: boolean;
 }
 
 // ─── Derived Status (computed at runtime, never stored) ─────────
