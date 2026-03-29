@@ -11,9 +11,9 @@ export function useDarkMode() {
     // Check localStorage first, then system preference
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored !== null) {
-      setIsDark(stored === 'dark');
+      setTimeout(() => setIsDark(stored === 'dark'), 0);
     } else {
-      setIsDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
+      setTimeout(() => setIsDark(window.matchMedia('(prefers-color-scheme: dark)').matches), 0);
     }
   }, []);
 
