@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface StatCardProps {
   value: number;
@@ -46,33 +47,50 @@ const accentStyles = {
 export default function StatCard({ value, label, accent, onClick, icon }: StatCardProps) {
   const styles = accentStyles[accent];
   return (
-    <button
+    <motion.button
       onClick={onClick}
+      whileHover={{ y: -4, scale: 1.01 }}
+      whileTap={{ scale: 0.98 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={cn(
-        'relative overflow-hidden rounded-xl border-2 p-4 text-left transition-all duration-200 cursor-pointer',
-        'hover:shadow-md hover:-translate-y-0.5',
-        'active:scale-[0.98]',
+        'relative overflow-hidden rounded-xl border-2 p-4 text-left transition-shadow duration-200 cursor-pointer',
+        'hover:shadow-lg',
         styles.border,
         'bg-surface dark:bg-surface-dark',
       )}
       aria-label={`${value} ${label}`}
     >
       {/* Top accent bar */}
-      <div className={cn('absolute top-0 left-0 right-0 h-1', styles.bar)} />
-
+      <motion.div 
+        className={cn('absolute top-0 left-0 right-0 h-1', styles.bar)} 
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      />
       <div className="flex items-start justify-between gap-3 pt-1">
         <div>
-          <p className={cn('text-3xl font-bold font-mono', styles.text)}>
+          <motion.p 
+            className={cn('text-3xl font-bold font-mono', styles.text)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
             {value}
-          </p>
+          </motion.p>
           <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-1">
             {label}
           </p>
         </div>
-        <div className={cn('rounded-lg p-2', styles.bg)}>
+        <motion.div 
+          className={cn('rounded-lg p-2', styles.bg)}
+          whileHover={{ rotate: 10 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
           {icon}
-        </div>
+        </motion.div>
       </div>
-    </button>
+    </motion.button>
   );
 }
