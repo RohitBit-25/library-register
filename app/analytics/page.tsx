@@ -2,14 +2,14 @@
 
 import { useMembers } from '@/hooks/useMembers';
 import { useStats } from '@/hooks/useStats';
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { BarChart3, TrendingUp, RefreshCw, CalendarDays, Clock, Users } from 'lucide-react';
 import DurationDonut from '@/components/charts/DurationDonut';
 import OccupancySparkline from '@/components/charts/OccupancySparkline';
 import { daysUntilExpiry } from '@/lib/utils';
 import { useMemo } from 'react';
 
-const containerVariants: Variants = {
+const containerVariants = {
   initial: { opacity: 0, y: 10 },
   animate: { 
     opacity: 1, y: 0, 
@@ -17,9 +17,9 @@ const containerVariants: Variants = {
   }
 };
 
-const itemVariants: Variants = {
+const itemVariants = {
   initial: { opacity: 0, scale: 0.95 },
-  animate: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  animate: { opacity: 1, scale: 1, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
 };
 
 export default function AnalyticsPage() {

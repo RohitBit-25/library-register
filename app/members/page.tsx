@@ -40,6 +40,40 @@ export default function MembersPage() {
     setConfirmBulkRemove(seats);
   };
 
+  const handleBulkExport = (seats: number[]) => {
+    const selectedMembers = members.filter(m => seats.includes(m.seat) && !m.vacant);
+    if (selectedMembers.length === 0) return;
+    
+    const headers = 'Seat,Name,Phone,Shift,JoinDate,Duration,Expiry,FeeStatus\n';
+    const rows = selectedMembers.map(m => 
+      `${m.seat},"${m.name}","${m.phone}",${m.shift},${m.joinDate},${m.duration},${m.expiry},${m.fee}`
+    ).join('\n');
+    
+    const blob = new Blob([headers + rows], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `library-members-export-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    addToast('success', `Exported ${selectedMembers.length} members to CSV`);
+  };
+
+  const handleBulkWhatsApp = (seats: number[]) => {
+    const selectedMembers = members.filter(m => seats.includes(m.seat) && !m.vacant && m.phone);
+    if (selectedMembers.length === 0) {
+      addToast('error', 'No phone numbers found for selected members');
+      return;
+    }
+    
+    const phones = selectedMembers.map(m => m.phone).join(', ');
+    navigator.clipboard.writeText(phones).then(() => {
+      addToast('success', `Copied ${selectedMembers.length} phone numbers to clipboard!`);
+    }).catch(() => {
+      addToast('error', 'Failed to copy to clipboard');
+    });
+  };
+
   return (
     <div>
       <div className="mb-5 flex items-start justify-between">
@@ -61,6 +95,8 @@ export default function MembersPage() {
         onRemove={handleRemove}
         onBulkMarkPaid={handleBulkMarkPaid}
         onBulkRemove={handleBulkRemove}
+        onBulkExport={handleBulkExport}
+        onBulkWhatsApp={handleBulkWhatsApp}
       />
 
       {/* Single remove confirm */}
