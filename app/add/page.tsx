@@ -1,3 +1,5 @@
+'use client';
+
 import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
 import AddMemberForm from '@/components/member/AddMemberForm';

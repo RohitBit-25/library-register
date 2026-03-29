@@ -1,5 +1,5 @@
 /* ─── Fonts ──────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
 
 @import "tailwindcss";
 
@@ -112,6 +112,15 @@ body {
   background: var(--color-text-tertiary-dark);
 }
 
+/* ─── No Scrollbar Utility ───────────────────────────────────── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* ─── Focus Ring ─────────────────────────────────────────────── */
 *:focus-visible {
   outline: 2px solid var(--color-blue-accent);
@@ -171,6 +180,80 @@ body {
   color: var(--color-vacant-text-dark);
 }
 
+/* ─── Glassmorphism Utilities ────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px) saturate(1.8);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8);
+}
+.dark .glass {
+  background: rgba(30, 30, 26, 0.75);
+}
+
+.glass-subtle {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(10px) saturate(1.5);
+  -webkit-backdrop-filter: blur(10px) saturate(1.5);
+}
+.dark .glass-subtle {
+  background: rgba(30, 30, 26, 0.55);
+}
+
+/* ─── Gradient Accents ───────────────────────────────────────── */
+.gradient-blue {
+  background: linear-gradient(135deg, #2563EB, #3B82F6, #60A5FA);
+}
+.gradient-green {
+  background: linear-gradient(135deg, #639922, #84CC16, #A3E635);
+}
+.gradient-amber {
+  background: linear-gradient(135deg, #EF9F27, #F59E0B, #FBBF24);
+}
+.gradient-red {
+  background: linear-gradient(135deg, #E24B4A, #EF4444, #F87171);
+}
+.gradient-purple {
+  background: linear-gradient(135deg, #7C3AED, #8B5CF6, #A78BFA);
+}
+
+/* ─── Premium Card Effects ───────────────────────────────────── */
+.card-premium {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.card-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+.dark .card-premium:hover {
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.3), 0 4px 10px -6px rgba(0, 0, 0, 0.2);
+}
+
+.card-premium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.card-premium:hover::before {
+  opacity: 1;
+}
+
+.card-premium.accent-blue::before { background: linear-gradient(90deg, #2563EB, #60A5FA); }
+.card-premium.accent-green::before { background: linear-gradient(90deg, #639922, #A3E635); }
+.card-premium.accent-amber::before { background: linear-gradient(90deg, #EF9F27, #FBBF24); }
+.card-premium.accent-red::before { background: linear-gradient(90deg, #E24B4A, #F87171); }
+.card-premium.accent-gray::before { background: linear-gradient(90deg, #9A9A8E, #D1D5DB); }
+
 /* ─── Reduced Motion ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -202,6 +285,32 @@ body {
   to { transform: translateX(0); opacity: 1; }
 }
 
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
 }
@@ -216,4 +325,53 @@ body {
 
 .animate-toast-in {
   animation: toast-in 0.3s ease-out;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.12) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-count-up {
+  animation: count-up 0.5s ease-out forwards;
+}
+
+/* ─── Sidebar Active Pill ────────────────────────────────────── */
+.nav-active-pill {
+  position: relative;
+}
+.nav-active-pill::after {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(180deg, #2563EB, #60A5FA);
+}
+
+/* ─── Step Check Animation ───────────────────────────────────── */
+@keyframes check-bounce {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.animate-check-bounce {
+  animation: check-bounce 0.4s ease-out;
 }
