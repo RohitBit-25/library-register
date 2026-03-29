@@ -160,7 +160,7 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Bottom row: Sparkline + Priority table */}
