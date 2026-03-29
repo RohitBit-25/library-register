@@ -3,7 +3,7 @@
 import { useMembers } from '@/hooks/useMembers';
 import { useAttendance } from '@/hooks/useAttendance';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarCheck, CheckCircle2, UserCheck, CalendarDays, Loader2 } from 'lucide-react';
+import { CalendarCheck, CheckCircle2, UserCheck, CalendarDays, Loader2, Users, Percent } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import { useState, useEffect } from 'react';
@@ -42,7 +42,6 @@ export default function AttendancePage() {
   const thirtyDayData = getLast30DaysData();
 
   const handleToggle = (seat: number, currentlyPresent: boolean) => {
-    // Haptic feedback for tactile feel on mobile devices
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
       navigator.vibrate([20]);
     }
@@ -58,7 +57,6 @@ export default function AttendancePage() {
     addToast('success', 'All occupied seats marked as present');
   };
 
-  // Prevent hydration mismatch empty state snapping
   if (!isHydrated) return (
     <div className="flex justify-center items-center h-64">
       <Loader2 className="w-8 h-8 animate-spin text-blue-accent" />
@@ -85,7 +83,7 @@ export default function AttendancePage() {
       {/* Header */}
       <motion.div variants={itemVariants} className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
             <CalendarCheck className="w-6 h-6 text-blue-accent" />
             Attendance
           </h1>
@@ -100,7 +98,7 @@ export default function AttendancePage() {
             onClick={() => setView('today')}
             className={cn(
               "px-5 py-2 text-sm font-bold rounded-lg transition-all",
-              view === 'today' ? "bg-bg dark:bg-bg-dark text-text-primary dark:text-text-primary-dark shadow-sm" : "text-text-tertiary dark:text-text-tertiary-dark hover:text-text-secondary dark:hover:text-text-secondary-dark"
+              view === 'today' ? "bg-blue-accent text-white shadow-sm" : "text-text-tertiary dark:text-text-tertiary-dark hover:text-text-secondary dark:hover:text-text-secondary-dark"
             )}
           >
             Today
@@ -109,7 +107,7 @@ export default function AttendancePage() {
             onClick={() => setView('history')}
             className={cn(
               "px-5 py-2 text-sm font-bold rounded-lg transition-all",
-              view === 'history' ? "bg-bg dark:bg-bg-dark text-text-primary dark:text-text-primary-dark shadow-sm" : "text-text-tertiary dark:text-text-tertiary-dark hover:text-text-secondary dark:hover:text-text-secondary-dark"
+              view === 'history' ? "bg-blue-accent text-white shadow-sm" : "text-text-tertiary dark:text-text-tertiary-dark hover:text-text-secondary dark:hover:text-text-secondary-dark"
             )}
           >
             History
@@ -129,18 +127,24 @@ export default function AttendancePage() {
           >
             {/* Quick Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-5 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm relative overflow-hidden">
+              <div className="card-premium accent-blue p-5 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-blue-accent/5 rounded-bl-[100px] pointer-events-none" />
-                <p className="text-xs font-bold text-text-tertiary dark:text-text-tertiary-dark uppercase tracking-wider mb-2">Check-ins</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <Users className="w-4 h-4 text-blue-accent" />
+                  <p className="text-xs font-bold text-text-tertiary dark:text-text-tertiary-dark uppercase tracking-wider">Check-ins</p>
+                </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-black text-text-primary dark:text-text-primary-dark tracking-tight">{presentToday}</span>
                   <span className="text-sm font-bold text-text-secondary dark:text-text-secondary-dark">/ {totalOccupied}</span>
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm relative overflow-hidden">
+              <div className="card-premium accent-green p-5 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-green-500/5 rounded-bl-[100px] pointer-events-none" />
-                <p className="text-xs font-bold text-text-tertiary dark:text-text-tertiary-dark uppercase tracking-wider mb-2">Turnout</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <Percent className="w-4 h-4 text-green-500" />
+                  <p className="text-xs font-bold text-text-tertiary dark:text-text-tertiary-dark uppercase tracking-wider">Turnout</p>
+                </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-black text-blue-accent tracking-tight">{attendanceRateToday}%</span>
                 </div>
@@ -149,7 +153,7 @@ export default function AttendancePage() {
               <div className="col-span-2 flex items-center justify-end">
                 <button 
                   onClick={() => setConfirmMarkAll(true)}
-                  className="flex items-center gap-2.5 px-6 py-4 bg-blue-accent text-white rounded-2xl font-black hover:bg-blue-accent/90 transition-all shadow-md hover:shadow-lg active:scale-95"
+                  className="flex items-center gap-2.5 px-6 py-4 gradient-blue text-white rounded-2xl font-black hover:opacity-90 transition-all shadow-lg shadow-blue-accent/20 hover:shadow-xl hover:shadow-blue-accent/30 active:scale-95"
                 >
                   <UserCheck className="w-5 h-5" />
                   Mark All Present
@@ -168,11 +172,11 @@ export default function AttendancePage() {
               
               {occupiedMembers.length === 0 ? (
                 <div className="text-center py-16 bg-bg dark:bg-bg-dark rounded-2xl border flex flex-col items-center">
-                   <div className="w-16 h-16 bg-surface dark:bg-surface-dark rounded-full mb-4 flex justify-center items-center shadow-sm">
-                      <UserCheck className="w-6 h-6 text-text-tertiary" />
-                   </div>
-                  <span className="text-base font-bold text-text-primary font-medium">No seats are currently occupied.</span>
-                  <p className="text-sm text-text-secondary mt-1">Add members to start tracking attendance.</p>
+                  <div className="w-16 h-16 bg-surface dark:bg-surface-dark rounded-full mb-4 flex justify-center items-center shadow-sm border border-card-border dark:border-card-border-dark">
+                    <UserCheck className="w-6 h-6 text-text-tertiary" />
+                  </div>
+                  <span className="text-base font-bold text-text-primary dark:text-text-primary-dark">No seats are currently occupied.</span>
+                  <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-1">Add members to start tracking attendance.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-10 gap-3">
@@ -189,9 +193,9 @@ export default function AttendancePage() {
                           key={member.seat}
                           onClick={() => handleToggle(member.seat, checkedIn)}
                           className={cn(
-                            "relative flex flex-col items-center justify-center aspect-square rounded-2xl border-2 transition-all p-2 gap-1.5 shadow-sm group",
+                            "relative flex flex-col items-center justify-center aspect-square rounded-2xl border-2 transition-all p-2 gap-1.5 shadow-sm group cursor-pointer",
                             checkedIn 
-                              ? "bg-blue-accent/10 border-blue-accent/50 text-blue-accent dark:bg-blue-accent/20 drop-shadow-sm" 
+                              ? "bg-blue-accent/10 border-blue-accent/50 text-blue-accent dark:bg-blue-accent/20 shadow-md shadow-blue-accent/10" 
                               : "bg-bg dark:bg-bg-dark border-card-border dark:border-card-border-dark hover:border-text-tertiary"
                           )}
                         >
@@ -235,8 +239,8 @@ export default function AttendancePage() {
           >
             <div className="bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark p-6 sm:p-8 rounded-3xl shadow-sm">
               <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 rounded-xl bg-blue-accent/10 flex items-center justify-center">
-                  <CalendarDays className="w-5 h-5 text-blue-accent" />
+                <div className="w-10 h-10 rounded-xl gradient-blue flex items-center justify-center shadow-sm shadow-blue-accent/20">
+                  <CalendarDays className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-black text-text-primary dark:text-text-primary-dark">30-Day Contribution Graph</h3>
@@ -246,7 +250,7 @@ export default function AttendancePage() {
               
               <div className="grid grid-cols-7 sm:grid-cols-10 gap-2.5">
                 {thirtyDayData.map((d, i) => {
-                  let colorClass = "bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark"; // 0
+                  let colorClass = "bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark";
                   if (d.rate > 0) colorClass = "bg-green-100 dark:bg-green-900 border-green-200 dark:border-green-800 text-green-800 dark:text-green-300";
                   if (d.rate >= 40) colorClass = "bg-green-300 dark:bg-green-700 border-green-400 dark:border-green-600 text-green-900 dark:text-green-100";
                   if (d.rate >= 80) colorClass = "bg-green-500 text-white shadow-sm font-bold drop-shadow-sm";
@@ -270,8 +274,8 @@ export default function AttendancePage() {
                         <span className={cn("text-xs sm:text-sm font-black", d.rate === 0 && "text-text-tertiary")}>
                           {d.day}
                         </span>
-                        {/* Hover Tooltip (Basic tailwind group hover) */}
-                        <div className="absolute bottom-full mb-2 bg-text-primary text-bg dark:bg-text-primary-dark dark:text-bg-dark text-[10px] px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-opacity z-50">
+                        {/* Hover Tooltip */}
+                        <div className="absolute bottom-full mb-2 bg-text-primary text-bg dark:bg-text-primary-dark dark:text-bg-dark text-[10px] px-2 py-1 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-opacity z-50">
                           {d.rate}% Rate • {d.count} present
                         </div>
                       </div>
