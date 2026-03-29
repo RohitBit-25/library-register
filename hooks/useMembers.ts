@@ -32,7 +32,7 @@ export function useMembers() {
 
   // Load from localStorage on mount
   useEffect(() => {
-    setMembers(loadMembers());
+    setTimeout(() => setMembers(loadMembers()), 0);
   }, []);
 
   // Listen for cross-tab / cross-component updates
