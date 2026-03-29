@@ -1,6 +1,4 @@
-'use client';
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
@@ -12,7 +10,13 @@ export default function SeatGridContent() {
   const { members, update, vacate, renew } = useMembers();
   const { addToast } = useToast();
   const searchParams = useSearchParams();
-  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
+
+  const initialSeat = useMemo(() => {
+    const seat = searchParams.get('seat');
+    return seat ? Number(seat) : null;
+  }, [searchParams]);
+
+  const [selectedSeat, setSelectedSeat] = useState<number | null>(initialSeat);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -21,12 +25,6 @@ export default function SeatGridContent() {
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
-
-  // Auto-open seat from URL param
-  useEffect(() => {
-    const seat = searchParams.get('seat');
-    if (seat) setSelectedSeat(Number(seat));
-  }, [searchParams]);
 
   const selectedMember = selectedSeat !== null
     ? members.find(m => m.seat === selectedSeat) || null

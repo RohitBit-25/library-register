@@ -7,7 +7,7 @@ import StatCard from '@/components/ui/StatCard';
 import Badge from '@/components/ui/Badge';
 import { getSeatStatus, fmtDate, daysUntilExpiry } from '@/lib/utils';
 import { type Member } from '@/lib/types';
-import { Users, UserMinus, AlertTriangle, CalendarX, X, Check, RefreshCw } from 'lucide-react';
+import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {

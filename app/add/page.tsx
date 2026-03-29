@@ -7,7 +7,7 @@ import { type Member } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 
 export default function AddMemberPage() {
-  const { members, add, getNextVacantSeat } = useMembers();
+  const { add, getNextVacantSeat } = useMembers();
   const { addToast } = useToast();
   const router = useRouter();
 
