@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { type Member, type SeatStatus, type Duration } from '@/lib/types';
-import { getSeatStatus, fmtDate, fmtDateShort, cn } from '@/lib/utils';
+import { type Member, type SeatStatus } from '@/lib/types';
+import { getSeatStatus, fmtDateShort, cn } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
-import { Search, Download, MoreVertical, Check, RefreshCw, MessageCircle, Trash2, UserPlus, ChevronUp, ChevronDown } from 'lucide-react';
+import { Search, MoreVertical, Check, RefreshCw, MessageCircle, Trash2, UserPlus, ChevronUp, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 
 interface MemberTableProps {
@@ -19,6 +19,11 @@ interface MemberTableProps {
 
 type SortField = 'seat' | 'name' | 'expiry' | 'joinDate';
 type FilterType = 'all' | SeatStatus | 'morning' | 'evening';
+
+function SortIcon({ field, currentField, asc }: { field: SortField; currentField: SortField; asc: boolean }) {
+  if (field !== currentField) return null;
+  return asc ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />;
+}
 
 export default function MemberTable({
   members,
@@ -111,9 +116,6 @@ export default function MemberTable({
     { value: 'evening', label: 'Evening' },
   ];
 
-  const SortIcon = ({ field }: { field: SortField }) => (
-    sortField === field ? (sortAsc ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />) : null
-  );
 
   return (
     <div>
@@ -188,18 +190,18 @@ export default function MemberTable({
                 />
               </th>
               <th className="text-left p-3 font-semibold cursor-pointer select-none" onClick={() => toggleSort('seat')}>
-                <span className="flex items-center gap-1">Seat <SortIcon field="seat" /></span>
+                <span className="flex items-center gap-1">Seat <SortIcon field="seat" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-semibold cursor-pointer select-none" onClick={() => toggleSort('name')}>
-                <span className="flex items-center gap-1">Name <SortIcon field="name" /></span>
+                <span className="flex items-center gap-1">Name <SortIcon field="name" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-semibold">Phone</th>
               <th className="text-left p-3 font-semibold cursor-pointer select-none" onClick={() => toggleSort('joinDate')}>
-                <span className="flex items-center gap-1">Joined <SortIcon field="joinDate" /></span>
+                <span className="flex items-center gap-1">Joined <SortIcon field="joinDate" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-semibold">Dur.</th>
               <th className="text-left p-3 font-semibold cursor-pointer select-none" onClick={() => toggleSort('expiry')}>
-                <span className="flex items-center gap-1">Expiry <SortIcon field="expiry" /></span>
+                <span className="flex items-center gap-1">Expiry <SortIcon field="expiry" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-semibold">Status</th>
               <th className="w-10 p-3" />
@@ -259,7 +261,7 @@ export default function MemberTable({
                         {openActions === m.seat && (
                           <div className="absolute right-0 top-full z-10 w-48 rounded-lg border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-lg animate-fade-in">
                             <button
-                              onClick={() => { m.fee === 'due' ? onMarkPaid(m.seat) : onMarkDue(m.seat); setOpenActions(null); }}
+                              onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
                               className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
                             >
                               <Check className="w-4 h-4" />
@@ -367,7 +369,7 @@ export default function MemberTable({
               {openActions === m.seat && !m.vacant && (
                 <div className="mt-2 pt-2 border-t border-card-border dark:border-card-border-dark flex flex-wrap gap-2 animate-fade-in">
                   <button
-                    onClick={() => { m.fee === 'due' ? onMarkPaid(m.seat) : onMarkDue(m.seat); setOpenActions(null); }}
+                    onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
                     className="cursor-pointer text-xs font-medium px-2.5 py-1.5 rounded-md bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark"
                   >
                     {m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}
