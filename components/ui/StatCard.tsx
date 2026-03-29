@@ -39,13 +39,6 @@ function AnimatedCounter({ value, duration = 800 }: { value: number; duration?: 
   return <>{displayValue}</>;
 }
 
-const accentGradients: Record<string, string> = {
-  blue: 'from-blue-500 to-blue-400',
-  gray: 'from-gray-400 to-gray-300',
-  amber: 'from-amber-500 to-amber-400',
-  red: 'from-red-500 to-red-400',
-  green: 'from-green-500 to-green-400',
-};
 
 const accentBgOverlays: Record<string, string> = {
   blue: 'bg-blue-accent/5 dark:bg-blue-accent/10',

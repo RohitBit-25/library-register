@@ -24,6 +24,10 @@ export default function QRCodePanel({
   const [copied, setCopied] = useState(false);
   const [isLinked, setIsLinked] = useState(true);
 
+  const isValidFormUrl = (u: string) => {
+    return u.includes('docs.google.com/forms') || u.includes('forms.gle/');
+  };
+
   // Load from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(FORM_STORAGE_KEY);
@@ -43,10 +47,6 @@ export default function QRCodePanel({
     setUrl(newUrl);
     setIsLinked(isValidFormUrl(newUrl));
     localStorage.setItem(FORM_STORAGE_KEY, newUrl);
-  };
-
-  const isValidFormUrl = (u: string) => {
-    return u.includes('docs.google.com/forms') || u.includes('forms.gle/');
   };
 
   const handleDownload = () => {

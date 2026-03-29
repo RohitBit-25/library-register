@@ -3,7 +3,7 @@
 import { useMembers } from '@/hooks/useMembers';
 import { useAttendance } from '@/hooks/useAttendance';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarCheck, CheckCircle2, UserCheck, CalendarDays, Loader2, Users, Percent } from 'lucide-react';
+import { CalendarCheck, CheckCircle2, UserCheck, CalendarDays, Loader2, Users, Percent, TrendingUp, Trophy, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import { useState, useEffect } from 'react';
@@ -27,7 +27,8 @@ export default function AttendancePage() {
   const { addToast } = useToast();
   const { 
     todayStr, totalOccupied, presentToday, attendanceRateToday,
-    markPresent, markAbsent, markAllPresent, isPresent, getLast30DaysData
+    markPresent, markAbsent, markAllPresent, isPresent, getLast30DaysData,
+    weeklySummary,
   } = useAttendance();
 
   const [view, setView] = useState<'today' | 'history'>('today');
@@ -114,6 +115,40 @@ export default function AttendancePage() {
           </button>
         </div>
       </motion.div>
+
+      {/* Weekly Summary Strip (per PRD §7.5) */}
+      {weeklySummary.daysWithData > 0 && (
+        <motion.div
+          variants={itemVariants}
+          className="mb-6 card-premium accent-blue rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-4 shadow-sm overflow-hidden relative"
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-accent/5 rounded-bl-[100px] pointer-events-none" />
+          <div className="flex items-center gap-2 mb-3">
+            <TrendingUp className="w-4 h-4 text-blue-accent" />
+            <h3 className="text-xs font-black text-text-primary dark:text-text-primary-dark uppercase tracking-wider">Weekly Summary</h3>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center">
+              <p className="text-2xl font-black text-blue-accent">{weeklySummary.avgRate}%</p>
+              <p className="text-[10px] font-bold text-text-tertiary dark:text-text-tertiary-dark uppercase tracking-wider mt-0.5">Avg this week</p>
+            </div>
+            <div className="text-center border-x border-card-border dark:border-card-border-dark">
+              <div className="flex items-center justify-center gap-1">
+                <Trophy className="w-3.5 h-3.5 text-green-500" />
+                <p className="text-2xl font-black text-active-text dark:text-active-text-dark">{weeklySummary.bestRate}%</p>
+              </div>
+              <p className="text-[10px] font-bold text-text-tertiary dark:text-text-tertiary-dark uppercase tracking-wider mt-0.5">Best · {weeklySummary.bestDayName}</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1">
+                <TrendingDown className="w-3.5 h-3.5 text-expired-text" />
+                <p className="text-2xl font-black text-expired-text dark:text-expired-text-dark">{weeklySummary.worstRate}%</p>
+              </div>
+              <p className="text-[10px] font-bold text-text-tertiary dark:text-text-tertiary-dark uppercase tracking-wider mt-0.5">Low · {weeklySummary.worstDayName}</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       <AnimatePresence mode="wait">
         {view === 'today' ? (

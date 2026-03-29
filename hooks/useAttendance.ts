@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { type AttendanceEntry } from '@/lib/types';
 import { useMembers } from '@/hooks/useMembers';
 
 // Fallback empty arr to prevent undefined
 const DEFAULT_ATTENDANCE: AttendanceEntry[] = [];
+
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export function useAttendance() {
   const [history, setHistory] = useState<AttendanceEntry[]>([]);
@@ -58,7 +60,6 @@ export function useAttendance() {
   // Format YYYY-MM-DD string
   const getTodayStr = () => {
     const d = new Date();
-    // Use local time zone string yyyy-mm-dd
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   };
 
@@ -94,7 +95,6 @@ export function useAttendance() {
   };
 
   const markAllPresent = (dateStr: string) => {
-    // get all currently occupied seats
     const occupiedSeats = members.filter(m => !m.vacant).map(m => m.seat);
     
     const existingIndex = history.findIndex(h => h.date === dateStr);
@@ -120,14 +120,10 @@ export function useAttendance() {
   const presentToday = todayRecord ? todayRecord.seats.length : 0;
   const attendanceRateToday = totalOccupied > 0 ? Math.round((presentToday / totalOccupied) * 100) : 0;
 
-  // We should also return a helper to generate a 30-day heatmap data
+  // 30-day heatmap data
   const getLast30DaysData = () => {
     const data = [];
     const today = new Date();
-    
-    // Total occupied seats assumed roughly constant for historical (for a simple implementation)
-    // A true historical attendance system would need to track total occupied per day, 
-    // but for our heatmap, we'll just compare against current occupied or absolute count.
     
     for (let i = 29; i >= 0; i--) {
       const d = new Date(today);
@@ -144,12 +140,62 @@ export function useAttendance() {
         date: ds,
         day: d.getDate(),
         month: d.getMonth(),
+        dayOfWeek: d.getDay(),
         count,
         rate
       });
     }
     return data;
   };
+
+  // ── Weekly Summary ────────────────────────────────────
+  const weeklySummary = useMemo(() => {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0=Sun, 1=Mon, ...
+    // Start of this week (Monday-based)
+    const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    
+    let totalRate = 0;
+    let daysWithData = 0;
+    let bestRate = 0;
+    let bestDayName = '—';
+    let worstRate = 101;
+    let worstDayName = '—';
+
+    for (let i = 0; i <= mondayOffset; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - (mondayOffset - i));
+      const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      
+      // Inline history lookup instead of calling getRecordForDate to avoid React Compiler dep mismatch
+      const record = history.find(h => h.date === ds);
+      if (record) {
+        const rate = totalOccupied > 0 ? Math.round((record.seats.length / totalOccupied) * 100) : 0;
+        totalRate += rate;
+        daysWithData++;
+
+        if (rate > bestRate) {
+          bestRate = rate;
+          bestDayName = DAY_NAMES[d.getDay()];
+        }
+        if (rate < worstRate) {
+          worstRate = rate;
+          worstDayName = DAY_NAMES[d.getDay()];
+        }
+      }
+    }
+
+    const avgRate = daysWithData > 0 ? Math.round(totalRate / daysWithData) : 0;
+
+    return {
+      avgRate,
+      daysWithData,
+      bestRate,
+      bestDayName,
+      worstRate: worstRate > 100 ? 0 : worstRate,
+      worstDayName: worstRate > 100 ? '—' : worstDayName,
+    };
+  }, [history, totalOccupied]);
 
   return {
     history,
@@ -162,6 +208,7 @@ export function useAttendance() {
     markAbsent,
     markAllPresent,
     isPresent,
-    getLast30DaysData
+    getLast30DaysData,
+    weeklySummary,
   };
 }
