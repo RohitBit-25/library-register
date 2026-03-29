@@ -1,26 +1,219 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ─── Fonts ──────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
+/* ─── Dark Mode via .dark class ──────────────────────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Design Tokens ──────────────────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Fonts */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, monospace;
+
+  /* Surface colours */
+  --color-surface: #FFFFFF;
+  --color-surface-dark: #1E1E1A;
+  --color-bg: #F7F6F2;
+  --color-bg-dark: #131310;
+  --color-card-border: #E0DFD8;
+  --color-card-border-dark: rgba(255, 255, 255, 0.10);
+  --color-input-bg: #FFFFFF;
+  --color-input-bg-dark: #2A2A24;
+
+  /* Text colours */
+  --color-text-primary: #1A1A16;
+  --color-text-primary-dark: #F0EFE8;
+  --color-text-secondary: #5A5A52;
+  --color-text-secondary-dark: #A0A094;
+  --color-text-tertiary: #9A9A8E;
+  --color-text-tertiary-dark: #606058;
+
+  /* Status — Active */
+  --color-active-fill: #EAF3DE;
+  --color-active-border: #639922;
+  --color-active-text: #27500A;
+  --color-active-fill-dark: #27500A;
+  --color-active-text-dark: #C0DD97;
+
+  /* Status — Expiring */
+  --color-expiring-fill: #FAEEDA;
+  --color-expiring-border: #BA7517;
+  --color-expiring-text: #633806;
+  --color-expiring-fill-dark: #633806;
+  --color-expiring-text-dark: #FAC775;
+
+  /* Status — Expired */
+  --color-expired-fill: #FCEBEB;
+  --color-expired-border: #E24B4A;
+  --color-expired-text: #791F1F;
+  --color-expired-fill-dark: #791F1F;
+  --color-expired-text-dark: #F7C1C1;
+
+  /* Status — Due */
+  --color-due-fill: #FAEEDA;
+  --color-due-border: #EF9F27;
+  --color-due-text: #633806;
+  --color-due-fill-dark: #633806;
+  --color-due-text-dark: #FAC775;
+
+  /* Status — Vacant */
+  --color-vacant-fill: #F1EFE8;
+  --color-vacant-border: #D3D1C7;
+  --color-vacant-text: #5F5E5A;
+  --color-vacant-fill-dark: #2C2C2A;
+  --color-vacant-border-dark: #444441;
+  --color-vacant-text-dark: #888780;
+
+  /* Accents */
+  --color-blue-accent: #2563EB;
+  --color-green-accent: #639922;
+  --color-amber-accent: #EF9F27;
+  --color-red-accent: #E24B4A;
+  --color-gray-accent: #9A9A8E;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base Styles ────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dark body {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-primary-dark);
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-tertiary);
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-text-tertiary-dark);
+}
+
+/* ─── Focus Ring ─────────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid var(--color-blue-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Seat Tile Status Backgrounds ───────────────────────────── */
+.tile-active {
+  background-color: var(--color-active-fill);
+  border-color: var(--color-active-border);
+  color: var(--color-active-text);
+}
+.dark .tile-active {
+  background-color: var(--color-active-fill-dark);
+  color: var(--color-active-text-dark);
+}
+
+.tile-expiring {
+  background-color: var(--color-expiring-fill);
+  border-color: var(--color-expiring-border);
+  color: var(--color-expiring-text);
+}
+.dark .tile-expiring {
+  background-color: var(--color-expiring-fill-dark);
+  color: var(--color-expiring-text-dark);
+}
+
+.tile-expired {
+  background-color: var(--color-expired-fill);
+  border-color: var(--color-expired-border);
+  color: var(--color-expired-text);
+}
+.dark .tile-expired {
+  background-color: var(--color-expired-fill-dark);
+  color: var(--color-expired-text-dark);
+}
+
+.tile-due {
+  background-color: var(--color-due-fill);
+  border-color: var(--color-due-border);
+  color: var(--color-due-text);
+}
+.dark .tile-due {
+  background-color: var(--color-due-fill-dark);
+  color: var(--color-due-text-dark);
+}
+
+.tile-vacant {
+  background-color: var(--color-vacant-fill);
+  border-color: var(--color-vacant-border);
+  color: var(--color-vacant-text);
+}
+.dark .tile-vacant {
+  background-color: var(--color-vacant-fill-dark);
+  border-color: var(--color-vacant-border-dark);
+  color: var(--color-vacant-text-dark);
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Animations ─────────────────────────────────────────────── */
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes toast-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+.animate-toast-in {
+  animation: toast-in 0.3s ease-out;
 }
