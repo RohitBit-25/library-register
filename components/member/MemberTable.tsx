@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { type Member, type SeatStatus } from '@/lib/types';
-import { getSeatStatus, fmtDateShort, cn } from '@/lib/utils';
+import { getSeatStatus, fmtDateShort, firstName, cn } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
-import { Search, MoreVertical, Check, RefreshCw, MessageCircle, Trash2, UserPlus, ChevronUp, ChevronDown } from 'lucide-react';
+import { Search, MoreVertical, Check, RefreshCw, MessageCircle, Trash2, UserPlus, ChevronUp, ChevronDown, Copy } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import ConfirmDialog from '../ui/ConfirmDialog';
+import Portal from '../ui/Portal';
+import { useToast } from '@/hooks/useToast';
 
 interface MemberTableProps {
   members: Member[];
@@ -39,18 +42,55 @@ export default function MemberTable({
   onBulkExport,
   onBulkWhatsApp,
 }: MemberTableProps) {
+  const { addToast } = useToast();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [sortField, setSortField] = useState<SortField>('seat');
   const [sortAsc, setSortAsc] = useState(true);
   const [selected, setSelected] = useState<Set<number>>(new Set());
+  
+  // Action state
   const [openActions, setOpenActions] = useState<number | null>(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+  const [seatToRemove, setSeatToRemove] = useState<number | null>(null);
+  const [bulkRemoveConfirm, setBulkRemoveConfirm] = useState(false);
+
+  // Close dropdown on outside click or scroll
+  useEffect(() => {
+    const handleOutsideClick = () => setOpenActions(null);
+    window.addEventListener('click', handleOutsideClick);
+    window.addEventListener('scroll', handleOutsideClick, { passive: true });
+    return () => {
+      window.removeEventListener('click', handleOutsideClick);
+      window.removeEventListener('scroll', handleOutsideClick);
+    };
+  }, []);
+
+  const handleActionClick = (e: React.MouseEvent, seat: number) => {
+    e.stopPropagation();
+    if (openActions === seat) {
+      setOpenActions(null);
+      return;
+    }
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDropdownPos({
+      top: rect.bottom + window.scrollY + 8,
+      left: rect.right + window.scrollX - 192, // 192px is w-48
+    });
+    setOpenActions(seat);
+  };
+
+  const handleCopy = (e: React.MouseEvent, text: string, type: string) => {
+    e.stopPropagation();
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    addToast('success', `Copied ${type}`);
+  };
 
   // Filter & sort
   const filtered = useMemo(() => {
     let result = [...members];
 
-    // Search
     if (search) {
       const q = search.toLowerCase();
       result = result.filter(m =>
@@ -60,7 +100,6 @@ export default function MemberTable({
       );
     }
 
-    // Filter
     if (filter !== 'all') {
       if (filter === 'morning' || filter === 'evening') {
         result = result.filter(m => !m.vacant && (m.shift === filter || m.shift === 'full'));
@@ -69,7 +108,6 @@ export default function MemberTable({
       }
     }
 
-    // Sort
     result.sort((a, b) => {
       let cmp = 0;
       switch (sortField) {
@@ -121,71 +159,103 @@ export default function MemberTable({
     { value: 'evening', label: 'Evening' },
   ];
 
-
   return (
     <div>
+      {/* Confirm Dialogs */}
+      <ConfirmDialog
+        isOpen={seatToRemove !== null}
+        onClose={() => setSeatToRemove(null)}
+        onConfirm={() => {
+          if (seatToRemove !== null) onRemove(seatToRemove);
+        }}
+        title="Remove Member"
+        description="Are you sure you want to remove this member? Their details and history will be cleared permanently."
+        confirmText="Remove Member"
+        variant="danger"
+      />
+      
+      <ConfirmDialog
+        isOpen={bulkRemoveConfirm}
+        onClose={() => setBulkRemoveConfirm(false)}
+        onConfirm={() => {
+          onBulkRemove(Array.from(selected));
+          setSelected(new Set());
+        }}
+        title="Bulk Remove Members"
+        description={`Are you sure you want to remove ${selected.size} members? This action cannot be undone.`}
+        confirmText="Remove All Selected"
+        variant="danger"
+      />
+
       {/* Bulk action bar */}
-      {selected.size > 0 && (
-        <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg bg-blue-accent/10 p-3 animate-fade-in">
-          <span className="text-sm font-medium text-blue-accent">
-            {selected.size} selected
-          </span>
-          <button
-            onClick={() => { onBulkMarkPaid(Array.from(selected)); setSelected(new Set()); }}
-            className="cursor-pointer rounded-md bg-active-border px-3 py-1.5 text-xs font-medium text-white hover:opacity-90 transition-opacity"
+      <AnimatePresence>
+        {selected.size > 0 && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-blue-accent/10 border border-blue-accent/20 p-3 shadow-sm"
           >
-            Mark Paid
-          </button>
-          <button
-            onClick={() => { onBulkRemove(Array.from(selected)); setSelected(new Set()); }}
-            className="cursor-pointer rounded-md bg-expired-border px-3 py-1.5 text-xs font-medium text-white hover:opacity-90 transition-opacity"
-          >
-            Remove
-          </button>
-          <button
-            onClick={() => onBulkWhatsApp(Array.from(selected))}
-            className="cursor-pointer rounded-md bg-[#25D366] px-3 py-1.5 text-xs font-medium text-white hover:opacity-90 transition-opacity"
-          >
-            WhatsApp
-          </button>
-          <button
-            onClick={() => onBulkExport(Array.from(selected))}
-            className="cursor-pointer rounded-md bg-active-fill px-3 py-1.5 text-xs font-medium text-text-primary hover:bg-active-border hover:text-white transition-colors"
-          >
-            Export CSV
-          </button>
-          <button
-            onClick={() => setSelected(new Set())}
-            className="cursor-pointer text-xs text-text-secondary dark:text-text-secondary-dark ml-auto hover:text-text-primary dark:hover:text-text-primary-dark"
-          >
-            Clear
-          </button>
-        </div>
-      )}
+            <span className="text-sm font-bold text-blue-accent drop-shadow-sm px-2">
+              {selected.size} selected
+            </span>
+            <button
+              onClick={() => { onBulkMarkPaid(Array.from(selected)); setSelected(new Set()); }}
+              className="cursor-pointer rounded-lg bg-green-500 px-3.5 py-2 text-xs font-bold text-white hover:bg-green-600 transition-colors shadow-sm"
+            >
+              Mark Paid
+            </button>
+            <button
+              onClick={() => setBulkRemoveConfirm(true)}
+              className="cursor-pointer rounded-lg bg-red-500 px-3.5 py-2 text-xs font-bold text-white hover:bg-red-600 transition-colors shadow-sm"
+            >
+              Remove
+            </button>
+            <button
+              onClick={() => onBulkWhatsApp(Array.from(selected))}
+              className="cursor-pointer rounded-lg bg-[#25D366] px-3.5 py-2 text-xs font-bold text-white hover:bg-[#20bd5a] transition-colors shadow-sm"
+            >
+              WhatsApp
+            </button>
+            <button
+              onClick={() => onBulkExport(Array.from(selected))}
+              className="cursor-pointer rounded-lg bg-active-fill dark:bg-active-fill-dark px-3.5 py-2 text-xs font-bold text-active-text dark:text-active-text-dark hover:opacity-80 transition-opacity"
+            >
+              Export CSV
+            </button>
+            <button
+              onClick={() => setSelected(new Set())}
+              className="cursor-pointer text-xs font-semibold text-text-secondary dark:text-text-secondary-dark ml-auto hover:text-text-primary dark:hover:text-text-primary-dark mr-2"
+            >
+              Clear
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Search */}
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark" />
         <input
           type="search"
-          placeholder="Search name, seat, phone…"
+          placeholder="Search name, phone, seat... (Press / to focus)"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full rounded-lg border border-card-border dark:border-card-border-dark bg-input-bg dark:bg-input-bg-dark pl-9 pr-4 py-2.5 text-sm text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none focus:ring-2 focus:ring-blue-accent/30 focus:border-blue-accent/50"
+          className="w-full rounded-xl border border-card-border dark:border-card-border-dark bg-input-bg dark:bg-input-bg-dark pl-9 pr-4 py-3 text-sm font-medium text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none focus:ring-2 focus:ring-blue-accent/30 focus:border-blue-accent/50 transition-all shadow-sm"
         />
       </div>
 
       {/* Filter pills */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-3 mb-4 -mx-1 px-1">
+      <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-4 -mx-1 px-1 custom-scrollbar">
         {filters.map(f => (
           <button
             key={f.value}
             onClick={() => setFilter(f.value)}
             className={cn(
-              'shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border',
+               'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border shadow-sm',
               filter === f.value
                 ? 'bg-blue-accent text-white border-blue-accent'
-                : 'bg-surface dark:bg-surface-dark border-card-border dark:border-card-border-dark text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark',
+                : 'bg-surface dark:bg-surface-dark border-card-border dark:border-card-border-dark text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:border-text-tertiary',
             )}
           >
             {f.label}
@@ -194,10 +264,10 @@ export default function MemberTable({
       </div>
 
       {/* Desktop table */}
-      <div className="hidden md:block overflow-x-auto rounded-xl border border-card-border dark:border-card-border-dark">
+      <div className="hidden md:block overflow-x-auto rounded-2xl border border-card-border dark:border-card-border-dark shadow-sm bg-surface dark:bg-surface-dark relative">
         <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-card-border dark:border-card-border-dark bg-bg dark:bg-bg-dark">
+          <thead className="sticky top-0 z-10 backdrop-blur-xl bg-surface/90 dark:bg-surface-dark/90 border-b border-card-border dark:border-card-border-dark">
+            <tr>
               <th className="w-10 p-3">
                 <input
                   type="checkbox"
@@ -206,21 +276,21 @@ export default function MemberTable({
                   className="w-4 h-4 rounded cursor-pointer accent-blue-accent"
                 />
               </th>
-              <th className="text-left p-3 font-semibold cursor-pointer select-none" onClick={() => toggleSort('seat')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-blue-accent transition-colors" onClick={() => toggleSort('seat')}>
                 <span className="flex items-center gap-1">Seat <SortIcon field="seat" currentField={sortField} asc={sortAsc} /></span>
               </th>
-              <th className="text-left p-3 font-semibold cursor-pointer select-none" onClick={() => toggleSort('name')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-blue-accent transition-colors" onClick={() => toggleSort('name')}>
                 <span className="flex items-center gap-1">Name <SortIcon field="name" currentField={sortField} asc={sortAsc} /></span>
               </th>
-              <th className="text-left p-3 font-semibold">Phone</th>
-              <th className="text-left p-3 font-semibold cursor-pointer select-none" onClick={() => toggleSort('joinDate')}>
+              <th className="text-left p-3 font-bold">Phone</th>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-blue-accent transition-colors" onClick={() => toggleSort('joinDate')}>
                 <span className="flex items-center gap-1">Joined <SortIcon field="joinDate" currentField={sortField} asc={sortAsc} /></span>
               </th>
-              <th className="text-left p-3 font-semibold">Dur.</th>
-              <th className="text-left p-3 font-semibold cursor-pointer select-none" onClick={() => toggleSort('expiry')}>
+              <th className="text-left p-3 font-bold">Dur.</th>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-blue-accent transition-colors" onClick={() => toggleSort('expiry')}>
                 <span className="flex items-center gap-1">Expiry <SortIcon field="expiry" currentField={sortField} asc={sortAsc} /></span>
               </th>
-              <th className="text-left p-3 font-semibold">Status</th>
+              <th className="text-left p-3 font-bold">Status</th>
               <th className="w-10 p-3" />
             </tr>
           </thead>
@@ -255,81 +325,48 @@ export default function MemberTable({
                       />
                     )}
                   </td>
-                  <td className="p-3 font-mono font-medium text-text-primary dark:text-text-primary-dark">
-                    {m.seat}
+                  <td className="p-3 font-mono font-bold text-text-primary dark:text-text-primary-dark">
+                    <div className="flex items-center gap-2 group">
+                      {m.seat}
+                      <button onClick={(e) => handleCopy(e, String(m.seat), 'seat')} className="opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Copy className="w-3 h-3 text-text-tertiary hover:text-blue-accent cursor-pointer" />
+                      </button>
+                    </div>
                   </td>
-                  <td className="p-3 font-medium text-text-primary dark:text-text-primary-dark">
+                  <td className="p-3 font-bold text-text-primary dark:text-text-primary-dark">
                     {m.vacant ? (
-                      <span className="text-text-tertiary dark:text-text-tertiary-dark italic">(Vacant)</span>
+                      <span className="text-text-tertiary dark:text-text-tertiary-dark italic font-medium">(Vacant)</span>
                     ) : m.name}
                   </td>
-                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark">{m.phone || '—'}</td>
-                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark">{fmtDateShort(m.joinDate)}</td>
-                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark">{m.duration || '—'}</td>
-                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark">{fmtDateShort(m.expiry)}</td>
+                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark font-medium">
+                    {m.phone ? (
+                      <div className="flex items-center gap-2 group">
+                        {m.phone}
+                        <button onClick={(e) => handleCopy(e, m.phone, 'phone number')} className="opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Copy className="w-3 h-3 text-text-tertiary hover:text-blue-accent cursor-pointer" />
+                        </button>
+                      </div>
+                    ) : '—'}
+                  </td>
+                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark font-medium">{fmtDateShort(m.joinDate)}</td>
+                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark font-medium">{m.duration || '—'}</td>
+                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark font-medium">{fmtDateShort(m.expiry)}</td>
                   <td className="p-3">
                     {m.vacant ? (
-                      <Link href="/add" className="text-blue-accent text-xs font-medium cursor-pointer hover:underline">+ Add</Link>
+                      <Link href="/add" className="text-blue-accent text-xs font-bold cursor-pointer hover:underline bg-blue-accent/10 py-1 px-3 rounded-md">+ Add</Link>
                     ) : (
                       <Badge status={status} size="sm" />
                     )}
                   </td>
                   <td className="p-3 relative">
                     {!m.vacant && (
-                      <>
-                        <button
-                          onClick={() => setOpenActions(openActions === m.seat ? null : m.seat)}
-                          className="cursor-pointer p-1 rounded hover:bg-bg dark:hover:bg-bg-dark transition-colors"
-                          aria-label={`Actions for ${m.name}`}
-                        >
-                          <MoreVertical className="w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark" />
-                        </button>
-                        <AnimatePresence>
-                          {openActions === m.seat && (
-                            <motion.div 
-                              initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                              animate={{ opacity: 1, scale: 1, y: 0 }}
-                              exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                              transition={{ duration: 0.15 }}
-                              className="absolute right-0 top-full z-10 w-48 rounded-lg border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-lg"
-                            >
-                              <button
-                                onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
-                              >
-                                <Check className="w-4 h-4" />
-                                {m.fee === 'due' ? 'Mark fee paid' : 'Mark fee due'}
-                              </button>
-                              <button
-                                onClick={() => { onRenew(m.seat); setOpenActions(null); }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
-                              >
-                                <RefreshCw className="w-4 h-4" />
-                                Renew membership
-                              </button>
-                              {m.phone && (
-                                <a
-                                  href={`https://wa.me/${m.phone.replace(/\D/g, '')}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
-                                  onClick={() => setOpenActions(null)}
-                                >
-                                  <MessageCircle className="w-4 h-4" />
-                                  WhatsApp
-                                </a>
-                              )}
-                              <button
-                                onClick={() => { onRemove(m.seat); setOpenActions(null); }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-expired-text dark:text-expired-text-dark hover:bg-expired-fill dark:hover:bg-expired-fill-dark transition-colors cursor-pointer"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                                Remove member
-                              </button>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </>
+                      <button
+                        onClick={(e) => handleActionClick(e, m.seat)}
+                        className="cursor-pointer p-1.5 rounded-lg hover:bg-bg dark:hover:bg-bg-dark transition-colors"
+                        aria-label={`Actions for ${m.name}`}
+                      >
+                        <MoreVertical className="w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark" />
+                      </button>
                     )}
                   </td>
                 </motion.tr>
@@ -340,10 +377,65 @@ export default function MemberTable({
         </table>
       </div>
 
+      {/* Desktop Portal Action Dropdown */}
+      <Portal>
+        <AnimatePresence>
+          {openActions !== null && (
+            <motion.div 
+              style={{ top: dropdownPos.top, left: dropdownPos.left }}
+              initial={{ opacity: 0, scale: 0.95, y: -5 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -5 }}
+              transition={{ duration: 0.15 }}
+              className="absolute z-50 w-48 rounded-xl border border-card-border dark:border-card-border-dark bg-surface/95 dark:bg-surface-dark/95 backdrop-blur-xl shadow-2xl p-1"
+            >
+              {members.filter(m => m.seat === openActions).map(m => (
+                <div key={m.seat}>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
+                  >
+                    <Check className="w-4 h-4" />
+                    {m.fee === 'due' ? 'Mark fee paid' : 'Mark fee due'}
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onRenew(m.seat); setOpenActions(null); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Renew membership
+                  </button>
+                  {m.phone && (
+                    <a
+                      href={`https://wa.me/${m.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hi ' + firstName(m.name) + ', your library fee for Seat ' + m.seat + ' is due.')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
+                      onClick={(e) => { e.stopPropagation(); setOpenActions(null); }}
+                    >
+                      <MessageCircle className="w-4 h-4 text-[#25D366]" />
+                      WhatsApp
+                    </a>
+                  )}
+                  <div className="h-px bg-card-border dark:bg-card-border-dark my-1 mx-2" />
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSeatToRemove(m.seat); setOpenActions(null); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors cursor-pointer rounded-lg"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Remove member
+                  </button>
+                </div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Portal>
+
       {/* Mobile card list */}
       <motion.div 
         layout
-        className="md:hidden space-y-2"
+        className="md:hidden space-y-3"
       >
         <AnimatePresence mode="popLayout">
           {filtered.map(m => {
@@ -357,35 +449,39 @@ export default function MemberTable({
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 key={m.seat}
                 className={cn(
-                  'rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-3.5 transition-colors',
-                  selected.has(m.seat) && 'ring-2 ring-blue-accent/30',
+                  'rounded-2xl border transition-colors shadow-sm',
+                  selected.has(m.seat) 
+                    ? 'border-blue-accent/50 bg-blue-accent/5'
+                    : 'border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark',
                 )}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3">
+                <div className="p-4 flex items-start justify-between">
+                  <div className="flex items-start gap-4">
                     {!m.vacant && (
-                      <input
-                        type="checkbox"
-                        checked={selected.has(m.seat)}
-                        onChange={() => toggleSelect(m.seat)}
-                        className="w-4 h-4 mt-0.5 rounded cursor-pointer accent-blue-accent"
-                      />
+                      <div className="pt-1">
+                        <input
+                          type="checkbox"
+                          checked={selected.has(m.seat)}
+                          onChange={() => toggleSelect(m.seat)}
+                          className="w-[18px] h-[18px] rounded cursor-pointer accent-blue-accent"
+                        />
+                      </div>
                     )}
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono font-semibold text-text-tertiary dark:text-text-tertiary-dark">
+                        <span className="text-xs font-mono font-bold text-text-tertiary dark:text-text-tertiary-dark bg-bg dark:bg-bg-dark px-1.5 py-0.5 rounded">
                           #{String(m.seat).padStart(2, '0')}
                         </span>
-                        <span className="text-sm font-semibold text-text-primary dark:text-text-primary-dark">
+                        <span className="text-base font-black text-text-primary dark:text-text-primary-dark tracking-tight">
                           {m.vacant ? 'Vacant' : m.name}
                         </span>
                       </div>
                       {!m.vacant && (
-                        <div className="flex items-center gap-2 mt-1">
+                        <div className="flex flex-wrap items-center gap-2 mt-2">
                           <Badge status={status} size="sm" />
                           {m.expiry && (
-                            <span className="text-[11px] text-text-tertiary dark:text-text-tertiary-dark">
-                              Expires: {fmtDateShort(m.expiry)}
+                            <span className="text-xs font-medium text-text-secondary dark:text-text-secondary-dark flex items-center gap-1">
+                              EXP: {fmtDateShort(m.expiry)}
                             </span>
                           )}
                         </div>
@@ -395,47 +491,69 @@ export default function MemberTable({
                   {m.vacant ? (
                     <Link
                       href="/add"
-                      className="flex items-center gap-1 text-xs font-medium text-blue-accent cursor-pointer hover:underline"
+                      className="flex items-center gap-1 text-xs font-bold text-white bg-blue-accent px-3 py-1.5 rounded-lg shadow-sm"
                     >
-                      <UserPlus className="w-3.5 h-3.5" />
+                      <UserPlus className="w-4 h-4" />
                       Add
                     </Link>
                   ) : (
                     <button
-                      onClick={() => setOpenActions(openActions === m.seat ? null : m.seat)}
-                      className="cursor-pointer p-1 rounded hover:bg-bg dark:hover:bg-bg-dark transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenActions(openActions === m.seat ? null : m.seat);
+                      }}
+                      className="cursor-pointer p-2 rounded-lg bg-bg dark:bg-bg-dark hover:bg-surface transition-colors"
                       aria-label={`Actions for ${m.name}`}
                     >
-                      <MoreVertical className="w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark" />
+                      <MoreVertical className="w-5 h-5 text-text-secondary dark:text-text-secondary-dark" />
                     </button>
                   )}
                 </div>
+                
+                {/* Mobile Accordion Actions */}
                 <AnimatePresence>
                   {openActions === m.seat && !m.vacant && (
                     <motion.div 
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="mt-2 pt-2 border-t border-card-border dark:border-card-border-dark flex flex-wrap gap-2 overflow-hidden"
+                      className="border-t border-card-border/50 dark:border-card-border-dark/50 bg-bg/50 dark:bg-bg-dark/50 rounded-b-2xl overflow-hidden"
                     >
-                      <button
-                        onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
-                        className="cursor-pointer text-xs font-medium px-2.5 py-1.5 rounded-md bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark"
-                      >
-                        {m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}
-                      </button>
-                      <button
-                        onClick={() => { onRenew(m.seat); setOpenActions(null); }}
-                        className="cursor-pointer text-xs font-medium px-2.5 py-1.5 rounded-md bg-blue-accent/10 text-blue-accent"
-                      >
-                        Renew
-                      </button>
-                      <button
-                        onClick={() => { onRemove(m.seat); setOpenActions(null); }}
-                        className="cursor-pointer text-xs font-medium px-2.5 py-1.5 rounded-md text-expired-text dark:text-expired-text-dark bg-expired-fill dark:bg-expired-fill-dark"
-                      >
-                        Remove
-                      </button>
+                      <div className="p-3 grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
+                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark shadow-sm"
+                        >
+                          <Check className="w-4 h-4 text-blue-accent" />
+                          <span className="text-[11px] mt-0.5">{m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}</span>
+                        </button>
+                        <button
+                          onClick={() => { onRenew(m.seat); setOpenActions(null); }}
+                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark shadow-sm"
+                        >
+                          <RefreshCw className="w-4 h-4 text-blue-accent" />
+                          <span className="text-[11px] mt-0.5">Renew</span>
+                        </button>
+                        {m.phone && (
+                          <a
+                            href={`https://wa.me/${m.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hi ' + firstName(m.name) + ', your library fee for Seat ' + m.seat + ' is due.')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex justify-center flex-1 col-span-2 sm:col-span-1 items-center gap-2 cursor-pointer text-xs font-bold px-3 py-3 rounded-xl bg-[#25D366]/10 text-[#20bd5a] border border-[#25D366]/20 shadow-sm"
+                            onClick={(e) => { e.stopPropagation(); setOpenActions(null); }}
+                          >
+                            <MessageCircle className="w-5 h-5" />
+                            WhatsApp Message
+                          </a>
+                        )}
+                        <button
+                          onClick={() => { setSeatToRemove(m.seat); setOpenActions(null); }}
+                          className="flex justify-center flex-1 col-span-2 sm:col-span-1 items-center gap-2 cursor-pointer text-xs font-bold px-3 py-3 rounded-xl bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/30 shadow-sm"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Remove Member
+                        </button>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -446,9 +564,17 @@ export default function MemberTable({
       </motion.div>
 
       {filtered.length === 0 && (
-        <div className="text-center py-12 text-text-tertiary dark:text-text-tertiary-dark">
-          <p className="text-sm">No members found</p>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center py-16 px-4 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-2xl shadow-sm mt-4"
+        >
+          <div className="w-16 h-16 bg-bg dark:bg-bg-dark rounded-full flex items-center justify-center mx-auto mb-4 border border-card-border dark:border-card-border-dark">
+            <Search className="w-6 h-6 text-text-tertiary" />
+          </div>
+          <h3 className="text-lg font-bold text-text-primary dark:text-text-primary-dark mb-1">No members found</h3>
+          <p className="text-sm text-text-secondary dark:text-text-secondary-dark font-medium">Try adjusting your filters or search query.</p>
+        </motion.div>
       )}
     </div>
   );
