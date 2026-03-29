@@ -1,11 +1,11 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { ExternalLink, ListChecks } from 'lucide-react';
 import QRCodePanel from '@/components/setup/QRCodePanel';
 import ScriptBlock from '@/components/setup/ScriptBlock';
 
-const containerVariants = {
+const containerVariants: Variants = {
   initial: { opacity: 0, y: 10 },
   animate: { 
     opacity: 1, 
@@ -14,7 +14,7 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   initial: { opacity: 0, y: 15 },
   animate: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };
