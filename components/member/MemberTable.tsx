@@ -6,6 +6,7 @@ import { getSeatStatus, fmtDateShort, cn } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
 import { Search, MoreVertical, Check, RefreshCw, MessageCircle, Trash2, UserPlus, ChevronUp, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface MemberTableProps {
   members: Member[];
@@ -207,18 +208,27 @@ export default function MemberTable({
               <th className="w-10 p-3" />
             </tr>
           </thead>
-          <tbody>
-            {filtered.map(m => {
-              const status = getSeatStatus(m);
-              return (
-                <tr
-                  key={m.seat}
-                  className={cn(
-                    'border-b border-card-border/50 dark:border-card-border-dark/50 transition-colors',
-                    selected.has(m.seat) && 'bg-blue-accent/5',
-                    !m.vacant && 'hover:bg-bg/60 dark:hover:bg-bg-dark/60',
-                  )}
-                >
+          <motion.tbody 
+            initial={false}
+            className="divide-y divide-card-border/30 dark:divide-card-border-dark/30"
+          >
+            <AnimatePresence mode="popLayout">
+              {filtered.map(m => {
+                const status = getSeatStatus(m);
+                return (
+                  <motion.tr
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    key={m.seat}
+                    className={cn(
+                      'border-b border-card-border/50 dark:border-card-border-dark/50 transition-colors',
+                      selected.has(m.seat) && 'bg-blue-accent/5',
+                      !m.vacant && 'hover:bg-bg/60 dark:hover:bg-bg-dark/60',
+                    )}
+                  >
                   <td className="p-3">
                     {!m.vacant && (
                       <input
@@ -258,140 +268,166 @@ export default function MemberTable({
                         >
                           <MoreVertical className="w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark" />
                         </button>
-                        {openActions === m.seat && (
-                          <div className="absolute right-0 top-full z-10 w-48 rounded-lg border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-lg animate-fade-in">
-                            <button
-                              onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
-                              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
+                        <AnimatePresence>
+                          {openActions === m.seat && (
+                            <motion.div 
+                              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                              transition={{ duration: 0.15 }}
+                              className="absolute right-0 top-full z-10 w-48 rounded-lg border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-lg"
                             >
-                              <Check className="w-4 h-4" />
-                              {m.fee === 'due' ? 'Mark fee paid' : 'Mark fee due'}
-                            </button>
-                            <button
-                              onClick={() => { onRenew(m.seat); setOpenActions(null); }}
-                              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
-                            >
-                              <RefreshCw className="w-4 h-4" />
-                              Renew membership
-                            </button>
-                            {m.phone && (
-                              <a
-                                href={`https://wa.me/${m.phone.replace(/\D/g, '')}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                              <button
+                                onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
                                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
-                                onClick={() => setOpenActions(null)}
                               >
-                                <MessageCircle className="w-4 h-4" />
-                                WhatsApp
-                              </a>
-                            )}
-                            <button
-                              onClick={() => { onRemove(m.seat); setOpenActions(null); }}
-                              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-expired-text dark:text-expired-text-dark hover:bg-expired-fill dark:hover:bg-expired-fill-dark transition-colors cursor-pointer"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                              Remove member
-                            </button>
-                          </div>
-                        )}
+                                <Check className="w-4 h-4" />
+                                {m.fee === 'due' ? 'Mark fee paid' : 'Mark fee due'}
+                              </button>
+                              <button
+                                onClick={() => { onRenew(m.seat); setOpenActions(null); }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
+                              >
+                                <RefreshCw className="w-4 h-4" />
+                                Renew membership
+                              </button>
+                              {m.phone && (
+                                <a
+                                  href={`https://wa.me/${m.phone.replace(/\D/g, '')}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
+                                  onClick={() => setOpenActions(null)}
+                                >
+                                  <MessageCircle className="w-4 h-4" />
+                                  WhatsApp
+                                </a>
+                              )}
+                              <button
+                                onClick={() => { onRemove(m.seat); setOpenActions(null); }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-expired-text dark:text-expired-text-dark hover:bg-expired-fill dark:hover:bg-expired-fill-dark transition-colors cursor-pointer"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                Remove member
+                              </button>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </>
                     )}
                   </td>
-                </tr>
+                </motion.tr>
               );
             })}
-          </tbody>
+            </AnimatePresence>
+          </motion.tbody>
         </table>
       </div>
 
       {/* Mobile card list */}
-      <div className="md:hidden space-y-2">
-        {filtered.map(m => {
-          const status = getSeatStatus(m);
-          return (
-            <div
-              key={m.seat}
-              className={cn(
-                'rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-3.5 transition-colors',
-                selected.has(m.seat) && 'ring-2 ring-blue-accent/30',
-              )}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3">
-                  {!m.vacant && (
-                    <input
-                      type="checkbox"
-                      checked={selected.has(m.seat)}
-                      onChange={() => toggleSelect(m.seat)}
-                      className="w-4 h-4 mt-0.5 rounded cursor-pointer accent-blue-accent"
-                    />
-                  )}
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono font-semibold text-text-tertiary dark:text-text-tertiary-dark">
-                        #{String(m.seat).padStart(2, '0')}
-                      </span>
-                      <span className="text-sm font-semibold text-text-primary dark:text-text-primary-dark">
-                        {m.vacant ? 'Vacant' : m.name}
-                      </span>
-                    </div>
-                    {!m.vacant && (
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge status={status} size="sm" />
-                        {m.expiry && (
-                          <span className="text-[11px] text-text-tertiary dark:text-text-tertiary-dark">
-                            Expires: {fmtDateShort(m.expiry)}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                {m.vacant ? (
-                  <Link
-                    href="/add"
-                    className="flex items-center gap-1 text-xs font-medium text-blue-accent cursor-pointer hover:underline"
-                  >
-                    <UserPlus className="w-3.5 h-3.5" />
-                    Add
-                  </Link>
-                ) : (
-                  <button
-                    onClick={() => setOpenActions(openActions === m.seat ? null : m.seat)}
-                    className="cursor-pointer p-1 rounded hover:bg-bg dark:hover:bg-bg-dark transition-colors"
-                    aria-label={`Actions for ${m.name}`}
-                  >
-                    <MoreVertical className="w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark" />
-                  </button>
+      <motion.div 
+        layout
+        className="md:hidden space-y-2"
+      >
+        <AnimatePresence mode="popLayout">
+          {filtered.map(m => {
+            const status = getSeatStatus(m);
+            return (
+              <motion.div
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95, height: 0 }}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                key={m.seat}
+                className={cn(
+                  'rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-3.5 transition-colors',
+                  selected.has(m.seat) && 'ring-2 ring-blue-accent/30',
                 )}
-              </div>
-              {openActions === m.seat && !m.vacant && (
-                <div className="mt-2 pt-2 border-t border-card-border dark:border-card-border-dark flex flex-wrap gap-2 animate-fade-in">
-                  <button
-                    onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
-                    className="cursor-pointer text-xs font-medium px-2.5 py-1.5 rounded-md bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark"
-                  >
-                    {m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}
-                  </button>
-                  <button
-                    onClick={() => { onRenew(m.seat); setOpenActions(null); }}
-                    className="cursor-pointer text-xs font-medium px-2.5 py-1.5 rounded-md bg-blue-accent/10 text-blue-accent"
-                  >
-                    Renew
-                  </button>
-                  <button
-                    onClick={() => { onRemove(m.seat); setOpenActions(null); }}
-                    className="cursor-pointer text-xs font-medium px-2.5 py-1.5 rounded-md text-expired-text dark:text-expired-text-dark bg-expired-fill dark:bg-expired-fill-dark"
-                  >
-                    Remove
-                  </button>
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3">
+                    {!m.vacant && (
+                      <input
+                        type="checkbox"
+                        checked={selected.has(m.seat)}
+                        onChange={() => toggleSelect(m.seat)}
+                        className="w-4 h-4 mt-0.5 rounded cursor-pointer accent-blue-accent"
+                      />
+                    )}
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono font-semibold text-text-tertiary dark:text-text-tertiary-dark">
+                          #{String(m.seat).padStart(2, '0')}
+                        </span>
+                        <span className="text-sm font-semibold text-text-primary dark:text-text-primary-dark">
+                          {m.vacant ? 'Vacant' : m.name}
+                        </span>
+                      </div>
+                      {!m.vacant && (
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge status={status} size="sm" />
+                          {m.expiry && (
+                            <span className="text-[11px] text-text-tertiary dark:text-text-tertiary-dark">
+                              Expires: {fmtDateShort(m.expiry)}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {m.vacant ? (
+                    <Link
+                      href="/add"
+                      className="flex items-center gap-1 text-xs font-medium text-blue-accent cursor-pointer hover:underline"
+                    >
+                      <UserPlus className="w-3.5 h-3.5" />
+                      Add
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() => setOpenActions(openActions === m.seat ? null : m.seat)}
+                      className="cursor-pointer p-1 rounded hover:bg-bg dark:hover:bg-bg-dark transition-colors"
+                      aria-label={`Actions for ${m.name}`}
+                    >
+                      <MoreVertical className="w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark" />
+                    </button>
+                  )}
                 </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                <AnimatePresence>
+                  {openActions === m.seat && !m.vacant && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mt-2 pt-2 border-t border-card-border dark:border-card-border-dark flex flex-wrap gap-2 overflow-hidden"
+                    >
+                      <button
+                        onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
+                        className="cursor-pointer text-xs font-medium px-2.5 py-1.5 rounded-md bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark"
+                      >
+                        {m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}
+                      </button>
+                      <button
+                        onClick={() => { onRenew(m.seat); setOpenActions(null); }}
+                        className="cursor-pointer text-xs font-medium px-2.5 py-1.5 rounded-md bg-blue-accent/10 text-blue-accent"
+                      >
+                        Renew
+                      </button>
+                      <button
+                        onClick={() => { onRemove(m.seat); setOpenActions(null); }}
+                        className="cursor-pointer text-xs font-medium px-2.5 py-1.5 rounded-md text-expired-text dark:text-expired-text-dark bg-expired-fill dark:bg-expired-fill-dark"
+                      >
+                        Remove
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </motion.div>
 
       {filtered.length === 0 && (
         <div className="text-center py-12 text-text-tertiary dark:text-text-tertiary-dark">
