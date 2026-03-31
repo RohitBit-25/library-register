@@ -6,10 +6,11 @@ import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
 import SeatGrid from '@/components/seat/SeatGrid';
 import SeatDetailPanel from '@/components/seat/SeatDetailPanel';
-import { type Duration } from '@/lib/types';
+import AddMemberSheet from '@/components/seat/AddMemberSheet';
+import { type Duration, type Member } from '@/lib/types';
 
 export default function SeatGridContent() {
-  const { members, update, vacate, renew } = useMembers();
+  const { members, update, vacate, renew, add } = useMembers();
   const { addToast } = useToast();
   const searchParams = useSearchParams();
 
@@ -54,6 +55,19 @@ export default function SeatGridContent() {
     addToast('warning', `Seat ${seat} vacated${member ? ` — ${member.name} removed` : ''}`);
   };
 
+  const handleAddSubmit = (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => {
+    const success = add(seat, data);
+    if (success) {
+      addToast('success', `Seat ${seat} allotted to ${data.name}`);
+      // AddMemberSheet auto-closes on success if we passed it in onSubmit, but we handle state closing in parent
+      setSelectedSeat(null);
+    } else {
+      addToast('error', 'Failed to allot seat. It might be occupied.');
+    }
+  };
+
+  const vacantSeats = useMemo(() => members.filter(m => m.vacant).map(m => m.seat), [members]);
+
   return (
     <div className={selectedSeat !== null && !isMobile ? 'pr-[330px]' : ''}>
       {/* Header */}
@@ -71,16 +85,27 @@ export default function SeatGridContent() {
         onSeatClick={seat => setSelectedSeat(seat)}
       />
 
-      <SeatDetailPanel
-        member={selectedMember}
-        open={selectedSeat !== null}
-        onClose={() => setSelectedSeat(null)}
-        onMarkPaid={handleMarkPaid}
-        onMarkDue={handleMarkDue}
-        onRenew={handleRenew}
-        onRemove={handleRemove}
-        isMobile={isMobile}
-      />
+      {selectedMember?.vacant ? (
+        <AddMemberSheet
+          open={selectedSeat !== null}
+          onClose={() => setSelectedSeat(null)}
+          seat={selectedSeat}
+          vacantSeats={vacantSeats}
+          onSubmit={handleAddSubmit}
+          isMobile={isMobile}
+        />
+      ) : (
+        <SeatDetailPanel
+          member={selectedMember}
+          open={selectedSeat !== null && !selectedMember?.vacant}
+          onClose={() => setSelectedSeat(null)}
+          onMarkPaid={handleMarkPaid}
+          onMarkDue={handleMarkDue}
+          onRenew={handleRenew}
+          onRemove={handleRemove}
+          isMobile={isMobile}
+        />
+      )}
     </div>
   );
 }
