@@ -11,6 +11,7 @@ import {
   UserPlus,
   MoreHorizontal,
   CalendarCheck,
+  CalendarClock,
   BarChart3,
   Settings,
   Sun,
@@ -31,7 +32,7 @@ export default function BottomNav() {
   const { isDark, toggle } = useDarkMode();
   const [moreOpen, setMoreOpen] = useState(false);
 
-  const isMoreActive = ['/attendance', '/analytics', '/setup'].includes(pathname);
+  const isMoreActive = ['/attendance', '/expiry', '/analytics', '/setup'].includes(pathname);
 
   return (
     <>
@@ -59,6 +60,19 @@ export default function BottomNav() {
               >
                 <CalendarCheck className="w-5 h-5" />
                 Attendance
+              </Link>
+              <Link
+                href="/expiry"
+                onClick={() => setMoreOpen(false)}
+                className={cn(
+                  'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                  pathname === '/expiry'
+                    ? 'bg-blue-accent/10 text-blue-accent'
+                    : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                )}
+              >
+                <CalendarClock className="w-5 h-5" />
+                Expiry Tracker
               </Link>
               <Link
                 href="/analytics"
