@@ -2,8 +2,7 @@
 
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { useAuth } from '@/hooks/useAuth';
-import { Sun, Moon, BookOpen, Shield, Eye, LogOut } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Sun, Moon, BookOpen, Shield, Eye } from 'lucide-react';
 
 interface TopBarProps {
   title?: string;
@@ -11,13 +10,7 @@ interface TopBarProps {
 
 export default function TopBar({ title = 'Library Register' }: TopBarProps) {
   const { isDark, toggle } = useDarkMode();
-  const { isAdmin, isAuthenticated, logout } = useAuth();
-  const router = useRouter();
-
-  const handleLogout = () => {
-    logout();
-    router.push('/landing');
-  };
+  const { isAdmin, isAuthenticated } = useAuth();
 
   return (
     <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between h-14 px-4 glass border-b border-card-border dark:border-card-border-dark">
