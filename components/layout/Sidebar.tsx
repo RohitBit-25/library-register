@@ -43,15 +43,14 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
   const router = useRouter();
 
   const navItems: NavItem[] = [
-    { href: '/', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
-    { href: '/seat-grid', label: 'Seat Grid', icon: <Grid3X3 className="w-5 h-5" /> },
+    { href: '/', label: 'Floorplan Map', icon: <LayoutDashboard className="w-5 h-5" /> },
+    { href: '/analytics', label: 'Insights Overview', icon: <BarChart3 className="w-5 h-5" /> },
     {
       href: '/members',
       label: 'All Members',
       icon: <Users className="w-5 h-5" />,
       badge: dueCount > 0 ? `${dueCount} due` : undefined,
     },
-    { href: '/add', label: 'Add Member', icon: <UserPlus className="w-5 h-5" /> },
     {
       href: '/requests',
       label: 'Seat Requests',
@@ -60,7 +59,6 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
     },
     { href: '/expiry', label: 'Expiry Tracker', icon: <CalendarClock className="w-5 h-5" /> },
     { href: '/attendance', label: 'Attendance', icon: <CalendarCheck className="w-5 h-5" /> },
-    { href: '/analytics', label: 'Analytics', icon: <BarChart3 className="w-5 h-5" /> },
     { href: '/setup', label: 'Google Setup', icon: <Settings className="w-5 h-5" /> },
   ];
 

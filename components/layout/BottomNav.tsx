@@ -27,10 +27,9 @@ import { useDarkMode } from '@/hooks/useDarkMode';
 /* ─── Admin Tabs ──────────────────────────────────────────────── */
 
 const adminTabs = [
-  { href: '/', label: 'Home', icon: LayoutDashboard },
-  { href: '/seat-grid', label: 'Grid', icon: Grid3X3 },
+  { href: '/', label: 'Map', icon: LayoutDashboard },
+  { href: '/analytics', label: 'Insights', icon: BarChart3 },
   { href: '/members', label: 'List', icon: Users },
-  { href: '/add', label: 'Add', icon: UserPlus },
 ];
 
 /* ─── User Tabs ───────────────────────────────────────────────── */
@@ -48,7 +47,7 @@ export default function BottomNav() {
 
   const tabs = isAdmin ? adminTabs : userTabs;
 
-  const adminMorePaths = ['/attendance', '/expiry', '/analytics', '/setup', '/requests'];
+  const adminMorePaths = ['/attendance', '/expiry', '/setup', '/requests'];
   const isMoreActive = isAdmin && adminMorePaths.includes(pathname);
 
   const handleLogout = () => {
@@ -113,19 +112,7 @@ export default function BottomNav() {
                     <CalendarClock className="w-5 h-5" />
                     Expiry Tracker
                   </Link>
-                  <Link
-                    href="/analytics"
-                    onClick={() => setMoreOpen(false)}
-                    className={cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
-                      pathname === '/analytics'
-                        ? 'bg-blue-accent/10 text-blue-accent'
-                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
-                    )}
-                  >
-                    <BarChart3 className="w-5 h-5" />
-                    Analytics
-                  </Link>
+                  {/* Analytics moved to main nav */}
                   <Link
                     href="/setup"
                     onClick={() => setMoreOpen(false)}
