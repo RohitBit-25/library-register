@@ -64,11 +64,11 @@ export default function BottomNav() {
             className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm animate-fade-in lg:hidden"
             onClick={() => setMoreOpen(false)}
           />
-          <div className="fixed bottom-[56px] left-0 right-0 z-50 rounded-t-2xl glass border-t border-card-border dark:border-card-border-dark shadow-2xl animate-slide-up lg:hidden">
-            <div className="flex justify-center pt-3 pb-1">
+          <div className="fixed bottom-[104px] left-4 right-4 z-50 rounded-3xl glass noise-pattern shadow-floating dark:shadow-floating-dark animate-slide-up lg:hidden overflow-hidden">
+            <div className="flex justify-center pt-3 pb-1 relative z-10">
               <div className="w-10 h-1 rounded-full bg-text-tertiary/30" />
             </div>
-            <nav className="px-4 pb-4 space-y-1">
+            <nav className="px-4 pb-4 space-y-1 relative z-10">
               {isAdmin ? (
                 /* Admin More Options */
                 <>
@@ -183,7 +183,8 @@ export default function BottomNav() {
       )}
 
       {/* Tab bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 h-14 flex items-center justify-around glass border-t border-card-border dark:border-card-border-dark">
+      <nav className="lg:hidden fixed bottom-6 left-6 right-6 z-30 h-16 rounded-[2rem] flex items-center justify-around glass noise-pattern shadow-floating dark:shadow-floating-dark">
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-white/10 to-transparent dark:from-white/5 rounded-[2rem] pointer-events-none" />
         {tabs.map(tab => {
           const isActive = pathname === tab.href;
           const Icon = tab.icon;
@@ -192,7 +193,7 @@ export default function BottomNav() {
               key={tab.href}
               href={tab.href}
               className={cn(
-                'flex flex-col items-center justify-center gap-0.5 min-w-[56px] py-1 cursor-pointer transition-colors',
+                'relative z-10 flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 cursor-pointer transition-spring',
                 isActive
                   ? 'text-blue-accent'
                   : 'text-text-tertiary dark:text-text-tertiary-dark',
@@ -206,7 +207,7 @@ export default function BottomNav() {
         <button
           onClick={() => setMoreOpen(prev => !prev)}
           className={cn(
-            'flex flex-col items-center justify-center gap-0.5 min-w-[56px] py-1 cursor-pointer transition-colors',
+            'relative z-10 flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 cursor-pointer transition-spring',
             isMoreActive
               ? 'text-blue-accent'
               : 'text-text-tertiary dark:text-text-tertiary-dark',

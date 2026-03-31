@@ -72,9 +72,8 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
   };
 
   return (
-    <aside className="hidden lg:flex flex-col w-[220px] h-screen fixed left-0 top-0 border-r border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark z-30">
-      {/* Logo area with gradient accent */}
-      <div className="p-5 pb-3 relative overflow-hidden">
+    <aside className="hidden lg:flex flex-col w-[220px] h-[calc(100vh-2rem)] fixed left-4 top-4 rounded-3xl glass noise-pattern shadow-floating dark:shadow-floating-dark z-30 overflow-hidden">
+      <div className="flex items-center gap-3 px-6 h-16 shrink-0 relative z-10">
         {/* Subtle gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-accent/5 via-transparent to-transparent pointer-events-none" />
         
@@ -91,9 +90,11 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
             </p>
           </div>
         </div>
+      </div>
 
-        {/* Admin badge */}
-        <div className="mt-3 relative z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-accent/10 text-blue-accent">
+      {/* Admin badge */}
+      <div className="px-6 pb-4 relative z-10">
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-accent/10 text-blue-accent">
           <Shield className="w-3.5 h-3.5" />
           <span className="text-[11px] font-bold">Admin Mode</span>
         </div>
@@ -132,8 +133,8 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-card-border dark:border-card-border-dark space-y-2">
-        <div className="flex items-center justify-between">
+      <div className="p-4 shrink-0 relative z-10">
+        <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-mono text-text-tertiary dark:text-text-tertiary-dark">
             {timeStr}
           </span>
