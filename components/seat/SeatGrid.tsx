@@ -13,17 +13,6 @@ interface SeatGridProps {
   onSeatClick: (seat: number) => void;
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.015,
-      delayChildren: 0.05,
-    }
-  }
-};
-
 export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
   const [shiftFilter, setShiftFilter] = useState<Shift | 'all'>('all');
 
