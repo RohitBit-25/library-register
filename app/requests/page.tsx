@@ -11,7 +11,6 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  User,
   Phone,
   MessageSquare,
   Armchair,
