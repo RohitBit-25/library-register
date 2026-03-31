@@ -7,9 +7,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard,
-  Grid3X3,
   Users,
-  UserPlus,
   MoreHorizontal,
   CalendarCheck,
   CalendarClock,

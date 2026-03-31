@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/useToast';
 import SeatGrid from '@/components/seat/SeatGrid';
 import SeatDetailPanel from '@/components/seat/SeatDetailPanel';
 import AddMemberSheet from '@/components/seat/AddMemberSheet';
+import GlobalSearch from '@/components/ui/GlobalSearch';
 import { type Duration, type Member } from '@/lib/types';
 
 export default function SeatGridContent() {
@@ -71,14 +72,18 @@ export default function SeatGridContent() {
   return (
     <div className={selectedSeat !== null && !isMobile ? 'pr-[330px]' : ''}>
       {/* Header */}
-      <div className="mb-5">
-        <h1 className="text-xl sm:text-2xl font-bold text-text-primary dark:text-text-primary-dark">
-          Seat Grid
-        </h1>
-        <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5">
-          Click any seat to manage
-        </p>
+      <div className="mb-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-text-primary dark:text-text-primary-dark tracking-tight">
+            Library Floorplan
+          </h1>
+          <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-0.5">
+            Tap any seat to manage, or search below
+          </p>
+        </div>
       </div>
+
+      <GlobalSearch onSelect={seat => setSelectedSeat(seat)} />
 
       <SeatGrid
         members={members}

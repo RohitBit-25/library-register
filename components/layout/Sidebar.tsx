@@ -7,9 +7,7 @@ import { useDarkMode } from '@/hooks/useDarkMode';
 import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard,
-  Grid3X3,
   Users,
-  UserPlus,
   CalendarCheck,
   CalendarClock,
   BarChart3,
