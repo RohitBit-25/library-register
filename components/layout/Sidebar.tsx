@@ -4,18 +4,24 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useDarkMode } from '@/hooks/useDarkMode';
+import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard,
   Grid3X3,
   Users,
   UserPlus,
   CalendarCheck,
+  CalendarClock,
   BarChart3,
   Settings,
   Sun,
   Moon,
   BookOpen,
+  Inbox,
+  LogOut,
+  Shield,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface NavItem {
   href: string;
@@ -27,11 +33,14 @@ interface NavItem {
 
 interface SidebarProps {
   dueCount?: number;
+  pendingRequests?: number;
 }
 
-export default function Sidebar({ dueCount = 0 }: SidebarProps) {
+export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarProps) {
   const pathname = usePathname();
   const { isDark, toggle } = useDarkMode();
+  const { logout } = useAuth();
+  const router = useRouter();
 
   const navItems: NavItem[] = [
     { href: '/', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
@@ -43,14 +52,26 @@ export default function Sidebar({ dueCount = 0 }: SidebarProps) {
       badge: dueCount > 0 ? `${dueCount} due` : undefined,
     },
     { href: '/add', label: 'Add Member', icon: <UserPlus className="w-5 h-5" /> },
-    { href: '/attendance', label: 'Attendance', icon: <CalendarCheck className="w-5 h-5" />, isNew: true },
-    { href: '/analytics', label: 'Analytics', icon: <BarChart3 className="w-5 h-5" />, isNew: true },
+    {
+      href: '/requests',
+      label: 'Seat Requests',
+      icon: <Inbox className="w-5 h-5" />,
+      badge: pendingRequests > 0 ? `${pendingRequests}` : undefined,
+    },
+    { href: '/expiry', label: 'Expiry Tracker', icon: <CalendarClock className="w-5 h-5" /> },
+    { href: '/attendance', label: 'Attendance', icon: <CalendarCheck className="w-5 h-5" /> },
+    { href: '/analytics', label: 'Analytics', icon: <BarChart3 className="w-5 h-5" /> },
     { href: '/setup', label: 'Google Setup', icon: <Settings className="w-5 h-5" /> },
   ];
 
   const now = new Date();
   const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false });
   const dateStr = now.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+  const handleLogout = () => {
+    logout();
+    router.push('/landing');
+  };
 
   return (
     <aside className="hidden lg:flex flex-col w-[220px] h-screen fixed left-0 top-0 border-r border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark z-30">
@@ -71,6 +92,12 @@ export default function Sidebar({ dueCount = 0 }: SidebarProps) {
               {dateStr}
             </p>
           </div>
+        </div>
+
+        {/* Admin badge */}
+        <div className="mt-3 relative z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-accent/10 text-blue-accent">
+          <Shield className="w-3.5 h-3.5" />
+          <span className="text-[11px] font-bold">Admin Mode</span>
         </div>
       </div>
 
@@ -101,18 +128,13 @@ export default function Sidebar({ dueCount = 0 }: SidebarProps) {
                   {item.badge}
                 </span>
               )}
-              {item.isNew && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-accent/10 text-blue-accent">
-                  NEW
-                </span>
-              )}
             </Link>
           );
         })}
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-card-border dark:border-card-border-dark">
+      <div className="p-4 border-t border-card-border dark:border-card-border-dark space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-mono text-text-tertiary dark:text-text-tertiary-dark">
             {timeStr}
@@ -128,6 +150,13 @@ export default function Sidebar({ dueCount = 0 }: SidebarProps) {
             <span>{isDark ? 'Light' : 'Dark'}</span>
           </button>
         </div>
+        <button
+          onClick={handleLogout}
+          className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-text-secondary dark:text-text-secondary-dark hover:text-expired-border hover:bg-expired-fill/50 dark:hover:bg-expired-fill-dark/50 transition-colors border border-card-border dark:border-card-border-dark"
+        >
+          <LogOut className="w-4 h-4" />
+          Logout
+        </button>
       </div>
     </aside>
   );
