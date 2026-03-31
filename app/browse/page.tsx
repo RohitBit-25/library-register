@@ -7,6 +7,7 @@ import { useSeatRequests } from '@/hooks/useSeatRequests';
 import { useToast } from '@/hooks/useToast';
 import { type Member, type Shift } from '@/lib/types';
 import { getSeatStatus, cn, firstName } from '@/lib/utils';
+import { SeatMapContainer, SeatMapWrapper, type FaceDir } from '@/components/seat/SeatMap';
 import SeatRequestSheet from '@/components/seat/SeatRequestSheet';
 import {
   Grid3X3,
@@ -166,26 +167,30 @@ export default function BrowsePage() {
       </div>
 
       {/* Grid */}
-      <div className="card-premium accent-blue rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-4 sm:p-6 shadow-sm">
-        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-card-border dark:border-card-border-dark">
+      <div className="card-premium accent-blue rounded-[2.5rem] border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm overflow-hidden mb-8">
+        <div className="flex items-center gap-2 px-6 pt-5 pb-3 border-b border-card-border/50 dark:border-card-border-dark/50">
           <Grid3X3 className="w-4 h-4 text-blue-accent" />
           <h3 className="text-sm font-black text-text-primary dark:text-text-primary-dark">
-            {shiftFilter === 'all' ? 'All Seats' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift`}
+            {shiftFilter === 'all' ? 'Floorplan Map' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift Mapping`}
           </h3>
           <span className="text-xs font-mono font-bold text-text-tertiary ml-auto">
-            {filtered.length} seats
+            {filtered.length} seats shown
           </span>
         </div>
-        <div className="grid grid-cols-5 sm:grid-cols-7 lg:grid-cols-10 gap-2 sm:gap-2.5 justify-items-center">
+        <SeatMapContainer>
           {filtered.map(member => (
-            <BrowseSeatTile
-              key={member.seat}
-              member={member}
-              onClick={handleSeatClick}
-              hasRequest={requests.some(r => r.seat === member.seat && r.status === 'pending')}
-            />
+            <SeatMapWrapper key={member.seat} seatNum={member.seat}>
+              {(face) => (
+                <BrowseSeatTile
+                  member={member}
+                  onClick={handleSeatClick}
+                  hasRequest={requests.some(r => r.seat === member.seat && r.status === 'pending')}
+                  face={face}
+                />
+              )}
+            </SeatMapWrapper>
           ))}
-        </div>
+        </SeatMapContainer>
       </div>
 
       {/* Request Sheet */}
@@ -205,10 +210,12 @@ function BrowseSeatTile({
   member,
   onClick,
   hasRequest,
+  face
 }: {
   member: Member;
   onClick: (seat: number) => void;
   hasRequest: boolean;
+  face: FaceDir;
 }) {
   const status = getSeatStatus(member);
   const isVacant = member.vacant;
@@ -218,34 +225,45 @@ function BrowseSeatTile({
       onClick={() => onClick(member.seat)}
       disabled={!isVacant}
       className={cn(
-        'relative flex flex-col items-center justify-between rounded-xl border transition-all duration-200 w-[74px] h-[74px] p-2',
+        'relative flex flex-col items-center justify-between rounded-xl border transition-all duration-200 w-full h-full p-1 z-10',
         isVacant
           ? 'tile-vacant cursor-pointer hover:ring-2 hover:ring-blue-accent/40 hover:scale-105 hover:shadow-lg active:scale-95'
-          : 'cursor-default opacity-80',
-        !isVacant && status === 'active' && 'tile-active',
-        !isVacant && status === 'expiring' && 'tile-expiring',
-        !isVacant && status === 'expired' && 'tile-expired',
-        !isVacant && status === 'due' && 'tile-due',
+          : 'cursor-default backdrop-blur-md bg-white/40 dark:bg-black/30 border-card-border dark:border-card-border-dark',
+        !isVacant && status === 'active' && 'tile-active opacity-90',
+        !isVacant && status === 'expiring' && 'tile-expiring opacity-90',
+        !isVacant && status === 'expired' && 'tile-expired opacity-90',
+        !isVacant && status === 'due' && 'tile-due opacity-90',
       )}
     >
+      {/* Chair indicator */}
+      <div className={cn(
+        "absolute rounded-full transition-colors",
+        status === 'vacant' ? 'bg-vacant-border/50 dark:bg-vacant-border-dark/50' : 
+        'bg-card-border dark:bg-card-border-dark',
+        face === 'up' && "bottom-[-6px] left-[15%] right-[15%] h-[4px]",
+        face === 'down' && "top-[-6px] left-[15%] right-[15%] h-[4px]",
+        face === 'left' && "right-[-6px] top-[15%] bottom-[15%] w-[4px]",
+        face === 'right' && "left-[-6px] top-[15%] bottom-[15%] w-[4px]"
+      )} />
+
       {/* Seat number */}
-      <span className="font-mono font-bold self-start leading-none text-xs">
+      <span className="font-mono font-bold self-start leading-none text-[10px] z-10">
         {String(member.seat).padStart(2, '0')}
       </span>
 
       {/* Name or status */}
       {isVacant ? (
-        <span className="text-[10px] font-bold text-active-border">
-          {hasRequest ? '⏳ Req' : 'Vacant'}
+        <span className="text-[9px] font-bold text-active-border z-10 text-center w-full leading-[1]">
+          {hasRequest ? '⏳' : 'Vac'}
         </span>
       ) : (
-        <span className="text-[11px] font-black truncate w-full text-center leading-tight">
+        <span className="text-[9px] font-black truncate w-full px-0.5 text-center leading-tight z-10 text-text-primary/70 dark:text-text-primary-dark/80">
           {firstName(member.name)}
         </span>
       )}
 
       {/* Shift indicator */}
-      <div className="flex items-center gap-0.5 text-[9px] font-bold">
+      <div className="flex items-center gap-0.5 text-[8px] font-bold z-10 opacity-70">
         {isVacant ? (
           <span className="font-medium opacity-60">
             {hasRequest ? 'Sent' : 'Tap'}
@@ -253,14 +271,14 @@ function BrowseSeatTile({
         ) : (
           <>
             {member.shift === 'evening' ? (
-              <Moon className="w-3 h-3" />
+              <Moon className="w-2.5 h-2.5" />
             ) : member.shift === 'full' ? (
               <span className="flex items-center gap-0.5">
-                <Sun className="w-2.5 h-2.5" />
-                <Moon className="w-2.5 h-2.5" />
+                <Sun className="w-2 h-2" />
+                <Moon className="w-2 h-2" />
               </span>
             ) : (
-              <Sun className="w-3 h-3" />
+              <Sun className="w-2.5 h-2.5" />
             )}
           </>
         )}
@@ -268,7 +286,7 @@ function BrowseSeatTile({
 
       {/* Pending request indicator */}
       {hasRequest && (
-        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-blue-accent border-2 border-white dark:border-[#121212] shadow-sm" />
+        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-blue-accent border-2 border-white dark:border-[#121212] shadow-sm z-20" />
       )}
     </button>
   );
