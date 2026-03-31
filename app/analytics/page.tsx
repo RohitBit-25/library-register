@@ -2,198 +2,331 @@
 
 import { useMembers } from '@/hooks/useMembers';
 import { useStats } from '@/hooks/useStats';
-import { motion } from 'framer-motion';
-import { BarChart3, TrendingUp, RefreshCw, CalendarDays, Clock, Users, PieChart, Wallet } from 'lucide-react';
-import DurationDonut from '@/components/charts/DurationDonut';
-import OccupancySparkline from '@/components/charts/OccupancySparkline';
-import { daysUntilExpiry } from '@/lib/utils';
-import { useMemo } from 'react';
+import { useToast } from '@/hooks/useToast';
+import StatCard from '@/components/ui/StatCard';
+import Badge from '@/components/ui/Badge';
+import { getSeatStatus, fmtDate, daysUntilExpiry } from '@/lib/utils';
+import { type Member } from '@/lib/types';
+import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw, TrendingUp, Sparkles } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { motion, Variants } from 'framer-motion';
 
-const containerVariants = {
+const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
   animate: { 
-    opacity: 1, y: 0, 
-    transition: { staggerChildren: 0.08 } 
+    opacity: 1, 
+    y: 0,
+    transition: { staggerChildren: 0.08 }
   }
 };
 
-const itemVariants = {
-  initial: { opacity: 0, scale: 0.95 },
-  animate: { opacity: 1, scale: 1, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
+const itemVariants: Variants = {
+  initial: { opacity: 0, y: 15 },
+  animate: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };
 
-export default function AnalyticsPage() {
-  const { members } = useMembers();
+export default function DashboardPage() {
+  const { members, update } = useMembers();
   const stats = useStats(members);
+  const { addToast } = useToast();
+  const router = useRouter();
 
-  // Generate 30 days of mock occupancy for sparkline
-  const mockOccupancy = useMemo(() => {
-    const data = [];
-    let current = stats.occupied;
-    for (let i = 0; i < 30; i++) {
-      data.unshift(current);
-      const pseudoRand = Math.abs(Math.sin(i * 12.345));
-      current = Math.max(0, current + Math.floor(pseudoRand * 5) - 2); 
-    }
-    return data;
-  }, [stats.occupied]);
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('en-IN', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
 
-  // Compute Upcoming Expirations
-  const getUpcomingExpiries = () => {
-    const next30Days = Array.from({ length: 30 }, (_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() + i);
-      const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-      return { date: ds, day: d.getDate(), month: d.toLocaleString('default', { month: 'short' }), count: 0 };
-    });
+  // Alerts: expired first, then due, then expiring
+  const alerts: (Member & { alertType: 'expired' | 'due' | 'expiring' })[] = [
+    ...stats.expiredMembers.map(m => ({ ...m, alertType: 'expired' as const })),
+    ...stats.dueMembers.map(m => ({ ...m, alertType: 'due' as const })),
+    ...stats.expiringThisWeek.map(m => ({ ...m, alertType: 'expiring' as const })),
+  ];
 
-    members.forEach(m => {
-      if (m.vacant || !m.expiry) return;
-      const days = daysUntilExpiry(m.expiry);
-      if (days >= 0 && days < 30) {
-        next30Days[days].count++;
-      }
-    });
+  // Priority members (top 10 needing attention)
+  const priorityMembers = [...alerts].slice(0, 10);
 
-    return next30Days;
+  // Sparkline: last 30 days (mockable occupancy data)
+  const occupancyData = generateSparklineData(stats.occupied);
+
+  const handleMarkPaid = (seat: number) => {
+    update(seat, { fee: 'paid' });
+    addToast('success', `Seat ${seat} — fee marked as paid`);
   };
 
-  const upcomingExpiries = getUpcomingExpiries();
-
-  // Fee collection stats
-  const totalCollected = members.filter(m => !m.vacant && m.fee === 'paid').length;
-  const totalPending = members.filter(m => !m.vacant && m.fee === 'due').length;
-  const feeRate = stats.occupied > 0 ? Math.round((totalCollected / stats.occupied) * 100) : 0;
+  const alertBorderColors: Record<string, string> = {
+    expired: 'border-l-expired-border',
+    due: 'border-l-due-border',
+    expiring: 'border-l-expiring-border',
+  };
 
   return (
     <motion.div 
-      variants={containerVariants}
+      variants={pageVariants}
       initial="initial"
       animate="animate"
-      className="max-w-5xl pb-24"
     >
-      <motion.div variants={itemVariants} className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
-          <BarChart3 className="w-6 h-6 text-blue-accent" />
-          Analytics
-        </h1>
-        <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-1">
-          Monthly insights and library trends.
-        </p>
-      </motion.div>
-
-      {/* Top Cards */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="card-premium accent-blue p-5 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark flex flex-col gap-2 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-blue-accent/5 rounded-bl-[60px] pointer-events-none" />
-          <Users className="w-5 h-5 text-blue-accent" />
-          <p className="text-2xl font-extrabold text-text-primary dark:text-text-primary-dark mt-1">{stats.occupied}</p>
-          <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider">Total Occupied</p>
+      {/* Page header */}
+      <motion.div variants={itemVariants} className="mb-6 flex items-end justify-between">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
+            Dashboard
+            <Sparkles className="w-5 h-5 text-blue-accent" />
+          </h1>
+          <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-0.5">
+            {dateStr}
+          </p>
         </div>
-        <div className="card-premium accent-amber p-5 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark flex flex-col gap-2 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-amber-accent/5 rounded-bl-[60px] pointer-events-none" />
-          <Clock className="w-5 h-5 text-amber-500" />
-          <p className="text-2xl font-extrabold text-text-primary dark:text-text-primary-dark mt-1">{stats.due}</p>
-          <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider">Fee Pending</p>
-        </div>
-        <div className="card-premium accent-green p-5 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark flex flex-col gap-2 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-green-accent/5 rounded-bl-[60px] pointer-events-none" />
-          <TrendingUp className="w-5 h-5 text-emerald-500" />
-          <p className="text-2xl font-extrabold text-text-primary dark:text-text-primary-dark mt-1">{feeRate}%</p>
-          <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider">Collection Rate</p>
-        </div>
-        <div className="card-premium accent-blue p-5 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark flex flex-col gap-2 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-indigo-500/5 rounded-bl-[60px] pointer-events-none" />
-          <RefreshCw className="w-5 h-5 text-indigo-500" />
-          <p className="text-2xl font-extrabold text-text-primary dark:text-text-primary-dark mt-1">{stats.expiring}</p>
-          <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider">Expiring Soon</p>
+        <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-text-tertiary dark:text-text-tertiary-dark bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-lg px-3 py-1.5">
+          <TrendingUp className="w-3.5 h-3.5 text-active-border" />
+          {Math.round((stats.occupied / 95) * 100)}% Occupied
         </div>
       </motion.div>
 
-      {/* Charts Row */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="card-premium accent-blue p-6 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm">
-          <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark mb-6 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-blue-accent" />
-            Occupancy Trend
-          </h3>
-          <OccupancySparkline data={mockOccupancy} />
-        </div>
-
-        <div className="card-premium accent-green p-6 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm">
-          <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark mb-6 flex items-center gap-2">
-            <PieChart className="w-4 h-4 text-green-accent" />
-            Membership Duration Split
-          </h3>
-          <DurationDonut data={stats.byDuration} />
-        </div>
+      {/* Stat cards */}
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+        <StatCard
+          value={stats.occupied}
+          label="Occupied Seats"
+          accent="blue"
+          icon={<Users className="w-5 h-5 text-blue-accent" />}
+          onClick={() => router.push('/members?filter=active')}
+        />
+        <StatCard
+          value={stats.vacant}
+          label="Vacant Seats"
+          accent="gray"
+          icon={<UserMinus className="w-5 h-5 text-gray-accent" />}
+          onClick={() => router.push('/members?filter=vacant')}
+        />
+        <StatCard
+          value={stats.due}
+          label="Fee Pending"
+          accent="amber"
+          icon={<AlertTriangle className="w-5 h-5 text-due-border" />}
+          onClick={() => router.push('/members?filter=due')}
+        />
+        <StatCard
+          value={stats.expiring + stats.expired}
+          label="Expiring / Expired"
+          accent="red"
+          icon={<CalendarX className="w-5 h-5 text-expired-border" />}
+          onClick={() => router.push('/members?filter=expired')}
+        />
       </motion.div>
 
-      {/* Fee Collection Progress */}
-      <motion.div variants={itemVariants} className="card-premium accent-green p-6 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm mb-6">
-        <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark mb-5 flex items-center gap-2">
-          <Wallet className="w-4 h-4 text-green-accent" />
-          Fee Collection — This Month
-        </h3>
-        <div className="space-y-4">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark">Collected</span>
-              <span className="text-xs font-bold text-active-text dark:text-active-text-dark">{totalCollected} members ({feeRate}%)</span>
-            </div>
-            <div className="w-full h-3 rounded-full bg-bg dark:bg-bg-dark overflow-hidden">
-              <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: `${feeRate}%` }}
-                transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-                className="h-full rounded-full gradient-green shadow-sm"
-              />
-            </div>
+      {/* Alert banner */}
+      {alerts.length > 0 && (
+        <motion.div variants={itemVariants} className="mb-6 card-premium accent-amber rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden shadow-sm">
+          <div className="px-4 py-3 border-b border-card-border dark:border-card-border-dark bg-bg/50 dark:bg-bg-dark/50">
+            <h2 className="text-sm font-bold text-text-primary dark:text-text-primary-dark flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-due-border" />
+              Alerts
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-due-fill dark:bg-due-fill-dark text-due-text dark:text-due-text-dark">
+                {alerts.length}
+              </span>
+            </h2>
           </div>
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark">Pending</span>
-              <span className="text-xs font-bold text-due-text dark:text-due-text-dark">{totalPending} members ({100 - feeRate}%)</span>
-            </div>
-            <div className="w-full h-3 rounded-full bg-bg dark:bg-bg-dark overflow-hidden">
-              <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: `${100 - feeRate}%` }}
-                transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-                className="h-full rounded-full gradient-amber shadow-sm"
-              />
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Expiry Calendar Strip */}
-      <motion.div variants={itemVariants} className="card-premium accent-red p-6 rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm overflow-hidden">
-        <div className="flex items-center gap-2 mb-6">
-          <CalendarDays className="w-5 h-5 text-text-tertiary dark:text-text-tertiary-dark" />
-          <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark">Upcoming Expirations (Next 30 Days)</h3>
-        </div>
-
-        <div className="flex gap-2 overflow-x-auto pb-4 pt-1 snap-x no-scrollbar">
-          {upcomingExpiries.map((d) => (
-            <div 
-              key={d.date} 
-              className="snap-start shrink-0 flex flex-col items-center justify-center p-3 w-16 h-[90px] rounded-xl border border-card-border dark:border-card-border-dark bg-bg dark:bg-bg-dark relative transition-all hover:scale-105 hover:-translate-y-1"
-            >
-              <span className="text-[10px] font-bold text-text-tertiary uppercase">{d.month}</span>
-              <span className="text-xl font-black text-text-primary dark:text-text-primary-dark leading-tight mt-0.5">{d.day}</span>
-              
-              {/* Highlight big expirations */}
-              {d.count > 0 && (
-                <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white text-[10px] font-black flex items-center justify-center rounded-full shadow-sm ring-2 ring-surface dark:ring-surface-dark border border-red-600">
-                  {d.count}
+          <div className="divide-y divide-card-border/50 dark:divide-card-border-dark/50 max-h-[280px] overflow-y-auto">
+            {alerts.map(m => (
+              <div
+                key={`alert-${m.seat}`}
+                className={`flex items-center justify-between px-4 py-3 hover:bg-bg/50 dark:hover:bg-bg-dark/50 transition-colors border-l-[3px] ${alertBorderColors[m.alertType]}`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="text-xs font-mono font-bold text-text-tertiary dark:text-text-tertiary-dark shrink-0 w-7 h-7 flex items-center justify-center rounded-lg bg-bg dark:bg-bg-dark">
+                    {m.seat}
+                  </span>
+                  <div className="min-w-0">
+                    <span className="text-sm font-semibold text-text-primary dark:text-text-primary-dark truncate block">
+                      {m.name}
+                    </span>
+                    <span className="text-xs text-text-tertiary dark:text-text-tertiary-dark">
+                      {m.alertType === 'due' && 'Fee not paid'}
+                      {m.alertType === 'expired' && `Expired ${fmtDate(m.expiry)}`}
+                      {m.alertType === 'expiring' && `Expires in ${daysUntilExpiry(m.expiry)} days`}
+                    </span>
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+                <div className="flex items-center gap-2 shrink-0 ml-3">
+                  {m.alertType === 'due' ? (
+                    <button
+                      onClick={() => handleMarkPaid(m.seat)}
+                      className="cursor-pointer flex items-center gap-1 rounded-lg bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark px-3 py-1.5 text-xs font-bold hover:shadow-sm transition-all active:scale-95"
+                    >
+                      <Check className="w-3 h-3" />
+                      Mark paid
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => router.push(`/seat-grid?seat=${m.seat}`)}
+                      className="cursor-pointer flex items-center gap-1 rounded-lg bg-blue-accent/10 text-blue-accent px-3 py-1.5 text-xs font-bold hover:shadow-sm transition-all active:scale-95"
+                    >
+                      <RefreshCw className="w-3 h-3" />
+                      Renew
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Bottom row: Sparkline + Priority table */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        {/* Sparkline */}
+        <div className="lg:col-span-2 card-premium accent-blue rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-5">
+          <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark mb-3">
+            Occupancy This Month
+          </h3>
+          <Sparkline data={occupancyData} />
+        </div>
+
+        {/* Priority table */}
+        <div className="lg:col-span-3 card-premium accent-red rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden">
+          <div className="px-4 py-3 border-b border-card-border dark:border-card-border-dark bg-bg/30 dark:bg-bg-dark/30">
+            <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark">
+              Priority Members
+            </h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-text-tertiary dark:text-text-tertiary-dark">
+                  <th className="px-4 py-2 font-medium">#</th>
+                  <th className="px-4 py-2 font-medium">Name</th>
+                  <th className="px-4 py-2 font-medium hidden sm:table-cell">Expires</th>
+                  <th className="px-4 py-2 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-card-border/30 dark:divide-card-border-dark/30">
+                {priorityMembers.map(m => (
+                  <tr key={m.seat} className="hover:bg-bg/50 dark:hover:bg-bg-dark/50 transition-colors">
+                    <td className="px-4 py-2.5 font-mono font-bold text-text-primary dark:text-text-primary-dark">
+                      {m.seat}
+                    </td>
+                    <td className="px-4 py-2.5 font-medium text-text-primary dark:text-text-primary-dark">
+                      {m.name.length > 14 ? m.name.slice(0, 12) + '…' : m.name}
+                    </td>
+                    <td className="px-4 py-2.5 text-text-secondary dark:text-text-secondary-dark hidden sm:table-cell">
+                      {fmtDate(m.expiry)}
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <Badge status={getSeatStatus(m)} size="sm" />
+                    </td>
+                  </tr>
+                ))}
+                {priorityMembers.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="px-4 py-8 text-center text-text-tertiary dark:text-text-tertiary-dark">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-12 h-12 rounded-full bg-active-fill dark:bg-active-fill-dark flex items-center justify-center">
+                          <Check className="w-6 h-6 text-active-border" />
+                        </div>
+                        <span className="font-medium">No alerts — everything looks good!</span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </motion.div>
-
     </motion.div>
   );
+}
+
+// ─── Sparkline SVG Component ────────────────────────────────────
+
+function Sparkline({ data }: { data: number[] }) {
+  const max = Math.max(...data, 1);
+  const min = Math.min(...data);
+  const w = 400;
+  const h = 100;
+  const pad = 10;
+
+  const points = data.map((v, i) => {
+    const x = pad + (i / (data.length - 1)) * (w - pad * 2);
+    const y = h - pad - ((v - min) / (max - min || 1)) * (h - pad * 2);
+    return `${x},${y}`;
+  });
+
+  const pathD = `M${points.join(' L')}`;
+  const fillD = `${pathD} L${pad + ((data.length - 1) / (data.length - 1)) * (w - pad * 2)},${h - pad} L${pad},${h - pad} Z`;
+
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+      {/* Grid lines */}
+      {[0, 25, 50, 75, 100].map(pct => {
+        const y = h - pad - (pct / 100) * (h - pad * 2);
+        return (
+          <line
+            key={pct}
+            x1={pad}
+            y1={y}
+            x2={w - pad}
+            y2={y}
+            stroke="currentColor"
+            strokeOpacity={0.06}
+            strokeWidth={1}
+          />
+        );
+      })}
+      {/* Gradient Fill */}
+      <path d={fillD} fill="url(#sparkGrad)" opacity={0.2} />
+      {/* Line */}
+      <path d={pathD} fill="none" stroke="url(#sparkLineGrad)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+      {/* Current dot */}
+      <circle
+        cx={pad + ((data.length - 1) / (data.length - 1)) * (w - pad * 2)}
+        cy={h - pad - ((data[data.length - 1] - min) / (max - min || 1)) * (h - pad * 2)}
+        r={5}
+        fill="#2563EB"
+        stroke="white"
+        strokeWidth={2.5}
+      />
+      {/* Outer glow */}
+      <circle
+        cx={pad + ((data.length - 1) / (data.length - 1)) * (w - pad * 2)}
+        cy={h - pad - ((data[data.length - 1] - min) / (max - min || 1)) * (h - pad * 2)}
+        r={10}
+        fill="#2563EB"
+        opacity={0.15}
+      />
+      {/* Labels */}
+      <text x={pad} y={h - 1} fontSize={10} fill="currentColor" opacity={0.4} className="font-mono">
+        Mar 1
+      </text>
+      <text x={w - pad} y={h - 1} fontSize={10} fill="currentColor" opacity={0.4} textAnchor="end" className="font-mono">
+        Today
+      </text>
+      <defs>
+        <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2563EB" />
+          <stop offset="100%" stopColor="#2563EB" stopOpacity={0} />
+        </linearGradient>
+        <linearGradient id="sparkLineGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#3B82F6" />
+          <stop offset="100%" stopColor="#2563EB" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+// ─── Generate mock sparkline data ───────────────────────────────
+
+function generateSparklineData(current: number): number[] {
+  const data: number[] = [];
+  for (let i = 0; i < 30; i++) {
+    const noise = Math.floor(Math.random() * 8) - 4;
+    data.push(Math.max(30, Math.min(95, current + noise - Math.floor((29 - i) * 0.3))));
+  }
+  data[data.length - 1] = current;
+  return data;
 }
