@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard,
   Grid3X3,
@@ -17,22 +18,44 @@ import {
   Sun,
   Moon,
   X,
+  Inbox,
+  Eye,
+  LogOut,
 } from 'lucide-react';
 import { useDarkMode } from '@/hooks/useDarkMode';
 
-const mainTabs = [
+/* ─── Admin Tabs ──────────────────────────────────────────────── */
+
+const adminTabs = [
   { href: '/', label: 'Home', icon: LayoutDashboard },
   { href: '/seat-grid', label: 'Grid', icon: Grid3X3 },
   { href: '/members', label: 'List', icon: Users },
   { href: '/add', label: 'Add', icon: UserPlus },
 ];
 
+/* ─── User Tabs ───────────────────────────────────────────────── */
+
+const userTabs = [
+  { href: '/browse', label: 'Browse', icon: Eye },
+];
+
 export default function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const { isDark, toggle } = useDarkMode();
+  const { isAdmin, logout } = useAuth();
   const [moreOpen, setMoreOpen] = useState(false);
 
-  const isMoreActive = ['/attendance', '/expiry', '/analytics', '/setup'].includes(pathname);
+  const tabs = isAdmin ? adminTabs : userTabs;
+
+  const adminMorePaths = ['/attendance', '/expiry', '/analytics', '/setup', '/requests'];
+  const isMoreActive = isAdmin && adminMorePaths.includes(pathname);
+
+  const handleLogout = () => {
+    setMoreOpen(false);
+    logout();
+    router.push('/landing');
+  };
 
   return (
     <>
@@ -48,58 +71,81 @@ export default function BottomNav() {
               <div className="w-10 h-1 rounded-full bg-text-tertiary/30" />
             </div>
             <nav className="px-4 pb-4 space-y-1">
-              <Link
-                href="/attendance"
-                onClick={() => setMoreOpen(false)}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
-                  pathname === '/attendance'
-                    ? 'bg-blue-accent/10 text-blue-accent'
-                    : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
-                )}
-              >
-                <CalendarCheck className="w-5 h-5" />
-                Attendance
-              </Link>
-              <Link
-                href="/expiry"
-                onClick={() => setMoreOpen(false)}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
-                  pathname === '/expiry'
-                    ? 'bg-blue-accent/10 text-blue-accent'
-                    : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
-                )}
-              >
-                <CalendarClock className="w-5 h-5" />
-                Expiry Tracker
-              </Link>
-              <Link
-                href="/analytics"
-                onClick={() => setMoreOpen(false)}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
-                  pathname === '/analytics'
-                    ? 'bg-blue-accent/10 text-blue-accent'
-                    : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
-                )}
-              >
-                <BarChart3 className="w-5 h-5" />
-                Analytics
-              </Link>
-              <Link
-                href="/setup"
-                onClick={() => setMoreOpen(false)}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
-                  pathname === '/setup'
-                    ? 'bg-blue-accent/10 text-blue-accent'
-                    : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
-                )}
-              >
-                <Settings className="w-5 h-5" />
-                Google Setup
-              </Link>
+              {isAdmin ? (
+                /* Admin More Options */
+                <>
+                  <Link
+                    href="/requests"
+                    onClick={() => setMoreOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                      pathname === '/requests'
+                        ? 'bg-blue-accent/10 text-blue-accent'
+                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                    )}
+                  >
+                    <Inbox className="w-5 h-5" />
+                    Seat Requests
+                  </Link>
+                  <Link
+                    href="/attendance"
+                    onClick={() => setMoreOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                      pathname === '/attendance'
+                        ? 'bg-blue-accent/10 text-blue-accent'
+                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                    )}
+                  >
+                    <CalendarCheck className="w-5 h-5" />
+                    Attendance
+                  </Link>
+                  <Link
+                    href="/expiry"
+                    onClick={() => setMoreOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                      pathname === '/expiry'
+                        ? 'bg-blue-accent/10 text-blue-accent'
+                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                    )}
+                  >
+                    <CalendarClock className="w-5 h-5" />
+                    Expiry Tracker
+                  </Link>
+                  <Link
+                    href="/analytics"
+                    onClick={() => setMoreOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                      pathname === '/analytics'
+                        ? 'bg-blue-accent/10 text-blue-accent'
+                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                    )}
+                  >
+                    <BarChart3 className="w-5 h-5" />
+                    Analytics
+                  </Link>
+                  <Link
+                    href="/setup"
+                    onClick={() => setMoreOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                      pathname === '/setup'
+                        ? 'bg-blue-accent/10 text-blue-accent'
+                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                    )}
+                  >
+                    <Settings className="w-5 h-5" />
+                    Google Setup
+                  </Link>
+                </>
+              ) : (
+                /* User More Options — minimal */
+                <></>
+              )}
+
+              {/* Common: Dark mode + Logout */}
               <button
                 onClick={toggle}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
@@ -116,6 +162,15 @@ export default function BottomNav() {
                   )} />
                 </div>
               </button>
+
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-text-secondary dark:text-text-secondary-dark hover:text-expired-border hover:bg-expired-fill/30 dark:hover:bg-expired-fill-dark/30 transition-colors cursor-pointer"
+              >
+                <LogOut className="w-5 h-5" />
+                <span>Logout</span>
+              </button>
+
               <button
                 onClick={() => setMoreOpen(false)}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-text-tertiary dark:text-text-tertiary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
@@ -130,7 +185,7 @@ export default function BottomNav() {
 
       {/* Tab bar */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 h-14 flex items-center justify-around bg-surface/95 dark:bg-surface-dark/95 backdrop-blur-md border-t border-card-border dark:border-card-border-dark">
-        {mainTabs.map(tab => {
+        {tabs.map(tab => {
           const isActive = pathname === tab.href;
           const Icon = tab.icon;
           return (
