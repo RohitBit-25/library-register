@@ -13,8 +13,9 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
   const { isAdmin, isAuthenticated } = useAuth();
 
   return (
-    <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between h-14 px-4 glass border-b border-card-border dark:border-card-border-dark">
-      <div className="flex items-center gap-2.5">
+    <header className="lg:hidden fixed top-4 left-4 right-4 z-30 flex items-center justify-between h-14 px-4 rounded-2xl glass noise-pattern shadow-floating dark:shadow-floating-dark overflow-hidden">
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-transparent dark:from-white/10 pointer-events-none" />
+      <div className="relative z-10 flex items-center gap-2.5">
         <div className="w-7 h-7 rounded-lg gradient-blue flex items-center justify-center shadow-sm shadow-blue-accent/20">
           <BookOpen className="w-3.5 h-3.5 text-white" />
         </div>
@@ -37,7 +38,7 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
           </span>
         )}
       </div>
-      <div className="flex items-center gap-1">
+      <div className="relative z-10 flex items-center gap-1">
         <button
           onClick={toggle}
           className="cursor-pointer rounded-xl p-2 text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark transition-all group"
