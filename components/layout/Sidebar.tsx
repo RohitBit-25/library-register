@@ -18,6 +18,7 @@ import {
   Inbox,
   LogOut,
   Shield,
+  MonitorSmartphone,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -57,6 +58,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
     },
     { href: '/expiry', label: 'Expiry Tracker', icon: <CalendarClock className="w-5 h-5" /> },
     { href: '/attendance', label: 'Attendance', icon: <CalendarCheck className="w-5 h-5" /> },
+    { href: '/kiosk', label: 'Launch Kiosk', icon: <MonitorSmartphone className="w-5 h-5" /> },
     { href: '/setup', label: 'Google Setup', icon: <Settings className="w-5 h-5" /> },
   ];
 

@@ -13,7 +13,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 // ─── Routes that don't use AppShell chrome ──────────────────────
-const STANDALONE_ROUTES = ['/landing'];
+const STANDALONE_ROUTES = ['/landing', '/kiosk'];
 
 // ─── Routes that only admins can access ─────────────────────────
 const ADMIN_ROUTES = ['/', '/seat-grid', '/members', '/add', '/attendance', '/analytics', '/expiry', '/setup', '/requests'];

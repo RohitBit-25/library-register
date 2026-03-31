@@ -19,6 +19,7 @@ import {
   Inbox,
   Eye,
   LogOut,
+  MonitorSmartphone,
 } from 'lucide-react';
 import { useDarkMode } from '@/hooks/useDarkMode';
 
@@ -109,6 +110,19 @@ export default function BottomNav() {
                   >
                     <CalendarClock className="w-5 h-5" />
                     Expiry Tracker
+                  </Link>
+                  <Link
+                    href="/kiosk"
+                    onClick={() => setMoreOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                      pathname === '/kiosk'
+                        ? 'bg-blue-accent/10 text-blue-accent'
+                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                    )}
+                  >
+                    <MonitorSmartphone className="w-5 h-5" />
+                    Launch Kiosk
                   </Link>
                   {/* Analytics moved to main nav */}
                   <Link
