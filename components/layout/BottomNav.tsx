@@ -10,7 +10,7 @@ import {
   Users,
   MoreHorizontal,
   CalendarCheck,
-  CalendarClock,
+  CalendarSearch,
   BarChart3,
   Settings,
   Sun,
@@ -108,7 +108,7 @@ export default function BottomNav() {
                         : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
                     )}
                   >
-                    <CalendarClock className="w-5 h-5" />
+                    <CalendarSearch className="w-5 h-5" />
                     Expiry Tracker
                   </Link>
                   <Link

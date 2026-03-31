@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/useToast';
 import { daysUntilExpiry, fmtDate, cn } from '@/lib/utils';
 import { type Member } from '@/lib/types';
 import {
-  CalendarClock,
+  CalendarSearch,
   AlertTriangle,
   Clock,
   CalendarDays,
@@ -207,7 +207,7 @@ export default function ExpiryPage() {
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
-            <CalendarClock className="w-6 h-6 text-expired-border" />
+            <CalendarSearch className="w-6 h-6 text-expired-border" />
             Expiry Tracker
           </h1>
           <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5">
