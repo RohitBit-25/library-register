@@ -6,10 +6,13 @@ import { getSeatStatus, firstName, daysUntilExpiry, fmtDateShort, cn } from '@/l
 import { Sun, Moon, Plus, Calendar as CalendarIcon, Clock } from 'lucide-react';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 
+import { type FaceDir } from './SeatMap';
+
 interface SeatTileProps {
   member: Member;
   onClick: (seat: number) => void;
   compact?: boolean;
+  face?: FaceDir;
 }
 
 const tileClass: Record<SeatStatus, string> = {
