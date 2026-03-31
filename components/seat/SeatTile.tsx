@@ -23,7 +23,7 @@ const tileClass: Record<SeatStatus, string> = {
   vacant: 'tile-vacant backdrop-blur-md bg-white/20 dark:bg-black/20',
 };
 
-function SeatTileInner({ member, onClick, compact = false }: SeatTileProps) {
+function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps) {
   const [isHovered, setIsHovered] = useState(false);
   const status = getSeatStatus(member);
   const days = !member.vacant ? daysUntilExpiry(member.expiry) : Infinity;
@@ -70,12 +70,26 @@ function SeatTileInner({ member, onClick, compact = false }: SeatTileProps) {
             damping: 25,
           }}
           className={cn(
-            'relative flex flex-col items-center justify-between rounded-xl border transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl hover:ring-2 hover:ring-blue-accent/20',
+            'relative flex flex-col items-center justify-between rounded-xl border transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl hover:ring-2 hover:ring-blue-accent/20 z-10',
             tileClass[status],
-            compact ? 'w-[56px] h-[56px] p-1' : 'w-[74px] h-[74px] p-2',
+            compact ? 'w-[50px] h-[50px] p-1' : 'w-[74px] h-[74px] p-2',
           )}
           aria-label={ariaLabel}
         >
+          {/* Chair indicator (relative to the face direction) */}
+          {face && (
+            <div className={cn(
+              "absolute rounded-full transition-colors",
+              status === 'vacant' ? 'bg-vacant-border/50 dark:bg-vacant-border-dark/50' : 
+              status === 'active' ? 'bg-green-400 dark:bg-green-500 shadow-sm border border-green-500/30' : 
+              status === 'expiring' ? 'bg-yellow-400 dark:bg-yellow-500 shadow-sm border border-yellow-500/30' : 
+              'bg-red-400 dark:bg-red-500 shadow-sm border border-red-500/30',
+              face === 'up' && "bottom-[-6px] left-[15%] right-[15%] h-[4px]",
+              face === 'down' && "top-[-6px] left-[15%] right-[15%] h-[4px]",
+              face === 'left' && "right-[-6px] top-[15%] bottom-[15%] w-[4px]",
+              face === 'right' && "left-[-6px] top-[15%] bottom-[15%] w-[4px]"
+            )} />
+          )}
           {/* SVG Expiry Visual Ring Background */}
           {!member.vacant && (
             <svg className="absolute inset-0 w-full h-full -rotate-90 opacity-20 dark:opacity-40">
