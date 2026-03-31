@@ -62,17 +62,21 @@ function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps
       >
         <m.button
           onClick={() => onClick(member.seat)}
-          whileHover={{ scale: 1.06, y: -3 }}
-          whileTap={{ scale: 0.93 }}
+          whileHover={{ scale: 1.05, y: -4 }}
+          whileTap={{ scale: 0.95, y: 0 }}
           transition={{ 
             type: "spring", 
-            stiffness: 400, 
+            stiffness: 500, 
             damping: 25,
+            mass: 0.5,
           }}
           className={cn(
-            'relative flex flex-col items-center justify-between rounded-xl border transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl hover:ring-2 hover:ring-blue-accent/20 z-10',
+            'relative flex flex-col items-center justify-between rounded-[14px] border border-white/20 dark:border-white/5 transition-colors cursor-pointer z-10',
             tileClass[status],
             compact ? 'w-[50px] h-[50px] p-1' : 'w-[74px] h-[74px] p-2',
+            status === 'active' ? 'shadow-ambient dark:shadow-ambient-dark hover:shadow-glow-purple hover:border-blue-accent/40' : 
+            status === 'expiring' ? 'shadow-ambient dark:shadow-ambient-dark hover:shadow-glow-orange hover:border-orange-500/40' : 
+            status === 'vacant' ? 'hover:shadow-floating dark:hover:shadow-floating-dark' : 'shadow-ambient dark:shadow-ambient-dark',
           )}
           aria-label={ariaLabel}
         >
