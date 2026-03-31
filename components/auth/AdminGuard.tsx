@@ -9,7 +9,7 @@ interface AdminGuardProps {
 }
 
 export default function AdminGuard({ children }: AdminGuardProps) {
-  const { isAdmin, isAuthenticated, role } = useAuth();
+  const { isAdmin, isAuthenticated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {

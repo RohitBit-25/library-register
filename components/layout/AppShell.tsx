@@ -22,7 +22,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   const { members } = useMembers();
   const stats = useStats(members);
   const { toasts, addToast, removeToast, ToastContext } = useToastProvider();
-  const { role, isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin } = useAuth();
   const { pendingCount } = useSeatRequests();
   const pathname = usePathname();
   const router = useRouter();
