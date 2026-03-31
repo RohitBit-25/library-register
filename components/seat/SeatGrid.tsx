@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { type Member, type Shift } from '@/lib/types';
 import { getSeatStatus, cn } from '@/lib/utils';
 import SeatTile from './SeatTile';
+import { SeatMapContainer, SeatMapWrapper } from './SeatMap';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Layers, Grid3X3 } from 'lucide-react';
 
@@ -113,44 +114,42 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
         </div>
 
         {/* Grid */}
-        <div className="card-premium accent-blue rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-4 sm:p-6 shadow-sm">
-          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-card-border dark:border-card-border-dark">
+        <div className="card-premium accent-blue rounded-[2.5rem] border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm overflow-hidden mb-8">
+          <div className="flex items-center gap-2 px-6 pt-5 pb-3 border-b border-card-border/50 dark:border-card-border-dark/50">
             <Grid3X3 className="w-4 h-4 text-blue-accent" />
             <h3 className="text-sm font-black text-text-primary dark:text-text-primary-dark">
-              {shiftFilter === 'all' ? 'All Seats' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift`}
+              {shiftFilter === 'all' ? 'Floorplan Map' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift Mapping`}
             </h3>
             <span className="text-xs font-mono font-bold text-text-tertiary ml-auto">
-              {(shiftFilter === 'all' ? members : filtered).length} seats
+              {(shiftFilter === 'all' ? members : filtered).length} seats shown
             </span>
           </div>
-          <m.div 
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            key={shiftFilter}
-            className="grid grid-cols-5 sm:grid-cols-7 lg:grid-cols-10 gap-2 sm:gap-2.5 justify-items-center"
-          >
+
+          <SeatMapContainer>
             <AnimatePresence mode="popLayout">
               {(shiftFilter === 'all' ? members : filtered).map(member => (
-                <m.div
-                  layout
-                  key={member.seat}
-                  variants={{
-                    hidden: { opacity: 0, scale: 0.8 },
-                    visible: { opacity: 1, scale: 1 }
-                  }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                >
-                  <SeatTile
-                    member={member}
-                    onClick={handleSeatClick}
-                    compact={false}
-                  />
-                </m.div>
+                <SeatMapWrapper key={member.seat} seatNum={member.seat}>
+                  {(face) => (
+                    <m.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      className="w-full h-full"
+                    >
+                      <SeatTile
+                        member={member}
+                        onClick={handleSeatClick}
+                        compact={true}
+                        face={face}
+                      />
+                    </m.div>
+                  )}
+                </SeatMapWrapper>
               ))}
             </AnimatePresence>
-          </m.div>
+          </SeatMapContainer>
         </div>
       </div>
     </LazyMotion>
