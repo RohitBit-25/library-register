@@ -48,7 +48,7 @@ export default function BottomSheet({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm animate-fade-in"
+        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-md animate-fade-in"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -59,19 +59,19 @@ export default function BottomSheet({
         aria-modal="true"
         aria-label={title || 'Detail panel'}
         className={cn(
-          'fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl glass border-t border-card-border dark:border-card-border-dark shadow-2xl animate-slide-up overflow-y-auto',
+          'fixed bottom-0 left-0 right-0 z-50 rounded-t-[32px] glass noise-pattern shadow-floating dark:shadow-floating-dark border-t border-white/20 dark:border-white/5 animate-slide-up overflow-hidden',
           snapHeights[snapPoint],
         )}
       >
         {/* Drag handle */}
-        <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full bg-text-tertiary/30 dark:bg-text-tertiary-dark/30" />
+        <div className="relative z-10 flex justify-center pt-4 pb-2">
+          <div className="w-12 h-1.5 rounded-full bg-text-tertiary/30 dark:bg-text-tertiary-dark/30" />
         </div>
 
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between px-5 pb-3">
-            <h3 className="text-lg font-semibold text-text-primary dark:text-text-primary-dark">
+          <div className="relative z-10 flex items-center justify-between px-6 pb-4">
+            <h3 className="text-xl font-bold text-text-primary dark:text-text-primary-dark tracking-tight">
               {title}
             </h3>
             <button
@@ -85,7 +85,7 @@ export default function BottomSheet({
         )}
 
         {/* Content */}
-        <div className="px-5 pb-6">
+        <div className="relative z-10 px-6 pb-8 overflow-y-auto max-h-full">
           {children}
         </div>
       </div>

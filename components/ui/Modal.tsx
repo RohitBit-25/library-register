@@ -41,9 +41,9 @@ export default function Modal({
     <dialog
       ref={dialogRef}
       onClose={onClose}
-      className="fixed inset-0 z-50 m-auto rounded-xl border border-card-border dark:border-card-border-dark glass shadow-2xl backdrop:bg-black/40 backdrop:backdrop-blur-sm p-0 max-w-md w-[calc(100%-2rem)] animate-fade-in"
+      className="fixed inset-0 z-50 m-auto rounded-[24px] border border-white/20 dark:border-white/5 glass noise-pattern shadow-floating dark:shadow-floating-dark backdrop:bg-black/40 backdrop:backdrop-blur-md p-0 max-w-md w-[calc(100%-2rem)] animate-fade-in overflow-hidden"
     >
-      <div className="p-6">
+      <div className="relative z-10 p-6">
         <div className="flex items-start justify-between mb-3">
           <h3 className="text-lg font-semibold text-text-primary dark:text-text-primary-dark">
             {title}
