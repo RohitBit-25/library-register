@@ -59,7 +59,7 @@ export default function BottomSheet({
         aria-modal="true"
         aria-label={title || 'Detail panel'}
         className={cn(
-          'fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl bg-surface dark:bg-surface-dark border-t border-card-border dark:border-card-border-dark shadow-2xl animate-slide-up overflow-y-auto',
+          'fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl glass border-t border-card-border dark:border-card-border-dark shadow-2xl animate-slide-up overflow-y-auto',
           snapHeights[snapPoint],
         )}
       >

@@ -63,7 +63,7 @@ export default function BottomNav() {
             className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm animate-fade-in lg:hidden"
             onClick={() => setMoreOpen(false)}
           />
-          <div className="fixed bottom-[56px] left-0 right-0 z-50 rounded-t-2xl bg-surface dark:bg-surface-dark border-t border-card-border dark:border-card-border-dark shadow-2xl animate-slide-up lg:hidden">
+          <div className="fixed bottom-[56px] left-0 right-0 z-50 rounded-t-2xl glass border-t border-card-border dark:border-card-border-dark shadow-2xl animate-slide-up lg:hidden">
             <div className="flex justify-center pt-3 pb-1">
               <div className="w-10 h-1 rounded-full bg-text-tertiary/30" />
             </div>
@@ -169,7 +169,7 @@ export default function BottomNav() {
       )}
 
       {/* Tab bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 h-14 flex items-center justify-around bg-surface/95 dark:bg-surface-dark/95 backdrop-blur-md border-t border-card-border dark:border-card-border-dark">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 h-14 flex items-center justify-around glass border-t border-card-border dark:border-card-border-dark">
         {tabs.map(tab => {
           const isActive = pathname === tab.href;
           const Icon = tab.icon;
