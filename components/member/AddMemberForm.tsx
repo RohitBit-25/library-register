@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo, useEffect } from 'react';
-import { type Member, type Duration, type Shift, type FeeStatus } from '@/lib/types';
+import { type Member } from '@/lib/types';
 import { calcExpiry, todayISO, cn } from '@/lib/utils';
-import { Zap, Upload, CheckCircle2, User, Phone as PhoneIcon, Calendar } from 'lucide-react';
+import { Zap, Upload, CheckCircle2, User, Phone as PhoneIcon } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
@@ -59,7 +59,6 @@ export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormPr
   const watchDuration = watch('duration');
   const watchPaymentMode = watch('paymentMode');
   const watchDocumentStatus = watch('documentStatus');
-  const watchTerms = watch('termsAccepted');
 
   // Auto-select first vacant if available when vacantSeats changes
   useEffect(() => {
