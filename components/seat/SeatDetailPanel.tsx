@@ -1,12 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { type Member, type Duration, type SeatStatus } from '@/lib/types';
 import { getSeatStatus, fmtDate, durationLabel, shiftLabel, calcExpiry, todayISO, cn, daysUntilExpiry } from '@/lib/utils';
 import BottomSheet from '@/components/ui/BottomSheet';
 import Modal from '@/components/ui/Modal';
 import { Phone, Calendar, Clock, Sun, Moon, Zap, X, RefreshCw, Trash2, CreditCard, MessageCircle, Copy } from 'lucide-react';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FloatingLabelInput } from '@/components/ui/FloatingLabelInput';
+
+const renewSchema = z.object({
+  renewDate: z.string().min(1, 'Required'),
+  renewDuration: z.enum(['1M', '3M', '6M', '1Y']),
+});
+type RenewFormValues = z.infer<typeof renewSchema>;
 
 interface SeatDetailPanelProps {
   member: Member | null;
@@ -47,15 +57,31 @@ export default function SeatDetailPanel({
   isMobile,
 }: SeatDetailPanelProps) {
   const [renewMode, setRenewMode] = useState(false);
-  const [renewDate, setRenewDate] = useState(todayISO());
-  const [renewDuration, setRenewDuration] = useState<Duration>('3M');
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const { register, handleSubmit, control, watch, reset } = useForm<RenewFormValues>({
+    resolver: zodResolver(renewSchema),
+    defaultValues: {
+      renewDate: todayISO(),
+      renewDuration: '3M',
+    },
+  });
+
+  const watchDate = watch('renewDate');
+  const watchDuration = watch('renewDuration');
+
+  const renewExpiry = useMemo(() => {
+    try {
+      return calcExpiry(watchDate, watchDuration);
+    } catch {
+      return '';
+    }
+  }, [watchDate, watchDuration]);
 
   if (!member) return null;
 
   const status = getSeatStatus(member);
-  const renewExpiry = calcExpiry(renewDate, renewDuration);
   const days = !member.vacant ? daysUntilExpiry(member.expiry) : 0;
 
   const shiftIcon = member.shift === 'evening' ? (
@@ -145,7 +171,7 @@ export default function SeatDetailPanel({
                       </ActionBtn>
                     )}
                     <ActionBtn 
-                      onClick={() => { setRenewMode(true); setRenewDate(todayISO()); }} 
+                      onClick={() => { reset({ renewDate: todayISO(), renewDuration: '3M' }); setRenewMode(true); }} 
                       icon={<RefreshCw className="w-4 h-4" />}
                       className="gradient-blue text-white shadow-sm"
                     >
@@ -178,78 +204,82 @@ export default function SeatDetailPanel({
           </>
         ) : (
           /* Renewal form */
-          <m.div
+          <m.form
+            onSubmit={handleSubmit((data) => {
+              onRenew(member.seat, data.renewDate, data.renewDuration);
+              setRenewMode(false);
+              onClose();
+            })}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             className="space-y-4"
           >
             <div className="gradient-blue rounded-xl p-4 text-white">
               <p className="text-xs font-bold uppercase tracking-wider opacity-80">Renewal</p>
-              <h4 className="text-lg font-black mt-1">
-                Seat {member.seat} — {member.name}
+              <h4 className="text-lg font-black mt-1 tracking-tight">
+                Seat {member.seat} — {member.name.split(' ')[0]}
               </h4>
             </div>
 
-            <div className="space-y-3">
-              <label className="block text-xs font-bold text-text-secondary dark:text-text-secondary-dark uppercase tracking-wider">
-                New join date
-                <input
-                  type="date"
-                  value={renewDate}
-                  onChange={e => setRenewDate(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-card-border dark:border-card-border-dark bg-input-bg dark:bg-input-bg-dark px-3 py-3 text-sm font-medium text-text-primary dark:text-text-primary-dark focus:ring-2 focus:ring-blue-accent/30 focus:border-blue-accent/50 outline-none transition-all"
-                />
-              </label>
+            <div className="space-y-4 pt-2">
+              <FloatingLabelInput
+                label="New join date"
+                type="date"
+                {...register('renewDate')}
+              />
 
               <div>
-                <span className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark uppercase tracking-wider">Duration</span>
-                <div className="flex gap-1.5 mt-1.5">
-                  {(['1M', '3M', '6M', '1Y'] as Duration[]).map(d => (
-                    <button
-                      key={d}
-                      onClick={() => setRenewDuration(d)}
-                      className={cn(
-                        'flex-1 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer border',
-                        renewDuration === d
-                          ? 'gradient-blue text-white border-transparent shadow-sm'
-                          : 'bg-bg dark:bg-bg-dark border-card-border dark:border-card-border-dark text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark',
-                      )}
-                    >
-                      {d}
-                    </button>
-                  ))}
-                </div>
+                <span className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark uppercase tracking-wider ml-1">Duration</span>
+                <Controller
+                  name="renewDuration"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex gap-1.5 mt-1.5 bg-bg dark:bg-bg-dark p-1.5 rounded-xl border border-card-border dark:border-card-border-dark shadow-inner shadow-black/5 dark:shadow-black/20">
+                      {(['1M', '3M', '6M', '1Y'] as Duration[]).map(d => (
+                        <button
+                          key={d}
+                          type="button"
+                          onClick={() => field.onChange(d)}
+                          className={cn(
+                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer relative overflow-hidden',
+                            field.value === d
+                              ? 'bg-blue-accent text-white shadow-md scale-100 ring-1 ring-blue-accent/50 z-10'
+                              : 'text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:bg-surface dark:hover:bg-surface-dark scale-[0.98] hover:scale-100 z-0',
+                          )}
+                        >
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                />
               </div>
 
-              <div className="rounded-xl bg-active-fill dark:bg-active-fill-dark border border-active-border/20 p-3">
+              <div className="rounded-xl bg-active-fill dark:bg-active-fill-dark border border-active-border/20 p-4 shadow-sm text-center border-dashed">
                 <span className="text-xs font-bold text-active-text dark:text-active-text-dark uppercase tracking-wider">New expiry date</span>
-                <p className="text-base font-black text-active-text dark:text-active-text-dark mt-1">
+                <p className="text-lg font-black text-active-text dark:text-active-text-dark mt-1 flex justify-center items-center gap-2">
+                  <Calendar className="w-4 h-4 opacity-70" />
                   {renewExpiry ? fmtDate(renewExpiry) : '—'}
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-3 pt-3">
               <button
+                type="button"
                 onClick={() => setRenewMode(false)}
-                className="flex-1 py-2.5 rounded-xl text-sm font-bold border border-card-border dark:border-card-border-dark text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
+                className="flex-1 py-3.5 rounded-xl text-xs font-black uppercase text-text-secondary dark:text-text-secondary-dark border border-card-border dark:border-card-border-dark hover:bg-bg dark:hover:bg-bg-dark hover:text-red-500 transition-colors cursor-pointer active:scale-95 shadow-sm"
               >
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  if (renewDuration) {
-                    onRenew(member.seat, renewDate, renewDuration);
-                    setRenewMode(false);
-                    onClose();
-                  }
-                }}
-                className="flex-1 py-2.5 rounded-xl text-sm font-bold gradient-blue text-white hover:opacity-90 transition-all cursor-pointer shadow-sm shadow-blue-accent/20"
+                type="submit"
+                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-blue-accent text-white hover:bg-blue-accent/90 transition-all cursor-pointer shadow-lg shadow-blue-accent/20 hover:shadow-xl hover:shadow-blue-accent/30 active:scale-95"
               >
                 Confirm Renewal
               </button>
             </div>
-          </m.div>
+          </m.form>
         )}
 
         <Modal
