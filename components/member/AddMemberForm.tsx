@@ -1,10 +1,35 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { type Member, type Duration, type Shift, type FeeStatus } from '@/lib/types';
-import { calcExpiry, todayISO, fmtDate, cn } from '@/lib/utils';
-import { Zap, Upload, CheckCircle2 } from 'lucide-react';
+import { calcExpiry, todayISO, cn } from '@/lib/utils';
+import { Zap, Upload, CheckCircle2, User, Phone as PhoneIcon, Calendar } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FloatingLabelInput } from '@/components/ui/FloatingLabelInput';
+
+const addMemberSchema = z.object({
+  seat: z.number().min(1, 'Seat is required'),
+  name: z.string().min(1, 'Name is required'),
+  phone: z.string().min(10, 'Valid phone number is required'),
+  shift: z.enum(['morning', 'evening', 'full']),
+  joinDate: z.string().min(1, 'Join date is required').refine(date => new Date(date) <= new Date(), {
+    message: 'Join date cannot be in the future',
+  }),
+  duration: z.enum(['1M', '3M', '6M', '1Y']),
+  fee: z.enum(['paid', 'due']),
+  paymentMode: z.enum(['upi', 'cash']),
+  documentStatus: z.string().min(1, 'Document is required'),
+  termsAccepted: z.object({
+    rules: z.boolean().refine(val => val === true, { message: 'Required' }),
+    damage: z.boolean().refine(val => val === true, { message: 'Required' }),
+    nonRefundable: z.boolean().refine(val => val === true, { message: 'Required' }),
+  }),
+});
+
+type AddMemberFormValues = z.infer<typeof addMemberSchema>;
 
 interface AddMemberFormProps {
   vacantSeats: number[];
@@ -12,98 +37,90 @@ interface AddMemberFormProps {
 }
 
 export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormProps) {
-  const [selectedSeat, setSelectedSeat] = useState<number>(vacantSeats[0] || -1);
+  const { register, handleSubmit, control, watch, setValue, formState: { errors, isValid }, reset } = useForm<AddMemberFormValues>({
+    resolver: zodResolver(addMemberSchema),
+    defaultValues: {
+      seat: vacantSeats[0] || -1,
+      name: '',
+      phone: '',
+      shift: 'morning',
+      joinDate: todayISO(),
+      duration: '3M',
+      fee: 'paid',
+      paymentMode: 'upi',
+      documentStatus: '',
+      termsAccepted: { rules: false, damage: false, nonRefundable: false },
+    },
+    mode: 'onChange',
+  });
+
+  const watchSeat = watch('seat');
+  const watchJoinDate = watch('joinDate');
+  const watchDuration = watch('duration');
+  const watchPaymentMode = watch('paymentMode');
+  const watchDocumentStatus = watch('documentStatus');
+  const watchTerms = watch('termsAccepted');
 
   // Auto-select first vacant if available when vacantSeats changes
   useEffect(() => {
-    if (vacantSeats.length > 0 && !vacantSeats.includes(selectedSeat)) {
-      setSelectedSeat(vacantSeats[0]);
+    if (vacantSeats.length > 0 && !vacantSeats.includes(watchSeat)) {
+      setValue('seat', vacantSeats[0]);
     }
-  }, [vacantSeats, selectedSeat]);
+  }, [vacantSeats, watchSeat, setValue]);
 
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [shift, setShift] = useState<Shift>('morning');
-  const [joinDate, setJoinDate] = useState(todayISO());
-  const [duration, setDuration] = useState<Duration>('3M');
-  const [fee, setFee] = useState<FeeStatus>('paid');
-  
-  // New Google Form Fields
-  const [paymentMode, setPaymentMode] = useState<'upi' | 'cash'>('upi');
-  const [documentStatus, setDocumentStatus] = useState<string>('');
-  const [termsAccepted, setTermsAccepted] = useState({
-    rules: false,
-    damage: false,
-    nonRefundable: false,
-  });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const expiry = useMemo(() => calcExpiry(joinDate, duration), [joinDate, duration]);
-
-  const allTermsAccepted = termsAccepted.rules && termsAccepted.damage && termsAccepted.nonRefundable;
+  const expiry = useMemo(() => {
+    try {
+      return calcExpiry(watchJoinDate, watchDuration);
+    } catch {
+      return '';
+    }
+  }, [watchJoinDate, watchDuration]);
 
   // Auto-mark fee as paid if picking UPI or Cash
   useEffect(() => {
-    if (paymentMode) {
-      setFee('paid');
+    if (watchPaymentMode) {
+      setValue('fee', 'paid');
     }
-  }, [paymentMode]);
-
-  const validate = (): boolean => {
-    const errs: Record<string, string> = {};
-    if (!name.trim()) errs.name = 'Name is required';
-    if (!phone.trim()) errs.phone = 'WhatsApp Number is required';
-    if (!joinDate) errs.joinDate = 'Join date is required';
-    if (new Date(joinDate) > new Date()) errs.joinDate = 'Join date cannot be in the future';
-    if (!duration) errs.duration = 'Select a duration';
-    if (selectedSeat === -1) errs.seat = 'No vacant seat selected';
-    if (!documentStatus) errs.documentStatus = 'Please upload a document';
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
+  }, [watchPaymentMode, setValue]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setDocumentStatus(e.target.files[0].name);
+      setValue('documentStatus', e.target.files[0].name, { shouldValidate: true });
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate() || !allTermsAccepted) return;
-
-    onSubmit(selectedSeat, { 
-      name: name.trim(), 
-      phone, 
-      shift, 
-      joinDate, 
-      duration, 
+  const handleFormSubmit = (data: AddMemberFormValues) => {
+    onSubmit(data.seat, { 
+      name: data.name.trim(), 
+      phone: data.phone, 
+      shift: data.shift, 
+      joinDate: data.joinDate, 
+      duration: data.duration, 
       expiry, 
-      fee,
-      paymentMode,
-      documentStatus,
-      termsAccepted: allTermsAccepted
+      fee: data.fee,
+      paymentMode: data.paymentMode,
+      documentStatus: data.documentStatus,
+      termsAccepted: true
     });
-    
-    // reset happens on parent unmount or manually
   };
 
   const clearForm = () => {
-    setName('');
-    setPhone('');
-    setShift('morning');
-    setJoinDate(todayISO());
-    setDuration('3M');
-    setFee('paid');
-    setPaymentMode('upi');
-    setDocumentStatus('');
-    setTermsAccepted({ rules: false, damage: false, nonRefundable: false });
-    setErrors({});
+    reset({
+      seat: vacantSeats[0] || -1,
+      name: '',
+      phone: '',
+      shift: 'morning',
+      joinDate: todayISO(),
+      duration: '3M',
+      fee: 'paid',
+      paymentMode: 'upi',
+      documentStatus: '',
+      termsAccepted: { rules: false, damage: false, nonRefundable: false },
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6" noValidate>
       {/* Seat Selection */}
       <div className="rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-6 shadow-sm space-y-5">
         <div className="flex items-center justify-between border-b border-card-border dark:border-card-border-dark pb-4">
@@ -116,11 +133,10 @@ export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormPr
           </span>
         </div>
 
-        <FieldGroup label="Seat Number" required error={errors.seat}>
+        <FieldGroup label="Seat Number" required error={errors.seat?.message}>
           <select
-            value={selectedSeat}
-            onChange={(e) => setSelectedSeat(Number(e.target.value))}
-            className="w-full cursor-pointer rounded-lg border border-card-border dark:border-card-border-dark px-4 py-3 text-sm font-mono font-bold bg-input-bg dark:bg-input-bg-dark text-text-primary dark:text-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-accent/30 focus:border-blue-accent/50"
+            {...register('seat', { valueAsNumber: true })}
+            className="w-full cursor-pointer rounded-xl border border-card-border dark:border-card-border-dark px-4 py-3.5 text-sm font-mono font-bold bg-surface/50 dark:bg-surface-dark/50 text-text-primary dark:text-text-primary-dark focus:outline-none focus:ring-4 focus:ring-blue-accent/10 focus:border-blue-accent/50 backdrop-blur-md transition-all duration-300"
           >
             {vacantSeats.length === 0 ? (
               <option value="-1">No seats available</option>
@@ -142,104 +158,102 @@ export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormPr
         </h3>
 
         {/* Name */}
-        <FieldGroup label="Full Name" required error={errors.name}>
-          <input
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="Your answer"
-            className={cn(
-              'w-full rounded-lg border px-4 py-3 text-sm bg-input-bg dark:bg-input-bg-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none focus:ring-2 focus:ring-blue-accent/30',
-              errors.name ? 'border-expired-border' : 'border-card-border dark:border-card-border-dark focus:border-blue-accent/50',
-            )}
-          />
-        </FieldGroup>
+        <FloatingLabelInput 
+          label="Full Name" 
+          icon={<User className="w-4 h-4" />}
+          error={errors.name?.message}
+          {...register('name')}
+        />
 
         {/* WhatsApp + Shift */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <FieldGroup label="Whatsapp Number" required error={errors.phone}>
-            <input
-              type="tel"
-              inputMode="tel"
-              value={phone}
-              onChange={e => setPhone(e.target.value)}
-              placeholder="Your answer"
-              className={cn(
-                'w-full rounded-lg border px-4 py-3 text-sm bg-input-bg dark:bg-input-bg-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none focus:ring-2 focus:ring-blue-accent/30',
-                errors.phone ? 'border-expired-border' : 'border-card-border dark:border-card-border-dark focus:border-blue-accent/50',
-              )}
-            />
-          </FieldGroup>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+          <FloatingLabelInput 
+            label="WhatsApp Number" 
+            icon={<PhoneIcon className="w-4 h-4" />}
+            type="tel"
+            inputMode="tel"
+            error={errors.phone?.message}
+            {...register('phone')}
+          />
 
-          <FieldGroup label="Shift" required>
-            <SegmentedControl
-              options={[
-                { value: 'morning', label: 'Morning' },
-                { value: 'evening', label: 'Evening' },
-                { value: 'full', label: 'Full' },
-              ]}
-              value={shift}
-              onChange={v => setShift(v as Shift)}
+          <FieldGroup label="Shift" required error={errors.shift?.message}>
+            <Controller
+              name="shift"
+              control={control}
+              render={({ field }) => (
+                <SegmentedControl
+                  options={[
+                    { value: 'morning', label: 'Morning' },
+                    { value: 'evening', label: 'Evening' },
+                    { value: 'full', label: 'Full' },
+                  ]}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
             />
           </FieldGroup>
         </div>
 
         {/* Join Date + Duration */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <FieldGroup label="Date Of Joining" required error={errors.joinDate}>
-            <input
-              type="date"
-              value={joinDate}
-              onChange={e => setJoinDate(e.target.value)}
-              className={cn(
-                'w-full cursor-pointer rounded-lg border px-4 py-3 text-sm bg-input-bg dark:bg-input-bg-dark text-text-primary dark:text-text-primary-dark focus:outline-none focus:ring-2 focus:ring-blue-accent/30',
-                errors.joinDate ? 'border-expired-border' : 'border-card-border dark:border-card-border-dark focus:border-blue-accent/50',
-              )}
-            />
-          </FieldGroup>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+          <FloatingLabelInput 
+            label="Date of Joining" 
+            type="date"
+            error={errors.joinDate?.message}
+            {...register('joinDate')}
+          />
 
-          <FieldGroup label="Membership Duration" required error={errors.duration}>
-            <SegmentedControl
-              options={[
-                { value: '1M', label: '1M' },
-                { value: '3M', label: '3M' },
-                { value: '6M', label: '6M' },
-                { value: '1Y', label: '1Y' },
-              ]}
-              value={duration}
-              onChange={v => setDuration(v as Duration)}
+          <FieldGroup label="Membership Duration" required error={errors.duration?.message}>
+            <Controller
+              name="duration"
+              control={control}
+              render={({ field }) => (
+                <SegmentedControl
+                  options={[
+                    { value: '1M', label: '1M' },
+                    { value: '3M', label: '3M' },
+                    { value: '6M', label: '6M' },
+                    { value: '1Y', label: '1Y' },
+                  ]}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
             />
           </FieldGroup>
         </div>
         
         {/* Document Upload */}
-        <FieldGroup label="Aadhar/Pan card" required error={errors.documentStatus}>
-          <div className="relative border-2 border-dashed border-card-border dark:border-card-border-dark rounded-xl p-8 hover:bg-bg dark:hover:bg-bg-dark transition-all duration-200 text-center group cursor-pointer">
-            <input 
-              type="file" 
-              onChange={handleFileChange}
-              accept="image/*,.pdf"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-            />
-            {documentStatus ? (
-              <div className="flex flex-col items-center gap-2">
-                <CheckCircle2 className="w-10 h-10 text-green-500 shrink-0" />
-                <span className="text-sm font-bold text-text-primary dark:text-text-primary-dark">{documentStatus}</span>
-                <span className="text-xs font-semibold text-text-secondary dark:text-text-secondary-dark group-hover:text-blue-accent transition-colors">Click to replace file</span>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-3 text-text-secondary dark:text-text-secondary-dark group-hover:text-blue-accent transition-colors">
-                <div className="bg-bg dark:bg-bg-dark p-3 rounded-full shadow-sm border border-card-border dark:border-card-border-dark transition-transform group-hover:scale-110 duration-200">
-                  <Upload className="w-5 h-5 text-current" />
+        <div className="pt-2">
+          <FieldGroup label="Aadhar/Pan card" required error={errors.documentStatus?.message}>
+            <div className="relative border-2 border-dashed border-card-border dark:border-card-border-dark rounded-xl p-8 hover:bg-bg dark:hover:bg-bg-dark transition-all duration-200 text-center group cursor-pointer bg-surface/30">
+              <input 
+                type="file" 
+                onChange={handleFileChange}
+                accept="image/*,.pdf"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              />
+              {watchDocumentStatus ? (
+                <div className="flex flex-col items-center gap-2">
+                  <CheckCircle2 className="w-10 h-10 text-green-500 shrink-0 drop-shadow-sm" />
+                  <span className="text-sm font-bold text-text-primary dark:text-text-primary-dark">{watchDocumentStatus}</span>
+                  <span className="text-xs font-semibold text-text-secondary dark:text-text-secondary-dark group-hover:text-blue-accent transition-colors">Click to replace file</span>
                 </div>
-                <div>
-                  <span className="text-[13px] font-bold block text-blue-accent">Add file</span>
-                  <span className="text-[11px] font-medium opacity-80 mt-1 block">Upload 1 supported file. Max 100 MB.</span>
+              ) : (
+                <div className="flex flex-col items-center gap-3 text-text-secondary dark:text-text-secondary-dark group-hover:text-blue-accent transition-colors">
+                  <div className="bg-bg dark:bg-bg-dark p-3 rounded-full shadow-sm border border-card-border dark:border-card-border-dark transition-transform group-hover:scale-110 duration-200">
+                    <Upload className="w-5 h-5 text-current" />
+                  </div>
+                  <div>
+                    <span className="text-[13px] font-bold block text-blue-accent drop-shadow-sm">Add file</span>
+                    <span className="text-[11px] font-medium opacity-80 mt-1 block tracking-wide">Upload 1 supported file. Max 100 MB.</span>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        </FieldGroup>
+              )}
+            </div>
+          </FieldGroup>
+        </div>
       </div>
 
       {/* Payment Section */}
@@ -249,21 +263,27 @@ export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormPr
         </h3>
         
         <FieldGroup label="Mode Of Payment" required>
-          <SegmentedControl
-            options={[
-              { value: 'upi', label: 'UPI' },
-              { value: 'cash', label: 'Cash' },
-            ]}
-            value={paymentMode}
-            onChange={v => setPaymentMode(v as 'upi' | 'cash')}
+          <Controller
+            name="paymentMode"
+            control={control}
+            render={({ field }) => (
+              <SegmentedControl
+                options={[
+                  { value: 'upi', label: 'UPI' },
+                  { value: 'cash', label: 'Cash' },
+                ]}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
           />
         </FieldGroup>
         
-        {paymentMode === 'upi' && (
+        {watchPaymentMode === 'upi' && (
           <div className="bg-bg dark:bg-bg-dark rounded-xl p-6 flex flex-col items-center justify-center border border-card-border dark:border-card-border-dark mt-2 text-center animate-in fade-in zoom-in-95 duration-200 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
             <p className="text-[13px] font-black tracking-wide text-text-primary dark:text-text-primary-dark mb-4 uppercase">Scan to pay via UPI</p>
-            <div className="p-3 bg-white rounded-xl shadow-sm">
+            <div className="p-3 bg-white rounded-xl shadow-sm border border-black/5">
               <QRCodeCanvas 
                 value={`upi://pay?pa=9462572575@axl&pn=KAMLESH%20SINGH%20ASDLIYA&cu=INR`}
                 size={160}
@@ -271,25 +291,28 @@ export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormPr
                 includeMargin={true}
               />
             </div>
-            <p className="text-[11px] font-bold text-text-secondary dark:text-text-secondary-dark mt-4 px-4 py-1.5 bg-surface dark:bg-surface-dark border rounded-full">UPI ID: 9462572575@axl</p>
+            <p className="text-[11px] font-bold text-text-secondary dark:text-text-secondary-dark mt-4 px-4 py-1.5 bg-surface dark:bg-surface-dark border rounded-full drop-shadow-sm">UPI ID: 9462572575@axl</p>
           </div>
         )}
       </div>
 
       {/* Terms & Conditions */}
       <div className="rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-6 shadow-sm space-y-4">
-        <h3 className="text-[13px] font-black text-red-500 uppercase tracking-wide border-b border-card-border dark:border-card-border-dark pb-4 mb-5">
-          Declaration & Terms and Condition *
+        <h3 className="text-[13px] font-black text-red-500 uppercase tracking-wide border-b border-card-border dark:border-card-border-dark pb-4 mb-5 flex items-center gap-2">
+          Declaration & Terms and Condition 
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block animate-pulse"></span>
         </h3>
         
         <label className="flex items-start gap-4 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-bg dark:hover:bg-bg-dark transition-colors">
           <input 
             type="checkbox" 
-            checked={termsAccepted.rules}
-            onChange={(e) => setTermsAccepted({...termsAccepted, rules: e.target.checked})}
-            className="mt-1 w-5 h-5 rounded border-2 border-card-border text-blue-accent focus:ring-blue-accent accent-blue-accent cursor-pointer" 
+            {...register('termsAccepted.rules')}
+            className="mt-1 w-5 h-5 rounded border-2 border-card-border text-blue-accent focus:ring-blue-accent accent-blue-accent cursor-pointer transition-transform group-hover:scale-105" 
           />
-          <span className="text-[13px] font-medium leading-relaxed text-text-primary dark:text-text-primary-dark group-hover:text-blue-accent transition-colors pt-0.5">
+          <span className={cn(
+            "text-[13px] font-medium leading-relaxed group-hover:text-blue-accent transition-colors pt-0.5",
+            errors.termsAccepted?.rules ? "text-red-500 font-bold" : "text-text-primary dark:text-text-primary-dark"
+          )}>
             I agree to follow all rules and regulations of the library.
           </span>
         </label>
@@ -297,11 +320,13 @@ export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormPr
         <label className="flex items-start gap-4 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-bg dark:hover:bg-bg-dark transition-colors">
           <input 
             type="checkbox" 
-            checked={termsAccepted.damage}
-            onChange={(e) => setTermsAccepted({...termsAccepted, damage: e.target.checked})}
-            className="mt-1 w-5 h-5 rounded border-2 border-card-border text-blue-accent focus:ring-blue-accent accent-blue-accent cursor-pointer" 
+            {...register('termsAccepted.damage')}
+            className="mt-1 w-5 h-5 rounded border-2 border-card-border text-blue-accent focus:ring-blue-accent accent-blue-accent cursor-pointer transition-transform group-hover:scale-105" 
           />
-          <span className="text-[13px] font-medium leading-relaxed text-text-primary dark:text-text-primary-dark group-hover:text-blue-accent transition-colors pt-0.5">
+          <span className={cn(
+            "text-[13px] font-medium leading-relaxed group-hover:text-blue-accent transition-colors pt-0.5",
+            errors.termsAccepted?.damage ? "text-red-500 font-bold" : "text-text-primary dark:text-text-primary-dark"
+          )}>
             I will be held responsible for any damage caused by me and agree to pay for the same.
           </span>
         </label>
@@ -309,11 +334,13 @@ export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormPr
         <label className="flex items-start gap-4 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-bg dark:hover:bg-bg-dark transition-colors">
           <input 
             type="checkbox" 
-            checked={termsAccepted.nonRefundable}
-            onChange={(e) => setTermsAccepted({...termsAccepted, nonRefundable: e.target.checked})}
-            className="mt-1 w-5 h-5 rounded border-2 border-card-border text-blue-accent focus:ring-blue-accent accent-blue-accent cursor-pointer" 
+            {...register('termsAccepted.nonRefundable')}
+            className="mt-1 w-5 h-5 rounded border-2 border-card-border text-blue-accent focus:ring-blue-accent accent-blue-accent cursor-pointer transition-transform group-hover:scale-105" 
           />
-          <span className="text-[13px] font-medium leading-relaxed text-text-primary dark:text-text-primary-dark group-hover:text-blue-accent transition-colors pt-0.5">
+          <span className={cn(
+            "text-[13px] font-medium leading-relaxed group-hover:text-blue-accent transition-colors pt-0.5",
+            errors.termsAccepted?.nonRefundable ? "text-red-500 font-bold" : "text-text-primary dark:text-text-primary-dark"
+          )}>
             Membership is Non-refundable and Non-transferable.
           </span>
         </label>
@@ -323,17 +350,17 @@ export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormPr
       <div className="flex gap-4 pb-8">
         <button
           type="submit"
-          disabled={vacantSeats.length === 0 || !allTermsAccepted}
-          className="flex-1 rounded-xl bg-blue-accent py-4 text-[13px] font-black tracking-widest uppercase text-white hover:bg-blue-accent/90 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:bg-card-border disabled:text-text-secondary disabled:cursor-not-allowed hover:shadow-lg hover:shadow-blue-accent/30 active:scale-[0.98]"
+          disabled={vacantSeats.length === 0 || !isValid}
+          className="flex-1 rounded-xl bg-blue-accent py-4 text-[13px] font-black tracking-widest uppercase text-white hover:bg-blue-accent/90 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:bg-card-border disabled:text-text-secondary disabled:cursor-not-allowed shadow-lg shadow-blue-accent/20 hover:shadow-xl hover:shadow-blue-accent/30 active:scale-[0.98]"
         >
           Submit Form
         </button>
         <button
           type="button"
           onClick={clearForm}
-          className="rounded-xl border border-card-border dark:border-card-border-dark px-6 text-[13px] font-black uppercase text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark hover:text-red-500 transition-colors cursor-pointer"
+          className="rounded-xl border border-card-border dark:border-card-border-dark px-6 text-[13px] font-black uppercase text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark hover:text-red-500 transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98]"
         >
-          Clear Form
+          Clear
         </button>
       </div>
     </form>
@@ -354,15 +381,15 @@ function FieldGroup({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <label className="block text-xs font-black uppercase tracking-wider text-text-secondary dark:text-text-secondary-dark mb-2.5">
+    <div className="flex flex-col">
+      <label className="block text-xs font-black uppercase tracking-wider text-text-secondary dark:text-text-secondary-dark mb-2 ml-1">
         {label}
-        {required && <span className="text-red-500 ml-1 text-sm leading-none">*</span>}
+        {required && <span className="text-red-500 ml-1.5 text-sm leading-none">*</span>}
       </label>
       {children}
       {error && (
-        <p className="mt-2 text-[11px] font-bold text-red-500 flex items-center gap-1">
-          <span className="w-1 h-1 rounded-full bg-red-500 inline-block"></span>
+        <p className="mt-2 ml-1 text-[11px] font-bold text-red-500 flex items-center gap-1.5 tracking-wide">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block shadow-sm"></span>
           {error}
         </p>
       )}
@@ -380,17 +407,17 @@ function SegmentedControl({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex gap-1.5 bg-bg dark:bg-bg-dark p-1.5 rounded-xl border border-card-border dark:border-card-border-dark inline-flex w-full">
+    <div className="flex gap-1.5 bg-bg dark:bg-bg-dark p-1.5 rounded-xl border border-card-border dark:border-card-border-dark w-full shadow-inner shadow-black/5 dark:shadow-black/20">
       {options.map(opt => (
         <button
           key={opt.value}
           type="button"
           onClick={() => onChange(opt.value)}
           className={cn(
-            'flex-1 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-200 cursor-pointer',
+            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer relative overflow-hidden',
             value === opt.value
-              ? 'bg-blue-accent text-white shadow-md scale-100 ring-1 ring-blue-accent/50'
-              : 'text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:bg-surface dark:hover:bg-surface-dark scale-[0.98]',
+              ? 'bg-blue-accent text-white shadow-md scale-100 ring-1 ring-blue-accent/50 z-10'
+              : 'text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:bg-surface dark:hover:bg-surface-dark scale-[0.98] hover:scale-100 z-0',
           )}
         >
           {opt.label}
@@ -399,3 +426,4 @@ function SegmentedControl({
     </div>
   );
 }
+
