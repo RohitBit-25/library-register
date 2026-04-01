@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarCheck, CheckCircle2, UserCheck, CalendarDays, Loader2, Users, Percent, TrendingUp, Trophy, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { AttendanceLogTable } from '@/components/attendance/AttendanceLogTable';
 
@@ -23,6 +23,11 @@ const itemVariants = {
   animate: { opacity: 1, scale: 1, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
 };
 
+const emptySubscribe = () => () => {};
+function useIsMounted() {
+  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+}
+
 export default function AttendancePage() {
   const { members } = useMembers();
   const { addToast } = useToast();
@@ -34,11 +39,7 @@ export default function AttendancePage() {
 
   const [view, setView] = useState<'today' | 'history'>('today');
   const [confirmMarkAll, setConfirmMarkAll] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  const isHydrated = useIsMounted();
 
   const occupiedMembers = members.filter(m => !m.vacant);
   const thirtyDayData = getLast30DaysData();
