@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import { useState, useEffect } from 'react';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
+import { AttendanceLogTable } from '@/components/attendance/AttendanceLogTable';
 
 const containerVariants = {
   initial: { opacity: 0, y: 10 },
@@ -272,6 +273,7 @@ export default function AttendancePage() {
             transition={{ duration: 0.2 }}
             className="space-y-6"
           >
+            {/* Heatmap Section */}
             <div className="bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark p-6 sm:p-8 rounded-3xl shadow-sm">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 rounded-xl gradient-blue flex items-center justify-center shadow-sm shadow-blue-accent/20">
@@ -321,6 +323,11 @@ export default function AttendancePage() {
                   )
                 })}
               </div>
+            </div>
+
+            {/* Attendance Logs DataTable */}
+            <div className="mt-8">
+              <AttendanceLogTable data={thirtyDayData} />
             </div>
           </motion.div>
         )}
