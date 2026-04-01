@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarCheck, CheckCircle2, UserCheck, CalendarDays, Loader2, Users, Percent, TrendingUp, Trophy, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
-import { useState, useEffect, useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore } from 'react';
+import { Tooltip } from '@/components/ui/Tooltip';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { AttendanceLogTable } from '@/components/attendance/AttendanceLogTable';
 
@@ -296,31 +297,27 @@ export default function AttendancePage() {
                   const isToday = i === thirtyDayData.length - 1;
 
                   return (
-                    <motion.div 
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: i * 0.01 }}
-                      key={d.date}
-                      title={`${d.date}: ${d.rate}% (${d.count} present)`}
-                      className="flex flex-col items-center justify-center group cursor-crosshair"
-                    >
-                      <div className={cn(
-                        "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1 hover:shadow-lg relative",
-                        colorClass,
-                        isToday && "ring-4 ring-blue-accent/30 ring-offset-2 dark:ring-offset-surface-dark"
-                      )}>
-                        <span className={cn("text-xs sm:text-sm font-black", d.rate === 0 && "text-text-tertiary")}>
-                          {d.day}
-                        </span>
-                        {/* Hover Tooltip */}
-                        <div className="absolute bottom-full mb-2 bg-text-primary text-bg dark:bg-text-primary-dark dark:text-bg-dark text-[10px] px-2 py-1 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-opacity z-50">
-                          {d.rate}% Rate • {d.count} present
+                    <Tooltip key={d.date} content={<span>{d.date}: {d.rate}% Rate &bull; {d.count} present</span>}>
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.01 }}
+                        className="flex flex-col items-center justify-center cursor-crosshair"
+                      >
+                        <div className={cn(
+                          "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex flex-col items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1 hover:shadow-lg",
+                          colorClass,
+                          isToday && "ring-4 ring-blue-accent/30 ring-offset-2 dark:ring-offset-surface-dark"
+                        )}>
+                          <span className={cn("text-xs sm:text-sm font-black", d.rate === 0 && "text-text-tertiary")}>
+                            {d.day}
+                          </span>
                         </div>
-                      </div>
-                      <span className="text-[10px] font-bold text-text-tertiary mt-1.5 drop-shadow-sm">
-                        {d.rate}%
-                      </span>
-                    </motion.div>
+                        <span className="text-[10px] font-bold text-text-tertiary mt-1.5 drop-shadow-sm">
+                          {d.rate}%
+                        </span>
+                      </motion.div>
+                    </Tooltip>
                   )
                 })}
               </div>

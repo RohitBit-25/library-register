@@ -3,6 +3,7 @@
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { useAuth } from '@/hooks/useAuth';
 import { Sun, Moon, BookOpen, Shield, Eye } from 'lucide-react';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 interface TopBarProps {
   title?: string;
@@ -39,15 +40,17 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
         )}
       </div>
       <div className="relative z-10 flex items-center gap-1">
-        <button
-          onClick={toggle}
-          className="cursor-pointer rounded-xl p-2 text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark transition-all group"
-          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-        >
-          <span className="block transition-transform duration-300 group-hover:rotate-45">
-            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </span>
-        </button>
+        <Tooltip content={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>
+          <button
+            onClick={toggle}
+            className="cursor-pointer rounded-xl p-2 text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark transition-all group"
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            <span className="block transition-transform duration-300 group-hover:rotate-45">
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </span>
+          </button>
+        </Tooltip>
       </div>
     </header>
   );
