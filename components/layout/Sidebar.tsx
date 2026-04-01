@@ -20,6 +20,7 @@ import {
   Shield,
   MonitorSmartphone,
 } from 'lucide-react';
+import { Tooltip } from '@/components/ui/Tooltip';
 import { useRouter } from 'next/navigation';
 
 interface NavItem {
@@ -138,24 +139,28 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
           <span className="text-xs font-mono text-text-tertiary dark:text-text-tertiary-dark">
             {timeStr}
           </span>
-          <button
-            onClick={toggle}
-            className="cursor-pointer flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-medium text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark transition-all group"
-            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            <span className="transition-transform duration-300 group-hover:rotate-45">
-              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </span>
-            <span>{isDark ? 'Light' : 'Dark'}</span>
-          </button>
+          <Tooltip content={isDark ? 'Switch to light mode' : 'Switch to dark mode'} side="right">
+            <button
+              onClick={toggle}
+              className="cursor-pointer flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-medium text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark transition-all group"
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              <span className="transition-transform duration-300 group-hover:rotate-45">
+                {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </span>
+              <span>{isDark ? 'Light' : 'Dark'}</span>
+            </button>
+          </Tooltip>
         </div>
-        <button
-          onClick={handleLogout}
-          className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-text-secondary dark:text-text-secondary-dark hover:text-expired-border hover:bg-expired-fill/50 dark:hover:bg-expired-fill-dark/50 transition-colors border border-card-border dark:border-card-border-dark"
-        >
-          <LogOut className="w-4 h-4" />
-          Logout
-        </button>
+        <Tooltip content="Sign out of the system" side="right">
+          <button
+            onClick={handleLogout}
+            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-text-secondary dark:text-text-secondary-dark hover:text-expired-border hover:bg-expired-fill/50 dark:hover:bg-expired-fill-dark/50 transition-colors border border-card-border dark:border-card-border-dark"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </button>
+        </Tooltip>
       </div>
     </aside>
   );

@@ -32,17 +32,24 @@ TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 export function Tooltip({
   children,
   content,
+  side = 'top',
+  sideOffset = 4,
   ...props
-}: { children: React.ReactNode; content: React.ReactNode } & React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root>) {
-  // Using custom wrapper for framer-motion smooth physics beyond basic animate-in.
-  // But standard radix animation usually suffices for tools.
+}: { 
+  children: React.ReactNode; 
+  content: React.ReactNode;
+  side?: 'top' | 'right' | 'bottom' | 'left';
+  sideOffset?: number;
+} & React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root>) {
   return (
     <TooltipProvider delayDuration={200}>
       <TooltipRoot {...props}>
         <TooltipTrigger asChild>
           {children}
         </TooltipTrigger>
-        <TooltipContent>{content}</TooltipContent>
+        <TooltipContent side={side} sideOffset={sideOffset}>
+          {content}
+        </TooltipContent>
       </TooltipRoot>
     </TooltipProvider>
   );
