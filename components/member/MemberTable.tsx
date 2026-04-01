@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import ConfirmDialog from '../ui/ConfirmDialog';
 import Portal from '../ui/Portal';
+import { Tooltip } from '../ui/Tooltip';
 import { useToast } from '@/hooks/useToast';
 
 interface MemberTableProps {
@@ -199,30 +200,38 @@ export default function MemberTable({
             <span className="text-sm font-bold text-blue-accent drop-shadow-sm px-2">
               {selected.size} selected
             </span>
-            <button
-              onClick={() => { onBulkMarkPaid(Array.from(selected)); setSelected(new Set()); }}
-              className="cursor-pointer rounded-lg bg-green-500 px-3.5 py-2 text-xs font-bold text-white hover:bg-green-600 transition-colors shadow-sm"
-            >
-              Mark Paid
-            </button>
-            <button
-              onClick={() => setBulkRemoveConfirm(true)}
-              className="cursor-pointer rounded-lg bg-red-500 px-3.5 py-2 text-xs font-bold text-white hover:bg-red-600 transition-colors shadow-sm"
-            >
-              Remove
-            </button>
-            <button
-              onClick={() => onBulkWhatsApp(Array.from(selected))}
-              className="cursor-pointer rounded-lg bg-[#25D366] px-3.5 py-2 text-xs font-bold text-white hover:bg-[#20bd5a] transition-colors shadow-sm"
-            >
-              WhatsApp
-            </button>
-            <button
-              onClick={() => onBulkExport(Array.from(selected))}
-              className="cursor-pointer rounded-lg bg-active-fill dark:bg-active-fill-dark px-3.5 py-2 text-xs font-bold text-active-text dark:text-active-text-dark hover:opacity-80 transition-opacity"
-            >
-              Export CSV
-            </button>
+            <Tooltip content="Mark selected members as paid">
+              <button
+                onClick={() => { onBulkMarkPaid(Array.from(selected)); setSelected(new Set()); }}
+                className="cursor-pointer rounded-lg bg-green-500 px-3.5 py-2 text-xs font-bold text-white hover:bg-green-600 transition-colors shadow-sm"
+              >
+                Mark Paid
+              </button>
+            </Tooltip>
+            <Tooltip content="Remove selected members from system">
+              <button
+                onClick={() => setBulkRemoveConfirm(true)}
+                className="cursor-pointer rounded-lg bg-red-500 px-3.5 py-2 text-xs font-bold text-white hover:bg-red-600 transition-colors shadow-sm"
+              >
+                Remove
+              </button>
+            </Tooltip>
+            <Tooltip content="Send payment reminders via WhatsApp">
+              <button
+                onClick={() => onBulkWhatsApp(Array.from(selected))}
+                className="cursor-pointer rounded-lg bg-[#25D366] px-3.5 py-2 text-xs font-bold text-white hover:bg-[#20bd5a] transition-colors shadow-sm"
+              >
+                WhatsApp
+              </button>
+            </Tooltip>
+            <Tooltip content="Download member data as CSV">
+              <button
+                onClick={() => onBulkExport(Array.from(selected))}
+                className="cursor-pointer rounded-lg bg-active-fill dark:bg-active-fill-dark px-3.5 py-2 text-xs font-bold text-active-text dark:text-active-text-dark hover:opacity-80 transition-opacity"
+              >
+                Export CSV
+              </button>
+            </Tooltip>
             <button
               onClick={() => setSelected(new Set())}
               className="cursor-pointer text-xs font-semibold text-text-secondary dark:text-text-secondary-dark ml-auto hover:text-text-primary dark:hover:text-text-primary-dark mr-2"
@@ -360,6 +369,7 @@ export default function MemberTable({
                   </td>
                   <td className="p-3 relative">
                     {!m.vacant && (
+                    <Tooltip content={`Manage ${m.name}`} side="left">
                       <button
                         onClick={(e) => handleActionClick(e, m.seat)}
                         className="cursor-pointer p-1.5 rounded-lg hover:bg-bg dark:hover:bg-bg-dark transition-colors"
@@ -367,6 +377,7 @@ export default function MemberTable({
                       >
                         <MoreVertical className="w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark" />
                       </button>
+                    </Tooltip>
                     )}
                   </td>
                 </motion.tr>
