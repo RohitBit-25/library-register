@@ -250,7 +250,7 @@ export default function MemberTable({
           placeholder="Search name, phone, seat... (Press / to focus)"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none focus:ring-2 focus:ring-blue-accent/30 focus:border-blue-accent/50 transition-all shadow-sm"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/30 focus:border-[var(--sapphire-500)]/50 transition-all shadow-sm"
         />
       </div>
 
@@ -263,8 +263,8 @@ export default function MemberTable({
             className={cn(
                'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border shadow-sm',
               filter === f.value
-                ? 'bg-blue-accent text-white border-blue-accent'
-                : 'bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-text-tertiary',
+                ? 'bg-[var(--sapphire-500)] text-[#1a1a16] border-[var(--sapphire-500)]'
+                : 'bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--text-tertiary)]',
             )}
           >
             {f.label}
@@ -462,7 +462,7 @@ export default function MemberTable({
                 className={cn(
                   'rounded-2xl border transition-colors shadow-sm',
                   selected.has(m.seat) 
-                    ? 'border-blue-accent/50 bg-[var(--sapphire-500)]/5'
+                    ? 'border-[var(--sapphire-500)]/50 bg-[var(--sapphire-500)]/5'
                     : 'border-[var(--border-default)] bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)]',
                 )}
               >
@@ -502,7 +502,7 @@ export default function MemberTable({
                   {m.vacant ? (
                     <Link
                       href="/add"
-                      className="flex items-center gap-1 text-xs font-bold text-white bg-blue-accent px-3 py-1.5 rounded-lg shadow-sm"
+                      className="flex items-center gap-1 text-xs font-bold text-[#1a1a16] bg-[var(--sapphire-500)] px-3 py-1.5 rounded-lg shadow-sm"
                     >
                       <UserPlus className="w-4 h-4" />
                       Add
