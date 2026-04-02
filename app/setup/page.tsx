@@ -102,9 +102,9 @@ export default function SetupPage() {
           </div>
 
           {/* Step 2 */}
-          <div className="card-premium accent-green p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
+          <div className="card-base p-5 rounded-xl shadow-sm" style={{borderLeft: '3px solid var(--emerald-500)'}}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full gradient-green text-white flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--emerald-500)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 2
               </div>
               <div>
@@ -117,9 +117,9 @@ export default function SetupPage() {
           </div>
 
           {/* Step 3 */}
-          <div className="card-premium accent-amber p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
+          <div className="card-base p-5 rounded-xl shadow-sm" style={{borderLeft: '3px solid var(--amber-500)'}}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full gradient-amber text-white flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--amber-500)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 3
               </div>
               <div className="w-full">
@@ -134,9 +134,9 @@ export default function SetupPage() {
           </div>
 
           {/* Step 4 */}
-          <div className="card-premium accent-purple p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
+          <div className="card-base p-5 rounded-xl shadow-sm" style={{borderLeft: '3px solid var(--indigo-500)'}}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full gradient-purple text-white flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--indigo-500)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 4
               </div>
               <div>
