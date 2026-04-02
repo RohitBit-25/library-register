@@ -1,75 +1,31 @@
-// ─── Role-Based Access Types & Helpers ──────────────────────────
+import { SignJWT, jwtVerify } from 'jose';
+import { cookies } from 'next/headers';
 
-export type UserRole = 'admin' | 'user';
+const secretKey = process.env.ADMIN_PIN || '1234';
+const key = new TextEncoder().encode(secretKey);
 
-export interface SeatRequest {
-  id: string;
-  seat: number;
-  userName: string;
-  userPhone: string;
-  message: string;
-  status: 'pending' | 'approved' | 'rejected';
-  createdAt: string; // ISO date
+export async function encrypt(payload: any) {
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('7d')
+    .sign(key);
 }
 
-// ─── Storage Keys ───────────────────────────────────────────────
-
-const ROLE_KEY = 'library-role';
-const REQUESTS_KEY = 'library-seat-requests';
-const ADMIN_PIN_KEY = 'library-admin-pin';
-const DEFAULT_PIN = '1234';
-
-// ─── Role Persistence ───────────────────────────────────────────
-
-export function getStoredRole(): UserRole | null {
-  if (typeof window === 'undefined') return null;
-  const role = localStorage.getItem(ROLE_KEY);
-  if (role === 'admin' || role === 'user') return role;
-  return null;
+export async function decrypt(input: string): Promise<any> {
+  const { payload } = await jwtVerify(input, key, {
+    algorithms: ['HS256'],
+  });
+  return payload;
 }
 
-export function setStoredRole(role: UserRole | null): void {
-  if (typeof window === 'undefined') return;
-  if (role) {
-    localStorage.setItem(ROLE_KEY, role);
-  } else {
-    localStorage.removeItem(ROLE_KEY);
-  }
-}
-
-// ─── Admin PIN ──────────────────────────────────────────────────
-
-export function getAdminPin(): string {
-  if (typeof window === 'undefined') return DEFAULT_PIN;
-  return localStorage.getItem(ADMIN_PIN_KEY) || DEFAULT_PIN;
-}
-
-export function setAdminPin(pin: string): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(ADMIN_PIN_KEY, pin);
-}
-
-export function verifyAdminPin(pin: string): boolean {
-  return pin === getAdminPin();
-}
-
-// ─── Seat Requests ──────────────────────────────────────────────
-
-export function getStoredRequests(): SeatRequest[] {
-  if (typeof window === 'undefined') return [];
+export async function verifyAdmin() {
+  const session = cookies().get('admin_session')?.value;
+  if (!session) return false;
   try {
-    const raw = localStorage.getItem(REQUESTS_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch { /* ignore */ }
-  return [];
-}
-
-export function saveRequests(requests: SeatRequest[]): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(REQUESTS_KEY, JSON.stringify(requests));
-  window.dispatchEvent(new Event('requests-updated'));
-}
-
-export function generateRequestId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    const parsed = await decrypt(session);
+    return parsed.isAdmin === true;
+  } catch (error) {
+    return false;
+  }
 }
