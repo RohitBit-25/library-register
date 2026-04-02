@@ -40,7 +40,17 @@ export interface Stats {
   expiredMembers: Member[];
 }
 
-// ─── Toast ──────────────────────────────────────────────────────
+// ─── Seat Request ──────────────────────────────────────────────
+export interface SeatRequest {
+  id: string | number;
+  seat: number;
+  userName: string;
+  userPhone: string;
+  message: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string | Date;
+}
+
 export type ToastType = 'success' | 'warning' | 'error';
 
 export interface ToastMessage {

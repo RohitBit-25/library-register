@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
 import { type UserRole, getStoredRole, setStoredRole, verifyAdminPin } from '@/lib/auth';
 
 // ─── Context Shape ──────────────────────────────────────────────
@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStoredRole(null);
   }, []);
 
-  const value: AuthContextValue = {
+  const value = useMemo(() => ({
     role,
     isAdmin: role === 'admin',
     isUser: role === 'user',
@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loginAsAdmin,
     loginAsUser,
     logout,
-  };
+  }), [role, loginAsAdmin, loginAsUser, logout]);
 
   // Don't render until hydrated to avoid flash
   if (!hydrated) {
