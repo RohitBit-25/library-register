@@ -63,8 +63,8 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
                 className={cn(
                   'flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer',
                   shiftFilter === s.value
-                    ? 'bg-blue-accent text-white shadow-sm'
-                    : 'text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                    ? 'bg-[var(--saffron-500)] text-[#1a1a16] shadow-sm'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-overlay)]',
                 )}
               >
                 {s.icon}
@@ -103,9 +103,9 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
         </div>
 
         {/* Grid */}
-        <div className="card-premium accent-blue rounded-[2.5rem] border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm overflow-hidden mb-8">
-          <div className="flex items-center gap-2 px-6 pt-5 pb-3 border-b border-card-border/50 dark:border-card-border-dark/50">
-            <Grid3X3 className="w-4 h-4 text-blue-accent" />
+        <div className="card-premium rounded-[2.5rem] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] overflow-hidden mb-8">
+          <div className="flex items-center gap-2 px-6 pt-5 pb-3 border-b border-[var(--border-subtle)]">
+            <Grid3X3 className="w-4 h-4 text-[var(--saffron-500)]" />
             <h3 className="text-sm font-black text-text-primary dark:text-text-primary-dark">
               {shiftFilter === 'all' ? 'Floorplan Map' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift Mapping`}
             </h3>

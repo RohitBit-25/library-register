@@ -188,11 +188,11 @@ function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps
                 
                 <div className="pt-1.5 border-t border-card-border/50 dark:border-card-border-dark/50 flex flex-col gap-1">
                   <div className="flex items-center gap-1.5 text-[10px] font-medium text-text-secondary">
-                    <CalendarIcon className="w-3 h-3 text-blue-accent" />
+                    <CalendarIcon className="w-3 h-3 text-[var(--saffron-500)]" />
                     <span>Due: {fmtDateShort(member.expiry)} <span className="opacity-70">({days}d)</span></span>
                   </div>
                   <div className="flex items-center gap-1.5 text-[10px] font-medium text-text-secondary">
-                    <Clock className="w-3 h-3 text-blue-accent" />
+                    <Clock className="w-3 h-3 text-[var(--saffron-500)]" />
                     <span className="capitalize">{member.shift} Shift</span>
                   </div>
                 </div>

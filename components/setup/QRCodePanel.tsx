@@ -57,19 +57,19 @@ export default function QRCodePanel() {
       className="card-premium accent-blue rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden shadow-sm"
     >
       {/* Status Bar */}
-      <div className="flex items-center gap-2 px-6 py-3 border-b border-card-border dark:border-card-border-dark bg-active-fill/50 dark:bg-active-fill-dark/30">
-        <div className="w-2.5 h-2.5 rounded-full bg-active-border animate-pulse-subtle" />
-        <span className="text-xs font-bold text-active-text dark:text-active-text-dark">
+      <div className="flex items-center gap-2 px-6 py-3 border-b border-[var(--border-subtle)] bg-[rgba(34,195,106,0.15)]">
+        <div className="w-2.5 h-2.5 rounded-full bg-[var(--emerald-400)] animate-pulse-subtle" />
+        <span className="text-xs font-bold text-[var(--emerald-400)]">
           ✓ App Portal Active
         </span>
-        <Sparkles className="w-3.5 h-3.5 text-active-border ml-auto" />
+        <Sparkles className="w-3.5 h-3.5 text-[var(--emerald-400)] ml-auto" />
       </div>
 
       <div className="flex flex-col md:flex-row">
         {/* Left side: Info & Actions */}
         <div className="flex-1 p-6 md:p-8 flex flex-col justify-center border-b md:border-b-0 md:border-r border-card-border dark:border-card-border-dark">
-          <h2 className="text-xl font-extrabold text-text-primary dark:text-text-primary-dark mb-2 flex items-center gap-2">
-            <QrCode className="w-5 h-5 text-blue-accent" />
+          <h2 className="text-xl font-extrabold text-[var(--text-primary)] mb-2 flex items-center gap-2">
+            <QrCode className="w-5 h-5 text-[var(--saffron-500)]" />
             Library Portal QR Code
           </h2>
           <p className="text-sm text-text-secondary dark:text-text-secondary-dark mb-6">
@@ -83,7 +83,7 @@ export default function QRCodePanel() {
                 href={url || '/'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-accent text-white rounded-xl font-bold text-sm hover:bg-blue-accent/90 transition-all shadow-sm hover:shadow-md"
+                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--saffron-500)] text-[#1a1a16] rounded-[var(--radius-md)] font-[var(--weight-bold)] text-sm hover:opacity-90 transition-all shadow-[var(--shadow-glow-saffron)]"
               >
                 <ExternalLink className="w-4 h-4" />
                 Open Portal
@@ -116,7 +116,7 @@ export default function QRCodePanel() {
         <div className="p-8 flex flex-col items-center justify-center bg-bg/30 dark:bg-bg-dark/30">
           <div 
             ref={qrRef}
-            className="p-4 bg-white rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800"
+            className="p-4 bg-[var(--bg-elevated)] rounded-2xl shadow-[var(--shadow-lg)] border border-[var(--border-subtle)] relative qr-container"
           >
             {url ? (
               <QRCodeCanvas 
@@ -124,17 +124,17 @@ export default function QRCodePanel() {
                 size={200}
                 level="H"
                 includeMargin={true}
-                bgColor="#FFFFFF"
-                fgColor="#000000"
+                bgColor="#1a1a16"
+                fgColor="#E8853A"
               />
             ) : (
-              <div className="w-[200px] h-[200px] bg-gray-100 animate-pulse flex items-center justify-center text-xs text-gray-400">Loading...</div>
+              <div className="w-[200px] h-[200px] bg-[var(--bg-overlay)] animate-pulse flex items-center justify-center text-xs text-[var(--text-tertiary)]">Loading...</div>
             )}
           </div>
           <button
             onClick={handleDownload}
             disabled={!url}
-            className="mt-6 flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-accent/10 text-blue-accent dark:bg-blue-accent/20 hover:bg-blue-accent hover:text-white rounded-full font-bold text-sm transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 flex items-center justify-center gap-2 px-6 py-2.5 bg-[var(--saffron-500)]/15 text-[var(--saffron-400)] hover:bg-[var(--saffron-500)] hover:text-white rounded-[var(--radius-full)] font-bold text-sm transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="w-4 h-4" />
             Download PNG

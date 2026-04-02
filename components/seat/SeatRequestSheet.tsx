@@ -80,8 +80,8 @@ export default function SeatRequestSheet({
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-accent/10 flex items-center justify-center">
-                  <Armchair className="w-5 h-5 text-blue-accent" />
+                <div className="w-10 h-10 rounded-xl bg-[var(--saffron-500)]/10 flex items-center justify-center">
+                  <Armchair className="w-5 h-5 text-[var(--saffron-500)]" />
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-text-primary dark:text-text-primary-dark">
@@ -104,8 +104,8 @@ export default function SeatRequestSheet({
             <div className="space-y-4">
               
               {/* Payment Section */}
-              <div className="p-4 rounded-xl bg-blue-accent/5 border border-blue-accent/20 flex flex-col items-center">
-                <p className="text-xs font-bold text-blue-accent mb-3 text-center uppercase tracking-wide">
+              <div className="p-4 rounded-xl bg-[var(--saffron-500)]/5 border border-[var(--saffron-500)]/20 flex flex-col items-center">
+                <p className="text-xs font-bold text-[var(--saffron-500)] mb-3 text-center uppercase tracking-wide">
                   Complete Payment
                 </p>
                 <div className="p-2 bg-white rounded-xl shadow-sm mb-3">
@@ -134,7 +134,7 @@ export default function SeatRequestSheet({
                   onChange={e => setName(e.target.value)}
                   placeholder="Enter your full name"
                   autoFocus
-                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-blue-accent/40 transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 transition-all"
                 />
               </div>
 
@@ -150,7 +150,7 @@ export default function SeatRequestSheet({
                   value={phone}
                   onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                   placeholder="10-digit mobile number"
-                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-blue-accent/40 transition-all font-mono"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 transition-all font-mono"
                 />
               </div>
 
@@ -180,7 +180,7 @@ export default function SeatRequestSheet({
                   onChange={e => setMessage(e.target.value)}
                   placeholder="Shift preference (e.g. Morning, 3 Months)"
                   rows={2}
-                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-blue-accent/40 transition-all resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 transition-all resize-none"
                 />
               </div>
 
@@ -191,7 +191,7 @@ export default function SeatRequestSheet({
                 className={cn(
                   'cursor-pointer w-full py-3 rounded-xl text-sm font-bold text-white transition-all shadow-md flex items-center justify-center gap-2 mt-2',
                   isValid
-                    ? 'gradient-blue hover:shadow-lg hover:shadow-blue-accent/25 active:scale-[0.98]'
+                    ? 'bg-[var(--gradient-glow)] hover:shadow-[var(--shadow-glow-saffron)] active:scale-[0.98]'
                     : 'bg-text-tertiary/30 cursor-not-allowed shadow-none'
                 )}
               >
