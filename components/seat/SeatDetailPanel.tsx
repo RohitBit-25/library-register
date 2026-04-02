@@ -36,7 +36,7 @@ const statusGradient: Record<SeatStatus, string> = {
   expiring: 'bg-amber-500 text-white shadow-lg shadow-amber-500/20',
   expired: 'bg-ruby-500 text-white shadow-lg shadow-ruby-500/20',
   due: 'bg-saffron-500 text-white shadow-lg shadow-saffron-500/20',
-  vacant: 'bg-surface dark:bg-surface-dark border-2 border-dashed border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark opacity-90',
+  vacant: 'bg-[var(--bg-surface)] border-2 border-dashed border-[var(--border-default)] text-[var(--text-primary)] opacity-90',
 };
 
 const statusLabel: Record<SeatStatus, string> = {
@@ -138,12 +138,12 @@ export default function SeatDetailPanel({
             {!member.vacant && (
               <>
                 {/* Info rows */}
-                <div className="space-y-1 bg-bg dark:bg-bg-dark rounded-xl p-3">
+                <div className="space-y-1 bg-[var(--bg-base)] rounded-xl p-3">
                   {readonly ? (
                     <>
                       <InfoRow icon={<Calendar className="w-4 h-4 text-sapphire-500" />} label="Status" value="Occupied" />
                       <div className="px-1 py-3 text-center">
-                        <p className="text-xs text-text-tertiary dark:text-text-tertiary-dark">Contact the librarian to manage this seat.</p>
+                        <p className="text-xs text-[var(--text-tertiary)]">Contact the librarian to manage this seat.</p>
                       </div>
                     </>
                   ) : (
@@ -246,12 +246,12 @@ export default function SeatDetailPanel({
               />
 
               <div>
-                <span className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark uppercase tracking-wider ml-1">Duration</span>
+                <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Duration</span>
                 <Controller
                   name="renewDuration"
                   control={control}
                   render={({ field }) => (
-                    <div className="flex gap-1.5 mt-1.5 bg-bg dark:bg-bg-dark p-1.5 rounded-xl border border-card-border dark:border-card-border-dark shadow-inner shadow-black/5 dark:shadow-black/20">
+                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5 dark:shadow-black/20">
                       {(['1M', '3M', '6M', '1Y'] as Duration[]).map(d => (
                         <button
                           key={d}
@@ -261,7 +261,7 @@ export default function SeatDetailPanel({
                             'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer relative overflow-hidden',
                             field.value === d
                               ? 'bg-sapphire-500 text-white shadow-md scale-100 ring-1 ring-sapphire-500/50 z-10'
-                              : 'text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:bg-surface dark:hover:bg-surface-dark scale-[0.98] hover:scale-100 z-0',
+                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] scale-[0.98] hover:scale-100 z-0',
                           )}
                         >
                           {d}
@@ -285,7 +285,7 @@ export default function SeatDetailPanel({
               <button
                 type="button"
                 onClick={() => setRenewMode(false)}
-                className="flex-1 py-3.5 rounded-xl text-xs font-black uppercase text-text-secondary dark:text-text-secondary-dark border border-card-border dark:border-card-border-dark hover:bg-bg dark:hover:bg-bg-dark hover:text-red-500 transition-colors cursor-pointer active:scale-95 shadow-sm"
+                className="flex-1 py-3.5 rounded-xl text-xs font-black uppercase text-[var(--text-secondary)] border border-[var(--border-default)] hover:bg-[var(--bg-base)] hover:text-[var(--ruby-400)] transition-colors cursor-pointer active:scale-95 shadow-sm"
               >
                 Cancel
               </button>
@@ -340,7 +340,7 @@ export default function SeatDetailPanel({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30"
+              className="fixed inset-0 bg-[var(--bg-void)]/20 backdrop-blur-sm z-30"
               onClick={() => { setRenewMode(false); onClose(); }}
             />
             <m.div 
@@ -348,11 +348,11 @@ export default function SeatDetailPanel({
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: '100%', opacity: 0 }}
               transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              className="fixed top-0 right-0 h-screen w-[340px] bg-surface dark:bg-surface-dark border-l border-card-border dark:border-card-border-dark shadow-2xl z-40 overflow-y-auto"
+              className="fixed top-0 right-0 h-screen w-[340px] bg-[var(--bg-surface)] border-l border-[var(--border-default)] shadow-[var(--shadow-xl)] z-40 overflow-y-auto"
             >
               <div className="p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-base font-black text-text-primary dark:text-text-primary-dark font-mono flex items-center gap-2">
+                  <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
                     <span className="w-8 h-8 bg-gradient-to-br from-sapphire-500 to-sapphire-600 rounded-lg flex items-center justify-center text-white text-xs font-black shadow-sm">
                       {String(member.seat).padStart(2, '0')}
                     </span>
@@ -360,7 +360,7 @@ export default function SeatDetailPanel({
                   </h3>
                   <button
                     onClick={() => { setRenewMode(false); onClose(); }}
-                    className="cursor-pointer rounded-xl p-2 text-text-tertiary dark:text-text-tertiary-dark hover:bg-bg dark:hover:bg-bg-dark transition-all hover:rotate-90 duration-200"
+                    className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-base)] transition-all hover:rotate-90 duration-200"
                     aria-label="Close panel"
                   >
                     <X className="w-5 h-5" />
@@ -382,8 +382,8 @@ function InfoRow({ icon, label, value, action }: { icon: React.ReactNode; label:
   return (
     <div className="flex items-center gap-3 py-2 px-1">
       <span className="shrink-0">{icon}</span>
-      <span className="text-xs font-bold text-text-tertiary dark:text-text-tertiary-dark uppercase tracking-wider w-16 shrink-0">{label}</span>
-      <span className="text-sm font-semibold text-text-primary dark:text-text-primary-dark flex-1">{value}</span>
+      <span className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider w-16 shrink-0">{label}</span>
+      <span className="text-sm font-semibold text-[var(--text-primary)] flex-1">{value}</span>
       {action}
     </div>
   );
