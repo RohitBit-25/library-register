@@ -167,7 +167,7 @@ export default function BrowsePage() {
       </div>
 
       {/* Grid */}
-      <div className="card-premium accent-blue rounded-[2.5rem] border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark shadow-sm overflow-hidden mb-8">
+      <div className="card-base rounded-[2.5rem] border border-[var(--border-default)] bg-[var(--bg-glass)] shadow-sm overflow-hidden mb-8">
         <div className="flex items-center gap-2 px-6 pt-5 pb-3 border-b border-card-border/50 dark:border-card-border-dark/50">
           <Grid3X3 className="w-4 h-4 text-[var(--sapphire-500)]" />
           <h3 className="text-sm font-black text-text-primary dark:text-text-primary-dark">

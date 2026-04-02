@@ -39,7 +39,7 @@ export default function SetupPage() {
 
       {/* Automation Flow Diagram */}
       <motion.div variants={itemVariants} className="mb-8">
-        <div className="card-premium accent-blue rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-6 overflow-hidden">
+        <div className="card-base rounded-2xl border border-[var(--border-default)] bg-[var(--bg-glass)] p-6 overflow-hidden">
           <h3 className="text-xs font-bold uppercase tracking-wider text-text-tertiary dark:text-text-tertiary-dark mb-5">
             How It Works — Zero Manual Work
           </h3>
@@ -72,16 +72,16 @@ export default function SetupPage() {
       {/* Instruction Guide */}
       <motion.div variants={itemVariants} className="mt-8">
         <h2 className="text-lg font-extrabold text-text-primary dark:text-text-primary-dark mb-4 flex items-center gap-2">
-          <ListChecks className="w-5 h-5 text-blue-accent" />
+          <ListChecks className="w-5 h-5 text-[var(--sapphire-500)]" />
           4-Step Integration Guide
         </h2>
 
         <div className="space-y-4">
           
           {/* Step 1 */}
-          <div className="card-premium accent-blue p-5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl shadow-sm">
+          <div className="card-base p-5 rounded-xl shadow-sm" style={{borderLeft: '3px solid var(--sapphire-500)'}}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full gradient-blue text-white flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--sapphire-500)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 1
               </div>
               <div>
