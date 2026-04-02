@@ -48,7 +48,7 @@ export default function ConfirmDialog({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={onClose}
-              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-[var(--bg-void)]/60 backdrop-blur-sm"
             />
             
             <motion.div
@@ -56,28 +56,28 @@ export default function ConfirmDialog({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -10 }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              className="relative w-full max-w-sm bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-2xl shadow-xl overflow-hidden"
+              className="relative w-full max-w-sm bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-[var(--shadow-xl)] overflow-hidden"
             >
               <div className="p-5">
                 <div className="flex items-start gap-4">
-                  <div className={`p-2 rounded-full flex-shrink-0 ${variant === 'danger' ? 'bg-red-500/20 text-red-500' : 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]'}`}>
+                  <div className={`p-2 rounded-full flex-shrink-0 ${variant === 'danger' ? 'bg-[var(--ruby-500)]/20 text-[var(--ruby-400)]' : 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]'}`}>
                     <AlertCircle className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-text-primary dark:text-text-primary-dark">
+                    <h3 className="text-lg font-bold text-[var(--text-primary)]">
                       {title}
                     </h3>
-                    <p className="mt-1 text-sm text-text-secondary dark:text-text-secondary-dark leading-relaxed">
+                    <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">
                       {description}
                     </p>
                   </div>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 p-4 bg-bg/50 dark:bg-bg-dark/50 border-t border-card-border dark:border-card-border-dark justify-end">
+              <div className="flex items-center gap-2 p-4 bg-[var(--bg-base)]/50 border-t border-[var(--border-subtle)] justify-end">
                 <button
                   onClick={onClose}
-                  className="px-4 py-2 text-sm font-semibold text-text-secondary dark:text-text-secondary-dark hover:bg-surface dark:hover:bg-surface-dark rounded-lg transition-colors"
+                  className="px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] rounded-lg transition-colors cursor-pointer"
                 >
                   {cancelText}
                 </button>
@@ -86,7 +86,7 @@ export default function ConfirmDialog({
                     onConfirm();
                     onClose();
                   }}
-                  className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm ${variant === 'danger' ? 'text-white bg-red-500 hover:bg-red-600' : 'text-[#1a1a16] bg-[var(--sapphire-500)] hover:brightness-110'}`}
+                  className={`cursor-pointer px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm ${variant === 'danger' ? 'text-white bg-[var(--ruby-500)] hover:brightness-110' : 'text-[var(--text-inverse)] bg-[var(--sapphire-500)] hover:brightness-110'}`}
                 >
                   {confirmText}
                 </button>
@@ -94,7 +94,7 @@ export default function ConfirmDialog({
               
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 text-text-tertiary hover:text-text-primary transition-colors"
+                className="absolute top-4 right-4 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
