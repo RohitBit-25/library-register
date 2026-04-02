@@ -4,7 +4,9 @@ import { useMembers } from '@/hooks/useMembers';
 import { useStats } from '@/hooks/useStats';
 import { useToast } from '@/hooks/useToast';
 import StatCard from '@/components/ui/StatCard';
-import Badge from '@/components/ui/Badge';
+import Badge, { BadgeVariant } from '@/components/ui/Badge';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 import { getSeatStatus, fmtDate, daysUntilExpiry } from '@/lib/utils';
 import { type Member } from '@/lib/types';
 import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw, TrendingUp, Sparkles } from 'lucide-react';
@@ -58,9 +60,9 @@ export default function DashboardPage() {
   };
 
   const alertBorderColors: Record<string, string> = {
-    expired: 'border-l-expired-border',
-    due: 'border-l-due-border',
-    expiring: 'border-l-expiring-border',
+    expired: 'border-l-[var(--ruby-500)]',
+    due: 'border-l-[var(--marigold-500)]',
+    expiring: 'border-l-[var(--emerald-500)]',
   };
 
   return (
@@ -70,162 +72,167 @@ export default function DashboardPage() {
       animate="animate"
     >
       {/* Page header */}
-      <motion.div variants={itemVariants} className="mb-6 flex items-end justify-between">
+      <motion.div variants={itemVariants} className="mb-[var(--space-6)] flex items-end justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
+          <h1 className="font-display text-2xl font-semibold tracking-[var(--tracking-tight)] text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
             Dashboard
-            <Sparkles className="w-5 h-5 text-blue-accent" />
+            <Sparkles className="w-5 h-5 text-[var(--sapphire-500)]" />
           </h1>
-          <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-0.5">
+          <p className="text-sm font-medium text-[var(--text-secondary)] mt-[var(--space-1)]">
             {dateStr}
           </p>
         </div>
-        <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-text-tertiary dark:text-text-tertiary-dark bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-lg px-3 py-1.5">
-          <TrendingUp className="w-3.5 h-3.5 text-active-border" />
+        <div className="hidden sm:flex items-center gap-[var(--space-2)] text-xs font-mono text-[var(--text-tertiary)] bg-[var(--bg-elevated)] border-[1.5px] border-[var(--border-subtle)] rounded-[var(--radius-md)] px-[var(--space-3)] py-[var(--space-2)] shadow-[var(--shadow-sm)]">
+          <TrendingUp className="w-3.5 h-3.5 text-[var(--emerald-500)]" />
           {Math.round((stats.occupied / 95) * 100)}% Occupied
         </div>
       </motion.div>
 
       {/* Stat cards */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-[var(--space-3)] sm:gap-[var(--space-4)] mb-[var(--space-6)]">
         <StatCard
           value={stats.occupied}
           label="Occupied Seats"
           accent="blue"
-          icon={<Users className="w-5 h-5 text-blue-accent" />}
+          icon={<Users className="w-5 h-5" />}
           onClick={() => router.push('/members?filter=active')}
         />
         <StatCard
           value={stats.vacant}
           label="Vacant Seats"
           accent="gray"
-          icon={<UserMinus className="w-5 h-5 text-gray-accent" />}
+          icon={<UserMinus className="w-5 h-5" />}
           onClick={() => router.push('/members?filter=vacant')}
         />
         <StatCard
           value={stats.due}
           label="Fee Pending"
           accent="amber"
-          icon={<AlertTriangle className="w-5 h-5 text-due-border" />}
+          icon={<AlertTriangle className="w-5 h-5" />}
           onClick={() => router.push('/members?filter=due')}
         />
         <StatCard
           value={stats.expiring + stats.expired}
           label="Expiring / Expired"
           accent="red"
-          icon={<CalendarX className="w-5 h-5 text-expired-border" />}
+          icon={<CalendarX className="w-5 h-5" />}
           onClick={() => router.push('/members?filter=expired')}
         />
       </motion.div>
 
       {/* Alert banner */}
       {alerts.length > 0 && (
-        <motion.div variants={itemVariants} className="mb-6 card-premium accent-amber rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden shadow-sm">
-          <div className="px-4 py-3 border-b border-card-border dark:border-card-border-dark bg-bg/50 dark:bg-bg-dark/50">
-            <h2 className="text-sm font-bold text-text-primary dark:text-text-primary-dark flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-due-border" />
-              Alerts
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-due-fill dark:bg-due-fill-dark text-due-text dark:text-due-text-dark">
-                {alerts.length}
-              </span>
-            </h2>
-          </div>
-          <div className="divide-y divide-card-border/50 dark:divide-card-border-dark/50 max-h-[280px] overflow-y-auto">
-            {alerts.map(m => (
-              <div
-                key={`alert-${m.seat}`}
-                className={`flex items-center justify-between px-4 py-3 hover:bg-bg/50 dark:hover:bg-bg-dark/50 transition-colors border-l-[3px] ${alertBorderColors[m.alertType]}`}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-xs font-mono font-bold text-text-tertiary dark:text-text-tertiary-dark shrink-0 w-7 h-7 flex items-center justify-center rounded-lg bg-bg dark:bg-bg-dark">
-                    {m.seat}
-                  </span>
-                  <div className="min-w-0">
-                    <span className="text-sm font-semibold text-text-primary dark:text-text-primary-dark truncate block">
-                      {m.name}
+        <motion.div variants={itemVariants} className="mb-[var(--space-6)]">
+          <Card variant="base" className="overflow-hidden">
+            <div className="px-[var(--space-5)] py-[var(--space-4)] border-b border-[var(--border-subtle)] bg-[var(--bg-muted)]">
+              <h2 className="font-display text-sm font-semibold text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
+                <AlertTriangle className="w-4 h-4 text-[var(--marigold-500)]" />
+                Alerts
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--marigold-500)]/10 text-[var(--marigold-500)]">
+                  {alerts.length}
+                </span>
+              </h2>
+            </div>
+            <div className="divide-y divide-[var(--border-subtle)] max-h-[280px] overflow-y-auto">
+              {alerts.map(m => (
+                <div
+                  key={`alert-${m.seat}`}
+                  className={`flex items-center justify-between px-[var(--space-5)] py-[var(--space-3)] hover:bg-[var(--bg-muted)] transition-colors border-l-4 ${alertBorderColors[m.alertType]}`}
+                >
+                  <div className="flex items-center gap-[var(--space-3)] min-w-0">
+                    <span className="text-xs font-mono font-bold text-[var(--text-tertiary)] shrink-0 w-8 h-8 flex items-center justify-center rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-[var(--shadow-sm)]">
+                      {m.seat}
                     </span>
-                    <span className="text-xs text-text-tertiary dark:text-text-tertiary-dark">
-                      {m.alertType === 'due' && 'Fee not paid'}
-                      {m.alertType === 'expired' && `Expired ${fmtDate(m.expiry)}`}
-                      {m.alertType === 'expiring' && `Expires in ${daysUntilExpiry(m.expiry)} days`}
-                    </span>
+                    <div className="min-w-0">
+                      <span className="text-sm font-[var(--font-body)] font-medium text-[var(--text-primary)] truncate block">
+                        {m.name}
+                      </span>
+                      <span className="text-xs text-[var(--text-tertiary)]">
+                        {m.alertType === 'due' && 'Fee not paid'}
+                        {m.alertType === 'expired' && `Expired ${fmtDate(m.expiry)}`}
+                        {m.alertType === 'expiring' && `Expires in ${daysUntilExpiry(m.expiry)} days`}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-[var(--space-2)] shrink-0 ml-[var(--space-3)]">
+                    {m.alertType === 'due' ? (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => handleMarkPaid(m.seat)}
+                        className="bg-[var(--emerald-500)] text-white border-transparent hover:bg-[var(--emerald-600)]"
+                      >
+                        <Check className="w-3.5 h-3.5 mr-1" />
+                        Mark paid
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => router.push(`/seat-grid?seat=${m.seat}`)}
+                      >
+                        <RefreshCw className="w-3.5 h-3.5 mr-1" />
+                        Renew
+                      </Button>
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0 ml-3">
-                  {m.alertType === 'due' ? (
-                    <button
-                      onClick={() => handleMarkPaid(m.seat)}
-                      className="cursor-pointer flex items-center gap-1 rounded-lg bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark px-3 py-1.5 text-xs font-bold hover:shadow-sm transition-all active:scale-95"
-                    >
-                      <Check className="w-3 h-3" />
-                      Mark paid
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => router.push(`/seat-grid?seat=${m.seat}`)}
-                      className="cursor-pointer flex items-center gap-1 rounded-lg bg-blue-accent/10 text-blue-accent px-3 py-1.5 text-xs font-bold hover:shadow-sm transition-all active:scale-95"
-                    >
-                      <RefreshCw className="w-3 h-3" />
-                      Renew
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </Card>
         </motion.div>
       )}
 
       {/* Bottom row: Sparkline + Priority table */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-5 gap-[var(--space-4)]">
         {/* Sparkline */}
-        <div className="lg:col-span-2 card-premium accent-blue rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-5">
-          <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark mb-3">
+        <Card variant="base" className="lg:col-span-2 p-[var(--space-5)]">
+          <h3 className="font-display text-sm font-semibold text-[var(--text-primary)] mb-[var(--space-4)]">
             Occupancy This Month
           </h3>
           <Sparkline data={occupancyData} />
-        </div>
+        </Card>
 
         {/* Priority table */}
-        <div className="lg:col-span-3 card-premium accent-red rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden">
-          <div className="px-4 py-3 border-b border-card-border dark:border-card-border-dark bg-bg/30 dark:bg-bg-dark/30">
-            <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark">
+        <Card variant="base" className="lg:col-span-3 overflow-hidden">
+          <div className="px-[var(--space-5)] py-[var(--space-4)] border-b border-[var(--border-subtle)] bg-[var(--bg-muted)]">
+            <h3 className="font-display text-sm font-semibold text-[var(--text-primary)]">
               Priority Members
             </h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-text-tertiary dark:text-text-tertiary-dark">
-                  <th className="px-4 py-2 font-medium">#</th>
-                  <th className="px-4 py-2 font-medium">Name</th>
-                  <th className="px-4 py-2 font-medium hidden sm:table-cell">Expires</th>
-                  <th className="px-4 py-2 font-medium">Status</th>
+                <tr className="text-left text-xs text-[var(--text-tertiary)] bg-[var(--bg-muted)] uppercase tracking-wider font-semibold">
+                  <th className="px-[var(--space-5)] py-[var(--space-3)]">#</th>
+                  <th className="px-[var(--space-5)] py-[var(--space-3)]">Name</th>
+                  <th className="px-[var(--space-5)] py-[var(--space-3)] hidden sm:table-cell">Expires</th>
+                  <th className="px-[var(--space-5)] py-[var(--space-3)]">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-card-border/30 dark:divide-card-border-dark/30">
+              <tbody className="divide-y divide-[var(--border-subtle)] bg-[var(--bg-elevated)]">
                 {priorityMembers.map(m => (
-                  <tr key={m.seat} className="hover:bg-bg/50 dark:hover:bg-bg-dark/50 transition-colors">
-                    <td className="px-4 py-2.5 font-mono font-bold text-text-primary dark:text-text-primary-dark">
+                  <tr key={m.seat} className="hover:bg-[var(--bg-muted)] transition-colors">
+                    <td className="px-[var(--space-5)] py-[var(--space-3)] font-mono text-[var(--text-secondary)]">
                       {m.seat}
                     </td>
-                    <td className="px-4 py-2.5 font-medium text-text-primary dark:text-text-primary-dark">
+                    <td className="px-[var(--space-5)] py-[var(--space-3)] font-medium text-[var(--text-primary)]">
                       {m.name.length > 14 ? m.name.slice(0, 12) + '…' : m.name}
                     </td>
-                    <td className="px-4 py-2.5 text-text-secondary dark:text-text-secondary-dark hidden sm:table-cell">
+                    <td className="px-[var(--space-5)] py-[var(--space-3)] text-[var(--text-secondary)] hidden sm:table-cell">
                       {fmtDate(m.expiry)}
                     </td>
-                    <td className="px-4 py-2.5">
-                      <Badge status={getSeatStatus(m)} size="sm" />
+                    <td className="px-[var(--space-5)] py-[var(--space-3)]">
+                      <Badge variant={getSeatStatus(m) as BadgeVariant} />
                     </td>
                   </tr>
                 ))}
                 {priorityMembers.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-4 py-8 text-center text-text-tertiary dark:text-text-tertiary-dark">
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-12 h-12 rounded-full bg-active-fill dark:bg-active-fill-dark flex items-center justify-center">
-                          <Check className="w-6 h-6 text-active-border" />
+                    <td colSpan={4} className="px-[var(--space-5)] py-[var(--space-8)] text-center text-[var(--text-tertiary)]">
+                      <div className="flex flex-col items-center gap-[var(--space-2)]">
+                        <div className="w-12 h-12 rounded-full bg-[var(--emerald-500)]/10 flex items-center justify-center">
+                          <Check className="w-6 h-6 text-[var(--emerald-500)]" />
                         </div>
                         <span className="font-medium">No alerts — everything looks good!</span>
                       </div>
@@ -235,7 +242,7 @@ export default function DashboardPage() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
       </motion.div>
     </motion.div>
   );
@@ -286,8 +293,8 @@ function Sparkline({ data }: { data: number[] }) {
         cx={pad + ((data.length - 1) / (data.length - 1)) * (w - pad * 2)}
         cy={h - pad - ((data[data.length - 1] - min) / (max - min || 1)) * (h - pad * 2)}
         r={5}
-        fill="#2563EB"
-        stroke="white"
+        fill="var(--sapphire-500)"
+        stroke="var(--bg-elevated)"
         strokeWidth={2.5}
       />
       {/* Outer glow */}
@@ -295,7 +302,7 @@ function Sparkline({ data }: { data: number[] }) {
         cx={pad + ((data.length - 1) / (data.length - 1)) * (w - pad * 2)}
         cy={h - pad - ((data[data.length - 1] - min) / (max - min || 1)) * (h - pad * 2)}
         r={10}
-        fill="#2563EB"
+        fill="var(--sapphire-500)"
         opacity={0.15}
       />
       {/* Labels */}
@@ -307,12 +314,12 @@ function Sparkline({ data }: { data: number[] }) {
       </text>
       <defs>
         <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#2563EB" />
-          <stop offset="100%" stopColor="#2563EB" stopOpacity={0} />
+          <stop offset="0%" stopColor="var(--sapphire-500)" />
+          <stop offset="100%" stopColor="var(--sapphire-500)" stopOpacity={0} />
         </linearGradient>
         <linearGradient id="sparkLineGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#3B82F6" />
-          <stop offset="100%" stopColor="#2563EB" />
+          <stop offset="0%" stopColor="var(--sapphire-400)" />
+          <stop offset="100%" stopColor="var(--sapphire-500)" />
         </linearGradient>
       </defs>
     </svg>
