@@ -231,10 +231,10 @@ export default function DashboardPage() {
                   <tr>
                     <td colSpan={4} className="px-[var(--space-5)] py-[var(--space-8)] text-center text-[var(--text-tertiary)]">
                       <div className="flex flex-col items-center gap-[var(--space-2)]">
-                        <div className="w-12 h-12 rounded-full bg-[var(--emerald-500)]/10 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-[var(--radius-full)] bg-[var(--emerald-500)]/10 flex items-center justify-center">
                           <Check className="w-6 h-6 text-[var(--emerald-500)]" />
                         </div>
-                        <span className="font-medium">No alerts — everything looks good!</span>
+                        <span className="font-[var(--weight-medium)]">No alerts — everything looks good!</span>
                       </div>
                     </td>
                   </tr>
