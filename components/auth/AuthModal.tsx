@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { X, Lock, Loader2 } from 'lucide-react';
 import { createPortal } from 'react-dom';
@@ -15,7 +15,7 @@ export default function AuthModal({
 }) {
   const [pin, setPin] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login } = useAuth();
+  const { loginAsAdmin } = useAuth();
   const { addToast } = useToast();
 
   if (!open) return null;
@@ -25,7 +25,7 @@ export default function AuthModal({
     if (!pin) return;
 
     setIsSubmitting(true);
-    const success = await login(pin);
+    const success = await loginAsAdmin(pin);
     setIsSubmitting(false);
 
     if (success) {
