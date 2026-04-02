@@ -27,7 +27,6 @@ interface SeatDetailPanelProps {
   onRenew: (seat: number, joinDate: string, duration: Duration) => void;
   onRemove: (seat: number) => void;
   isMobile: boolean;
-  readonly?: boolean;
 }
 
 // ── Status gradient banner config ──────────────────
@@ -56,7 +55,6 @@ export default function SeatDetailPanel({
   onRenew,
   onRemove,
   isMobile,
-  readonly = false,
 }: SeatDetailPanelProps) {
   const [renewMode, setRenewMode] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
@@ -136,75 +134,71 @@ export default function SeatDetailPanel({
             {!member.vacant && (
               <>
                 {/* Info rows */}
-                {!readonly && (
-                  <div className="space-y-1 bg-bg dark:bg-bg-dark rounded-xl p-3">
-                    <InfoRow 
-                      icon={<Phone className="w-4 h-4 text-blue-accent" />} 
-                      label="Phone" 
-                      value={member.phone || '—'}
-                      action={member.phone ? (
-                        <button onClick={handleCopyPhone} className="text-text-tertiary hover:text-blue-accent transition-colors cursor-pointer p-1">
-                          {copied ? <span className="text-[10px] font-bold text-active-text">Copied!</span> : <Copy className="w-3.5 h-3.5" />}
-                        </button>
-                      ) : undefined}
-                    />
-                    <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Joined" value={fmtDate(member.joinDate)} />
-                    <InfoRow icon={<Clock className="w-4 h-4 text-blue-accent" />} label="Duration" value={durationLabel(member.duration as Duration)} />
-                    <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Expires" value={fmtDate(member.expiry)} />
-                  </div>
-                )}
+                <div className="space-y-1 bg-bg dark:bg-bg-dark rounded-xl p-3">
+                  <InfoRow 
+                    icon={<Phone className="w-4 h-4 text-blue-accent" />} 
+                    label="Phone" 
+                    value={member.phone || '—'}
+                    action={member.phone ? (
+                      <button onClick={handleCopyPhone} className="text-text-tertiary hover:text-blue-accent transition-colors cursor-pointer p-1">
+                        {copied ? <span className="text-[10px] font-bold text-active-text">Copied!</span> : <Copy className="w-3.5 h-3.5" />}
+                      </button>
+                    ) : undefined}
+                  />
+                  <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Joined" value={fmtDate(member.joinDate)} />
+                  <InfoRow icon={<Clock className="w-4 h-4 text-blue-accent" />} label="Duration" value={durationLabel(member.duration as Duration)} />
+                  <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Expires" value={fmtDate(member.expiry)} />
+                </div>
 
                 {/* Actions */}
-                {!readonly && (
-                  <div className="space-y-2">
-                    <div className="grid grid-cols-2 gap-2">
-                      {member.fee === 'due' ? (
-                        <ActionBtn 
-                          onClick={() => { onMarkPaid(member.seat); onClose(); }} 
-                          icon={<CreditCard className="w-4 h-4" />}
-                          className="gradient-green text-white shadow-sm"
-                        >
-                          Mark Paid
-                        </ActionBtn>
-                      ) : (
-                        <ActionBtn 
-                          onClick={() => { onMarkDue(member.seat); onClose(); }} 
-                          icon={<CreditCard className="w-4 h-4" />}
-                          className="bg-due-fill dark:bg-due-fill-dark text-due-text dark:text-due-text-dark border border-due-border/30"
-                        >
-                          Mark Due
-                        </ActionBtn>
-                      )}
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    {member.fee === 'due' ? (
                       <ActionBtn 
-                        onClick={() => { reset({ renewDate: todayISO(), renewDuration: '3M' }); setRenewMode(true); }} 
-                        icon={<RefreshCw className="w-4 h-4" />}
-                        className="gradient-blue text-white shadow-sm"
+                        onClick={() => { onMarkPaid(member.seat); onClose(); }} 
+                        icon={<CreditCard className="w-4 h-4" />}
+                        className="gradient-green text-white shadow-sm"
                       >
-                        Renew
+                        Mark Paid
                       </ActionBtn>
-                    </div>
-
-                    {member.phone && (
-                      <a
-                        href={`https://wa.me/${member.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hi ' + member.name.split(' ')[0] + ', your library membership for Seat ' + member.seat + ' needs attention.')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-[#25D366] bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-colors cursor-pointer"
+                    ) : (
+                      <ActionBtn 
+                        onClick={() => { onMarkDue(member.seat); onClose(); }} 
+                        icon={<CreditCard className="w-4 h-4" />}
+                        className="bg-due-fill dark:bg-due-fill-dark text-due-text dark:text-due-text-dark border border-due-border/30"
                       >
-                        <MessageCircle className="w-4 h-4" />
-                        WhatsApp Message
-                      </a>
+                        Mark Due
+                      </ActionBtn>
                     )}
-
-                    <button
-                      onClick={() => setConfirmRemove(true)}
-                      className="w-full flex items-center justify-center gap-2 text-center text-sm font-bold text-expired-text dark:text-expired-text-dark py-2.5 rounded-xl border border-expired-border/20 hover:bg-expired-fill dark:hover:bg-expired-fill-dark transition-colors cursor-pointer"
+                    <ActionBtn 
+                      onClick={() => { reset({ renewDate: todayISO(), renewDuration: '3M' }); setRenewMode(true); }} 
+                      icon={<RefreshCw className="w-4 h-4" />}
+                      className="gradient-blue text-white shadow-sm"
                     >
-                      <Trash2 className="w-4 h-4" />
-                      Remove Member
-                    </button>
+                      Renew
+                    </ActionBtn>
                   </div>
-                )}
+
+                  {member.phone && (
+                    <a
+                      href={`https://wa.me/${member.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hi ' + member.name.split(' ')[0] + ', your library membership for Seat ' + member.seat + ' needs attention.')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-[#25D366] bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-colors cursor-pointer"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      WhatsApp Message
+                    </a>
+                  )}
+
+                  <button
+                    onClick={() => setConfirmRemove(true)}
+                    className="w-full flex items-center justify-center gap-2 text-center text-sm font-bold text-expired-text dark:text-expired-text-dark py-2.5 rounded-xl border border-expired-border/20 hover:bg-expired-fill dark:hover:bg-expired-fill-dark transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Remove Member
+                  </button>
+                </div>
               </>
             )}
           </>
