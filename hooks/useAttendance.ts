@@ -1,63 +1,28 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
+import useSWR from 'swr';
 import { type AttendanceEntry } from '@/lib/types';
 import { useMembers } from '@/hooks/useMembers';
+import { useAuth } from '@/hooks/useAuth';
 
-// Fallback empty arr to prevent undefined
-const DEFAULT_ATTENDANCE: AttendanceEntry[] = [];
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export function useAttendance() {
-  const [history, setHistory] = useState<AttendanceEntry[]>([]);
+  const { isAdmin } = useAuth();
   const { members } = useMembers();
+  
+  // Use SWR for remote data fetching, but only if Admin (otherwise it's empty)
+  const { data: history = [], mutate } = useSWR<AttendanceEntry[]>(
+    isAdmin ? '/api/attendance' : null,
+    fetcher,
+    { revalidateOnFocus: false }
+  );
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    let initialHistory = DEFAULT_ATTENDANCE;
-    try {
-      const stored = localStorage.getItem('library_attendance');
-      if (stored) {
-        initialHistory = JSON.parse(stored);
-      }
-    } catch {
-      // Keep default
-    }
-    setTimeout(() => setHistory(initialHistory), 0);
-  }, []);
+  // --- API Helpers ---
 
-  // Generic save wrapper
-  const save = (newHistory: AttendanceEntry[]) => {
-    setHistory(newHistory);
-    localStorage.setItem('library_attendance', JSON.stringify(newHistory));
-    window.dispatchEvent(new Event('library_attendance_updated'));
-  };
-
-  // Listen for updates across tabs
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'library_attendance' && e.newValue) {
-        setHistory(JSON.parse(e.newValue));
-      }
-    };
-    const handleCustomEvent = () => {
-      const stored = localStorage.getItem('library_attendance');
-      if (stored) setHistory(JSON.parse(stored));
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('library_attendance_updated', handleCustomEvent);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('library_attendance_updated', handleCustomEvent);
-    };
-  }, []);
-
-  // --- API ---
-
-  // Format YYYY-MM-DD string
   const getTodayStr = () => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -67,60 +32,82 @@ export function useAttendance() {
     return history.find(h => h.date === dateStr);
   };
 
-  const markPresent = (dateStr: string, seat: number) => {
-    const existingIndex = history.findIndex(h => h.date === dateStr);
-    const newHistory = [...history];
+  const markPresent = useCallback(async (dateStr: string, seat: number) => {
+    if (!isAdmin) return;
 
-    if (existingIndex >= 0) {
-      const entry = newHistory[existingIndex];
-      if (!entry.seats.includes(seat)) {
-        newHistory[existingIndex] = { ...entry, seats: [...entry.seats, seat] };
-      }
-    } else {
+    // Optimistic UI update
+    const newHistory = history.map(h => 
+      h.date === dateStr ? { ...h, seats: Array.from(new Set([...h.seats, seat])) } : h
+    );
+    if (!history.some(h => h.date === dateStr)) {
       newHistory.push({ date: dateStr, seats: [seat] });
     }
-    save(newHistory);
-  };
 
-  const markAbsent = (dateStr: string, seat: number) => {
-    const existingIndex = history.findIndex(h => h.date === dateStr);
-    if (existingIndex >= 0) {
-      const newHistory = [...history];
-      newHistory[existingIndex] = {
-        ...newHistory[existingIndex],
-        seats: newHistory[existingIndex].seats.filter(s => s !== seat)
-      };
-      save(newHistory);
+    try {
+      mutate(newHistory, false);
+      await fetch('/api/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: dateStr, seat, present: true }),
+      });
+      mutate();
+    } catch (error) {
+      console.error('Failed to mark present:', error);
+      mutate();
     }
-  };
+  }, [history, isAdmin, mutate]);
 
-  const markAllPresent = (dateStr: string) => {
+  const markAbsent = useCallback(async (dateStr: string, seat: number) => {
+    if (!isAdmin) return;
+
+    // Optimistic UI update
+    const newHistory = history.map(h => 
+      h.date === dateStr ? { ...h, seats: h.seats.filter(s => s !== seat) } : h
+    );
+
+    try {
+      mutate(newHistory, false);
+      await fetch('/api/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: dateStr, seat, present: false }),
+      });
+      mutate();
+    } catch (error) {
+      console.error('Failed to mark absent:', error);
+      mutate();
+    }
+  }, [history, isAdmin, mutate]);
+
+  const markAllPresent = useCallback(async (dateStr: string) => {
+    if (!isAdmin) return;
+
     const occupiedSeats = members.filter(m => !m.vacant).map(m => m.seat);
-    
-    const existingIndex = history.findIndex(h => h.date === dateStr);
-    const newHistory = [...history];
-    if (existingIndex >= 0) {
-      newHistory[existingIndex] = { date: dateStr, seats: occupiedSeats };
-    } else {
-      newHistory.push({ date: dateStr, seats: occupiedSeats });
+
+    try {
+      await fetch('/api/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: dateStr, seats: occupiedSeats, allPresent: true }),
+      });
+      mutate();
+    } catch (error) {
+      console.error('Failed to mark all present:', error);
     }
-    save(newHistory);
-  };
+  }, [isAdmin, members, mutate]);
 
   const isPresent = (dateStr: string, seat: number): boolean => {
     const record = getRecordForDate(dateStr);
-    if (!record) return false;
-    return record.seats.includes(seat);
+    return record?.seats.includes(seat) ?? false;
   };
 
-  // Daily stats for today
+  // Stats derived from dynamic data
+  const totalOccupied = members.filter(m => !m.vacant).length;
   const todayStr = getTodayStr();
   const todayRecord = getRecordForDate(todayStr);
-  const totalOccupied = members.filter(m => !m.vacant).length;
   const presentToday = todayRecord ? todayRecord.seats.length : 0;
   const attendanceRateToday = totalOccupied > 0 ? Math.round((presentToday / totalOccupied) * 100) : 0;
 
-  // 30-day heatmap data
   const getLast30DaysData = () => {
     const data = [];
     const today = new Date();
@@ -130,11 +117,10 @@ export function useAttendance() {
       d.setDate(d.getDate() - i);
       const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       
-      const record = getRecordForDate(ds);
+      const record = history.find(h => h.date === ds);
       const count = record ? record.seats.length : 0;
       let rate = 0;
       if (totalOccupied > 0) rate = Math.round((count / totalOccupied) * 100);
-      else if (count > 0) rate = 100;
 
       data.push({
         date: ds,
@@ -148,11 +134,9 @@ export function useAttendance() {
     return data;
   };
 
-  // ── Weekly Summary ────────────────────────────────────
   const weeklySummary = useMemo(() => {
     const today = new Date();
-    const dayOfWeek = today.getDay(); // 0=Sun, 1=Mon, ...
-    // Start of this week (Monday-based)
+    const dayOfWeek = today.getDay();
     const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     
     let totalRate = 0;
@@ -167,7 +151,6 @@ export function useAttendance() {
       d.setDate(d.getDate() - (mondayOffset - i));
       const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       
-      // Inline history lookup instead of calling getRecordForDate to avoid React Compiler dep mismatch
       const record = history.find(h => h.date === ds);
       if (record) {
         const rate = totalOccupied > 0 ? Math.round((record.seats.length / totalOccupied) * 100) : 0;
@@ -185,10 +168,8 @@ export function useAttendance() {
       }
     }
 
-    const avgRate = daysWithData > 0 ? Math.round(totalRate / daysWithData) : 0;
-
     return {
-      avgRate,
+      avgRate: daysWithData > 0 ? Math.round(totalRate / daysWithData) : 0,
       daysWithData,
       bestRate,
       bestDayName,
@@ -210,5 +191,6 @@ export function useAttendance() {
     isPresent,
     getLast30DaysData,
     weeklySummary,
+    isLoading: isAdmin && !history.length
   };
 }

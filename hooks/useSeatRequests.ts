@@ -1,89 +1,79 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import {
-  type SeatRequest,
-  getStoredRequests,
-  saveRequests,
-  generateRequestId,
-} from '@/lib/auth';
+import { useCallback } from 'react';
+import useSWR from 'swr';
+import { type SeatRequest } from '@/lib/types';
+import { useAuth } from '@/hooks/useAuth';
+
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export function useSeatRequests() {
-  const [requests, setRequests] = useState<SeatRequest[]>([]);
+  const { isAdmin } = useAuth();
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    setRequests(getStoredRequests());
-  }, []);
-
-  // Listen for cross-tab / cross-component updates
-  useEffect(() => {
-    const handler = () => setRequests(getStoredRequests());
-    window.addEventListener('storage', handler);
-    window.addEventListener('requests-updated', handler);
-    return () => {
-      window.removeEventListener('storage', handler);
-      window.removeEventListener('requests-updated', handler);
-    };
-  }, []);
-
-  const addRequest = useCallback(
-    (seat: number, userName: string, userPhone: string, message: string) => {
-      const newRequest: SeatRequest = {
-        id: generateRequestId(),
-        seat,
-        userName,
-        userPhone,
-        message,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-      };
-      setRequests(prev => {
-        const next = [newRequest, ...prev];
-        saveRequests(next);
-        return next;
-      });
-      return newRequest;
-    },
-    []
+  const { data: requests = [], mutate } = useSWR<SeatRequest[]>(
+    isAdmin ? '/api/requests' : null,
+    fetcher,
+    { revalidateOnFocus: true }
   );
 
-  const approveRequest = useCallback((id: string) => {
-    setRequests(prev => {
-      const next = prev.map(r =>
-        r.id === id ? { ...r, status: 'approved' as const } : r
-      );
-      saveRequests(next);
-      return next;
-    });
-  }, []);
+  const addRequest = useCallback(async (request: Omit<SeatRequest, 'id' | 'status' | 'createdAt'>) => {
+    try {
+      const response = await fetch('/api/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...request, status: 'pending' }),
+      });
+      
+      if (!response.ok) throw new Error('Failed to submit request');
+      
+      // If we are admin, we might want to see the new request immediately
+      if (isAdmin) mutate();
+      
+      return true;
+    } catch (error) {
+      console.error('Failed to submit seat request:', error);
+      return false;
+    }
+  }, [isAdmin, mutate]);
 
-  const rejectRequest = useCallback((id: string) => {
-    setRequests(prev => {
-      const next = prev.map(r =>
-        r.id === id ? { ...r, status: 'rejected' as const } : r
-      );
-      saveRequests(next);
-      return next;
-    });
-  }, []);
+  const approveRequest = useCallback(async (id: string | number) => {
+    if (!isAdmin) return;
 
-  const deleteRequest = useCallback((id: string) => {
-    setRequests(prev => {
-      const next = prev.filter(r => r.id !== id);
-      saveRequests(next);
-      return next;
-    });
-  }, []);
+    try {
+      await fetch('/api/requests', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: 'approved' }),
+      });
+      mutate();
+    } catch (error) {
+      console.error('Failed to approve request:', error);
+    }
+  }, [isAdmin, mutate]);
+
+  const rejectRequest = useCallback(async (id: string | number) => {
+    if (!isAdmin) return;
+
+    try {
+      await fetch('/api/requests', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: 'rejected' }),
+      });
+      mutate();
+    } catch (error) {
+      console.error('Failed to reject request:', error);
+    }
+  }, [isAdmin, mutate]);
 
   const pendingCount = requests.filter(r => r.status === 'pending').length;
 
   return {
     requests,
+    pendingCount,
     addRequest,
     approveRequest,
     rejectRequest,
-    deleteRequest,
-    pendingCount,
+    isLoading: isAdmin && !requests.length
   };
 }
