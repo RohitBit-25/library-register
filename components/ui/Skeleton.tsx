@@ -9,10 +9,10 @@ export function Skeleton({ className, variant = 'rectangular' }: SkeletonProps) 
   return (
     <div
       className={cn(
-        'animate-pulse bg-gray-200 dark:bg-gray-800',
-        variant === 'text' && 'h-3 w-3/4 rounded',
-        variant === 'circular' && 'rounded-full',
-        variant === 'rectangular' && 'rounded-lg',
+        'animate-pulse bg-[var(--bg-muted)]',
+        variant === 'text' && 'h-3 w-3/4 rounded-[var(--radius-sm)]',
+        variant === 'circular' && 'rounded-[var(--radius-full)]',
+        variant === 'rectangular' && 'rounded-[var(--radius-md)]',
         className
       )}
     />
@@ -21,9 +21,9 @@ export function Skeleton({ className, variant = 'rectangular' }: SkeletonProps) 
 
 export function SeatSkeleton() {
   return (
-    <div className="aspect-square rounded-2xl border border-gray-100 dark:border-gray-800 p-2 flex flex-col justify-between">
-      <Skeleton variant="rectangular" className="h-4 w-1/2" />
-      <Skeleton variant="text" className="h-3 w-full" />
+    <div className="aspect-square rounded-[var(--radius-xl)] bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] p-[var(--space-2)] flex flex-col justify-between shadow-[var(--shadow-sm)]">
+      <Skeleton variant="rectangular" className="h-[20px] w-1/2" />
+      <Skeleton variant="text" className="h-[12px] w-[80%]" />
     </div>
   );
 }
