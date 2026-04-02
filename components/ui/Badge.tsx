@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { motion, HTMLMotionProps } from 'framer-motion';
 
-export type BadgeVariant = 'active' | 'expired' | 'expiring' | 'vacant' | 'pending' | 'morning' | 'evening' | 'full';
+export type BadgeVariant = 'active' | 'expired' | 'expiring' | 'vacant' | 'pending' | 'due' | 'morning' | 'evening' | 'full';
 
 export interface BadgeProps extends HTMLMotionProps<"span"> {
   variant: BadgeVariant;
@@ -13,6 +13,7 @@ const badgeConfig: Record<BadgeVariant, { bg: string; border: string; text: stri
   active:   { bg: 'bg-[rgba(34,195,106,0.20)]',        border: 'border-[rgba(34,195,106,0.3)]',       text: 'text-[var(--emerald-400)]',  defaultLabel: 'Active' },
   expired:  { bg: 'bg-[rgba(232,66,66,0.20)]',         border: 'border-[rgba(232,66,66,0.3)]',        text: 'text-[var(--ruby-400)]',     defaultLabel: 'Expired' },
   expiring: { bg: 'bg-[rgba(232,162,10,0.20)]',        border: 'border-[rgba(232,162,10,0.3)]',       text: 'text-[var(--amber-400)]',    defaultLabel: 'Expiring Soon' },
+  due:      { bg: 'bg-[rgba(232,133,58,0.20)]',        border: 'border-[rgba(232,133,58,0.3)]',       text: 'text-[var(--saffron-400)]',  defaultLabel: 'Fee Due' },
   vacant:   { bg: 'bg-[rgba(61,158,255,0.20)]',        border: 'border-[rgba(61,158,255,0.3)]',       text: 'text-[var(--sapphire-400)]', defaultLabel: 'Vacant' },
   pending:  { bg: 'bg-[rgba(123,95,245,0.20)]',        border: 'border-[rgba(123,95,245,0.3)]',       text: 'text-[var(--indigo-400)]',   defaultLabel: 'Pending' },
   morning:  { bg: 'bg-[rgba(232,162,10,0.15)]',        border: 'border-[rgba(232,162,10,0.25)]',      text: 'text-[var(--amber-400)]',    defaultLabel: '🌅 Morning' },

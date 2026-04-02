@@ -3,7 +3,7 @@
 import { type ToastMessage } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { CheckCircle, AlertTriangle, XCircle, X, Info } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import { toastVariants } from '@/animations/variants';
 
 interface ToastContainerProps {
@@ -39,7 +39,7 @@ export default function ToastContainer({ toasts, onRemove }: ToastContainerProps
             <motion.div
               layout
               key={t.id}
-              variants={toastVariants}
+              variants={toastVariants as Variants}
               initial="hidden"
               animate="visible"
               exit="exit"

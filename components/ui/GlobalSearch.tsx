@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useMembers } from '@/hooks/useMembers';
 import { Search, X } from 'lucide-react';
 import { cn, getSeatStatus } from '@/lib/utils';
-import Badge from '@/components/ui/Badge';
+import Badge, { type BadgeVariant } from '@/components/ui/Badge';
 import { AnimatePresence, m } from 'framer-motion';
 
 interface GlobalSearchProps {
@@ -100,7 +100,7 @@ export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
                       </div>
                       {!member.vacant && (
                         <div className="shrink-0 flex gap-2 items-center">
-                          <Badge status={getSeatStatus(member)} size="sm" />
+                          <Badge variant={getSeatStatus(member) as BadgeVariant} className="scale-90 origin-right" />
                         </div>
                       )}
                     </button>

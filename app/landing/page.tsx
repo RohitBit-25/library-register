@@ -8,13 +8,12 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export default function LandingPage() {
   const router = useRouter();
   const { loginAsAdmin, loginAsUser, isAuthenticated, isAdmin } = useAuth();
 
-  const [showAdminModal, setShowAdminModal] = useState(false);
   const [pin, setPin] = useState('');
   const [pinError, setPinError] = useState(false);
 
@@ -29,12 +28,17 @@ export default function LandingPage() {
   }
 
   const handleAdminLogin = () => {
-    if (loginAsAdmin(pin)) {
-      router.push('/');
-    } else {
-      setPinError(true);
-      setTimeout(() => setPinError(false), 3000);
-    }
+    // loginAsAdmin always returns a boolean synchronously based on useAuth code? Wait, the lint says it's a Promise<boolean> that is always truthy if not awaited. Let's make it async/await.
+    const attemptLogin = async () => {
+      const success = await loginAsAdmin(pin);
+      if (success) {
+        router.push('/');
+      } else {
+        setPinError(true);
+        setTimeout(() => setPinError(false), 3000);
+      }
+    };
+    attemptLogin();
   };
 
   const handleUserEnter = () => {
