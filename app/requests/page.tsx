@@ -53,7 +53,7 @@ export default function RequestsPage() {
       phone: req.userPhone,
       paymentMode: 'upi'
     });
-    router.push(`/add?${query.toString()}`);
+    router.push(`/?${query.toString()}`);
   };
 
   const handleReject = (id: string | number, seat: number) => {
