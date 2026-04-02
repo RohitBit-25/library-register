@@ -195,9 +195,9 @@ export default function MemberTable({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-blue-accent/10 border border-blue-accent/20 p-3 shadow-sm"
+            className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-[var(--sapphire-500)]/10 border border-[var(--sapphire-500)]/20 p-3 shadow-sm"
           >
-            <span className="text-sm font-bold text-blue-accent drop-shadow-sm px-2">
+            <span className="text-sm font-bold text-[var(--sapphire-500)] drop-shadow-sm px-2">
               {selected.size} selected
             </span>
             <Tooltip content="Mark selected members as paid">
@@ -234,7 +234,7 @@ export default function MemberTable({
             </Tooltip>
             <button
               onClick={() => setSelected(new Set())}
-              className="cursor-pointer text-xs font-semibold text-text-secondary dark:text-text-secondary-dark ml-auto hover:text-text-primary dark:hover:text-text-primary-dark mr-2"
+              className="cursor-pointer text-xs font-semibold text-[var(--text-secondary)] ml-auto hover:text-[var(--text-primary)] mr-2"
             >
               Clear
             </button>
@@ -244,13 +244,13 @@ export default function MemberTable({
 
       {/* Search */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
         <input
           type="search"
           placeholder="Search name, phone, seat... (Press / to focus)"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full rounded-xl border border-card-border dark:border-card-border-dark bg-input-bg dark:bg-input-bg-dark pl-9 pr-4 py-3 text-sm font-medium text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none focus:ring-2 focus:ring-blue-accent/30 focus:border-blue-accent/50 transition-all shadow-sm"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none focus:ring-2 focus:ring-blue-accent/30 focus:border-blue-accent/50 transition-all shadow-sm"
         />
       </div>
 
@@ -264,7 +264,7 @@ export default function MemberTable({
                'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border shadow-sm',
               filter === f.value
                 ? 'bg-blue-accent text-white border-blue-accent'
-                : 'bg-surface dark:bg-surface-dark border-card-border dark:border-card-border-dark text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:border-text-tertiary',
+                : 'bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-text-tertiary',
             )}
           >
             {f.label}
@@ -273,30 +273,30 @@ export default function MemberTable({
       </div>
 
       {/* Desktop table */}
-      <div className="hidden md:block overflow-x-auto rounded-2xl border border-card-border dark:border-card-border-dark shadow-sm bg-surface dark:bg-surface-dark relative">
+      <div className="hidden md:block overflow-x-auto rounded-2xl border border-[var(--border-default)] shadow-sm bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] relative">
         <table className="w-full text-sm">
-          <thead className="sticky top-0 z-10 backdrop-blur-xl bg-surface/90 dark:bg-surface-dark/90 border-b border-card-border dark:border-card-border-dark">
+          <thead className="sticky top-0 z-10 backdrop-blur-xl bg-surface/90 dark:bg-surface-dark/90 border-b border-[var(--border-default)]">
             <tr>
               <th className="w-10 p-3">
                 <input
                   type="checkbox"
                   checked={selected.size === filtered.filter(m => !m.vacant).length && selected.size > 0}
                   onChange={toggleSelectAll}
-                  className="w-4 h-4 rounded cursor-pointer accent-blue-accent"
+                  className="w-4 h-4 rounded cursor-pointer accent-[var(--saffron-500)]"
                 />
               </th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-blue-accent transition-colors" onClick={() => toggleSort('seat')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-500)] transition-colors" onClick={() => toggleSort('seat')}>
                 <span className="flex items-center gap-1">Seat <SortIcon field="seat" currentField={sortField} asc={sortAsc} /></span>
               </th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-blue-accent transition-colors" onClick={() => toggleSort('name')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-500)] transition-colors" onClick={() => toggleSort('name')}>
                 <span className="flex items-center gap-1">Name <SortIcon field="name" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-bold">Phone</th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-blue-accent transition-colors" onClick={() => toggleSort('joinDate')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-500)] transition-colors" onClick={() => toggleSort('joinDate')}>
                 <span className="flex items-center gap-1">Joined <SortIcon field="joinDate" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-bold">Dur.</th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-blue-accent transition-colors" onClick={() => toggleSort('expiry')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-500)] transition-colors" onClick={() => toggleSort('expiry')}>
                 <span className="flex items-center gap-1">Expiry <SortIcon field="expiry" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-bold">Status</th>
@@ -319,9 +319,9 @@ export default function MemberTable({
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     key={m.seat}
                     className={cn(
-                      'border-b border-card-border/50 dark:border-card-border-dark/50 transition-colors',
-                      selected.has(m.seat) && 'bg-blue-accent/5',
-                      !m.vacant && 'hover:bg-bg/60 dark:hover:bg-bg-dark/60',
+                      'border-b border-[var(--border-subtle)] transition-colors',
+                      selected.has(m.seat) && 'bg-[var(--sapphire-500)]/5',
+                      !m.vacant && 'hover:bg-[var(--bg-muted)]',
                     )}
                   >
                   <td className="p-3">
@@ -330,41 +330,41 @@ export default function MemberTable({
                         type="checkbox"
                         checked={selected.has(m.seat)}
                         onChange={() => toggleSelect(m.seat)}
-                        className="w-4 h-4 rounded cursor-pointer accent-blue-accent"
+                        className="w-4 h-4 rounded cursor-pointer accent-[var(--saffron-500)]"
                       />
                     )}
                   </td>
-                  <td className="p-3 font-mono font-bold text-text-primary dark:text-text-primary-dark">
+                  <td className="p-3 font-mono font-bold text-[var(--text-primary)]">
                     <div className="flex items-center gap-2 group">
                       {m.seat}
                       <button onClick={(e) => handleCopy(e, String(m.seat), 'seat')} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Copy className="w-3 h-3 text-text-tertiary hover:text-blue-accent cursor-pointer" />
+                        <Copy className="w-3 h-3 text-text-tertiary hover:text-[var(--sapphire-500)] cursor-pointer" />
                       </button>
                     </div>
                   </td>
-                  <td className="p-3 font-bold text-text-primary dark:text-text-primary-dark">
+                  <td className="p-3 font-bold text-[var(--text-primary)]">
                     {m.vacant ? (
-                      <span className="text-text-tertiary dark:text-text-tertiary-dark italic font-medium">(Vacant)</span>
+                      <span className="text-[var(--text-tertiary)] italic font-medium">(Vacant)</span>
                     ) : m.name}
                   </td>
-                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark font-medium">
+                  <td className="p-3 text-[var(--text-secondary)] font-medium">
                     {m.phone ? (
                       <div className="flex items-center gap-2 group">
                         {m.phone}
                         <button onClick={(e) => handleCopy(e, m.phone, 'phone number')} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Copy className="w-3 h-3 text-text-tertiary hover:text-blue-accent cursor-pointer" />
+                          <Copy className="w-3 h-3 text-text-tertiary hover:text-[var(--sapphire-500)] cursor-pointer" />
                         </button>
                       </div>
                     ) : '—'}
                   </td>
-                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark font-medium">{fmtDateShort(m.joinDate)}</td>
-                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark font-medium">{m.duration || '—'}</td>
-                  <td className="p-3 text-text-secondary dark:text-text-secondary-dark font-medium">{fmtDateShort(m.expiry)}</td>
+                  <td className="p-3 text-[var(--text-secondary)] font-medium">{fmtDateShort(m.joinDate)}</td>
+                  <td className="p-3 text-[var(--text-secondary)] font-medium">{m.duration || '—'}</td>
+                  <td className="p-3 text-[var(--text-secondary)] font-medium">{fmtDateShort(m.expiry)}</td>
                   <td className="p-3">
                     {m.vacant ? (
-                      <Link href="/add" className="text-blue-accent text-xs font-bold cursor-pointer hover:underline bg-blue-accent/10 py-1 px-3 rounded-md">+ Add</Link>
+                      <Link href="/add" className="text-[var(--sapphire-500)] text-xs font-bold cursor-pointer hover:underline bg-[var(--sapphire-500)]/10 py-1 px-3 rounded-md">+ Add</Link>
                     ) : (
-                      <Badge status={status} size="sm" />
+                      <Badge variant={status} />
                     )}
                   </td>
                   <td className="p-3 relative">
@@ -375,7 +375,7 @@ export default function MemberTable({
                         className="cursor-pointer p-1.5 rounded-lg hover:bg-bg dark:hover:bg-bg-dark transition-colors"
                         aria-label={`Actions for ${m.name}`}
                       >
-                        <MoreVertical className="w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark" />
+                        <MoreVertical className="w-4 h-4 text-[var(--text-tertiary)]" />
                       </button>
                     </Tooltip>
                     )}
@@ -398,20 +398,20 @@ export default function MemberTable({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -5 }}
               transition={{ duration: 0.15 }}
-              className="absolute z-50 w-48 rounded-xl border border-card-border dark:border-card-border-dark bg-surface/95 dark:bg-surface-dark/95 backdrop-blur-xl shadow-2xl p-1"
+              className="absolute z-50 w-48 rounded-xl border border-[var(--border-default)] bg-surface/95 dark:bg-surface-dark/95 backdrop-blur-xl shadow-2xl p-1"
             >
               {members.filter(m => m.seat === openActions).map(m => (
                 <div key={m.seat}>
                   <button
                     onClick={(e) => { e.stopPropagation(); if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
                   >
                     <Check className="w-4 h-4" />
                     {m.fee === 'due' ? 'Mark fee paid' : 'Mark fee due'}
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); onRenew(m.seat); setOpenActions(null); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Renew membership
@@ -421,7 +421,7 @@ export default function MemberTable({
                       href={`https://wa.me/${m.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hi ' + firstName(m.name) + ', your library fee for Seat ' + m.seat + ' is due.')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
                       onClick={(e) => { e.stopPropagation(); setOpenActions(null); }}
                     >
                       <MessageCircle className="w-4 h-4 text-[#25D366]" />
@@ -462,8 +462,8 @@ export default function MemberTable({
                 className={cn(
                   'rounded-2xl border transition-colors shadow-sm',
                   selected.has(m.seat) 
-                    ? 'border-blue-accent/50 bg-blue-accent/5'
-                    : 'border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark',
+                    ? 'border-blue-accent/50 bg-[var(--sapphire-500)]/5'
+                    : 'border-[var(--border-default)] bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)]',
                 )}
               >
                 <div className="p-4 flex items-start justify-between">
@@ -474,24 +474,24 @@ export default function MemberTable({
                           type="checkbox"
                           checked={selected.has(m.seat)}
                           onChange={() => toggleSelect(m.seat)}
-                          className="w-[18px] h-[18px] rounded cursor-pointer accent-blue-accent"
+                          className="w-[18px] h-[18px] rounded cursor-pointer accent-[var(--saffron-500)]"
                         />
                       </div>
                     )}
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono font-bold text-text-tertiary dark:text-text-tertiary-dark bg-bg dark:bg-bg-dark px-1.5 py-0.5 rounded">
+                        <span className="text-xs font-mono font-bold text-[var(--text-tertiary)] bg-[var(--bg-overlay)] px-1.5 py-0.5 rounded">
                           #{String(m.seat).padStart(2, '0')}
                         </span>
-                        <span className="text-base font-black text-text-primary dark:text-text-primary-dark tracking-tight">
+                        <span className="text-base font-black text-[var(--text-primary)] tracking-tight">
                           {m.vacant ? 'Vacant' : m.name}
                         </span>
                       </div>
                       {!m.vacant && (
                         <div className="flex flex-wrap items-center gap-2 mt-2">
-                          <Badge status={status} size="sm" />
+                          <Badge variant={status} />
                           {m.expiry && (
-                            <span className="text-xs font-medium text-text-secondary dark:text-text-secondary-dark flex items-center gap-1">
+                            <span className="text-xs font-medium text-[var(--text-secondary)] flex items-center gap-1">
                               EXP: {fmtDateShort(m.expiry)}
                             </span>
                           )}
@@ -513,10 +513,10 @@ export default function MemberTable({
                         e.stopPropagation();
                         setOpenActions(openActions === m.seat ? null : m.seat);
                       }}
-                      className="cursor-pointer p-2 rounded-lg bg-bg dark:bg-bg-dark hover:bg-surface transition-colors"
+                      className="cursor-pointer p-2 rounded-lg bg-[var(--bg-overlay)] hover:bg-surface transition-colors"
                       aria-label={`Actions for ${m.name}`}
                     >
-                      <MoreVertical className="w-5 h-5 text-text-secondary dark:text-text-secondary-dark" />
+                      <MoreVertical className="w-5 h-5 text-[var(--text-secondary)]" />
                     </button>
                   )}
                 </div>
@@ -528,21 +528,21 @@ export default function MemberTable({
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="border-t border-card-border/50 dark:border-card-border-dark/50 bg-bg/50 dark:bg-bg-dark/50 rounded-b-2xl overflow-hidden"
+                      className="border-t border-[var(--border-subtle)] bg-[var(--bg-muted)] rounded-b-2xl overflow-hidden"
                     >
                       <div className="p-3 grid grid-cols-2 gap-2">
                         <button
                           onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
-                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark shadow-sm"
+                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] border border-[var(--border-default)] shadow-sm"
                         >
-                          <Check className="w-4 h-4 text-blue-accent" />
+                          <Check className="w-4 h-4 text-[var(--sapphire-500)]" />
                           <span className="text-[11px] mt-0.5">{m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}</span>
                         </button>
                         <button
                           onClick={() => { onRenew(m.seat); setOpenActions(null); }}
-                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark shadow-sm"
+                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] border border-[var(--border-default)] shadow-sm"
                         >
-                          <RefreshCw className="w-4 h-4 text-blue-accent" />
+                          <RefreshCw className="w-4 h-4 text-[var(--sapphire-500)]" />
                           <span className="text-[11px] mt-0.5">Renew</span>
                         </button>
                         {m.phone && (
@@ -578,13 +578,13 @@ export default function MemberTable({
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center py-16 px-4 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-2xl shadow-sm mt-4"
+          className="text-center py-16 px-4 bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] border border-[var(--border-default)] rounded-2xl shadow-sm mt-4"
         >
-          <div className="w-16 h-16 bg-bg dark:bg-bg-dark rounded-full flex items-center justify-center mx-auto mb-4 border border-card-border dark:border-card-border-dark">
+          <div className="w-16 h-16 bg-[var(--bg-overlay)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--border-default)]">
             <Search className="w-6 h-6 text-text-tertiary" />
           </div>
-          <h3 className="text-lg font-bold text-text-primary dark:text-text-primary-dark mb-1">No members found</h3>
-          <p className="text-sm text-text-secondary dark:text-text-secondary-dark font-medium">Try adjusting your filters or search query.</p>
+          <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">No members found</h3>
+          <p className="text-sm text-[var(--text-secondary)] font-medium">Try adjusting your filters or search query.</p>
         </motion.div>
       )}
     </div>

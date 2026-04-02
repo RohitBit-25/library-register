@@ -89,13 +89,13 @@ export default function RequestsPage() {
             </span>
           )}
         </h1>
-        <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5">
+        <p className="text-[var(--text-sm)] text-[var(--text-secondary)] mt-0.5">
           Review and verify payments for seat requests
         </p>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl p-1 shadow-sm mb-5 overflow-x-auto">
+      <div className="flex items-center gap-[var(--space-1)] bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] rounded-[var(--radius-xl)] p-[var(--space-1)] shadow-[var(--shadow-sm)] mb-5 overflow-x-auto">
         {tabs.map(tab => (
           <button
             key={tab.key}
@@ -104,7 +104,7 @@ export default function RequestsPage() {
               'flex items-center gap-[var(--space-1\.5)] px-[var(--space-3)] py-[var(--space-2)] rounded-[var(--radius-lg)] text-[var(--text-xs)] font-[var(--weight-bold)] transition-all duration-200 cursor-pointer whitespace-nowrap',
               filter === tab.key
                 ? 'bg-[var(--indigo-500)] text-[var(--text-inverse)] shadow-[var(--shadow-sm)]'
-                : 'text-[var(--text-secondary)] dark:text-[var(--text-secondary-dark)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary-dark)] hover:bg-[var(--bg-elevated)] dark:hover:bg-[var(--bg-elevated-dark)]',
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]',
             )}
           >
             {tab.icon}
@@ -115,7 +115,7 @@ export default function RequestsPage() {
                   'px-[var(--space-1\.5)] py-[var(--space-0\.5)] rounded-[var(--radius-full)] text-[10px] font-[var(--weight-bold)]',
                   filter === tab.key
                     ? 'bg-white/20 text-[var(--text-inverse)]'
-                    : 'bg-[var(--bg)] dark:bg-[var(--bg-dark)] text-[var(--text-tertiary)] dark:text-[var(--text-tertiary-dark)]'
+                    : 'bg-[var(--bg-muted)] text-[var(--text-tertiary)]'
                 )}
               >
                 {tab.count}
@@ -129,10 +129,10 @@ export default function RequestsPage() {
       <div className="space-y-[var(--space-3)] pb-20">
         {filtered.length === 0 ? (
           <Card variant="base" className="p-[var(--space-10)] text-center">
-            <div className="w-14 h-14 rounded-[var(--radius-2xl)] bg-[var(--bg)] dark:bg-[var(--bg-dark)] flex items-center justify-center mx-auto mb-[var(--space-3)]">
-              <Inbox className="w-7 h-7 text-[var(--text-tertiary)] dark:text-[var(--text-tertiary-dark)]" />
+            <div className="w-14 h-14 rounded-[var(--radius-2xl)] bg-[var(--bg-overlay)] flex items-center justify-center mx-auto mb-[var(--space-3)]">
+              <Inbox className="w-7 h-7 text-[var(--text-tertiary)]" />
             </div>
-            <p className="text-[var(--text-sm)] font-[var(--weight-medium)] text-[var(--text-secondary)] dark:text-[var(--text-secondary-dark)]">
+            <p className="text-[var(--text-sm)] font-[var(--weight-medium)] text-[var(--text-secondary)]">
               {filter === 'pending'
                 ? 'No pending requests'
                 : filter === 'approved'
@@ -141,7 +141,7 @@ export default function RequestsPage() {
                     ? 'No rejected requests'
                     : 'No requests yet'}
             </p>
-            <p className="text-[var(--text-xs)] text-[var(--text-tertiary)] dark:text-[var(--text-tertiary-dark)] mt-[var(--space-1)]">
+            <p className="text-[var(--text-xs)] text-[var(--text-tertiary)] mt-[var(--space-1)]">
               When users request seats, they&apos;ll appear here
             </p>
           </Card>
@@ -173,17 +173,17 @@ export default function RequestsPage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-[var(--space-2)]">
-                        <span className="text-[var(--text-sm)] font-[var(--weight-bold)] text-[var(--text-primary)] dark:text-[var(--text-primary-dark)]">
+                        <span className="text-[var(--text-sm)] font-[var(--weight-bold)] text-[var(--text-primary)]">
                           {req.userName}
                         </span>
                         <Badge variant={req.status === 'approved' ? 'active' : (req.status === 'rejected' ? 'expired' : 'pending')} />
                       </div>
                       <div className="flex items-center gap-[var(--space-3)] mt-0.5">
-                        <span className="text-[11px] text-[var(--text-tertiary)] dark:text-[var(--text-tertiary-dark)] flex items-center gap-[var(--space-1)]">
+                        <span className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-[var(--space-1)]">
                           <Armchair className="w-3 h-3" />
                           Seat #{req.seat}
                         </span>
-                        <span className="text-[11px] text-[var(--text-tertiary)] dark:text-[var(--text-tertiary-dark)] flex items-center gap-[var(--space-1)]">
+                        <span className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-[var(--space-1)]">
                           <Phone className="w-3 h-3" />
                           {req.userPhone}
                         </span>
@@ -191,7 +191,7 @@ export default function RequestsPage() {
                     </div>
                   </div>
 
-                  <span className="text-[10px] font-[var(--font-mono)] text-[var(--text-tertiary)] dark:text-[var(--text-tertiary-dark)] whitespace-nowrap">
+                  <span className="text-[10px] font-[var(--font-mono)] text-[var(--text-tertiary)] whitespace-nowrap">
                     {fmtDate(req.createdAt.toString().split('T')[0])}
                   </span>
                 </div>
@@ -199,10 +199,10 @@ export default function RequestsPage() {
                 {/* Payment Proof Highlight */}
                 {req.transactionId && (
                   <div className="mb-[var(--space-3)] px-[var(--space-3)] py-[var(--space-2)] rounded-[var(--radius-lg)] bg-[var(--emerald-500)]/10 border border-[var(--emerald-500)]/20">
-                    <span className="text-[var(--text-xs)] font-[var(--weight-bold)] text-[var(--emerald-600)] dark:text-[var(--emerald-400)] block mb-0.5">
+                    <span className="text-[var(--text-xs)] font-[var(--weight-bold)] text-[var(--emerald-400)] block mb-0.5">
                       💳 Payment Verification Required
                     </span>
-                    <span className="text-[11px] font-[var(--font-mono)] text-[var(--text-secondary)] dark:text-[var(--text-secondary-dark)] break-all">
+                    <span className="text-[11px] font-[var(--font-mono)] text-[var(--text-secondary)] break-all">
                       UPI Ref: {req.transactionId}
                     </span>
                   </div>
@@ -210,8 +210,8 @@ export default function RequestsPage() {
 
                 {/* Message */}
                 {req.message && (
-                  <div className="mb-[var(--space-3)] px-[var(--space-3)] py-[var(--space-2)] rounded-[var(--radius-lg)] bg-[var(--bg)]/50 dark:bg-[var(--bg-dark)]/50 border border-[var(--border-subtle)]">
-                    <span className="text-[var(--text-xs)] text-[var(--text-secondary)] dark:text-[var(--text-secondary-dark)] flex items-start gap-[var(--space-1\.5)]">
+                  <div className="mb-[var(--space-3)] px-[var(--space-3)] py-[var(--space-2)] rounded-[var(--radius-lg)] bg-[var(--bg-muted)] border border-[var(--border-subtle)]">
+                    <span className="text-[var(--text-xs)] text-[var(--text-secondary)] flex items-start gap-[var(--space-1\.5)]">
                       <MessageSquare className="w-3 h-3 mt-0.5 shrink-0 text-[var(--text-tertiary)]" />
                       {req.message}
                     </span>

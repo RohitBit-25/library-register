@@ -64,9 +64,9 @@ export default function BottomNav() {
             className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm animate-fade-in lg:hidden"
             onClick={() => setMoreOpen(false)}
           />
-          <div className="fixed bottom-[104px] left-4 right-4 z-50 rounded-3xl glass noise-pattern shadow-floating dark:shadow-floating-dark animate-slide-up lg:hidden overflow-hidden">
-            <div className="flex justify-center pt-3 pb-1 relative z-10">
-              <div className="w-10 h-1 rounded-full bg-text-tertiary/30" />
+          <div className="fixed bottom-[104px] left-4 right-4 z-50 rounded-[var(--radius-3xl)] bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] shadow-[var(--shadow-floating)] animate-slide-up lg:hidden overflow-hidden">
+            <div className="flex justify-center pt-[var(--space-3)] pb-[var(--space-1)] relative z-10">
+              <div className="w-10 h-1 rounded-[var(--radius-full)] bg-[var(--text-tertiary)]/30" />
             </div>
             <nav className="px-4 pb-4 space-y-1 relative z-10">
               {isAdmin ? (
@@ -76,10 +76,10 @@ export default function BottomNav() {
                     href="/requests"
                     onClick={() => setMoreOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                      'flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] rounded-[var(--radius-lg)] text-[var(--text-sm)] font-[var(--weight-medium)] transition-colors cursor-pointer',
                       pathname === '/requests'
-                        ? 'bg-blue-accent/10 text-blue-accent'
-                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                        ? 'bg-[var(--indigo-500)]/10 text-[var(--indigo-500)]'
+                        : 'text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)]',
                     )}
                   >
                     <Inbox className="w-5 h-5" />
@@ -89,10 +89,10 @@ export default function BottomNav() {
                     href="/attendance"
                     onClick={() => setMoreOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                      'flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] rounded-[var(--radius-lg)] text-[var(--text-sm)] font-[var(--weight-medium)] transition-colors cursor-pointer',
                       pathname === '/attendance'
-                        ? 'bg-blue-accent/10 text-blue-accent'
-                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                        ? 'bg-[var(--indigo-500)]/10 text-[var(--indigo-500)]'
+                        : 'text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)]',
                     )}
                   >
                     <CalendarCheck className="w-5 h-5" />
@@ -102,10 +102,10 @@ export default function BottomNav() {
                     href="/expiry"
                     onClick={() => setMoreOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                      'flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] rounded-[var(--radius-lg)] text-[var(--text-sm)] font-[var(--weight-medium)] transition-colors cursor-pointer',
                       pathname === '/expiry'
-                        ? 'bg-blue-accent/10 text-blue-accent'
-                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                        ? 'bg-[var(--indigo-500)]/10 text-[var(--indigo-500)]'
+                        : 'text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)]',
                     )}
                   >
                     <CalendarSearch className="w-5 h-5" />
@@ -115,10 +115,10 @@ export default function BottomNav() {
                     href="/kiosk"
                     onClick={() => setMoreOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                      'flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] rounded-[var(--radius-lg)] text-[var(--text-sm)] font-[var(--weight-medium)] transition-colors cursor-pointer',
                       pathname === '/kiosk'
-                        ? 'bg-blue-accent/10 text-blue-accent'
-                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                        ? 'bg-[var(--indigo-500)]/10 text-[var(--indigo-500)]'
+                        : 'text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)]',
                     )}
                   >
                     <MonitorSmartphone className="w-5 h-5" />
@@ -129,10 +129,10 @@ export default function BottomNav() {
                     href="/setup"
                     onClick={() => setMoreOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer',
+                      'flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] rounded-[var(--radius-lg)] text-[var(--text-sm)] font-[var(--weight-medium)] transition-colors cursor-pointer',
                       pathname === '/setup'
-                        ? 'bg-blue-accent/10 text-blue-accent'
-                        : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                        ? 'bg-[var(--indigo-500)]/10 text-[var(--indigo-500)]'
+                        : 'text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)]',
                     )}
                   >
                     <Settings className="w-5 h-5" />
@@ -147,16 +147,16 @@ export default function BottomNav() {
               {/* Common: Dark mode + Logout */}
               <button
                 onClick={toggle}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
+                className="w-full flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] rounded-[var(--radius-lg)] text-[var(--text-sm)] font-[var(--weight-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] transition-colors cursor-pointer"
               >
                 {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 <span>{isDark ? 'Light mode' : 'Dark mode'}</span>
                 <div className={cn(
-                  'ml-auto w-9 h-5 rounded-full transition-colors relative',
-                  isDark ? 'bg-blue-accent' : 'bg-text-tertiary/30',
+                  'ml-auto w-9 h-5 rounded-[var(--radius-full)] transition-colors relative',
+                  isDark ? 'bg-[var(--indigo-500)]' : 'bg-[var(--text-tertiary)]/30',
                 )}>
                   <div className={cn(
-                    'absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform',
+                    'absolute top-0.5 w-4 h-4 rounded-[var(--radius-full)] bg-white shadow-[var(--shadow-sm)] transition-transform',
                     isDark ? 'translate-x-4' : 'translate-x-0.5',
                   )} />
                 </div>
@@ -164,7 +164,7 @@ export default function BottomNav() {
 
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-text-secondary dark:text-text-secondary-dark hover:text-expired-border hover:bg-expired-fill/30 dark:hover:bg-expired-fill-dark/30 transition-colors cursor-pointer"
+                className="w-full flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] rounded-[var(--radius-lg)] text-[var(--text-sm)] font-[var(--weight-medium)] text-[var(--text-secondary)] hover:text-[var(--ruby-500)] hover:bg-[var(--ruby-500)]/10 transition-colors cursor-pointer"
               >
                 <LogOut className="w-5 h-5" />
                 <span>Logout</span>
@@ -172,7 +172,7 @@ export default function BottomNav() {
 
               <button
                 onClick={() => setMoreOpen(false)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-text-tertiary dark:text-text-tertiary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-[var(--space-2)] px-[var(--space-4)] py-[var(--space-2\.5)] rounded-[var(--radius-lg)] text-[var(--text-sm)] font-[var(--weight-medium)] text-[var(--text-tertiary)] hover:bg-[var(--bg-elevated)] transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
                 Close
@@ -183,8 +183,8 @@ export default function BottomNav() {
       )}
 
       {/* Tab bar */}
-      <nav className="lg:hidden fixed bottom-6 left-6 right-6 z-30 h-16 rounded-[2rem] flex items-center justify-around glass noise-pattern shadow-floating dark:shadow-floating-dark">
-        <div className="absolute inset-0 z-0 bg-gradient-to-t from-white/10 to-transparent dark:from-white/5 rounded-[2rem] pointer-events-none" />
+      <nav className="lg:hidden fixed bottom-6 left-6 right-6 z-30 h-16 rounded-[var(--radius-3xl)] flex items-center justify-around bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] shadow-[var(--shadow-floating)]">
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-[var(--bg-overlay)] to-transparent rounded-[var(--radius-3xl)] pointer-events-none" />
         {tabs.map(tab => {
           const isActive = pathname === tab.href;
           const Icon = tab.icon;
@@ -193,28 +193,28 @@ export default function BottomNav() {
               key={tab.href}
               href={tab.href}
               className={cn(
-                'relative z-10 flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 cursor-pointer transition-spring',
+                'relative z-10 flex flex-col items-center justify-center gap-[var(--space-1)] min-w-[64px] py-[var(--space-1)] cursor-pointer transition-all',
                 isActive
-                  ? 'text-blue-accent'
-                  : 'text-text-tertiary dark:text-text-tertiary-dark',
+                  ? 'text-[var(--indigo-500)]'
+                  : 'text-[var(--text-tertiary)]',
               )}
             >
               <Icon className="w-5 h-5" />
-              <span className="text-[10px] font-medium">{tab.label}</span>
+              <span className="text-[10px] font-[var(--weight-medium)]">{tab.label}</span>
             </Link>
           );
         })}
         <button
           onClick={() => setMoreOpen(prev => !prev)}
           className={cn(
-            'relative z-10 flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 cursor-pointer transition-spring',
+            'relative z-10 flex flex-col items-center justify-center gap-[var(--space-1)] min-w-[64px] py-[var(--space-1)] cursor-pointer transition-all',
             isMoreActive
-              ? 'text-blue-accent'
-              : 'text-text-tertiary dark:text-text-tertiary-dark',
+              ? 'text-[var(--indigo-500)]'
+              : 'text-[var(--text-tertiary)]',
           )}
         >
           <MoreHorizontal className="w-5 h-5" />
-          <span className="text-[10px] font-medium">More</span>
+          <span className="text-[10px] font-[var(--weight-medium)]">More</span>
         </button>
       </nav>
     </>

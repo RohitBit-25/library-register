@@ -78,10 +78,10 @@ export default function MembersPage() {
     <div>
       <div className="mb-5 flex items-start justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-text-primary dark:text-text-primary-dark">
+          <h1 className="text-[var(--text-xl)] sm:text-[var(--text-2xl)] font-[var(--weight-extrabold)] text-[var(--text-primary)] tracking-tight">
             All Members
           </h1>
-          <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5">
+          <p className="text-[var(--text-sm)] text-[var(--text-secondary)] mt-0.5">
             {members.filter(m => !m.vacant).length} members · {members.filter(m => m.vacant).length} vacant
           </p>
         </div>
