@@ -75,13 +75,13 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
 
           {/* Quick stats — pill badges */}
           <div className="flex flex-wrap items-center gap-2">
-            <StatPill label="Occupied" value={stats.occupied} accent="bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark border-active-border/30" />
-            <StatPill label="Vacant" value={stats.vacant} accent="bg-vacant-fill dark:bg-vacant-fill-dark text-text-secondary dark:text-text-secondary-dark border-vacant-border dark:border-vacant-border-dark" />
+            <StatPill label="Occupied" value={stats.occupied} accent="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30" />
+            <StatPill label="Vacant" value={stats.vacant} accent="bg-surface dark:bg-surface-dark text-text-secondary dark:text-text-secondary-dark border-card-border dark:border-card-border-dark border-dashed" />
             {stats.due > 0 && (
-              <StatPill label="Due" value={stats.due} accent="bg-due-fill dark:bg-due-fill-dark text-due-text dark:text-due-text-dark border-due-border/30" />
+              <StatPill label="Due" value={stats.due} accent="bg-saffron-500/10 text-saffron-800 dark:text-saffron-300 border-saffron-500/30" />
             )}
             {(stats.expiring + stats.expired) > 0 && (
-              <StatPill label="Expiry" value={stats.expiring + stats.expired} accent="bg-expired-fill dark:bg-expired-fill-dark text-expired-text dark:text-expired-text-dark border-expired-border/30" />
+              <StatPill label="Expiry" value={stats.expiring + stats.expired} accent="bg-ruby-500/10 text-ruby-700 dark:text-ruby-300 border-ruby-500/30" />
             )}
           </div>
         </div>
@@ -89,11 +89,11 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
         {/* Legend — enhanced */}
         <div className="flex flex-wrap items-center gap-3 mb-4 text-[11px] font-bold text-text-secondary dark:text-text-secondary-dark uppercase tracking-wider">
           {[
-            { cls: 'bg-active-fill dark:bg-active-fill-dark ring-active-border', label: 'Active' },
-            { cls: 'bg-expiring-fill dark:bg-expiring-fill-dark ring-expiring-border', label: 'Expiring' },
-            { cls: 'bg-expired-fill dark:bg-expired-fill-dark ring-expired-border', label: 'Expired' },
-            { cls: 'bg-due-fill dark:bg-due-fill-dark ring-due-border', label: 'Fee Due' },
-            { cls: 'bg-vacant-fill dark:bg-vacant-fill-dark ring-vacant-border dark:ring-vacant-border-dark', label: 'Vacant' },
+            { cls: 'bg-emerald-500/20 ring-emerald-500/50', label: 'Active' },
+            { cls: 'bg-amber-500/20 ring-amber-500/50', label: 'Expiring' },
+            { cls: 'bg-ruby-500/20 ring-ruby-500/50', label: 'Expired' },
+            { cls: 'bg-saffron-500/20 ring-saffron-500/50', label: 'Fee Due' },
+            { cls: 'bg-surface dark:bg-surface-dark ring-card-border/50 border-dashed', label: 'Vacant' },
           ].map(l => (
             <span key={l.label} className="flex items-center gap-1.5">
               <span className={cn('w-3 h-3 rounded-md ring-2', l.cls)} />

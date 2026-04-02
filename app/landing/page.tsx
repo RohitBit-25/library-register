@@ -53,7 +53,7 @@ export default function LandingPage() {
 
       {/* Content */}
       <div className="relative z-10 max-w-lg mx-auto px-[var(--space-5)] py-[var(--space-10)] min-h-[100dvh] flex flex-col justify-center items-center">
-        
+
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -76,7 +76,7 @@ export default function LandingPage() {
               श्री गणगौर Library
             </h1>
             <p className="font-[var(--font-display)] text-[var(--text-lg)] text-[var(--text-secondary)] italic font-[var(--weight-medium)] tracking-[var(--tracking-wide)]">
-              ✦ Udaipur's Premier Study Space ✦
+              ✦ Rajsamand's Premier Study Space ✦
             </p>
           </div>
 
@@ -109,7 +109,7 @@ export default function LandingPage() {
                   <Shield className="w-4 h-4 text-[var(--text-tertiary)]" />
                   Admin Access
                 </h3>
-                
+
                 <div className="space-y-[var(--space-4)]">
                   <Input
                     label="Admin PIN"
@@ -127,7 +127,7 @@ export default function LandingPage() {
                     error={pinError ? "Incorrect PIN" : undefined}
                     className="font-[var(--font-mono)] tracking-[0.2em]"
                   />
-                  
+
                   <Button
                     variant="ghost"
                     className="w-full justify-between"

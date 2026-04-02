@@ -16,11 +16,11 @@ interface SeatTileProps {
 }
 
 const tileClass: Record<SeatStatus, string> = {
-  active: 'tile-active backdrop-blur-md bg-white/40 dark:bg-black/30',
-  expiring: 'tile-expiring backdrop-blur-md bg-white/40 dark:bg-black/30',
-  expired: 'tile-expired backdrop-blur-md bg-red-50/50 dark:bg-red-900/10',
-  due: 'tile-due backdrop-blur-md bg-yellow-50/50 dark:bg-yellow-900/10',
-  vacant: 'tile-vacant backdrop-blur-md bg-white/20 dark:bg-black/20',
+  active: 'bg-emerald-500/10 dark:bg-emerald-500/20 ring-1 ring-emerald-500/50 hover:shadow-[0_0_15px_rgba(34,195,106,0.3)] text-emerald-700 dark:text-emerald-300',
+  expiring: 'bg-amber-500/10 dark:bg-amber-500/20 ring-1 ring-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] text-amber-700 dark:text-amber-300',
+  expired: 'bg-ruby-500/10 dark:bg-ruby-500/20 ring-1 ring-ruby-500/50 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] text-ruby-700 dark:text-ruby-300',
+  due: 'bg-saffron-500/10 dark:bg-saffron-500/20 ring-1 ring-saffron-500/50 hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] text-saffron-800 dark:text-saffron-300',
+  vacant: 'bg-surface dark:bg-surface-dark border-card-border dark:border-card-border-dark border-dashed opacity-80 hover:opacity-100 text-text-secondary dark:text-text-secondary-dark',
 };
 
 function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps) {
@@ -71,12 +71,9 @@ function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps
             mass: 0.5,
           }}
           className={cn(
-            'relative flex flex-col items-center justify-between rounded-[14px] border border-white/20 dark:border-white/5 transition-colors cursor-pointer z-10',
+            'relative flex flex-col items-center justify-between rounded-[10px] transition-all cursor-pointer z-10 w-full h-full border border-transparent',
             tileClass[status],
-            compact ? 'w-[50px] h-[50px] p-1' : 'w-[74px] h-[74px] p-2',
-            status === 'active' ? 'shadow-ambient dark:shadow-ambient-dark hover:shadow-glow-purple hover:border-blue-accent/40' : 
-            status === 'expiring' ? 'shadow-ambient dark:shadow-ambient-dark hover:shadow-glow-orange hover:border-orange-500/40' : 
-            status === 'vacant' ? 'hover:shadow-floating dark:hover:shadow-floating-dark' : 'shadow-ambient dark:shadow-ambient-dark',
+            compact ? 'p-1' : 'p-1.5',
           )}
           aria-label={ariaLabel}
         >
