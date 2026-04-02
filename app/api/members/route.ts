@@ -6,7 +6,15 @@ import { verifyAdmin } from '@/lib/auth-server';
 export async function GET() {
   try {
     await dbConnect();
-    const members = await Member.find({}).sort({ seat: 1 }).lean();
+    let members = await Member.find({}).sort({ seat: 1 }).lean();
+    
+    // Auto-seed if empty
+    if (members.length === 0) {
+      const { getDefaultMembers } = await import('@/lib/defaultData');
+      const seeds = getDefaultMembers();
+      await Member.insertMany(seeds);
+      members = await Member.find({}).sort({ seat: 1 }).lean();
+    }
     
     const isAdmin = await verifyAdmin();
 
