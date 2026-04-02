@@ -12,7 +12,7 @@ export async function encrypt(payload: Record<string, unknown>) {
     .sign(key);
 }
 
-export async function decrypt(input: string): Promise<any> {
+export async function decrypt(input: string): Promise<Record<string, unknown>> {
     const { payload } = await jwtVerify(input, key, {
       algorithms: ['HS256'],
     });

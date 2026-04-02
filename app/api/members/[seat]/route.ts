@@ -2,8 +2,14 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
 
+import { verifyAdmin } from '@/lib/auth';
+
 export async function PATCH(request: Request, { params }: { params: Promise<{ seat: string }> }) {
   try {
+    const isAdmin = await verifyAdmin();
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { seat } = await params;
     const seatId = parseInt(seat, 10);
     const body = await request.json();
@@ -33,6 +39,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ seat: string }> }) {
   try {
+    const isAdmin = await verifyAdmin();
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { seat } = await params;
     const seatId = parseInt(seat, 10);
     

@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
 import { verifyAdmin } from '@/lib/auth';
-import type { Member as MemberType } from '@/lib/types';
 
 export async function GET() {
   try {
@@ -15,8 +14,8 @@ export async function GET() {
       return NextResponse.json(members);
     } else {
       // Redact sensitive data
-      const redacted = members.map((m: any) => ({
-        _id: m._id,
+      const redacted = members.map((m) => ({
+        _id: (m as { _id?: string })._id,
         seat: m.seat,
         vacant: m.vacant,
         name: m.vacant ? '' : 'Occupied',
