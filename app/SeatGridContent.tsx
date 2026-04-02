@@ -10,8 +10,12 @@ import AddMemberSheet from '@/components/seat/AddMemberSheet';
 import GlobalSearch from '@/components/ui/GlobalSearch';
 import { type Duration, type Member } from '@/lib/types';
 
+import { useAuth } from '@/contexts/AuthContext';
+import { Lock } from 'lucide-react';
+
 export default function SeatGridContent() {
   const { members, update, vacate, renew, add } = useMembers();
+  const { isAdmin } = useAuth();
   const { addToast } = useToast();
   const searchParams = useSearchParams();
 
@@ -60,7 +64,6 @@ export default function SeatGridContent() {
     const success = await add(seat, data);
     if (success) {
       addToast('success', `Seat ${seat} allotted to ${data.name}`);
-      // AddMemberSheet auto-closes on success if we passed it in onSubmit, but we handle state closing in parent
       setSelectedSeat(null);
     } else {
       addToast('error', 'Failed to allot seat. It might be occupied.');
@@ -90,7 +93,19 @@ export default function SeatGridContent() {
         onSeatClick={seat => setSelectedSeat(seat)}
       />
 
-      {selectedMember?.vacant ? (
+      {!isAdmin ? (
+        <SeatDetailPanel
+          member={selectedMember}
+          open={selectedSeat !== null}
+          onClose={() => setSelectedSeat(null)}
+          onMarkPaid={() => {}}
+          onMarkDue={() => {}}
+          onRenew={() => {}}
+          onRemove={() => {}}
+          isMobile={isMobile}
+          readonly={true}
+        />
+      ) : selectedMember?.vacant ? (
         <AddMemberSheet
           open={selectedSeat !== null}
           onClose={() => setSelectedSeat(null)}
