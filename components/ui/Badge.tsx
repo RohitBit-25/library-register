@@ -1,59 +1,42 @@
-'use client';
-
-import { type SeatStatus } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { motion, HTMLMotionProps } from 'framer-motion';
 
-interface BadgeProps {
-  status: SeatStatus;
-  size?: 'sm' | 'md';
+export type BadgeVariant = 'active' | 'expired' | 'expiring' | 'vacant' | 'pending' | 'morning' | 'evening' | 'full';
+
+export interface BadgeProps extends HTMLMotionProps<"span"> {
+  variant: BadgeVariant;
+  className?: string;
+  children?: React.ReactNode;
 }
 
-const config: Record<SeatStatus, { label: string; dot: string; bg: string; text: string }> = {
-  active: {
-    label: 'Active',
-    dot: 'bg-active-border',
-    bg: 'bg-active-fill dark:bg-active-fill-dark',
-    text: 'text-active-text dark:text-active-text-dark',
-  },
-  expiring: {
-    label: 'Expiring',
-    dot: 'bg-expiring-border',
-    bg: 'bg-expiring-fill dark:bg-expiring-fill-dark',
-    text: 'text-expiring-text dark:text-expiring-text-dark',
-  },
-  expired: {
-    label: 'Expired',
-    dot: 'bg-expired-border',
-    bg: 'bg-expired-fill dark:bg-expired-fill-dark',
-    text: 'text-expired-text dark:text-expired-text-dark',
-  },
-  due: {
-    label: 'Fee Due',
-    dot: 'bg-due-border',
-    bg: 'bg-due-fill dark:bg-due-fill-dark',
-    text: 'text-due-text dark:text-due-text-dark',
-  },
-  vacant: {
-    label: 'Vacant',
-    dot: 'bg-vacant-border dark:bg-vacant-border-dark',
-    bg: 'bg-vacant-fill dark:bg-vacant-fill-dark',
-    text: 'text-vacant-text dark:text-vacant-text-dark',
-  },
+const badgeConfig: Record<BadgeVariant, { bg: string; border: string; text: string; defaultLabel: string }> = {
+  active:   { bg: 'bg-[rgba(34,195,106,0.20)]',        border: 'border-[rgba(34,195,106,0.3)]',       text: 'text-[var(--emerald-400)]',  defaultLabel: 'Active' },
+  expired:  { bg: 'bg-[rgba(232,66,66,0.20)]',         border: 'border-[rgba(232,66,66,0.3)]',        text: 'text-[var(--ruby-400)]',     defaultLabel: 'Expired' },
+  expiring: { bg: 'bg-[rgba(232,162,10,0.20)]',        border: 'border-[rgba(232,162,10,0.3)]',       text: 'text-[var(--amber-400)]',    defaultLabel: 'Expiring Soon' },
+  vacant:   { bg: 'bg-[rgba(61,158,255,0.20)]',        border: 'border-[rgba(61,158,255,0.3)]',       text: 'text-[var(--sapphire-400)]', defaultLabel: 'Vacant' },
+  pending:  { bg: 'bg-[rgba(123,95,245,0.20)]',        border: 'border-[rgba(123,95,245,0.3)]',       text: 'text-[var(--indigo-400)]',   defaultLabel: 'Pending' },
+  morning:  { bg: 'bg-[rgba(232,162,10,0.15)]',        border: 'border-[rgba(232,162,10,0.25)]',      text: 'text-[var(--amber-400)]',    defaultLabel: '🌅 Morning' },
+  evening:  { bg: 'bg-[rgba(123,95,245,0.15)]',        border: 'border-[rgba(123,95,245,0.25)]',      text: 'text-[var(--indigo-400)]',   defaultLabel: '🌙 Evening' },
+  full:     { bg: 'bg-[rgba(232,133,58,0.15)]',        border: 'border-[rgba(232,133,58,0.25)]',      text: 'text-[var(--saffron-400)]',  defaultLabel: '☀️ Full Day' },
 };
 
-export default function Badge({ status, size = 'md' }: BadgeProps) {
-  const c = config[status];
+export function Badge({ variant, className, children, ...props }: BadgeProps) {
+  const c = badgeConfig[variant];
   return (
-    <span
+    <motion.span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full font-medium',
-        c.bg,
-        c.text,
-        size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs',
+        "inline-flex items-center gap-[var(--space-1)] px-[10px] py-[4px]",
+        "rounded-[var(--radius-full)] border-[1.5px]",
+        "font-[var(--font-body)] text-[var(--text-xs)] font-[var(--weight-semibold)]",
+        "tracking-[var(--tracking-widest)] uppercase",
+        c.bg, c.border, c.text,
+        className
       )}
+      {...props}
     >
-      <span className={cn('rounded-full', c.dot, size === 'sm' ? 'h-1.5 w-1.5' : 'h-2 w-2')} />
-      {c.label}
-    </span>
+      {children || c.defaultLabel}
+    </motion.span>
   );
 }
+
+export default Badge;
