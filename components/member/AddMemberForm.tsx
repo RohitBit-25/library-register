@@ -5,7 +5,7 @@ import { type Member } from '@/lib/types';
 import { calcExpiry, todayISO, cn } from '@/lib/utils';
 import { Zap, Upload, CheckCircle2, User, Phone as PhoneIcon } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FloatingLabelInput } from '@/components/ui/FloatingLabelInput';
@@ -37,7 +37,7 @@ interface AddMemberFormProps {
 }
 
 export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormProps) {
-  const { register, handleSubmit, control, watch, setValue, formState: { errors, isValid }, reset } = useForm<AddMemberFormValues>({
+  const { register, handleSubmit, control, setValue, formState: { errors, isValid }, reset } = useForm<AddMemberFormValues>({
     resolver: zodResolver(addMemberSchema),
     defaultValues: {
       seat: vacantSeats[0] || -1,
@@ -54,11 +54,11 @@ export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormPr
     mode: 'onChange',
   });
 
-  const watchSeat = watch('seat');
-  const watchJoinDate = watch('joinDate');
-  const watchDuration = watch('duration');
-  const watchPaymentMode = watch('paymentMode');
-  const watchDocumentStatus = watch('documentStatus');
+  const watchSeat = useWatch({ control, name: 'seat' });
+  const watchJoinDate = useWatch({ control, name: 'joinDate' });
+  const watchDuration = useWatch({ control, name: 'duration' });
+  const watchPaymentMode = useWatch({ control, name: 'paymentMode' });
+  const watchDocumentStatus = useWatch({ control, name: 'documentStatus' });
 
   // Auto-select first vacant if available when vacantSeats changes
   useEffect(() => {

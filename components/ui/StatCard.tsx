@@ -20,8 +20,8 @@ function AnimatedCounter({ value, duration = 800 }: { value: number; duration?: 
     const start = prevValueRef.current;
     const end = value;
     if (start === end) {
-      setDisplayValue(end);
-      return;
+      const timer = setTimeout(() => setDisplayValue(end), 0);
+      return () => clearTimeout(timer);
     }
     const startTime = Date.now();
     const step = () => {

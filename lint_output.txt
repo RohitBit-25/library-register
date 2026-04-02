@@ -1,0 +1,111 @@
+
+> library-register@0.1.0 lint
+> eslint
+
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/app/expiry/page.tsx
+  13:3  warning  'ShieldCheck' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/components/member/AddMemberForm.tsx
+  57:21  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/components/member/AddMemberForm.tsx:57:21
+  55 |   });
+  56 |
+> 57 |   const watchSeat = watch('seat');
+     |                     ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  58 |   const watchJoinDate = watch('joinDate');
+  59 |   const watchDuration = watch('duration');
+  60 |   const watchPaymentMode = watch('paymentMode');  react-hooks/incompatible-library
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/components/setup/QRCodePanel.tsx
+  35:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/components/setup/QRCodePanel.tsx:35:7
+  33 |     const stored = localStorage.getItem(FORM_STORAGE_KEY);
+  34 |     if (stored) {
+> 35 |       setUrl(stored);
+     |       ^^^^^^ Avoid calling setState() directly within an effect
+  36 |       setIsLinked(isValidFormUrl(stored));
+  37 |     } else if (initialUrl) {
+  38 |       setUrl(initialUrl);  react-hooks/set-state-in-effect
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/components/ui/DataTable.tsx
+  28:3   warning  'searchKey' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  34:17  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/components/ui/DataTable.tsx:34:17
+  32 |   const [globalFilter, setGlobalFilter] = React.useState('');
+  33 |
+> 34 |   const table = useReactTable({
+     |                 ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+  35 |     data,
+  36 |     columns,
+  37 |     getCoreRowModel: getCoreRowModel(),  react-hooks/incompatible-library
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/components/ui/Portal.tsx
+  14:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/components/ui/Portal.tsx:14:5
+  12 |
+  13 |   useEffect(() => {
+> 14 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  15 |     return () => setMounted(false);
+  16 |   }, []);
+  17 |  react-hooks/set-state-in-effect
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/components/ui/StatCard.tsx
+  23:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/components/ui/StatCard.tsx:23:7
+  21 |     const end = value;
+  22 |     if (start === end) {
+> 23 |       setDisplayValue(end);
+     |       ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  24 |       return;
+  25 |     }
+  26 |     const startTime = Date.now();  react-hooks/set-state-in-effect
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/hooks/useAuth.tsx
+  37:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rohitsingh/Desktop/Gangaur-library /library-register/hooks/useAuth.tsx:37:5
+  35 |   useEffect(() => {
+  36 |     const stored = getStoredRole();
+> 37 |     setRole(stored);
+     |     ^^^^^^^ Avoid calling setState() directly within an effect
+  38 |     setHydrated(true);
+  39 |   }, []);
+  40 |  react-hooks/set-state-in-effect
+
+✖ 8 problems (4 errors, 4 warnings)
+

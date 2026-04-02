@@ -28,14 +28,18 @@ const AuthContext = createContext<AuthContextValue>({
 // ─── Provider ───────────────────────────────────────────────────
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [role, setRole] = useState<UserRole | null>(null);
-  const [hydrated, setHydrated] = useState(false);
+  const [state, setState] = useState<{ role: UserRole | null; hydrated: boolean }>({
+    role: null,
+    hydrated: false,
+  });
 
   // Hydrate from localStorage on mount
   useEffect(() => {
     const stored = getStoredRole();
-    setRole(stored);
-    setHydrated(true);
+    const timer = setTimeout(() => {
+      setState({ role: stored, hydrated: true });
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const loginAsAdmin = useCallback(async (pin: string): Promise<boolean> => {
@@ -51,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Server auth is a bonus layer; client-side still works
       }
 
-      setRole('admin');
+      setState(prev => ({ ...prev, role: 'admin' }));
       setStoredRole('admin');
       return true;
     }
@@ -59,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loginAsUser = useCallback(() => {
-    setRole('user');
+    setState(prev => ({ ...prev, role: 'user' }));
     setStoredRole('user');
   }, []);
 
@@ -67,22 +71,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Clear server-side JWT cookie
     fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
 
-    setRole(null);
+    setState(prev => ({ ...prev, role: null }));
     setStoredRole(null);
   }, []);
 
   const value = useMemo(() => ({
-    role,
-    isAdmin: role === 'admin',
-    isUser: role === 'user',
-    isAuthenticated: role !== null,
+    role: state.role,
+    isAdmin: state.role === 'admin',
+    isUser: state.role === 'user',
+    isAuthenticated: state.role !== null,
     loginAsAdmin,
     loginAsUser,
     logout,
-  }), [role, loginAsAdmin, loginAsUser, logout]);
+  }), [state.role, loginAsAdmin, loginAsUser, logout]);
 
   // Don't render until hydrated to avoid flash
-  if (!hydrated) {
+  if (!state.hydrated) {
     return null;
   }
 
