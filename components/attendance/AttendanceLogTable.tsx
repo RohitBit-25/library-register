@@ -27,7 +27,7 @@ export function AttendanceLogTable({ data }: { data: AttendanceLog[] }) {
           const dateObj = parseISO(val);
           return (
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-accent/10 flex items-center justify-center text-blue-accent">
+              <div className="w-8 h-8 rounded-full bg-[var(--sapphire-500)]/10 flex items-center justify-center text-[var(--sapphire-500)]">
                 <CalendarDays className="w-4 h-4" />
               </div>
               <div className="flex flex-col">
