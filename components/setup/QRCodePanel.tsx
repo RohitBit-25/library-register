@@ -31,15 +31,18 @@ export default function QRCodePanel({
   // Load from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(FORM_STORAGE_KEY);
-    if (stored) {
-      setUrl(stored);
-      setIsLinked(isValidFormUrl(stored));
-    } else if (initialUrl) {
-      setUrl(initialUrl);
-      setIsLinked(isValidFormUrl(initialUrl));
-    } else {
-      setIsLinked(isValidFormUrl(DEFAULT_FORM_URL));
-    }
+    const timer = setTimeout(() => {
+      if (stored) {
+        setUrl(stored);
+        setIsLinked(isValidFormUrl(stored));
+      } else if (initialUrl) {
+        setUrl(initialUrl);
+        setIsLinked(isValidFormUrl(initialUrl));
+      } else {
+        setIsLinked(isValidFormUrl(DEFAULT_FORM_URL));
+      }
+    }, 0);
+    return () => clearTimeout(timer);
   }, [initialUrl]);
 
   // Save to localStorage on URL change

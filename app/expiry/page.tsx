@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
 import { daysUntilExpiry, fmtDate, firstName, cn } from '@/lib/utils';
@@ -10,7 +10,6 @@ import {
   AlertTriangle,
   Clock,
   CalendarDays,
-  ShieldCheck,
   RefreshCw,
   Flame,
   MessageCircle,
@@ -73,11 +72,11 @@ export default function ExpiryPage() {
   const totalWeek = occupiedMembers.filter(m => m.daysLeft > 0 && m.daysLeft <= 7).length;
   const totalMonth = occupiedMembers.filter(m => m.daysLeft > 7 && m.daysLeft <= 30).length;
 
-  const handleRenew = (seat: number) => {
+  const handleRenew = useCallback((seat: number) => {
     router.push(`/seat-grid?seat=${seat}`);
-  };
+  }, [router]);
 
-  const handleWhatsApp = (m: ExpiryMember) => {
+  const handleWhatsApp = useCallback((m: ExpiryMember) => {
     if (!m.phone) {
       addToast('error', 'No phone number available');
       return;
@@ -93,9 +92,9 @@ export default function ExpiryPage() {
       `Hello ${firstName(m.name)}, your library membership (Seat #${m.seat}) ${expiryText}. Please visit us to renew. Thank you! — Gangaur Library`
     );
     window.open(`https://wa.me/91${m.phone.replace(/\D/g, '')}?text=${message}`, '_blank');
-  };
+  }, [addToast]);
 
-  const columns: ColumnDef<ExpiryMember>[] = [
+  const columns = useMemo<ColumnDef<ExpiryMember>[]>(() => [
     {
       accessorKey: 'seat',
       header: 'Seat',
@@ -215,7 +214,7 @@ export default function ExpiryPage() {
         </div>
       ),
     },
-  ];
+  ], [handleRenew, handleWhatsApp]);
 
   return (
     <div className="animate-fade-in max-w-6xl pb-24">
