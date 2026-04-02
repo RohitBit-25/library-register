@@ -27,6 +27,7 @@ interface SeatDetailPanelProps {
   onRenew: (seat: number, joinDate: string, duration: Duration) => void;
   onRemove: (seat: number) => void;
   isMobile: boolean;
+  readonly?: boolean;
 }
 
 // ── Status gradient banner config ──────────────────
@@ -55,6 +56,7 @@ export default function SeatDetailPanel({
   onRenew,
   onRemove,
   isMobile,
+  readonly = false,
 }: SeatDetailPanelProps) {
   const [renewMode, setRenewMode] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
