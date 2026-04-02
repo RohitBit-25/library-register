@@ -1,87 +1,71 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
+import useSWR from 'swr';
 import { type Member } from '@/lib/types';
 import { getDefaultMembers } from '@/lib/defaultData';
 import { calcExpiry } from '@/lib/utils';
 
-const STORAGE_KEY = 'library-members';
-
-function loadMembers(): Member[] {
-  if (typeof window === 'undefined') return getDefaultMembers();
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length === 95) return parsed;
-    }
-  } catch { /* ignore parse errors */ }
-  const defaults = getDefaultMembers();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
-  return defaults;
-}
-
-function saveMembers(members: Member[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(members));
-  // Dispatch event for cross-tab sync
-  window.dispatchEvent(new Event('members-updated'));
-}
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export function useMembers() {
-  const [members, setMembers] = useState<Member[]>(getDefaultMembers);
+  const { data: members = [], mutate, isLoading } = useSWR<Member[]>('/api/members', fetcher, {
+    fallbackData: getDefaultMembers(), // Optimistic initial data
+    revalidateOnFocus: true,
+  });
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    setTimeout(() => setMembers(loadMembers()), 0);
-  }, []);
+  const update = useCallback(async (seat: number, patch: Partial<Member>) => {
+    // Optimistic update
+    mutate((current) => {
+      if (!current) return current;
+      return current.map(m => m.seat === seat ? { ...m, ...patch } : m);
+    }, false);
 
-  // Listen for cross-tab / cross-component updates
-  useEffect(() => {
-    const handler = () => setMembers(loadMembers());
-    window.addEventListener('storage', handler);
-    window.addEventListener('members-updated', handler);
-    return () => {
-      window.removeEventListener('storage', handler);
-      window.removeEventListener('members-updated', handler);
-    };
-  }, []);
-
-  const update = useCallback((seat: number, patch: Partial<Member>) => {
-    setMembers(prev => {
-      const next = prev.map(m => m.seat === seat ? { ...m, ...patch } : m);
-      saveMembers(next);
-      return next;
+    await fetch(`/api/members/${seat}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
     });
-  }, []);
+    
+    mutate(); // Revalidate
+  }, [mutate]);
 
-  const vacate = useCallback((seat: number) => {
-    setMembers(prev => {
-      const next = prev.map(m =>
-        m.seat === seat
-          ? { ...m, name: '', phone: '', joinDate: '', duration: '' as const, expiry: '', fee: '' as const, shift: 'morning' as const, vacant: true, paymentMode: undefined, documentStatus: undefined, termsAccepted: undefined }
-          : m,
-      );
-      saveMembers(next);
-      return next;
-    });
-  }, []);
+  const vacate = useCallback(async (seat: number) => {
+    // Optimistic update
+    mutate((current) => {
+      if (!current) return current;
+      return current.map(m => m.seat === seat ? {
+        ...m, name: '', phone: '', joinDate: '', duration: '' as Member['duration'], expiry: '', fee: '' as Member['fee'], shift: 'morning', vacant: true, paymentMode: undefined, documentStatus: undefined, termsAccepted: undefined
+      } : m);
+    }, false);
 
-  const add = useCallback((seatNumber: number, data: Omit<Member, 'seat' | 'vacant'>): boolean => {
-    let success = false;
-    setMembers(prev => {
-      const targetIdx = prev.findIndex(m => m.seat === seatNumber && m.vacant);
-      if (targetIdx === -1) return prev;
-      success = true;
-      const next = prev.map(m =>
-        m.seat === seatNumber
-          ? { ...m, ...data, seat: seatNumber, vacant: false }
-          : m,
-      );
-      saveMembers(next);
-      return next;
+    await fetch(`/api/members/${seat}`, {
+      method: 'DELETE',
     });
-    return success;
-  }, []);
+    
+    mutate();
+  }, [mutate]);
+
+  const add = useCallback(async (seatNumber: number, data: Omit<Member, 'seat' | 'vacant'>): Promise<boolean> => {
+    // We can't immediately return true/false synchronously, but we rely on the component using await
+    const isOccupied = members.some(m => m.seat === seatNumber && !m.vacant);
+    if (isOccupied) return false;
+
+    // Optimistic update
+    mutate((current) => {
+      if (!current) return current;
+      return current.map(m => m.seat === seatNumber ? { ...m, ...data, seat: seatNumber, vacant: false } : m);
+    }, false);
+
+    const res = await fetch(`/api/members/${seatNumber}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...data, vacant: false }),
+    });
+
+    mutate();
+    return res.ok;
+  }, [members, mutate]);
 
   const renew = useCallback((seat: number, joinDate: string, duration: '1M' | '3M' | '6M' | '1Y') => {
     const expiry = calcExpiry(joinDate, duration);
@@ -93,27 +77,39 @@ export function useMembers() {
     return m ? m.seat : -1;
   }, [members]);
 
-  const bulkMarkPaid = useCallback((seats: number[]) => {
-    setMembers(prev => {
-      const next = prev.map(m =>
-        seats.includes(m.seat) ? { ...m, fee: 'paid' as const } : m,
-      );
-      saveMembers(next);
-      return next;
-    });
-  }, []);
+  const bulkMarkPaid = useCallback(async (seats: number[]) => {
+    // Optimistic
+    mutate((current) => {
+      if (!current) return current;
+      return current.map(m => seats.includes(m.seat) ? { ...m, fee: 'paid' } : m);
+    }, false);
 
-  const bulkRemove = useCallback((seats: number[]) => {
-    setMembers(prev => {
-      const next = prev.map(m =>
-        seats.includes(m.seat)
-          ? { ...m, name: '', phone: '', joinDate: '', duration: '' as const, expiry: '', fee: '' as const, shift: 'morning' as const, vacant: true, paymentMode: undefined, documentStatus: undefined, termsAccepted: undefined }
-          : m,
-      );
-      saveMembers(next);
-      return next;
-    });
-  }, []);
+    await Promise.all(seats.map(seat => 
+      fetch(`/api/members/${seat}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fee: 'paid' }),
+      })
+    ));
+    
+    mutate();
+  }, [mutate]);
 
-  return { members, update, vacate, add, renew, getNextVacantSeat, bulkMarkPaid, bulkRemove };
+  const bulkRemove = useCallback(async (seats: number[]) => {
+    // Optimistic
+    mutate((current) => {
+       if (!current) return current;
+       return current.map(m => seats.includes(m.seat) ? {
+         ...m, name: '', phone: '', joinDate: '', duration: '' as Member['duration'], expiry: '', fee: '' as Member['fee'], shift: 'morning', vacant: true, paymentMode: undefined, documentStatus: undefined, termsAccepted: undefined
+       } : m);
+    }, false);
+
+    await Promise.all(seats.map(seat => 
+      fetch(`/api/members/${seat}`, { method: 'DELETE' })
+    ));
+    
+    mutate();
+  }, [mutate]);
+
+  return { members, update, vacate, add, renew, getNextVacantSeat, bulkMarkPaid, bulkRemove, isLoading };
 }

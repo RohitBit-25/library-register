@@ -56,8 +56,8 @@ export default function SeatGridContent() {
     addToast('warning', `Seat ${seat} vacated${member ? ` — ${member.name} removed` : ''}`);
   };
 
-  const handleAddSubmit = (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => {
-    const success = add(seat, data);
+  const handleAddSubmit = async (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => {
+    const success = await add(seat, data);
     if (success) {
       addToast('success', `Seat ${seat} allotted to ${data.name}`);
       // AddMemberSheet auto-closes on success if we passed it in onSubmit, but we handle state closing in parent
