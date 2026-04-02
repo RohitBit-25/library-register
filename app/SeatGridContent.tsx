@@ -121,6 +121,11 @@ export default function SeatGridContent() {
           vacantSeats={vacantSeats}
           onSubmit={handleAddSubmit}
           isMobile={isMobile}
+          initialData={{
+            name: searchParams.get('name') || '',
+            phone: searchParams.get('phone') || '',
+            paymentMode: (searchParams.get('paymentMode') as 'upi' | 'cash') || 'upi'
+          }}
         />
       ) : (
         <SeatDetailPanel

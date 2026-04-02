@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import { type Member } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { X, Send, User, Phone, MessageSquare, Armchair } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import { X, Send, User, Phone, MessageSquare, Armchair, Receipt } from 'lucide-react';
 
 interface SeatRequestSheetProps {
   member: Member | null;
   open: boolean;
   onClose: () => void;
-  onSubmit: (seat: number, name: string, phone: string, message: string) => void;
+  onSubmit: (seat: number, name: string, phone: string, message: string, transactionId: string) => void;
 }
 
 export default function SeatRequestSheet({
@@ -21,24 +22,29 @@ export default function SeatRequestSheet({
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
+  const [transactionId, setTransactionId] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   if (!open || !member) return null;
 
+  // Placeholder UPI link without fixed amount so user can pay agreed fee
+  const upiUrl = `upi://pay?pa=library@upi&pn=Gangaur%20Library&cu=INR`;
+
   const handleSubmit = () => {
-    if (!name.trim() || !phone.trim()) return;
-    onSubmit(member.seat, name.trim(), phone.trim(), message.trim());
+    if (!name.trim() || !phone.trim() || !transactionId.trim()) return;
+    onSubmit(member.seat, name.trim(), phone.trim(), message.trim(), transactionId.trim());
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
       setName('');
       setPhone('');
       setMessage('');
+      setTransactionId('');
       onClose();
     }, 2000);
   };
 
-  const isValid = name.trim().length >= 2 && phone.trim().length >= 10;
+  const isValid = name.trim().length >= 2 && phone.trim().length >= 10 && transactionId.trim().length >= 4;
 
   return (
     <>
@@ -49,7 +55,7 @@ export default function SeatRequestSheet({
       />
 
       {/* Sheet */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl bg-surface dark:bg-surface-dark border-t border-card-border dark:border-card-border-dark shadow-2xl animate-slide-up max-h-[85vh] overflow-y-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl bg-surface dark:bg-surface-dark border-t border-card-border dark:border-card-border-dark shadow-2xl animate-slide-up max-h-[90vh] overflow-y-auto">
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 rounded-full bg-text-tertiary/30" />
@@ -65,7 +71,7 @@ export default function SeatRequestSheet({
               Request Sent!
             </h3>
             <p className="text-sm text-text-tertiary dark:text-text-tertiary-dark">
-              The admin will review your request for Seat #{member.seat}
+              The admin will verify your payment for Seat #{member.seat}
             </p>
           </div>
         ) : (
@@ -82,7 +88,7 @@ export default function SeatRequestSheet({
                     Request Seat #{member.seat}
                   </h3>
                   <p className="text-xs text-text-tertiary dark:text-text-tertiary-dark">
-                    Fill in your details to request this seat
+                    Scan via UPI and submit proof
                   </p>
                 </div>
               </div>
@@ -95,7 +101,27 @@ export default function SeatRequestSheet({
             </div>
 
             {/* Form fields */}
-            <div className="space-y-3">
+            <div className="space-y-4">
+              
+              {/* Payment Section */}
+              <div className="p-4 rounded-xl bg-blue-accent/5 border border-blue-accent/20 flex flex-col items-center">
+                <p className="text-xs font-bold text-blue-accent mb-3 text-center uppercase tracking-wide">
+                  Complete Payment
+                </p>
+                <div className="p-2 bg-white rounded-xl shadow-sm mb-3">
+                  <QRCodeSVG
+                    value={upiUrl}
+                    size={130}
+                    level="Q"
+                    className="rounded-lg"
+                  />
+                </div>
+                <p className="text-[11px] text-text-secondary dark:text-text-secondary-dark text-center leading-relaxed">
+                  Scan to pay using Google Pay, PhonePe, or Paytm.<br/>
+                  Enter your Transaction ID below after paying.
+                </p>
+              </div>
+
               {/* Name */}
               <div>
                 <label className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark mb-1.5 flex items-center gap-1.5">
@@ -128,6 +154,21 @@ export default function SeatRequestSheet({
                 />
               </div>
 
+              {/* Transaction ID */}
+              <div>
+                <label className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark mb-1.5 flex items-center gap-1.5">
+                  <Receipt className="w-3.5 h-3.5" />
+                  Transaction / UTR ID *
+                </label>
+                <input
+                  type="text"
+                  value={transactionId}
+                  onChange={e => setTransactionId(e.target.value)}
+                  placeholder="e.g. 3084XXXXXXXX"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border-emerald-500/30 text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all font-mono"
+                />
+              </div>
+
               {/* Message */}
               <div>
                 <label className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark mb-1.5 flex items-center gap-1.5">
@@ -137,7 +178,7 @@ export default function SeatRequestSheet({
                 <textarea
                   value={message}
                   onChange={e => setMessage(e.target.value)}
-                  placeholder="Any specific shift preference or request…"
+                  placeholder="Shift preference (e.g. Morning, 3 Months)"
                   rows={2}
                   className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-blue-accent/40 transition-all resize-none"
                 />
@@ -148,18 +189,18 @@ export default function SeatRequestSheet({
                 onClick={handleSubmit}
                 disabled={!isValid}
                 className={cn(
-                  'cursor-pointer w-full py-3 rounded-xl text-sm font-bold text-white transition-all shadow-md flex items-center justify-center gap-2',
+                  'cursor-pointer w-full py-3 rounded-xl text-sm font-bold text-white transition-all shadow-md flex items-center justify-center gap-2 mt-2',
                   isValid
                     ? 'gradient-blue hover:shadow-lg hover:shadow-blue-accent/25 active:scale-[0.98]'
                     : 'bg-text-tertiary/30 cursor-not-allowed shadow-none'
                 )}
               >
                 <Send className="w-4 h-4" />
-                Send Request
+                Submit Verification
               </button>
 
               <p className="text-center text-[10px] text-text-tertiary dark:text-text-tertiary-dark">
-                The library admin will contact you after reviewing your request
+                Admin will allot your seat once payment is verified
               </p>
             </div>
           </div>

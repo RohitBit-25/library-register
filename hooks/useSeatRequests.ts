@@ -66,6 +66,19 @@ export function useSeatRequests() {
     }
   }, [isAdmin, mutate]);
 
+  const deleteRequest = useCallback(async (id: string | number) => {
+    if (!isAdmin) return;
+
+    try {
+      await fetch(`/api/requests?id=${id}`, {
+        method: 'DELETE',
+      });
+      mutate();
+    } catch (error) {
+      console.error('Failed to delete request:', error);
+    }
+  }, [isAdmin, mutate]);
+
   const pendingCount = requests.filter(r => r.status === 'pending').length;
 
   return {
@@ -74,6 +87,7 @@ export function useSeatRequests() {
     addRequest,
     approveRequest,
     rejectRequest,
+    deleteRequest,
     isLoading: isAdmin && !requests.length
   };
 }

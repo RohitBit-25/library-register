@@ -87,3 +87,35 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: 'Failed to update request' }, { status: 500 });
   }
 }
+
+/**
+ * DELETE: Delete a request permanently.
+ * Admin only.
+ */
+export async function DELETE(request: Request) {
+  const isAdmin = await verifyAdmin();
+  if (!isAdmin) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Missing request ID' }, { status: 400 });
+    }
+
+    await dbConnect();
+    const deleted = await SeatRequest.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return NextResponse.json({ error: 'Request not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Request DELETE error:', error);
+    return NextResponse.json({ error: 'Failed to delete request' }, { status: 500 });
+  }
+}

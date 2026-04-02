@@ -34,20 +34,21 @@ type AddMemberFormValues = z.infer<typeof addMemberSchema>;
 interface AddMemberFormProps {
   vacantSeats: number[];
   onSubmit: (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => void;
+  initialData?: { name: string; phone: string; paymentMode: 'upi' | 'cash' };
 }
 
-export default function AddMemberForm({ vacantSeats, onSubmit }: AddMemberFormProps) {
+export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: AddMemberFormProps) {
   const { register, handleSubmit, control, setValue, formState: { errors, isValid }, reset } = useForm<AddMemberFormValues>({
     resolver: zodResolver(addMemberSchema),
     defaultValues: {
       seat: vacantSeats[0] || -1,
-      name: '',
-      phone: '',
+      name: initialData?.name || '',
+      phone: initialData?.phone || '',
       shift: 'morning',
       joinDate: todayISO(),
       duration: '3M',
       fee: 'paid',
-      paymentMode: 'upi',
+      paymentMode: initialData?.paymentMode || 'upi',
       documentStatus: '',
       termsAccepted: { rules: false, damage: false, nonRefundable: false },
     },

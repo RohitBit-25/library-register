@@ -14,6 +14,7 @@ interface AddMemberSheetProps {
   vacantSeats: number[];
   onSubmit: (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => void;
   isMobile: boolean;
+  initialData?: { name: string; phone: string; paymentMode: 'upi' | 'cash' };
 }
 
 export default function AddMemberSheet({ 
@@ -22,7 +23,8 @@ export default function AddMemberSheet({
   seat, 
   vacantSeats, 
   onSubmit, 
-  isMobile 
+  isMobile,
+  initialData
 }: AddMemberSheetProps) {
   
   // Reorder vacant seats so the tapped seat is pre-selected first
@@ -35,6 +37,7 @@ export default function AddMemberSheet({
     <div className="pb-8">
       <AddMemberForm 
         vacantSeats={orderedVacant}
+        initialData={initialData}
         onSubmit={(s, data) => {
           onSubmit(s, data);
           onClose(); // Auto-close on successful submit

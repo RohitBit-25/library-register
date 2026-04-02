@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { useSeatRequests } from '@/hooks/useSeatRequests';
 import { useToast } from '@/hooks/useToast';
 import { fmtDate, cn } from '@/lib/utils';
+import { type SeatRequest } from '@/lib/types';
 import {
   Inbox,
   Check,
@@ -42,19 +43,25 @@ export default function RequestsPage() {
     return { pending, approved, rejected, all: requests.length };
   }, [requests]);
 
-  const handleApprove = (id: string, seat: number) => {
-    approveRequest(id);
-    addToast('success', `Request for Seat #${seat} approved`);
-    // Navigate to add member page for this seat
-    router.push(`/add?seat=${seat}`);
+  const handleApprove = (req: SeatRequest) => {
+    approveRequest(req.id);
+    addToast('success', `Request for Seat #${req.seat} approved`);
+    // Navigate to add member page for this seat and pass metadata to auto-fill
+    const query = new URLSearchParams({
+      seat: String(req.seat),
+      name: req.userName,
+      phone: req.userPhone,
+      paymentMode: 'upi'
+    });
+    router.push(`/add?${query.toString()}`);
   };
 
-  const handleReject = (id: string, seat: number) => {
+  const handleReject = (id: string | number, seat: number) => {
     rejectRequest(id);
     addToast('warning', `Request for Seat #${seat} rejected`);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string | number) => {
     deleteRequest(id);
     addToast('warning', 'Request deleted');
   };
@@ -80,7 +87,7 @@ export default function RequestsPage() {
           )}
         </h1>
         <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5">
-          Review and manage seat requests from users
+          Review and verify payments for seat requests
         </p>
       </div>
 
@@ -190,9 +197,21 @@ export default function RequestsPage() {
                   </div>
 
                   <span className="text-[10px] font-mono text-text-tertiary dark:text-text-tertiary-dark whitespace-nowrap">
-                    {fmtDate(req.createdAt.split('T')[0])}
+                    {fmtDate(req.createdAt.toString().split('T')[0])}
                   </span>
                 </div>
+
+                {/* Payment Proof Highlight */}
+                {req.transactionId && (
+                  <div className="mb-3 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 block mb-0.5">
+                      💳 Payment Verification Required
+                    </span>
+                    <span className="text-[11px] font-mono text-text-secondary dark:text-text-secondary-dark break-all">
+                      UPI Ref: {req.transactionId}
+                    </span>
+                  </div>
+                )}
 
                 {/* Message */}
                 {req.message && (
@@ -209,11 +228,11 @@ export default function RequestsPage() {
                   {req.status === 'pending' && (
                     <>
                       <button
-                        onClick={() => handleApprove(req.id, req.seat)}
+                        onClick={() => handleApprove(req)}
                         className="cursor-pointer flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-white gradient-green hover:shadow-lg hover:shadow-green-accent/20 active:scale-[0.98] transition-all shadow-md"
                       >
                         <Check className="w-3.5 h-3.5" />
-                        Approve & Add
+                        Verify & Add
                       </button>
                       <button
                         onClick={() => handleReject(req.id, req.seat)}

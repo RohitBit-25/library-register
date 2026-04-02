@@ -66,9 +66,9 @@ export default function BrowsePage() {
     }
   }, [members, requests, addToast]);
 
-  const handleSubmitRequest = (seat: number, name: string, phone: string, message: string) => {
-    addRequest(seat, name, phone, message);
-    addToast('success', `Seat #${seat} request submitted!`);
+  const handleSubmitRequest = (seat: number, name: string, phone: string, message: string, transactionId: string) => {
+    addRequest({ seat, userName: name, userPhone: phone, message, transactionId });
+    addToast('success', `Seat #${seat} and payment details submitted!`);
   };
 
   const handleLogout = () => {
