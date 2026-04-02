@@ -67,12 +67,12 @@ export default function QRCodePanel() {
 
       <div className="flex flex-col md:flex-row">
         {/* Left side: Info & Actions */}
-        <div className="flex-1 p-6 md:p-8 flex flex-col justify-center border-b md:border-b-0 md:border-r border-card-border dark:border-card-border-dark">
+        <div className="flex-1 p-6 md:p-8 flex flex-col justify-center border-b md:border-b-0 md:border-r border-[var(--border-subtle)]">
           <h2 className="text-xl font-extrabold text-[var(--text-primary)] mb-2 flex items-center gap-2">
             <QrCode className="w-5 h-5 text-[var(--saffron-500)]" />
             Library Portal QR Code
           </h2>
-          <p className="text-sm text-text-secondary dark:text-text-secondary-dark mb-6">
+          <p className="text-sm text-[var(--text-secondary)] mb-6">
             Visitors scan this QR code to access your library app. They can view available seats, request a booking, and notify you instantly in the Requests dashboard. Allotments and tracking are handled entirely in the system.
           </p>
 
@@ -92,7 +92,7 @@ export default function QRCodePanel() {
               {/* Copy Link */}
               <button
                 onClick={handleCopyLink}
-                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl font-bold text-sm text-text-primary dark:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors"
+                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl font-bold text-sm text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors cursor-pointer"
               >
                 {copied ? <Check className="w-4 h-4 text-active-border" /> : <Copy className="w-4 h-4" />}
                 {copied ? 'Copied!' : 'Copy Link'}
@@ -113,10 +113,10 @@ export default function QRCodePanel() {
         </div>
 
         {/* Right side: QR Display */}
-        <div className="p-8 flex flex-col items-center justify-center bg-bg/30 dark:bg-bg-dark/30">
+        <div className="p-8 flex flex-col items-center justify-center bg-[var(--bg-base)]/30">
           <div 
             ref={qrRef}
-            className="p-4 bg-[var(--bg-elevated)] rounded-2xl shadow-[var(--shadow-lg)] border border-[var(--border-subtle)] relative qr-container"
+            className="p-4 bg-[var(--bg-elevated)] rounded-2xl shadow-[var(--shadow-lg)] border border-[var(--border-subtle)] relative jaali-pattern"
           >
             {url ? (
               <QRCodeCanvas 
@@ -139,7 +139,7 @@ export default function QRCodePanel() {
             <Download className="w-4 h-4" />
             Download PNG
           </button>
-          <p className="text-[10px] text-text-tertiary dark:text-text-tertiary-dark mt-3 text-center max-w-[200px]">
+          <p className="text-[10px] text-[var(--text-tertiary)] mt-3 text-center max-w-[200px]">
             Print and place at the front desk. Users scan to request a seat.
           </p>
         </div>
