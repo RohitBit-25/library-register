@@ -55,7 +55,7 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
         {/* Controls bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           {/* Shift toggle — pill style */}
-          <div className="flex items-center gap-1 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl p-1 shadow-sm">
+          <div className="flex items-center gap-1 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-1 shadow-sm">
             {shifts.map(s => (
               <button
                 key={s.value}
@@ -76,7 +76,7 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
           {/* Quick stats — pill badges */}
           <div className="flex flex-wrap items-center gap-2">
             <StatPill label="Occupied" value={stats.occupied} accent="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30" />
-            <StatPill label="Vacant" value={stats.vacant} accent="bg-surface dark:bg-surface-dark text-text-secondary dark:text-text-secondary-dark border-card-border dark:border-card-border-dark border-dashed" />
+            <StatPill label="Vacant" value={stats.vacant} accent="bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-default)] border-dashed" />
             {stats.due > 0 && (
               <StatPill label="Due" value={stats.due} accent="bg-saffron-500/10 text-saffron-800 dark:text-saffron-300 border-saffron-500/30" />
             )}
@@ -87,13 +87,13 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
         </div>
 
         {/* Legend — enhanced */}
-        <div className="flex flex-wrap items-center gap-3 mb-4 text-[11px] font-bold text-text-secondary dark:text-text-secondary-dark uppercase tracking-wider">
+        <div className="flex flex-wrap items-center gap-3 mb-4 text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
           {[
             { cls: 'bg-emerald-500/20 ring-emerald-500/50', label: 'Active' },
             { cls: 'bg-amber-500/20 ring-amber-500/50', label: 'Expiring' },
             { cls: 'bg-ruby-500/20 ring-ruby-500/50', label: 'Expired' },
             { cls: 'bg-saffron-500/20 ring-saffron-500/50', label: 'Fee Due' },
-            { cls: 'bg-surface dark:bg-surface-dark ring-card-border/50 border-dashed', label: 'Vacant' },
+            { cls: 'bg-[var(--bg-surface)] ring-[var(--border-default)] border-dashed', label: 'Vacant' },
           ].map(l => (
             <span key={l.label} className="flex items-center gap-1.5">
               <span className={cn('w-3 h-3 rounded-md ring-2', l.cls)} />
@@ -106,10 +106,10 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
         <div className="card-base rounded-[2.5rem] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] overflow-hidden mb-8">
           <div className="flex items-center gap-2 px-6 pt-5 pb-3 border-b border-[var(--border-subtle)]">
             <Grid3X3 className="w-4 h-4 text-[var(--saffron-500)]" />
-            <h3 className="text-sm font-black text-text-primary dark:text-text-primary-dark">
+            <h3 className="text-sm font-black text-[var(--text-primary)]">
               {shiftFilter === 'all' ? 'Floorplan Map' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift Mapping`}
             </h3>
-            <span className="text-xs font-mono font-bold text-text-tertiary ml-auto">
+            <span className="text-xs font-mono font-bold text-[var(--text-tertiary)] ml-auto">
               {(shiftFilter === 'all' ? members : filtered).length} seats shown
             </span>
           </div>
