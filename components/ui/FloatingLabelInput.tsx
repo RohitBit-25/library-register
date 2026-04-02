@@ -31,8 +31,8 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
             'peer w-full rounded-xl border bg-[var(--bg-muted)] px-4 pt-6 pb-2 text-base font-medium text-[var(--text-primary)] placeholder-transparent shadow-sm outline-none transition-all duration-300 backdrop-blur-md',
             !!icon && 'pl-11',
             error 
-              ? 'border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-500/10' 
-              : 'border-[var(--border-default)] hover:border-[var(--border-strong)] focus:border-[var(--sapphire-500)]/50 focus:bg-[var(--bg-muted)] focus:ring-4 focus:ring-[var(--sapphire-500)]/10',
+              ? 'border-[var(--ruby-500)] focus:border-[var(--ruby-400)] focus:ring-4 focus:ring-[var(--ruby-glow)]' 
+              : 'border-[var(--border-default)] hover:border-[var(--border-strong)] focus:border-[var(--border-glow)] focus:bg-[var(--bg-elevated)] focus:ring-4 focus:ring-[rgba(232,133,58,0.15)]',
             className
           )}
           onFocus={(e) => {
@@ -52,7 +52,7 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
             'pointer-events-none absolute left-4 text-[var(--text-tertiary)] transition-all duration-300 transform font-medium select-none z-10',
             !!icon && 'left-11',
             active
-              ? 'top-2 text-[11px] font-bold text-[var(--sapphire-500)]'
+              ? 'top-2 text-[11px] font-bold text-[var(--saffron-400)]'
               : 'top-1/2 -translate-y-1/2 text-sm'
           )}
         >
@@ -62,7 +62,7 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
         {error && (
           <motion.span 
             initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
-            className="absolute -bottom-5 left-1 text-[11px] font-bold text-red-500 tracking-wide"
+            className="absolute -bottom-5 left-1 text-[11px] font-bold text-[var(--ruby-400)] tracking-wide"
           >
             {error}
           </motion.span>
