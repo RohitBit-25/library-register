@@ -127,7 +127,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <h3 className="text-sm font-black text-text-primary dark:text-text-primary-dark uppercase tracking-wide">
             Seat Allotment
           </h3>
-          <span className="flex items-center gap-1.5 rounded-lg bg-blue-accent/10 px-3 py-1.5 text-xs font-bold text-blue-accent hover:bg-blue-accent/20 transition-colors">
+          <span className="flex items-center gap-1.5 rounded-lg bg-[var(--sapphire-500)]/10 px-3 py-1.5 text-xs font-bold text-[var(--sapphire-500)] hover:bg-[var(--sapphire-500)]/20 transition-colors">
             <Zap className="w-3.5 h-3.5" />
             {vacantSeats.length} Available
           </span>
@@ -136,7 +136,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <FieldGroup label="Seat Number" required error={errors.seat?.message}>
           <select
             {...register('seat', { valueAsNumber: true })}
-            className="w-full cursor-pointer rounded-xl border border-card-border dark:border-card-border-dark px-4 py-3.5 text-sm font-mono font-bold bg-surface/50 dark:bg-surface-dark/50 text-text-primary dark:text-text-primary-dark focus:outline-none focus:ring-4 focus:ring-blue-accent/10 focus:border-blue-accent/50 backdrop-blur-md transition-all duration-300"
+            className="w-full cursor-pointer rounded-xl border border-card-border dark:border-card-border-dark px-4 py-3.5 text-sm font-mono font-bold bg-surface/50 dark:bg-surface-dark/50 text-text-primary dark:text-text-primary-dark focus:outline-none focus:ring-4 focus:ring-[var(--saffron-500)]/10 focus:border-[var(--saffron-500)]/50 backdrop-blur-md transition-all duration-300"
           >
             {vacantSeats.length === 0 ? (
               <option value="-1">No seats available</option>
@@ -238,15 +238,15 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
                 <div className="flex flex-col items-center gap-2">
                   <CheckCircle2 className="w-10 h-10 text-green-500 shrink-0 drop-shadow-sm" />
                   <span className="text-sm font-bold text-text-primary dark:text-text-primary-dark">{watchDocumentStatus}</span>
-                  <span className="text-xs font-semibold text-text-secondary dark:text-text-secondary-dark group-hover:text-blue-accent transition-colors">Click to replace file</span>
+                  <span className="text-xs font-semibold text-text-secondary dark:text-text-secondary-dark group-hover:text-[var(--saffron-500)] transition-colors">Click to replace file</span>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-3 text-text-secondary dark:text-text-secondary-dark group-hover:text-blue-accent transition-colors">
+                <div className="flex flex-col items-center gap-3 text-text-secondary dark:text-text-secondary-dark group-hover:text-[var(--saffron-500)] transition-colors">
                   <div className="bg-bg dark:bg-bg-dark p-3 rounded-full shadow-sm border border-card-border dark:border-card-border-dark transition-transform group-hover:scale-110 duration-200">
                     <Upload className="w-5 h-5 text-current" />
                   </div>
                   <div>
-                    <span className="text-[13px] font-bold block text-blue-accent drop-shadow-sm">Add file</span>
+                    <span className="text-[13px] font-bold block text-[var(--saffron-500)] drop-shadow-sm">Add file</span>
                     <span className="text-[11px] font-medium opacity-80 mt-1 block tracking-wide">Upload 1 supported file. Max 100 MB.</span>
                   </div>
                 </div>
@@ -307,10 +307,10 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <input 
             type="checkbox" 
             {...register('termsAccepted.rules')}
-            className="mt-1 w-5 h-5 rounded border-2 border-card-border text-blue-accent focus:ring-blue-accent accent-blue-accent cursor-pointer transition-transform group-hover:scale-105" 
+            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-500)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
           />
           <span className={cn(
-            "text-[13px] font-medium leading-relaxed group-hover:text-blue-accent transition-colors pt-0.5",
+            "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-500)] transition-colors pt-0.5",
             errors.termsAccepted?.rules ? "text-red-500 font-bold" : "text-text-primary dark:text-text-primary-dark"
           )}>
             I agree to follow all rules and regulations of the library.
@@ -321,10 +321,10 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <input 
             type="checkbox" 
             {...register('termsAccepted.damage')}
-            className="mt-1 w-5 h-5 rounded border-2 border-card-border text-blue-accent focus:ring-blue-accent accent-blue-accent cursor-pointer transition-transform group-hover:scale-105" 
+            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-500)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
           />
           <span className={cn(
-            "text-[13px] font-medium leading-relaxed group-hover:text-blue-accent transition-colors pt-0.5",
+            "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-500)] transition-colors pt-0.5",
             errors.termsAccepted?.damage ? "text-red-500 font-bold" : "text-text-primary dark:text-text-primary-dark"
           )}>
             I will be held responsible for any damage caused by me and agree to pay for the same.
@@ -335,10 +335,10 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <input 
             type="checkbox" 
             {...register('termsAccepted.nonRefundable')}
-            className="mt-1 w-5 h-5 rounded border-2 border-card-border text-blue-accent focus:ring-blue-accent accent-blue-accent cursor-pointer transition-transform group-hover:scale-105" 
+            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-500)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
           />
           <span className={cn(
-            "text-[13px] font-medium leading-relaxed group-hover:text-blue-accent transition-colors pt-0.5",
+            "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-500)] transition-colors pt-0.5",
             errors.termsAccepted?.nonRefundable ? "text-red-500 font-bold" : "text-text-primary dark:text-text-primary-dark"
           )}>
             Membership is Non-refundable and Non-transferable.
@@ -351,7 +351,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <button
           type="submit"
           disabled={vacantSeats.length === 0 || !isValid}
-          className="flex-1 rounded-xl bg-blue-accent py-4 text-[13px] font-black tracking-widest uppercase text-white hover:bg-blue-accent/90 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:bg-card-border disabled:text-text-secondary disabled:cursor-not-allowed shadow-lg shadow-blue-accent/20 hover:shadow-xl hover:shadow-blue-accent/30 active:scale-[0.98]"
+          className="flex-1 rounded-xl bg-[var(--saffron-500)] py-4 text-[13px] font-black tracking-widest uppercase text-[#1a1a16] hover:brightness-110 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[var(--saffron-500)]/20 hover:shadow-xl hover:shadow-[var(--saffron-500)]/30 active:scale-[0.98]"
         >
           Submit Form
         </button>
@@ -416,8 +416,8 @@ function SegmentedControl({
           className={cn(
             'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer relative overflow-hidden',
             value === opt.value
-              ? 'bg-blue-accent text-white shadow-md scale-100 ring-1 ring-blue-accent/50 z-10'
-              : 'text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:bg-surface dark:hover:bg-surface-dark scale-[0.98] hover:scale-100 z-0',
+              ? 'bg-[var(--sapphire-500)] text-[#1a1a16] shadow-md scale-100 ring-1 ring-[var(--sapphire-500)]/50 z-10'
+              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100 z-0',
           )}
         >
           {opt.label}
