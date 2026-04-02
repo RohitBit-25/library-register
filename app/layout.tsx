@@ -22,8 +22,6 @@ export const viewport: Viewport = {
   themeColor: "#1a1a16",
 };
 
-import { AuthProvider } from "@/contexts/AuthContext";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,9 +36,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full">
         <ServiceWorkerRegister />
-        <AuthProvider>
-          <AppShell>{children}</AppShell>
-        </AuthProvider>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );
