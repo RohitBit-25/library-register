@@ -103,7 +103,7 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
         </div>
 
         {/* Grid */}
-        <div className="card-premium rounded-[2.5rem] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] overflow-hidden mb-8">
+        <div className="card-base rounded-[2.5rem] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] overflow-hidden mb-8">
           <div className="flex items-center gap-2 px-6 pt-5 pb-3 border-b border-[var(--border-subtle)]">
             <Grid3X3 className="w-4 h-4 text-[var(--saffron-500)]" />
             <h3 className="text-sm font-black text-text-primary dark:text-text-primary-dark">

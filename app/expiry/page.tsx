@@ -34,7 +34,7 @@ function UrgencyStat({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="card-premium rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-3 flex items-center gap-3 shadow-[var(--shadow-ambient)] min-w-0">
+    <div className="card-base rounded-xl border border-[var(--border-default)] bg-[var(--bg-glass)] p-3 flex items-center gap-3 shadow-[var(--shadow-sm)] min-w-0">
       <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', iconBg)}>
         {icon}
       </div>

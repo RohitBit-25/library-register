@@ -97,7 +97,7 @@ export default function KioskPage() {
               </p>
             </div>
 
-            <div className="card-premium p-6 sm:p-8 rounded-[2rem] bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-xl border border-card-border dark:border-card-border-dark shadow-2xl">
+            <div className="card-base p-6 sm:p-8 rounded-[2rem] bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] shadow-2xl">
               <div className="mb-8">
                 <div className="h-20 w-full bg-bg dark:bg-bg-dark border-2 border-card-border dark:border-card-border-dark rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-inner">
                   <span className={cn(
