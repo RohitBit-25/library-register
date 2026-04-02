@@ -10,7 +10,7 @@ interface AuthContextValue {
   isAdmin: boolean;
   isUser: boolean;
   isAuthenticated: boolean;
-  loginAsAdmin: (pin: string) => boolean;
+  loginAsAdmin: (pin: string) => Promise<boolean>;
   loginAsUser: () => void;
   logout: () => void;
 }
@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextValue>({
   isAdmin: false,
   isUser: false,
   isAuthenticated: false,
-  loginAsAdmin: () => false,
+  loginAsAdmin: async () => false,
   loginAsUser: () => {},
   logout: () => {},
 });
@@ -38,8 +38,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setHydrated(true);
   }, []);
 
-  const loginAsAdmin = useCallback((pin: string): boolean => {
+  const loginAsAdmin = useCallback(async (pin: string): Promise<boolean> => {
     if (verifyAdminPin(pin)) {
+      // Set the server-side JWT cookie for API route protection
+      try {
+        await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin }),
+        });
+      } catch {
+        // Server auth is a bonus layer; client-side still works
+      }
+
       setRole('admin');
       setStoredRole('admin');
       return true;
@@ -53,6 +64,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
+    // Clear server-side JWT cookie
+    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+
     setRole(null);
     setStoredRole(null);
   }, []);

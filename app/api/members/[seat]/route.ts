@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
 
-import { verifyAdmin } from '@/lib/auth';
+import { verifyAdmin } from '@/lib/auth-server';
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ seat: string }> }) {
   try {

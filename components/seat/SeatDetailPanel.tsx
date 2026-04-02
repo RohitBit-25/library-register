@@ -27,6 +27,7 @@ interface SeatDetailPanelProps {
   onRenew: (seat: number, joinDate: string, duration: Duration) => void;
   onRemove: (seat: number) => void;
   isMobile: boolean;
+  readonly?: boolean;
 }
 
 // ── Status gradient banner config ──────────────────
@@ -55,6 +56,7 @@ export default function SeatDetailPanel({
   onRenew,
   onRemove,
   isMobile,
+  readonly = false,
 }: SeatDetailPanelProps) {
   const [renewMode, setRenewMode] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
@@ -135,22 +137,34 @@ export default function SeatDetailPanel({
               <>
                 {/* Info rows */}
                 <div className="space-y-1 bg-bg dark:bg-bg-dark rounded-xl p-3">
-                  <InfoRow 
-                    icon={<Phone className="w-4 h-4 text-blue-accent" />} 
-                    label="Phone" 
-                    value={member.phone || '—'}
-                    action={member.phone ? (
-                      <button onClick={handleCopyPhone} className="text-text-tertiary hover:text-blue-accent transition-colors cursor-pointer p-1">
-                        {copied ? <span className="text-[10px] font-bold text-active-text">Copied!</span> : <Copy className="w-3.5 h-3.5" />}
-                      </button>
-                    ) : undefined}
-                  />
-                  <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Joined" value={fmtDate(member.joinDate)} />
-                  <InfoRow icon={<Clock className="w-4 h-4 text-blue-accent" />} label="Duration" value={durationLabel(member.duration as Duration)} />
-                  <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Expires" value={fmtDate(member.expiry)} />
+                  {readonly ? (
+                    <>
+                      <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Status" value="Occupied" />
+                      <div className="px-1 py-3 text-center">
+                        <p className="text-xs text-text-tertiary dark:text-text-tertiary-dark">Contact the librarian to manage this seat.</p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <InfoRow 
+                        icon={<Phone className="w-4 h-4 text-blue-accent" />} 
+                        label="Phone" 
+                        value={member.phone || '—'}
+                        action={member.phone ? (
+                          <button onClick={handleCopyPhone} className="text-text-tertiary hover:text-blue-accent transition-colors cursor-pointer p-1">
+                            {copied ? <span className="text-[10px] font-bold text-active-text">Copied!</span> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
+                        ) : undefined}
+                      />
+                      <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Joined" value={fmtDate(member.joinDate)} />
+                      <InfoRow icon={<Clock className="w-4 h-4 text-blue-accent" />} label="Duration" value={durationLabel(member.duration as Duration)} />
+                      <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Expires" value={fmtDate(member.expiry)} />
+                    </>
+                  )}
                 </div>
 
-                {/* Actions */}
+                {/* Actions — admin only */}
+                {!readonly && (
                 <div className="space-y-2">
                   <div className="grid grid-cols-2 gap-2">
                     {member.fee === 'due' ? (
@@ -199,6 +213,7 @@ export default function SeatDetailPanel({
                     Remove Member
                   </button>
                 </div>
+                )}
               </>
             )}
           </>

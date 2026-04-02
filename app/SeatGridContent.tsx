@@ -10,8 +10,7 @@ import AddMemberSheet from '@/components/seat/AddMemberSheet';
 import GlobalSearch from '@/components/ui/GlobalSearch';
 import { type Duration, type Member } from '@/lib/types';
 
-import { useAuth } from '@/contexts/AuthContext';
-import { Lock } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function SeatGridContent() {
   const { members, update, vacate, renew, add } = useMembers();
