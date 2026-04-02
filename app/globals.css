@@ -332,3 +332,58 @@ body {
   from { width: 100%; }
   to   { width: 0%; }
 }
+
+/* Form Inputs — Floating Label System */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-field {
+  background: var(--bg-muted);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 20px 16px 8px;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
+  caret-color: var(--saffron-500);
+}
+
+.input-label {
+  position: absolute;
+  top: 14px; left: 16px;
+  font-size: var(--text-base);
+  color: var(--text-tertiary);
+  pointer-events: none;
+  transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: left top;
+}
+
+.input-field:focus ~ .input-label,
+.input-field:not(:placeholder-shown) ~ .input-label {
+  transform: translateY(-9px) scale(0.75);
+  color: var(--saffron-400);
+}
+
+.input-field:focus {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 0 3px rgba(232, 133, 58, 0.15), var(--shadow-xs);
+  background: var(--bg-elevated);
+}
+
+.input-field.is-error {
+  border-color: var(--ruby-500);
+  box-shadow: 0 0 0 3px rgba(232, 66, 66, 0.15);
+}
+
+.input-helper {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-top: var(--space-1);
+  padding-left: var(--space-4);
+}
+.input-helper.is-error { color: var(--ruby-400); }
