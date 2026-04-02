@@ -7,7 +7,7 @@ import BottomSheet from '@/components/ui/BottomSheet';
 import Modal from '@/components/ui/Modal';
 import { Phone, Calendar, Clock, Sun, Moon, Zap, X, RefreshCw, Trash2, CreditCard, MessageCircle, Copy } from 'lucide-react';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FloatingLabelInput } from '@/components/ui/FloatingLabelInput';
@@ -62,7 +62,7 @@ export default function SeatDetailPanel({
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const { register, handleSubmit, control, watch, reset } = useForm<RenewFormValues>({
+  const { register, handleSubmit, control, reset } = useForm<RenewFormValues>({
     resolver: zodResolver(renewSchema),
     defaultValues: {
       renewDate: todayISO(),
@@ -70,8 +70,10 @@ export default function SeatDetailPanel({
     },
   });
 
-  const watchDate = watch('renewDate');
-  const watchDuration = watch('renewDuration');
+  const watchDate = useWatch({ control, name: 'renewDate' });
+  const watchDuration = useWatch({ control, name: 'renewDuration' });
+     
+  // We can remove watch from useForm destructure if not needed anywhere else
 
   const renewExpiry = useMemo(() => {
     try {

@@ -8,12 +8,13 @@ import SeatGrid from '@/components/seat/SeatGrid';
 import SeatDetailPanel from '@/components/seat/SeatDetailPanel';
 import AddMemberSheet from '@/components/seat/AddMemberSheet';
 import GlobalSearch from '@/components/ui/GlobalSearch';
+import { SeatSkeleton } from '@/components/ui/Skeleton';
 import { type Duration, type Member } from '@/lib/types';
 
 import { useAuth } from '@/hooks/useAuth';
 
 export default function SeatGridContent() {
-  const { members, update, vacate, renew, add } = useMembers();
+  const { members, update, vacate, renew, add, isLoading } = useMembers();
   const { isAdmin } = useAuth();
   const { addToast } = useToast();
   const searchParams = useSearchParams();
@@ -87,10 +88,18 @@ export default function SeatGridContent() {
 
       <GlobalSearch onSelect={seat => setSelectedSeat(seat)} />
 
-      <SeatGrid
-        members={members}
-        onSeatClick={seat => setSelectedSeat(seat)}
-      />
+      {isLoading ? (
+        <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 sm:gap-3">
+          {Array.from({ length: 40 }).map((_, i) => (
+            <SeatSkeleton key={i} />
+          ))}
+        </div>
+      ) : (
+        <SeatGrid
+          members={members}
+          onSeatClick={seat => setSelectedSeat(seat)}
+        />
+      )}
 
       {!isAdmin ? (
         <SeatDetailPanel
