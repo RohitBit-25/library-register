@@ -11,7 +11,8 @@ export async function POST(request: Request) {
       const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
       const session = await encrypt({ isAdmin: true, expires });
 
-      cookies().set('admin_session', session, {
+      const cookieStore = await cookies();
+      cookieStore.set('admin_session', session, {
         expires,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
     } else {
       return NextResponse.json({ success: false, error: 'Invalid PIN' }, { status: 401 });
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, error: 'Bad Request' }, { status: 400 });
   }
 }
