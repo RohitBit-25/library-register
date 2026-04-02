@@ -76,11 +76,11 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
     <aside className="hidden lg:flex flex-col w-[220px] h-[calc(100vh-2rem)] fixed left-4 top-4 rounded-3xl glass noise-pattern shadow-floating dark:shadow-floating-dark z-30 overflow-hidden">
       <div className="flex items-center gap-3 px-6 h-16 shrink-0 relative z-10">
         {/* Subtle gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-accent/5 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--saffron-500)]/5 via-transparent to-transparent pointer-events-none" />
         
         <div className="flex items-center gap-2.5 relative z-10">
-          <div className="w-9 h-9 rounded-xl gradient-blue flex items-center justify-center shadow-md shadow-blue-accent/20">
-            <BookOpen className="w-[18px] h-[18px] text-white" />
+          <div className="w-9 h-9 rounded-xl bg-[var(--saffron-500)] flex items-center justify-center shadow-md shadow-[var(--saffron-500)]/20">
+            <BookOpen className="w-[18px] h-[18px] text-[#1a1a16]" />
           </div>
           <div>
             <h1 className="text-sm font-extrabold text-text-primary dark:text-text-primary-dark leading-tight tracking-tight">
@@ -95,7 +95,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
 
       {/* Admin badge */}
       <div className="px-6 pb-4 relative z-10">
-        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-accent/10 text-blue-accent">
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]">
           <Shield className="w-3.5 h-3.5" />
           <span className="text-[11px] font-bold">Admin Mode</span>
         </div>
@@ -112,7 +112,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
               className={cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer relative',
                 isActive
-                  ? 'bg-blue-accent/10 text-blue-accent font-semibold nav-active-pill'
+                  ? 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)] font-bold'
                   : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark hover:text-text-primary dark:hover:text-text-primary-dark',
               )}
             >

@@ -60,7 +60,7 @@ export default function ConfirmDialog({
             >
               <div className="p-5">
                 <div className="flex items-start gap-4">
-                  <div className={`p-2 rounded-full flex-shrink-0 ${variant === 'danger' ? 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400' : 'bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400'}`}>
+                  <div className={`p-2 rounded-full flex-shrink-0 ${variant === 'danger' ? 'bg-red-500/20 text-red-500' : 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]'}`}>
                     <AlertCircle className="w-6 h-6" />
                   </div>
                   <div>
@@ -86,7 +86,7 @@ export default function ConfirmDialog({
                     onConfirm();
                     onClose();
                   }}
-                  className={`px-4 py-2 text-sm font-bold text-white rounded-lg transition-colors shadow-sm ${variant === 'danger' ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-accent hover:bg-blue-accent/90'}`}
+                  className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm ${variant === 'danger' ? 'text-white bg-red-500 hover:bg-red-600' : 'text-[#1a1a16] bg-[var(--sapphire-500)] hover:brightness-110'}`}
                 >
                   {confirmText}
                 </button>

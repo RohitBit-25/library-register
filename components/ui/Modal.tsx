@@ -74,7 +74,7 @@ export default function Modal({
               'cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors',
               confirmVariant === 'danger'
                 ? 'bg-expired-border text-white hover:bg-expired-border/90'
-                : 'bg-blue-accent text-white hover:bg-blue-accent/90',
+                : 'bg-[var(--sapphire-500)] text-[#1a1a16] hover:brightness-110',
             )}
           >
             {confirmLabel}
