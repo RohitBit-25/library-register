@@ -42,7 +42,7 @@ export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
     <div ref={wrapperRef} className="relative w-full max-w-lg mx-auto mb-6 z-40">
       <div className={cn(
         "relative flex items-center bg-surface dark:bg-surface-dark border rounded-2xl transition-all shadow-sm",
-        isFocused ? "border-blue-accent ring-4 ring-blue-accent/20" : "border-card-border dark:border-card-border-dark hover:border-blue-accent/50"
+        isFocused ? "border-sapphire-500 ring-4 ring-sapphire-500/20" : "border-card-border dark:border-card-border-dark hover:border-sapphire-500/50"
       )}>
         <Search className="absolute left-4 w-5 h-5 text-text-tertiary dark:text-text-tertiary-dark" />
         <input
@@ -84,7 +84,7 @@ export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
                       className="w-full text-left px-4 py-3 hover:bg-bg/80 dark:hover:bg-bg-dark/80 transition-colors flex items-center justify-between group cursor-pointer"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-accent/10 flex items-center justify-center text-blue-accent font-mono font-bold border border-blue-accent/20 group-hover:scale-105 transition-transform">
+                        <div className="w-10 h-10 rounded-xl bg-sapphire-500/10 flex items-center justify-center text-sapphire-500 font-mono font-bold border border-sapphire-500/20 group-hover:scale-105 transition-transform">
                           {String(member.seat).padStart(2, '0')}
                         </div>
                         <div>

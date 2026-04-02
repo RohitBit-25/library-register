@@ -32,11 +32,11 @@ interface SeatDetailPanelProps {
 
 // ── Status gradient banner config ──────────────────
 const statusGradient: Record<SeatStatus, string> = {
-  active: 'gradient-green',
-  expiring: 'gradient-amber',
-  expired: 'gradient-red',
-  due: 'gradient-amber',
-  vacant: 'bg-vacant-fill dark:bg-vacant-fill-dark',
+  active: 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20',
+  expiring: 'bg-amber-500 text-white shadow-lg shadow-amber-500/20',
+  expired: 'bg-ruby-500 text-white shadow-lg shadow-ruby-500/20',
+  due: 'bg-saffron-500 text-white shadow-lg shadow-saffron-500/20',
+  vacant: 'bg-surface dark:bg-surface-dark border-2 border-dashed border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark opacity-90',
 };
 
 const statusLabel: Record<SeatStatus, string> = {
@@ -141,7 +141,7 @@ export default function SeatDetailPanel({
                 <div className="space-y-1 bg-bg dark:bg-bg-dark rounded-xl p-3">
                   {readonly ? (
                     <>
-                      <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Status" value="Occupied" />
+                      <InfoRow icon={<Calendar className="w-4 h-4 text-sapphire-500" />} label="Status" value="Occupied" />
                       <div className="px-1 py-3 text-center">
                         <p className="text-xs text-text-tertiary dark:text-text-tertiary-dark">Contact the librarian to manage this seat.</p>
                       </div>
@@ -149,18 +149,18 @@ export default function SeatDetailPanel({
                   ) : (
                     <>
                       <InfoRow 
-                        icon={<Phone className="w-4 h-4 text-blue-accent" />} 
+                        icon={<Phone className="w-4 h-4 text-sapphire-500" />} 
                         label="Phone" 
                         value={member.phone || '—'}
                         action={member.phone ? (
-                          <button onClick={handleCopyPhone} className="text-text-tertiary hover:text-blue-accent transition-colors cursor-pointer p-1">
-                            {copied ? <span className="text-[10px] font-bold text-active-text">Copied!</span> : <Copy className="w-3.5 h-3.5" />}
+                          <button onClick={handleCopyPhone} className="text-text-tertiary hover:text-sapphire-500 transition-colors cursor-pointer p-1">
+                            {copied ? <span className="text-[10px] font-bold text-emerald-500">Copied!</span> : <Copy className="w-3.5 h-3.5" />}
                           </button>
                         ) : undefined}
                       />
-                      <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Joined" value={fmtDate(member.joinDate)} />
-                      <InfoRow icon={<Clock className="w-4 h-4 text-blue-accent" />} label="Duration" value={durationLabel(member.duration as Duration)} />
-                      <InfoRow icon={<Calendar className="w-4 h-4 text-blue-accent" />} label="Expires" value={fmtDate(member.expiry)} />
+                      <InfoRow icon={<Calendar className="w-4 h-4 text-sapphire-500" />} label="Joined" value={fmtDate(member.joinDate)} />
+                      <InfoRow icon={<Clock className="w-4 h-4 text-sapphire-500" />} label="Duration" value={durationLabel(member.duration as Duration)} />
+                      <InfoRow icon={<Calendar className="w-4 h-4 text-sapphire-500" />} label="Expires" value={fmtDate(member.expiry)} />
                     </>
                   )}
                 </div>
@@ -173,7 +173,7 @@ export default function SeatDetailPanel({
                       <ActionBtn 
                         onClick={() => { onMarkPaid(member.seat); onClose(); }} 
                         icon={<CreditCard className="w-4 h-4" />}
-                        className="gradient-green text-white shadow-sm"
+                        className="bg-emerald-500 text-white shadow-sm hover:shadow-md hover:bg-emerald-600 border-transparent"
                       >
                         Mark Paid
                       </ActionBtn>
@@ -181,7 +181,7 @@ export default function SeatDetailPanel({
                       <ActionBtn 
                         onClick={() => { onMarkDue(member.seat); onClose(); }} 
                         icon={<CreditCard className="w-4 h-4" />}
-                        className="bg-due-fill dark:bg-due-fill-dark text-due-text dark:text-due-text-dark border border-due-border/30"
+                        className="bg-saffron-50 dark:bg-saffron-900/10 text-saffron-800 dark:text-saffron-400 border border-saffron-500/30 hover:bg-saffron-500/10"
                       >
                         Mark Due
                       </ActionBtn>
@@ -189,7 +189,7 @@ export default function SeatDetailPanel({
                     <ActionBtn 
                       onClick={() => { reset({ renewDate: todayISO(), renewDuration: '3M' }); setRenewMode(true); }} 
                       icon={<RefreshCw className="w-4 h-4" />}
-                      className="gradient-blue text-white shadow-sm"
+                      className="bg-sapphire-500 text-white shadow-sm hover:shadow-md hover:bg-sapphire-600 border-transparent"
                     >
                       Renew
                     </ActionBtn>
@@ -209,7 +209,7 @@ export default function SeatDetailPanel({
 
                   <button
                     onClick={() => setConfirmRemove(true)}
-                    className="w-full flex items-center justify-center gap-2 text-center text-sm font-bold text-expired-text dark:text-expired-text-dark py-2.5 rounded-xl border border-expired-border/20 hover:bg-expired-fill dark:hover:bg-expired-fill-dark transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 text-center text-sm font-bold text-ruby-600 dark:text-ruby-400 py-2.5 rounded-xl border border-ruby-500/20 hover:bg-ruby-500/10 transition-colors cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4" />
                     Remove Member
@@ -231,7 +231,7 @@ export default function SeatDetailPanel({
             animate={{ opacity: 1, x: 0 }}
             className="space-y-4"
           >
-            <div className="gradient-blue rounded-xl p-4 text-white">
+            <div className="bg-sapphire-500 rounded-xl p-4 text-white shadow-lg shadow-sapphire-500/20">
               <p className="text-xs font-bold uppercase tracking-wider opacity-80">Renewal</p>
               <h4 className="text-lg font-black mt-1 tracking-tight">
                 Seat {member.seat} — {member.name.split(' ')[0]}
@@ -260,7 +260,7 @@ export default function SeatDetailPanel({
                           className={cn(
                             'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer relative overflow-hidden',
                             field.value === d
-                              ? 'bg-blue-accent text-white shadow-md scale-100 ring-1 ring-blue-accent/50 z-10'
+                              ? 'bg-sapphire-500 text-white shadow-md scale-100 ring-1 ring-sapphire-500/50 z-10'
                               : 'text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:bg-surface dark:hover:bg-surface-dark scale-[0.98] hover:scale-100 z-0',
                           )}
                         >
@@ -272,9 +272,9 @@ export default function SeatDetailPanel({
                 />
               </div>
 
-              <div className="rounded-xl bg-active-fill dark:bg-active-fill-dark border border-active-border/20 p-4 shadow-sm text-center border-dashed">
-                <span className="text-xs font-bold text-active-text dark:text-active-text-dark uppercase tracking-wider">New expiry date</span>
-                <p className="text-lg font-black text-active-text dark:text-active-text-dark mt-1 flex justify-center items-center gap-2">
+              <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 shadow-sm text-center border-dashed">
+                <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">New expiry date</span>
+                <p className="text-lg font-black text-emerald-700 dark:text-emerald-300 mt-1 flex justify-center items-center gap-2">
                   <Calendar className="w-4 h-4 opacity-70" />
                   {renewExpiry ? fmtDate(renewExpiry) : '—'}
                 </p>
@@ -291,7 +291,7 @@ export default function SeatDetailPanel({
               </button>
               <button
                 type="submit"
-                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-blue-accent text-white hover:bg-blue-accent/90 transition-all cursor-pointer shadow-lg shadow-blue-accent/20 hover:shadow-xl hover:shadow-blue-accent/30 active:scale-95"
+                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-sapphire-500 text-white hover:bg-sapphire-600 transition-all cursor-pointer shadow-lg shadow-sapphire-500/20 hover:shadow-xl hover:shadow-sapphire-500/30 active:scale-95"
               >
                 Confirm Renewal
               </button>
@@ -353,7 +353,7 @@ export default function SeatDetailPanel({
               <div className="p-5">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-base font-black text-text-primary dark:text-text-primary-dark font-mono flex items-center gap-2">
-                    <span className="w-8 h-8 gradient-blue rounded-lg flex items-center justify-center text-white text-xs font-black shadow-sm">
+                    <span className="w-8 h-8 bg-gradient-to-br from-sapphire-500 to-sapphire-600 rounded-lg flex items-center justify-center text-white text-xs font-black shadow-sm">
                       {String(member.seat).padStart(2, '0')}
                     </span>
                     Seat Details
