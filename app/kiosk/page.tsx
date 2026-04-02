@@ -60,11 +60,11 @@ export default function KioskPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg dark:bg-bg-dark flex items-center justify-center p-4 selection:bg-blue-accent/30">
+    <div className="min-h-screen bg-bg dark:bg-bg-dark flex items-center justify-center p-4 selection:bg-[var(--saffron-500)]/30">
       
       {/* Background Decor */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-blue-accent/5 blur-3xl mix-blend-multiply dark:mix-blend-overlay"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-[var(--sapphire-500)]/5 blur-3xl mix-blend-multiply dark:mix-blend-overlay"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-amber-accent/5 blur-3xl mix-blend-multiply dark:mix-blend-overlay"></div>
       </div>
 
@@ -86,7 +86,7 @@ export default function KioskPage() {
             className="w-full max-w-sm"
           >
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-accent to-purple-600 outline outline-4 outline-surface dark:outline-surface-dark shadow-xl mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--sapphire-500)] to-purple-600 outline outline-4 outline-surface dark:outline-surface-dark shadow-xl mb-6">
                 <UserCheck className="w-8 h-8 text-white" />
               </div>
               <h1 className="text-4xl font-black tracking-tight text-text-primary dark:text-text-primary-dark">
@@ -134,7 +134,7 @@ export default function KioskPage() {
                 <button
                   onClick={handleEnter}
                   disabled={!seatInput}
-                  className="aspect-square rounded-2xl gradient-blue text-white disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl hover:shadow-blue-accent/20 hover:-translate-y-1 transition-all flex items-center justify-center cursor-pointer active:scale-95"
+                  className="aspect-square rounded-2xl bg-[var(--saffron-500)] text-[#1a1a16] disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl hover:shadow-[var(--saffron-500)]/20 hover:-translate-y-1 transition-all flex items-center justify-center cursor-pointer active:scale-95"
                 >
                   <ArrowRight className="w-8 h-8" />
                 </button>
@@ -159,7 +159,7 @@ export default function KioskPage() {
                 <ArrowLeft className="w-5 h-5" />
               </button>
 
-              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-500 to-blue-accent rounded-[2rem] rotate-3 mb-6 shadow-xl flex items-center justify-center border-4 border-surface dark:border-surface-dark">
+              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-500 to-[var(--sapphire-500)] rounded-[2rem] rotate-3 mb-6 shadow-xl flex items-center justify-center border-4 border-surface dark:border-surface-dark">
                 <span className="text-4xl font-black text-white -rotate-3 font-mono">
                   {String(activeMember.seat).padStart(2, '0')}
                 </span>

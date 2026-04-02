@@ -45,7 +45,7 @@ export default function SetupPage() {
           </h3>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             {[
-              { icon: <QrCode className="w-5 h-5" />, label: 'Member Scans QR', color: 'bg-blue-accent/10 text-blue-accent' },
+              { icon: <QrCode className="w-5 h-5" />, label: 'Member Scans QR', color: 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]' },
               { icon: <FileText className="w-5 h-5" />, label: 'Fills Google Form', color: 'bg-green-accent/10 text-green-accent' },
               { icon: <Zap className="w-5 h-5" />, label: 'Script Runs Auto', color: 'bg-amber-accent/10 text-amber-accent' },
               { icon: <Mail className="w-5 h-5" />, label: 'You Get Email', color: 'bg-red-accent/10 text-red-accent' },
@@ -87,7 +87,7 @@ export default function SetupPage() {
               <div>
                 <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark">Create your Google Form</h3>
                 <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-1">
-                  Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-blue-accent hover:underline inline-flex items-center gap-1">Google Forms <ExternalLink className="w-3 h-3" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
+                  Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-[var(--sapphire-500)] hover:underline inline-flex items-center gap-1">Google Forms <ExternalLink className="w-3 h-3" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
                 </p>
                 <ol className="list-decimal list-inside mt-2 text-xs font-mono bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark p-3 rounded-lg text-text-tertiary dark:text-text-tertiary-dark">
                   <li>Full Name</li>
@@ -145,9 +145,9 @@ export default function SetupPage() {
                   In Apps Script, click the <strong>Clock icon (Triggers)</strong> on the left side. Add a new trigger:
                 </p>
                 <ul className="list-disc list-inside mt-2 text-xs font-mono bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark p-3 rounded-lg text-text-tertiary dark:text-text-tertiary-dark leading-loose">
-                  <li>Function to run: <strong className="text-blue-accent">onFormSubmit</strong></li>
-                  <li>Event source: <strong className="text-blue-accent">From spreadsheet</strong></li>
-                  <li>Event type: <strong className="text-blue-accent">On form submit</strong></li>
+                  <li>Function to run: <strong className="text-[var(--sapphire-500)]">onFormSubmit</strong></li>
+                  <li>Event source: <strong className="text-[var(--sapphire-500)]">From spreadsheet</strong></li>
+                  <li>Event type: <strong className="text-[var(--sapphire-500)]">On form submit</strong></li>
                 </ul>
                 <p className="text-xs text-text-secondary dark:text-text-secondary-dark mt-3 italic">
                   Save the trigger and grant the required permissions when prompted by Google. You are all set!
