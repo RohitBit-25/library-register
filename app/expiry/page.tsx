@@ -165,7 +165,7 @@ export default function ExpiryPage() {
                   : dLeft <= 7
                   ? 'bg-expiring-fill dark:bg-expiring-fill-dark text-expiring-text dark:text-expiring-text-dark'
                   : dLeft <= 30
-                  ? 'bg-blue-accent/10 text-blue-accent'
+                  ? 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]'
                   : 'bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark'
               )}
             >
@@ -206,7 +206,7 @@ export default function ExpiryPage() {
           <Tooltip content="Renew Membership">
             <button
               onClick={() => handleRenew(row.original.seat)}
-              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-blue-accent/10 text-blue-accent hover:bg-blue-accent/20 shadow-sm hover:scale-105 transition-all active:scale-95 border border-blue-accent/20"
+              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)] hover:bg-[var(--sapphire-500)]/20 shadow-sm hover:scale-105 transition-all active:scale-95 border border-[var(--sapphire-500)]/20"
             >
               <RefreshCw className="w-4 h-4" />
             </button>
@@ -258,7 +258,7 @@ export default function ExpiryPage() {
           count={totalMonth}
           label="This Month"
           gradient="from-[#2563EB] to-[#60A5FA]"
-          iconBg="bg-blue-accent/10 text-blue-accent"
+          iconBg="bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]"
           icon={<CalendarDays className="w-4 h-4" />}
         />
       </div>
