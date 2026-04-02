@@ -29,7 +29,7 @@ export default function SetupPage() {
     >
       <motion.div variants={itemVariants} className="mb-6">
         <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
-          <Zap className="w-6 h-6 text-blue-accent" />
+          <Zap className="w-6 h-6 text-[var(--sapphire-500)]" />
           Automation Setup
         </h1>
         <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-1">
