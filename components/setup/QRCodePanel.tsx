@@ -54,7 +54,7 @@ export default function QRCodePanel() {
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="card-premium accent-blue rounded-2xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark overflow-hidden shadow-sm"
+      className="card-base rounded-2xl border border-[var(--border-default)] bg-[var(--bg-glass)] overflow-hidden shadow-sm"
     >
       {/* Status Bar */}
       <div className="flex items-center gap-2 px-6 py-3 border-b border-[var(--border-subtle)] bg-[rgba(34,195,106,0.15)]">
