@@ -5,6 +5,7 @@ export interface ISeatRequest extends Document {
   userName: string;
   userPhone: string;
   message: string;
+  transactionId: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: Date;
 }
@@ -14,6 +15,7 @@ const SeatRequestSchema = new Schema<ISeatRequest>({
   userName: { type: String, required: true },
   userPhone: { type: String, required: true },
   message: { type: String, default: '' },
+  transactionId: { type: String, required: true },
   status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }
 }, {
   timestamps: true

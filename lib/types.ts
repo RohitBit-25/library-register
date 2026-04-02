@@ -47,6 +47,7 @@ export interface SeatRequest {
   userName: string;
   userPhone: string;
   message: string;
+  transactionId: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string | Date;
 }

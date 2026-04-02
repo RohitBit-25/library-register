@@ -33,8 +33,8 @@ export async function POST(request: Request) {
     const data = await request.json();
     
     // Minimal validation
-    if (!data.seat || !data.userName || !data.userPhone) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!data.seat || !data.userName || !data.userPhone || !data.transactionId) {
+      return NextResponse.json({ error: 'Missing required fields including transaction ID' }, { status: 400 });
     }
 
     const newRequest = await SeatRequest.create({
@@ -42,6 +42,7 @@ export async function POST(request: Request) {
       userName: data.userName,
       userPhone: data.userPhone,
       message: data.message || '',
+      transactionId: data.transactionId,
       status: 'pending'
     });
 
