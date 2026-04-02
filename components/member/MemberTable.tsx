@@ -250,7 +250,7 @@ export default function MemberTable({
           placeholder="Search name, phone, seat... (Press / to focus)"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/30 focus:border-[var(--sapphire-500)]/50 transition-all shadow-sm"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/30 focus:border-[var(--sapphire-500)]/50 transition-all shadow-sm"
         />
       </div>
 
@@ -275,7 +275,7 @@ export default function MemberTable({
       {/* Desktop table */}
       <div className="hidden md:block overflow-x-auto rounded-2xl border border-[var(--border-default)] shadow-sm bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] relative">
         <table className="w-full text-sm">
-          <thead className="sticky top-0 z-10 backdrop-blur-xl bg-surface/90 dark:bg-surface-dark/90 border-b border-[var(--border-default)]">
+          <thead className="sticky top-0 z-10 backdrop-blur-xl bg-[var(--bg-surface)]/90 border-b border-[var(--border-default)]">
             <tr>
               <th className="w-10 p-3">
                 <input
@@ -305,7 +305,7 @@ export default function MemberTable({
           </thead>
           <motion.tbody 
             initial={false}
-            className="divide-y divide-card-border/30 dark:divide-card-border-dark/30"
+            className="divide-y divide-[var(--border-subtle)]"
           >
             <AnimatePresence mode="popLayout">
               {filtered.map(m => {
@@ -372,7 +372,7 @@ export default function MemberTable({
                     <Tooltip content={`Manage ${m.name}`} side="left">
                       <button
                         onClick={(e) => handleActionClick(e, m.seat)}
-                        className="cursor-pointer p-1.5 rounded-lg hover:bg-bg dark:hover:bg-bg-dark transition-colors"
+                        className="cursor-pointer p-1.5 rounded-lg hover:bg-[var(--bg-base)] transition-colors"
                         aria-label={`Actions for ${m.name}`}
                       >
                         <MoreVertical className="w-4 h-4 text-[var(--text-tertiary)]" />
@@ -398,20 +398,20 @@ export default function MemberTable({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -5 }}
               transition={{ duration: 0.15 }}
-              className="absolute z-50 w-48 rounded-xl border border-[var(--border-default)] bg-surface/95 dark:bg-surface-dark/95 backdrop-blur-xl shadow-2xl p-1"
+              className="absolute z-50 w-48 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)]/95 backdrop-blur-xl shadow-[var(--shadow-xl)] p-1"
             >
               {members.filter(m => m.seat === openActions).map(m => (
                 <div key={m.seat}>
                   <button
                     onClick={(e) => { e.stopPropagation(); if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
                   >
                     <Check className="w-4 h-4" />
                     {m.fee === 'due' ? 'Mark fee paid' : 'Mark fee due'}
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); onRenew(m.seat); setOpenActions(null); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Renew membership
@@ -421,17 +421,17 @@ export default function MemberTable({
                       href={`https://wa.me/${m.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hi ' + firstName(m.name) + ', your library fee for Seat ' + m.seat + ' is due.')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-bg dark:hover:bg-bg-dark transition-colors cursor-pointer rounded-lg"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
                       onClick={(e) => { e.stopPropagation(); setOpenActions(null); }}
                     >
                       <MessageCircle className="w-4 h-4 text-[#25D366]" />
                       WhatsApp
                     </a>
                   )}
-                  <div className="h-px bg-card-border dark:bg-card-border-dark my-1 mx-2" />
+                  <div className="h-px bg-[var(--border-subtle)] my-1 mx-2" />
                   <button
                     onClick={(e) => { e.stopPropagation(); setSeatToRemove(m.seat); setOpenActions(null); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors cursor-pointer rounded-lg"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--ruby-400)] hover:bg-[rgba(232,66,66,0.08)] transition-colors cursor-pointer rounded-lg"
                   >
                     <Trash2 className="w-4 h-4" />
                     Remove member
@@ -559,7 +559,7 @@ export default function MemberTable({
                         )}
                         <button
                           onClick={() => { setSeatToRemove(m.seat); setOpenActions(null); }}
-                          className="flex justify-center flex-1 col-span-2 sm:col-span-1 items-center gap-2 cursor-pointer text-xs font-bold px-3 py-3 rounded-xl bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/30 shadow-sm"
+                          className="flex justify-center flex-1 col-span-2 sm:col-span-1 items-center gap-2 cursor-pointer text-xs font-bold px-3 py-3 rounded-xl bg-[rgba(232,66,66,0.06)] text-[var(--ruby-400)] border border-[rgba(232,66,66,0.15)] shadow-sm"
                         >
                           <Trash2 className="w-4 h-4" />
                           Remove Member
