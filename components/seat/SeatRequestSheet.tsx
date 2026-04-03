@@ -10,7 +10,7 @@ interface SeatRequestSheetProps {
   member: Member | null;
   open: boolean;
   onClose: () => void;
-  onSubmit: (seat: number, name: string, phone: string, message: string, transactionId: string) => Promise<void>;
+  onSubmit: (seat: number, name: string, phone: string, message: string, transactionId: string) => void;
 }
 
 export default function SeatRequestSheet({
@@ -24,33 +24,24 @@ export default function SeatRequestSheet({
   const [message, setMessage] = useState('');
   const [transactionId, setTransactionId] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!open || !member) return null;
 
   // Placeholder UPI link without fixed amount so user can pay agreed fee
   const upiUrl = `upi://pay?pa=library@upi&pn=Gangaur%20Library&cu=INR`;
 
-  const handleSubmit = async () => {
-    if (!name.trim() || !phone.trim() || !transactionId.trim() || isSubmitting) return;
-    
-    setIsSubmitting(true);
-    try {
-      await onSubmit(member.seat, name.trim(), phone.trim(), message.trim(), transactionId.trim());
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
-        setIsSubmitting(false);
-        setName('');
-        setPhone('');
-        setMessage('');
-        setTransactionId('');
-        onClose();
-      }, 2000);
-    } catch (err) {
-      console.error(err);
-      setIsSubmitting(false);
-    }
+  const handleSubmit = () => {
+    if (!name.trim() || !phone.trim() || !transactionId.trim()) return;
+    onSubmit(member.seat, name.trim(), phone.trim(), message.trim(), transactionId.trim());
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setName('');
+      setPhone('');
+      setMessage('');
+      setTransactionId('');
+      onClose();
+    }, 2000);
   };
 
   const isValid = name.trim().length >= 2 && phone.trim().length >= 10 && transactionId.trim().length >= 4;
@@ -196,28 +187,16 @@ export default function SeatRequestSheet({
               {/* Submit */}
               <button
                 onClick={handleSubmit}
-                disabled={!isValid || submitted || isSubmitting}
+                disabled={!isValid}
                 className={cn(
-                  'cursor-pointer w-full py-3 rounded-xl text-sm font-bold text-[#1a1a16] transition-all shadow-md flex items-center justify-center gap-2 mt-2',
-                  isValid && !submitted && !isSubmitting
+                  'cursor-pointer w-full py-3 rounded-xl text-sm font-bold text-white transition-all shadow-md flex items-center justify-center gap-2 mt-2',
+                  isValid
                     ? 'bg-[var(--gradient-glow)] hover:shadow-[var(--shadow-glow-saffron)] active:scale-[0.98]'
-                    : 'bg-[var(--bg-muted)] text-[var(--text-tertiary)] cursor-not-allowed shadow-none'
+                    : 'bg-text-tertiary/30 cursor-not-allowed shadow-none'
                 )}
               >
-                {isSubmitting ? (
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    Submitting...
-                  </span>
-                ) : submitted ? (
-                  <span className="flex items-center gap-2">
-                    <Send className="w-4 h-4" /> Request Submitted!
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2 text-white">
-                    <Send className="w-4 h-4" /> Submit Verification
-                  </span>
-                )}
+                <Send className="w-4 h-4" />
+                Submit Verification
               </button>
 
               <p className="text-center text-[10px] text-[var(--text-tertiary)]">
