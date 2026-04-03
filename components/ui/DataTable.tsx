@@ -51,7 +51,7 @@ export function DataTable<TData, TValue>({
       {/* ToolBar */}
       <div className="flex items-center justify-between">
         <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
           <input
             placeholder={searchPlaceholder}
             value={globalFilter ?? ''}
@@ -86,7 +86,7 @@ export function DataTable<TData, TValue>({
                                 header.getContext()
                               )}
                           {header.column.getCanSort() && (
-                            <span className="text-text-muted">
+                            <span className="text-[var(--text-tertiary)]">
                               {{
                                 asc: <ChevronUp className="w-3.5 h-3.5" />,
                                 desc: <ChevronDown className="w-3.5 h-3.5" />,
@@ -136,7 +136,7 @@ export function DataTable<TData, TValue>({
 
       {/* Pagination */}
       <div className="flex items-center justify-between px-2">
-        <div className="text-sm text-text-muted">
+        <div className="text-sm text-[var(--text-tertiary)]">
           Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{' '}
           {Math.min(
             (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
@@ -148,14 +148,14 @@ export function DataTable<TData, TValue>({
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="p-2 rounded-xl text-text-secondary hover:bg-surface hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="p-2 rounded-xl text-text-secondary hover:bg-surface hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             <ChevronRight className="w-4 h-4" />
           </button>

@@ -81,7 +81,7 @@ function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps
           {face && (
             <div className={cn(
               "absolute rounded-full transition-colors",
-              status === 'vacant' ? 'bg-vacant-border/50 dark:bg-vacant-border-dark/50' : 
+              status === 'vacant' ? 'bg-[var(--border-default)]/30' : 
               status === 'active' ? 'bg-green-400 dark:bg-green-500 shadow-sm border border-green-500/30' : 
               status === 'expiring' ? 'bg-yellow-400 dark:bg-yellow-500 shadow-sm border border-yellow-500/30' : 
               'bg-red-400 dark:bg-red-500 shadow-sm border border-red-500/30',
@@ -99,7 +99,7 @@ function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps
                 cy="50%"
                 r={ringRadius}
                 fill="transparent"
-                className="stroke-card-border dark:stroke-card-border-dark"
+                className="stroke-[var(--border-default)]"
                 strokeWidth="2"
               />
               {status !== 'expired' && (
@@ -181,17 +181,17 @@ function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps
                 <div className="flex items-start justify-between">
                   <div>
                     <h4 className="text-sm font-black text-[var(--text-primary)]">{member.name}</h4>
-                    <p className="text-[10px] text-text-tertiary font-mono">#{String(member.seat).padStart(2, '0')} • {member.phone || 'No phone'}</p>
+                    <p className="text-[10px] text-[var(--text-tertiary)] font-mono">#{String(member.seat).padStart(2, '0')} • {member.phone || 'No phone'}</p>
                   </div>
                   <div className={cn('w-2 h-2 rounded-full mt-1', status === 'active' ? 'bg-green-500' : status === 'expiring' ? 'bg-yellow-500' : 'bg-red-500')} />
                 </div>
                 
                 <div className="pt-1.5 border-t border-[var(--border-subtle)] flex flex-col gap-1">
-                  <div className="flex items-center gap-1.5 text-[10px] font-medium text-text-secondary">
+                  <div className="flex items-center gap-1.5 text-[10px] font-medium text-[var(--text-secondary)]">
                     <CalendarIcon className="w-3 h-3 text-[var(--saffron-500)]" />
                     <span>Due: {fmtDateShort(member.expiry)} <span className="opacity-70">({days}d)</span></span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[10px] font-medium text-text-secondary">
+                  <div className="flex items-center gap-1.5 text-[10px] font-medium text-[var(--text-secondary)]">
                     <Clock className="w-3 h-3 text-[var(--saffron-500)]" />
                     <span className="capitalize">{member.shift} Shift</span>
                   </div>

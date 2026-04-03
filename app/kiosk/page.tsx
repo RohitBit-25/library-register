@@ -69,7 +69,7 @@ export default function KioskPage() {
       </div>
 
       <div className="absolute top-6 left-6 z-50">
-        <Link href="/" className="flex items-center gap-2 text-text-tertiary hover:text-[var(--text-primary)] transition-colors bg-surface/80/80 backdrop-blur-md px-4 py-2 rounded-full border border-[var(--border-default)] font-medium cursor-pointer shadow-sm hover:shadow-md">
+        <Link href="/" className="flex items-center gap-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors bg-surface/80/80 backdrop-blur-md px-4 py-2 rounded-full border border-[var(--border-default)] font-medium cursor-pointer shadow-sm hover:shadow-md">
           <ArrowLeft className="w-4 h-4" />
           Exit Kiosk
         </Link>
@@ -102,7 +102,7 @@ export default function KioskPage() {
                 <div className="h-20 w-full bg-[var(--bg-base)] border-2 border-[var(--border-default)] rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-inner">
                   <span className={cn(
                     "text-5xl font-mono font-black tracking-widest leading-none",
-                    seatInput ? "text-[var(--text-primary)]" : "text-text-tertiary/40"
+                    seatInput ? "text-[var(--text-primary)]" : "text-[var(--text-tertiary)]/40"
                   )}>
                     {seatInput || "---"}
                   </span>
@@ -154,7 +154,7 @@ export default function KioskPage() {
               
               <button 
                 onClick={() => setActiveMember(null)}
-                className="absolute top-4 left-4 p-2 bg-[var(--bg-base)] rounded-full text-text-tertiary hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+                className="absolute top-4 left-4 p-2 bg-[var(--bg-base)] rounded-full text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -168,7 +168,7 @@ export default function KioskPage() {
               <h2 className="text-3xl font-black tracking-tight text-[var(--text-primary)] mb-1">
                 {activeMember.name}
               </h2>
-              <p className="text-text-tertiary font-medium mb-8">
+              <p className="text-[var(--text-tertiary)] font-medium mb-8">
                 Current Status: {isPresent(todayStr, activeMember.seat) ? (
                   <span className="text-green-600 dark:text-green-400 font-bold inline-flex items-center gap-1">Checked In <CheckCircle2 className="w-4 h-4" /></span>
                 ) : (

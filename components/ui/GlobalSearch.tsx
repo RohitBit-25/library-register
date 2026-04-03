@@ -51,7 +51,7 @@ export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
           onChange={e => setQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
           placeholder="Search member name, phone, or seat #..."
-          className="w-full bg-transparent border-none py-3.5 pl-11 pr-10 text-sm font-medium text-[var(--text-primary)] placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none"
+          className="w-full bg-transparent border-none py-3.5 pl-11 pr-10 text-sm font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] dark:placeholder:text-[var(--text-tertiary)]-dark focus:outline-none"
         />
         {query && (
           <button 
@@ -72,7 +72,7 @@ export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
             className="absolute top-full left-0 right-0 mt-2 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-xl overflow-hidden"
           >
             {results.length > 0 ? (
-              <ul className="divide-y divide-card-border/50 dark:divide-card-border-dark/50">
+              <ul className="divide-y divide-[var(--border-subtle)]">
                 {results.map(member => (
                   <li key={member.seat}>
                     <button
@@ -89,7 +89,7 @@ export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
                         </div>
                         <div>
                           <p className="text-sm font-bold text-[var(--text-primary)]">
-                            {!member.vacant ? member.name : <span className="text-text-tertiary font-medium">Vacant</span>}
+                            {!member.vacant ? member.name : <span className="text-[var(--text-tertiary)] font-medium">Vacant</span>}
                           </p>
                           {!member.vacant && member.phone && (
                             <p className="text-xs text-[var(--text-tertiary)] mt-0.5 tracking-wider">

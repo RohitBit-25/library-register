@@ -66,7 +66,7 @@ export default function OccupancySparkline({ data }: OccupancySparklineProps) {
       </svg>
       
       <div className="absolute top-3 left-4">
-        <span className="text-xs font-bold text-text-tertiary uppercase tracking-wider">30-Day Trend</span>
+        <span className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">30-Day Trend</span>
         <div className="text-2xl font-black text-[var(--text-primary)] leading-tight mt-1 truncate">
           {data[data.length - 1]} occupied
         </div>

@@ -173,7 +173,7 @@ export default function BrowsePage() {
           <h3 className="text-sm font-black text-[var(--text-primary)]">
             {shiftFilter === 'all' ? 'Floorplan Map' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift Mapping`}
           </h3>
-          <span className="text-xs font-mono font-bold text-text-tertiary ml-auto">
+          <span className="text-xs font-mono font-bold text-[var(--text-tertiary)] ml-auto">
             {filtered.length} seats shown
           </span>
         </div>
@@ -238,8 +238,8 @@ function BrowseSeatTile({
       {/* Chair indicator */}
       <div className={cn(
         "absolute rounded-full transition-colors",
-        status === 'vacant' ? 'bg-vacant-border/50 dark:bg-vacant-border-dark/50' : 
-        'bg-card-border dark:bg-card-border-dark',
+        status === 'vacant' ? 'bg-[var(--border-default)]/30' : 
+        'bg-[var(--border-default)]',
         face === 'up' && "bottom-[-6px] left-[15%] right-[15%] h-[4px]",
         face === 'down' && "top-[-6px] left-[15%] right-[15%] h-[4px]",
         face === 'left' && "right-[-6px] top-[15%] bottom-[15%] w-[4px]",
