@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { Shield, Sparkles, ArrowRight, BookOpen } from 'lucide-react';
@@ -17,13 +17,14 @@ export default function LandingPage() {
   const [pin, setPin] = useState('');
   const [pinError, setPinError] = useState(false);
 
-  // If already authenticated, redirect
-  if (isAuthenticated) {
-    if (isAdmin) {
-      router.replace('/');
-    } else {
-      router.replace('/browse');
+  // Redirect authenticated users after render (not during)
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace(isAdmin ? '/' : '/browse');
     }
+  }, [isAuthenticated, isAdmin, router]);
+
+  if (isAuthenticated) {
     return null;
   }
 

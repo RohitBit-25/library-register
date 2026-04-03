@@ -5,16 +5,23 @@ import useSWR from 'swr';
 import { type SeatRequest } from '@/lib/types';
 import { useAuth } from '@/hooks/useAuth';
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+};
 
 export function useSeatRequests() {
   const { isAdmin } = useAuth();
 
-  const { data: requests = [], mutate } = useSWR<SeatRequest[]>(
+  const { data, mutate } = useSWR<SeatRequest[]>(
     isAdmin ? '/api/requests' : null,
     fetcher,
     { revalidateOnFocus: true }
   );
+
+  const requests = Array.isArray(data) ? data : [];
 
   const addRequest = useCallback(async (request: Omit<SeatRequest, 'id' | 'status' | 'createdAt'>) => {
     try {
@@ -30,8 +37,8 @@ export function useSeatRequests() {
       if (isAdmin) mutate();
       
       return true;
-    } catch (error) {
-      console.error('Failed to submit seat request:', error);
+    } catch (err) {
+      console.error('Failed to submit seat request:', err);
       return false;
     }
   }, [isAdmin, mutate]);
@@ -46,8 +53,8 @@ export function useSeatRequests() {
         body: JSON.stringify({ id, status: 'approved' }),
       });
       mutate();
-    } catch (error) {
-      console.error('Failed to approve request:', error);
+    } catch (err) {
+      console.error('Failed to approve request:', err);
     }
   }, [isAdmin, mutate]);
 
@@ -61,8 +68,8 @@ export function useSeatRequests() {
         body: JSON.stringify({ id, status: 'rejected' }),
       });
       mutate();
-    } catch (error) {
-      console.error('Failed to reject request:', error);
+    } catch (err) {
+      console.error('Failed to reject request:', err);
     }
   }, [isAdmin, mutate]);
 
@@ -74,8 +81,8 @@ export function useSeatRequests() {
         method: 'DELETE',
       });
       mutate();
-    } catch (error) {
-      console.error('Failed to delete request:', error);
+    } catch (err) {
+      console.error('Failed to delete request:', err);
     }
   }, [isAdmin, mutate]);
 
