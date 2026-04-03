@@ -35,6 +35,7 @@ const adminTabs = [
 
 const userTabs = [
   { href: '/browse', label: 'Browse', icon: Eye },
+  { href: '/my-requests', label: 'Requests', icon: Inbox },
 ];
 
 export default function BottomNav() {
@@ -140,7 +141,7 @@ export default function BottomNav() {
                   </Link>
                 </>
               ) : (
-                /* User More Options — minimal */
+                /* User More Options — no extra items needed */
                 <></>
               )}
 

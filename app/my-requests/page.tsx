@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from 'react';
 import { useSeatRequests } from '@/hooks/useSeatRequests';
-import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { type SeatRequest } from '@/lib/types';
 import { cn, fmtDate } from '@/lib/utils';
@@ -25,7 +24,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function MyRequestsPage() {
   const { lookupByPhone, storedUserPhone, requests: autoRequests } = useSeatRequests();
-  const { isAdmin } = useAuth();
   const router = useRouter();
 
   const [phone, setPhone] = useState(storedUserPhone || '');

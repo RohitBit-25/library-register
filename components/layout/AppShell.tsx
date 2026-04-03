@@ -15,8 +15,10 @@ import { useEffect } from 'react';
 // ─── Routes that don't use AppShell chrome ──────────────────────
 const STANDALONE_ROUTES = ['/landing', '/kiosk'];
 
-// ─── Routes that only admins can access ─────────────────────────
-const ADMIN_ROUTES = ['/', '/seat-grid', '/members', '/add', '/attendance', '/analytics', '/expiry', '/setup', '/requests'];
+
+
+// ─── Routes accessible to regular users ─────────────────────────
+const USER_ROUTES = ['/browse', '/my-requests'];
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
   const { members } = useMembers();
@@ -39,7 +41,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     }
 
     // User trying to access admin routes → redirect to browse
-    if (isAuthenticated && !isAdmin && ADMIN_ROUTES.includes(pathname)) {
+    if (isAuthenticated && !isAdmin && !USER_ROUTES.includes(pathname) && !isStandalone) {
       router.replace('/browse');
       return;
     }
