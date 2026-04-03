@@ -168,7 +168,7 @@ export default function BrowsePage() {
 
       {/* Grid */}
       <div className="card-base rounded-[2.5rem] border border-[var(--border-default)] bg-[var(--bg-glass)] shadow-sm overflow-hidden mb-8">
-        <div className="flex items-center gap-2 px-6 pt-5 pb-3 border-b border-card-border/50/50">
+        <div className="flex items-center gap-2 px-6 pt-5 pb-3 border-b border-[var(--border-subtle)]">
           <Grid3X3 className="w-4 h-4 text-[var(--sapphire-500)]" />
           <h3 className="text-sm font-black text-[var(--text-primary)]">
             {shiftFilter === 'all' ? 'Floorplan Map' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift Mapping`}
@@ -257,7 +257,7 @@ function BrowseSeatTile({
           {hasRequest ? '⏳' : 'Vac'}
         </span>
       ) : (
-        <span className="text-[9px] font-black truncate w-full px-0.5 text-center leading-tight z-10 text-text-primary/70/80">
+        <span className="text-[9px] font-black truncate w-full px-0.5 text-center leading-tight z-10 text-[var(--text-primary)]/70">
           {firstName(member.name)}
         </span>
       )}

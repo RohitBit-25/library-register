@@ -114,7 +114,7 @@ export default function KioskPage() {
                   <button
                     key={num}
                     onClick={() => handleNumpad(num.toString())}
-                    className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-card-border/50/50 text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-all active:scale-95 cursor-pointer"
+                    className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-[var(--border-subtle)] text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-all active:scale-95 cursor-pointer"
                   >
                     {num}
                   </button>
@@ -127,7 +127,7 @@ export default function KioskPage() {
                 </button>
                 <button
                   onClick={() => handleNumpad('0')}
-                  className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-card-border/50/50 text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-all active:scale-95 cursor-pointer"
+                  className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-[var(--border-subtle)] text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-all active:scale-95 cursor-pointer"
                 >
                   0
                 </button>

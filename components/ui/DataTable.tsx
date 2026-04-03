@@ -74,7 +74,7 @@ export function DataTable<TData, TValue>({
                         key={header.id}
                         className={cn(
                           "px-6 py-4 font-medium",
-                          header.column.getCanSort() && "cursor-pointer select-none hover:bg-bg/50/50 transition-colors"
+                          header.column.getCanSort() && "cursor-pointer select-none hover:bg-[var(--bg-base)]/50 transition-colors"
                         )}
                         onClick={header.column.getToggleSortingHandler()}
                       >

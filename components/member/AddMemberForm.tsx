@@ -136,7 +136,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <FieldGroup label="Seat Number" required error={errors.seat?.message}>
           <select
             {...register('seat', { valueAsNumber: true })}
-            className="w-full cursor-pointer rounded-xl border border-[var(--border-default)] px-4 py-3.5 text-sm font-mono font-bold bg-surface/50/50 text-[var(--text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--saffron-500)]/10 focus:border-[var(--saffron-500)]/50 backdrop-blur-md transition-all duration-300"
+            className="w-full cursor-pointer rounded-xl border border-[var(--border-default)] px-4 py-3.5 text-sm font-mono font-bold bg-[var(--bg-surface)]/50 text-[var(--text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--saffron-500)]/10 focus:border-[var(--saffron-500)]/50 backdrop-blur-md transition-all duration-300"
           >
             {vacantSeats.length === 0 ? (
               <option value="-1">No seats available</option>

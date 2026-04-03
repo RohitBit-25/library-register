@@ -186,7 +186,7 @@ function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps
                   <div className={cn('w-2 h-2 rounded-full mt-1', status === 'active' ? 'bg-green-500' : status === 'expiring' ? 'bg-yellow-500' : 'bg-red-500')} />
                 </div>
                 
-                <div className="pt-1.5 border-t border-card-border/50/50 flex flex-col gap-1">
+                <div className="pt-1.5 border-t border-[var(--border-subtle)] flex flex-col gap-1">
                   <div className="flex items-center gap-1.5 text-[10px] font-medium text-text-secondary">
                     <CalendarIcon className="w-3 h-3 text-[var(--saffron-500)]" />
                     <span>Due: {fmtDateShort(member.expiry)} <span className="opacity-70">({days}d)</span></span>

@@ -56,7 +56,7 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
   return (
     <div className="w-full overflow-x-auto pb-8 pt-4 custom-scrollbar smooth-scroll relative z-0">
       <div 
-        className="relative mx-auto bg-[#e5e5f7]/50 dark:bg-[#1a1a24]/50 rounded-[2rem] border-2 border-card-border/60/60 shadow-inner" 
+        className="relative mx-auto bg-[#e5e5f7]/50 dark:bg-[#1a1a24]/50 rounded-[2rem] border-2 border-[var(--border-subtle)] shadow-inner" 
         style={{ 
           width: `${width}px`, 
           height: `${height}px`, 
@@ -66,7 +66,7 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
           backgroundPosition: '0 0, 10px 10px'
         }}
       >
-        <div className="absolute inset-0 bg-surface/90/95 rounded-[2rem] backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-[var(--bg-surface)]/90 rounded-[2rem] backdrop-blur-[2px]" />
         
         {/* Entry Placeholder */}
         <div className="absolute top-0 left-[38.5%] w-32 h-2 -translate-x-[50%] -translate-y-full flex flex-col items-center opacity-80 z-10">

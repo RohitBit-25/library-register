@@ -80,7 +80,7 @@ export default function AddMemberSheet({
               className="fixed top-0 right-0 h-screen w-full max-w-[480px] bg-[var(--bg-surface)] border-l border-[var(--border-default)] shadow-2xl z-40 flex flex-col"
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-5 border-b border-card-border/50/50 bg-bg/50/50 backdrop-blur-md sticky top-0 z-10">
+              <div className="flex items-center justify-between p-5 border-b border-[var(--border-subtle)] bg-[var(--bg-base)]/50 backdrop-blur-md sticky top-0 z-10">
                 <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
                   <span className="w-8 h-8 bg-[var(--sapphire-500)] rounded-lg flex items-center justify-center text-[var(--text-inverse)] shadow-sm">
                     <UserPlus className="w-4 h-4" />
