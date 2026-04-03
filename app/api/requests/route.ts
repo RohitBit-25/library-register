@@ -37,6 +37,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields including transaction ID' }, { status: 400 });
     }
 
+    // Duplicate prevention: check if a pending request already exists for this seat + phone
+    const existing = await SeatRequest.findOne({
+      seat: data.seat,
+      userPhone: data.userPhone,
+      status: 'pending',
+    });
+    if (existing) {
+      return NextResponse.json(
+        { error: 'You already have a pending request for this seat' },
+        { status: 409 }
+      );
+    }
+
     const newRequest = await SeatRequest.create({
       seat: data.seat,
       userName: data.userName,

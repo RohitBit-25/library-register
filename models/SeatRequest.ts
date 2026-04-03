@@ -21,7 +21,8 @@ const SeatRequestSchema = new Schema<ISeatRequest>({
   timestamps: true
 });
 
-// Index for filtering by status
+// Indexes for filtering
 SeatRequestSchema.index({ status: 1 });
+SeatRequestSchema.index({ userPhone: 1, status: 1 });
 
 export default mongoose.models.SeatRequest || mongoose.model<ISeatRequest>('SeatRequest', SeatRequestSchema);
