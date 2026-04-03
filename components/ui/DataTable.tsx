@@ -56,16 +56,16 @@ export function DataTable<TData, TValue>({
             placeholder={searchPlaceholder}
             value={globalFilter ?? ''}
             onChange={(event) => setGlobalFilter(event.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-divider dark:border-divider-dark rounded-xl bg-bg-light dark:bg-bg-light-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm"
+            className="w-full pl-9 pr-4 py-2 border border-[var(--border-default)] rounded-xl bg-[var(--bg-muted)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/30 focus:border-transparent transition-all shadow-sm"
           />
         </div>
       </div>
 
       {/* Table Container */}
-      <div className="rounded-2xl border border-divider dark:border-divider-dark bg-[var(--bg-surface)] overflow-hidden shadow-[var(--shadow-ambient)]">
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] overflow-hidden shadow-[var(--shadow-sm)]">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left relative">
-            <thead className="text-xs text-[var(--text-secondary)] uppercase bg-bg-light dark:bg-bg-light-dark border-b border-divider dark:border-divider-dark">
+            <thead className="text-xs text-[var(--text-secondary)] uppercase bg-[var(--bg-base)] border-b border-[var(--border-default)]">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
@@ -102,7 +102,7 @@ export function DataTable<TData, TValue>({
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y divide-divider/50 dark:divide-divider-dark/50 text-[var(--text-primary)]">
+            <tbody className="divide-y divide-[var(--border-subtle)] text-[var(--text-primary)]">
               <AnimatePresence initial={false}>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
@@ -112,7 +112,7 @@ export function DataTable<TData, TValue>({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      className="hover:bg-bg-light/50 dark:hover:bg-bg-light-dark/50 transition-colors group"
+                      className="hover:bg-[var(--bg-base)]/50 transition-colors group"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="px-6 py-4 whitespace-nowrap">

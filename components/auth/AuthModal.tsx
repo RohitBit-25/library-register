@@ -42,22 +42,22 @@ export default function AuthModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" 
+        className="absolute inset-0 bg-[var(--bg-void)]/60 backdrop-blur-sm transition-opacity" 
         onClick={onClose} 
       />
 
       {/* Modal */}
-      <div className="bg-bg-primary dark:bg-bg-primary-dark rounded-2xl shadow-2xl w-full max-w-sm border border-border-primary dark:border-border-primary-dark overflow-hidden transform transition-all z-10">
-        <div className="px-6 py-5 border-b border-border-primary dark:border-border-primary-dark flex justify-between items-center bg-bg-secondary dark:bg-bg-secondary-dark/50">
+      <div className="bg-[var(--bg-surface)] rounded-2xl shadow-[var(--shadow-xl)] w-full max-w-sm border border-[var(--border-default)] overflow-hidden transform transition-all z-10">
+        <div className="px-6 py-5 border-b border-[var(--border-default)] flex justify-between items-center bg-[var(--bg-base)]/50">
           <div className="flex items-center gap-2">
-            <Lock className="w-5 h-5 text-accent-primary" />
+            <Lock className="w-5 h-5 text-[var(--saffron-500)]" />
             <h2 className="text-[17px] font-semibold text-[var(--text-primary)]">
               Admin Login
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-[var(--text-secondary)] hover:bg-bg-primary dark:hover:bg-bg-primary-dark rounded-full transition-colors"
+            className="p-1.5 text-[var(--text-secondary)] hover:bg-[var(--bg-base)] rounded-full transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -83,7 +83,7 @@ export default function AuthModal({
                 autoFocus
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
-                className="w-full h-11 px-3 bg-bg-secondary dark:bg-bg-secondary-dark border border-border-primary dark:border-border-primary-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-primary/50 text-[var(--text-primary)] transition-shadow text-center tracking-[0.5em] text-lg font-mono"
+                className="w-full h-11 px-3 bg-[var(--bg-base)] border border-[var(--border-default)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/30 text-[var(--text-primary)] transition-shadow text-center tracking-[0.5em] text-lg font-mono"
                 placeholder="••••••"
               />
             </div>
@@ -91,7 +91,7 @@ export default function AuthModal({
             <button
               type="submit"
               disabled={isSubmitting || !pin}
-              className="w-full h-11 bg-accent-primary hover:bg-accent-secondary text-white font-medium rounded-xl flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className="w-full h-11 bg-[var(--saffron-500)] hover:bg-[var(--saffron-600)] text-[var(--text-inverse)] font-medium rounded-xl flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
               {isSubmitting ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
