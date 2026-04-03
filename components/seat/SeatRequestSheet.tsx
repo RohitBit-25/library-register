@@ -64,7 +64,7 @@ export default function SeatRequestSheet({
         {submitted ? (
           /* ── Success State ───────────────────────────────── */
           <div className="px-5 py-10 text-center animate-fade-in">
-            <div className="w-16 h-16 rounded-2xl bg-active-fill dark:bg-active-fill-dark flex items-center justify-center mx-auto mb-4 animate-check-bounce">
+            <div className="w-16 h-16 rounded-2xl bg-[var(--emerald-500)]/15 flex items-center justify-center mx-auto mb-4 animate-check-bounce">
               <Send className="w-7 h-7 text-active-border" />
             </div>
             <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">

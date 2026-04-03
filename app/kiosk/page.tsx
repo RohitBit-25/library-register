@@ -121,7 +121,7 @@ export default function KioskPage() {
                 ))}
                 <button
                   onClick={handleDelete}
-                  className="aspect-square rounded-2xl bg-expired-fill/50 dark:bg-expired-fill-dark/50 border border-expired-border text-expired-text hover:bg-expired-fill dark:hover:bg-expired-fill-dark transition-all flex items-center justify-center font-bold uppercase text-[11px] tracking-wider hover:-translate-y-1 active:scale-95 shadow-sm cursor-pointer"
+                  className="aspect-square rounded-2xl bg-expired-fill/50/50 border border-[var(--ruby-500)]/30 text-[var(--ruby-400)] hover:bg-expired-fill transition-all flex items-center justify-center font-bold uppercase text-[11px] tracking-wider hover:-translate-y-1 active:scale-95 shadow-sm cursor-pointer"
                 >
                   Clear
                 </button>
@@ -180,7 +180,7 @@ export default function KioskPage() {
                 <button
                   onClick={() => handleCheckAction('in')}
                   disabled={isPresent(todayStr, activeMember.seat)}
-                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-active-fill/50 dark:bg-active-fill-dark/50 border-2 border-active-border text-active-text dark:text-active-text-dark hover:bg-active-fill dark:hover:bg-active-fill-dark hover:-translate-y-1 transition-all disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
+                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-active-fill/50/50 border-2 border-[var(--emerald-500)]/30 text-[var(--emerald-400)] hover:bg-active-fill hover:-translate-y-1 transition-all disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
                 >
                   <LogIn className="w-8 h-8 mb-2" />
                   <span className="font-extrabold uppercase tracking-widest text-[11px]">Check In</span>

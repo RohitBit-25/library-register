@@ -112,7 +112,7 @@ export default function BrowsePage() {
           )}
           <button
             onClick={handleLogout}
-            className="cursor-pointer flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] bg-[var(--bg-base)] hover:text-expired-border transition-colors border border-[var(--border-default)]"
+            className="cursor-pointer flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] bg-[var(--bg-base)] hover:text-[var(--ruby-400)] transition-colors border border-[var(--border-default)]"
           >
             <LogOut className="w-4 h-4" />
             <span className="hidden sm:inline">Exit</span>
@@ -142,11 +142,11 @@ export default function BrowsePage() {
 
         {/* Quick stats */}
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold shadow-sm bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark border-active-border/30">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold shadow-sm bg-[var(--emerald-500)]/15 text-[var(--emerald-400)] border-[var(--emerald-500)]/30/30">
             <span className="text-base font-black">{stats.occupied}</span>
             Occupied
           </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold shadow-sm bg-vacant-fill dark:bg-vacant-fill-dark text-[var(--text-secondary)] border-vacant-border dark:border-vacant-border-dark">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold shadow-sm bg-[var(--bg-overlay)] text-[var(--text-secondary)] border-[var(--border-default)]">
             <span className="text-base font-black">{stats.vacant}</span>
             Vacant
           </span>
@@ -156,8 +156,8 @@ export default function BrowsePage() {
       {/* Legend */}
       <div className="flex flex-wrap items-center gap-3 mb-4 text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
         {[
-          { cls: 'bg-active-fill dark:bg-active-fill-dark ring-active-border', label: 'Occupied' },
-          { cls: 'bg-vacant-fill dark:bg-vacant-fill-dark ring-vacant-border dark:ring-vacant-border-dark', label: 'Vacant (Tap to request)' },
+          { cls: 'bg-[var(--emerald-500)]/15 ring-[var(--emerald-500)]/50', label: 'Occupied' },
+          { cls: 'bg-[var(--bg-overlay)] ring-[var(--border-default)]', label: 'Vacant (Tap to request)' },
         ].map(l => (
           <span key={l.label} className="flex items-center gap-1.5">
             <span className={cn('w-3 h-3 rounded-md ring-2', l.cls)} />

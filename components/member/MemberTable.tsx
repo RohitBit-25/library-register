@@ -227,7 +227,7 @@ export default function MemberTable({
             <Tooltip content="Download member data as CSV">
               <button
                 onClick={() => onBulkExport(Array.from(selected))}
-                className="cursor-pointer rounded-lg bg-active-fill dark:bg-active-fill-dark px-3.5 py-2 text-xs font-bold text-active-text dark:text-active-text-dark hover:opacity-80 transition-opacity"
+                className="cursor-pointer rounded-lg bg-[var(--emerald-500)]/15 px-3.5 py-2 text-xs font-bold text-[var(--emerald-400)] hover:opacity-80 transition-opacity"
               >
                 Export CSV
               </button>

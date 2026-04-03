@@ -106,7 +106,7 @@ export default function ExpiryPage() {
             className={cn(
               'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-mono font-bold shrink-0 shadow-sm border',
               isExpired
-                ? 'bg-expired-fill dark:bg-expired-fill-dark text-expired-text dark:text-expired-text-dark border-expired-border/50'
+                ? 'bg-[var(--ruby-500)]/15 text-[var(--ruby-400)] border-[var(--ruby-500)]/30/50'
                 : dLeft <= 7
                 ? 'bg-expiring-fill dark:bg-expiring-fill-dark text-expiring-text dark:text-expiring-text-dark border-expiring-border/50'
                 : 'bg-[var(--bg-surface)] text-[var(--text-primary)] border-divider dark:border-divider-dark'
@@ -159,14 +159,14 @@ export default function ExpiryPage() {
               className={cn(
                 'text-[10px] uppercase font-black px-1.5 py-0.5 rounded-md whitespace-nowrap inline-block mb-1.5 tracking-wider',
                 isExpired
-                  ? 'bg-expired-fill dark:bg-expired-fill-dark text-expired-text dark:text-expired-text-dark'
+                  ? 'bg-[var(--ruby-500)]/15 text-[var(--ruby-400)]'
                   : dLeft === 0
                   ? 'bg-[#DC2626]/10 text-[#DC2626]'
                   : dLeft <= 7
                   ? 'bg-expiring-fill dark:bg-expiring-fill-dark text-expiring-text dark:text-expiring-text-dark'
                   : dLeft <= 30
                   ? 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]'
-                  : 'bg-active-fill dark:bg-active-fill-dark text-active-text dark:text-active-text-dark'
+                  : 'bg-[var(--emerald-500)]/15 text-[var(--emerald-400)]'
               )}
             >
               {daysText}
@@ -198,7 +198,7 @@ export default function ExpiryPage() {
           <Tooltip content="Send WhatsApp Reminder">
             <button
               onClick={() => handleWhatsApp(row.original)}
-              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-active-fill/50 dark:bg-active-fill-dark/50 text-active-text dark:text-active-text-dark hover:bg-active-fill dark:hover:bg-active-fill-dark shadow-sm hover:scale-105 transition-all active:scale-95 border border-active-border/20 dark:border-active-border-dark/20"
+              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-active-fill/50/50 text-[var(--emerald-400)] hover:bg-active-fill shadow-sm hover:scale-105 transition-all active:scale-95 border border-[var(--emerald-500)]/30/20 dark:border-[var(--emerald-500)]/30-dark/20"
             >
               <MessageCircle className="w-4 h-4" />
             </button>
@@ -222,7 +222,7 @@ export default function ExpiryPage() {
       <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-            <CalendarSearch className="w-6 h-6 text-expired-border" />
+            <CalendarSearch className="w-6 h-6 text-[var(--ruby-400)]" />
             Expiry Tracker
           </h1>
           <p className="text-sm font-medium text-[var(--text-secondary)] mt-1">
@@ -237,14 +237,14 @@ export default function ExpiryPage() {
           count={totalExpired}
           label="Expired"
           gradient="from-[#E24B4A] to-[#F87171]"
-          iconBg="bg-expired-fill dark:bg-expired-fill-dark text-expired-border"
+          iconBg="bg-[var(--ruby-500)]/15 text-[var(--ruby-400)]"
           icon={<Flame className="w-4 h-4" />}
         />
         <UrgencyStat
           count={totalToday}
           label="Today"
           gradient="from-[#DC2626] to-[#EF4444]"
-          iconBg="bg-expired-fill dark:bg-expired-fill-dark text-[#DC2626]"
+          iconBg="bg-[var(--ruby-500)]/15 text-[#DC2626]"
           icon={<AlertTriangle className="w-4 h-4" />}
         />
         <UrgencyStat
