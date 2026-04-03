@@ -55,7 +55,7 @@ export default function SeatRequestSheet({
       />
 
       {/* Sheet */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl bg-surface dark:bg-surface-dark border-t border-card-border dark:border-card-border-dark shadow-2xl animate-slide-up max-h-[90vh] overflow-y-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl bg-[var(--bg-surface)] border-t border-[var(--border-default)] shadow-2xl animate-slide-up max-h-[90vh] overflow-y-auto">
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 rounded-full bg-text-tertiary/30" />
@@ -67,10 +67,10 @@ export default function SeatRequestSheet({
             <div className="w-16 h-16 rounded-2xl bg-active-fill dark:bg-active-fill-dark flex items-center justify-center mx-auto mb-4 animate-check-bounce">
               <Send className="w-7 h-7 text-active-border" />
             </div>
-            <h3 className="text-lg font-bold text-text-primary dark:text-text-primary-dark mb-1">
+            <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">
               Request Sent!
             </h3>
-            <p className="text-sm text-text-tertiary dark:text-text-tertiary-dark">
+            <p className="text-sm text-[var(--text-tertiary)]">
               The admin will verify your payment for Seat #{member.seat}
             </p>
           </div>
@@ -84,17 +84,17 @@ export default function SeatRequestSheet({
                   <Armchair className="w-5 h-5 text-[var(--saffron-500)]" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-text-primary dark:text-text-primary-dark">
+                  <h3 className="text-base font-bold text-[var(--text-primary)]">
                     Request Seat #{member.seat}
                   </h3>
-                  <p className="text-xs text-text-tertiary dark:text-text-tertiary-dark">
+                  <p className="text-xs text-[var(--text-tertiary)]">
                     Scan via UPI and submit proof
                   </p>
                 </div>
               </div>
               <button
                 onClick={onClose}
-                className="cursor-pointer rounded-lg p-1.5 text-text-tertiary dark:text-text-tertiary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors"
+                className="cursor-pointer rounded-lg p-1.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-base)] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -116,7 +116,7 @@ export default function SeatRequestSheet({
                     className="rounded-lg"
                   />
                 </div>
-                <p className="text-[11px] text-text-secondary dark:text-text-secondary-dark text-center leading-relaxed">
+                <p className="text-[11px] text-[var(--text-secondary)] text-center leading-relaxed">
                   Scan to pay using Google Pay, PhonePe, or Paytm.<br/>
                   Enter your Transaction ID below after paying.
                 </p>
@@ -124,7 +124,7 @@ export default function SeatRequestSheet({
 
               {/* Name */}
               <div>
-                <label className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark mb-1.5 flex items-center gap-1.5">
+                <label className="text-xs font-bold text-[var(--text-secondary)] mb-1.5 flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5" />
                   Your Name *
                 </label>
@@ -134,13 +134,13 @@ export default function SeatRequestSheet({
                   onChange={e => setName(e.target.value)}
                   placeholder="Enter your full name"
                   autoFocus
-                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 transition-all"
                 />
               </div>
 
               {/* Phone */}
               <div>
-                <label className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark mb-1.5 flex items-center gap-1.5">
+                <label className="text-xs font-bold text-[var(--text-secondary)] mb-1.5 flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5" />
                   Phone Number *
                 </label>
@@ -150,13 +150,13 @@ export default function SeatRequestSheet({
                   value={phone}
                   onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                   placeholder="10-digit mobile number"
-                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 transition-all font-mono"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 transition-all font-mono"
                 />
               </div>
 
               {/* Transaction ID */}
               <div>
-                <label className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark mb-1.5 flex items-center gap-1.5">
+                <label className="text-xs font-bold text-[var(--text-secondary)] mb-1.5 flex items-center gap-1.5">
                   <Receipt className="w-3.5 h-3.5" />
                   Transaction / UTR ID *
                 </label>
@@ -165,13 +165,13 @@ export default function SeatRequestSheet({
                   value={transactionId}
                   onChange={e => setTransactionId(e.target.value)}
                   placeholder="e.g. 3084XXXXXXXX"
-                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border-emerald-500/30 text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all font-mono"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-[var(--bg-base)] border-emerald-500/30 text-[var(--text-primary)] placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all font-mono"
                 />
               </div>
 
               {/* Message */}
               <div>
-                <label className="text-xs font-bold text-text-secondary dark:text-text-secondary-dark mb-1.5 flex items-center gap-1.5">
+                <label className="text-xs font-bold text-[var(--text-secondary)] mb-1.5 flex items-center gap-1.5">
                   <MessageSquare className="w-3.5 h-3.5" />
                   Message (optional)
                 </label>
@@ -180,7 +180,7 @@ export default function SeatRequestSheet({
                   onChange={e => setMessage(e.target.value)}
                   placeholder="Shift preference (e.g. Morning, 3 Months)"
                   rows={2}
-                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 transition-all resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 transition-all resize-none"
                 />
               </div>
 
@@ -199,7 +199,7 @@ export default function SeatRequestSheet({
                 Submit Verification
               </button>
 
-              <p className="text-center text-[10px] text-text-tertiary dark:text-text-tertiary-dark">
+              <p className="text-center text-[10px] text-[var(--text-tertiary)]">
                 Admin will allot your seat once payment is verified
               </p>
             </div>

@@ -28,11 +28,11 @@ export default function SetupPage() {
       className="max-w-[1000px] pb-12"
     >
       <motion.div variants={itemVariants} className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
           <Zap className="w-6 h-6 text-[var(--sapphire-500)]" />
           Automation Setup
         </h1>
-        <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-1">
+        <p className="text-sm font-medium text-[var(--text-secondary)] mt-1">
           Connect Google Forms for automated seat allotment and email notifications.
         </p>
       </motion.div>
@@ -40,7 +40,7 @@ export default function SetupPage() {
       {/* Automation Flow Diagram */}
       <motion.div variants={itemVariants} className="mb-8">
         <div className="card-base rounded-2xl border border-[var(--border-default)] bg-[var(--bg-glass)] p-6 overflow-hidden">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-text-tertiary dark:text-text-tertiary-dark mb-5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)] mb-5">
             How It Works — Zero Manual Work
           </h3>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
@@ -56,7 +56,7 @@ export default function SetupPage() {
                   <span className="text-[10px] font-bold whitespace-nowrap">{step.label}</span>
                 </div>
                 {i < 3 && (
-                  <ArrowRight className="w-4 h-4 text-text-tertiary dark:text-text-tertiary-dark shrink-0 hidden sm:block" />
+                  <ArrowRight className="w-4 h-4 text-[var(--text-tertiary)] shrink-0 hidden sm:block" />
                 )}
               </div>
             ))}
@@ -71,7 +71,7 @@ export default function SetupPage() {
 
       {/* Instruction Guide */}
       <motion.div variants={itemVariants} className="mt-8">
-        <h2 className="text-lg font-extrabold text-text-primary dark:text-text-primary-dark mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-extrabold text-[var(--text-primary)] mb-4 flex items-center gap-2">
           <ListChecks className="w-5 h-5 text-[var(--sapphire-500)]" />
           4-Step Integration Guide
         </h2>
@@ -85,11 +85,11 @@ export default function SetupPage() {
                 1
               </div>
               <div>
-                <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark">Create your Google Form</h3>
-                <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-1">
+                <h3 className="text-sm font-bold text-[var(--text-primary)]">Create your Google Form</h3>
+                <p className="text-sm text-[var(--text-secondary)] mt-1">
                   Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-[var(--sapphire-500)] hover:underline inline-flex items-center gap-1">Google Forms <ExternalLink className="w-3 h-3" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
                 </p>
-                <ol className="list-decimal list-inside mt-2 text-xs font-mono bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark p-3 rounded-lg text-text-tertiary dark:text-text-tertiary-dark">
+                <ol className="list-decimal list-inside mt-2 text-xs font-mono bg-[var(--bg-base)] border border-[var(--border-default)] p-3 rounded-lg text-[var(--text-tertiary)]">
                   <li>Full Name</li>
                   <li>Phone Number (Short answer)</li>
                   <li>Join Date (Date)</li>
@@ -108,8 +108,8 @@ export default function SetupPage() {
                 2
               </div>
               <div>
-                <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark">Link to Google Sheets</h3>
-                <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-1">
+                <h3 className="text-sm font-bold text-[var(--text-primary)]">Link to Google Sheets</h3>
+                <p className="text-sm text-[var(--text-secondary)] mt-1">
                   In your Google Form, click on <strong>Responses</strong> &gt; <strong>Link to Sheets</strong> and create a new spreadsheet.
                 </p>
               </div>
@@ -123,8 +123,8 @@ export default function SetupPage() {
                 3
               </div>
               <div className="w-full">
-                <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark">Paste the Automation Code</h3>
-                <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-1">
+                <h3 className="text-sm font-bold text-[var(--text-primary)]">Paste the Automation Code</h3>
+                <p className="text-sm text-[var(--text-secondary)] mt-1">
                   Open your connected Google Sheet. Click on <strong>Extensions</strong> &gt; <strong>Apps Script</strong>. Delete all existing code and paste the following snippet:
                 </p>
                 
@@ -140,16 +140,16 @@ export default function SetupPage() {
                 4
               </div>
               <div>
-                <h3 className="text-sm font-bold text-text-primary dark:text-text-primary-dark">Create the Submit Trigger</h3>
-                <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-1">
+                <h3 className="text-sm font-bold text-[var(--text-primary)]">Create the Submit Trigger</h3>
+                <p className="text-sm text-[var(--text-secondary)] mt-1">
                   In Apps Script, click the <strong>Clock icon (Triggers)</strong> on the left side. Add a new trigger:
                 </p>
-                <ul className="list-disc list-inside mt-2 text-xs font-mono bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark p-3 rounded-lg text-text-tertiary dark:text-text-tertiary-dark leading-loose">
+                <ul className="list-disc list-inside mt-2 text-xs font-mono bg-[var(--bg-base)] border border-[var(--border-default)] p-3 rounded-lg text-[var(--text-tertiary)] leading-loose">
                   <li>Function to run: <strong className="text-[var(--sapphire-500)]">onFormSubmit</strong></li>
                   <li>Event source: <strong className="text-[var(--sapphire-500)]">From spreadsheet</strong></li>
                   <li>Event type: <strong className="text-[var(--sapphire-500)]">On form submit</strong></li>
                 </ul>
-                <p className="text-xs text-text-secondary dark:text-text-secondary-dark mt-3 italic">
+                <p className="text-xs text-[var(--text-secondary)] mt-3 italic">
                   Save the trigger and grant the required permissions when prompted by Google. You are all set!
                 </p>
               </div>

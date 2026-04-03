@@ -20,7 +20,7 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
         <div className="w-7 h-7 rounded-lg bg-[var(--saffron-500)] flex items-center justify-center shadow-sm shadow-[var(--saffron-500)]/20">
           <BookOpen className="w-3.5 h-3.5 text-[#1a1a16]" />
         </div>
-        <h1 className="text-sm font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight">
+        <h1 className="text-sm font-extrabold text-[var(--text-primary)] tracking-tight">
           {title}
         </h1>
         {isAuthenticated && (
@@ -43,7 +43,7 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
         <Tooltip content={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>
           <button
             onClick={toggle}
-            className="cursor-pointer rounded-xl p-2 text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark transition-all group"
+            className="cursor-pointer rounded-xl p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-base)] transition-all group"
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             <span className="block transition-transform duration-300 group-hover:rotate-45">

@@ -77,10 +77,10 @@ export default function SeatGridContent() {
       {/* Header */}
       <div className="mb-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-text-primary dark:text-text-primary-dark tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] tracking-tight">
             Library Floorplan
           </h1>
-          <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-0.5">
+          <p className="text-sm font-medium text-[var(--text-secondary)] mt-0.5">
             Tap any seat to manage, or search below
           </p>
         </div>

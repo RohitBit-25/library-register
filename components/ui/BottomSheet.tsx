@@ -71,12 +71,12 @@ export default function BottomSheet({
         {/* Header */}
         {title && (
           <div className="relative z-10 flex items-center justify-between px-6 pb-4">
-            <h3 className="text-xl font-bold text-text-primary dark:text-text-primary-dark tracking-tight">
+            <h3 className="text-xl font-bold text-[var(--text-primary)] tracking-tight">
               {title}
             </h3>
             <button
               onClick={onClose}
-              className="cursor-pointer rounded-lg p-1.5 text-text-tertiary dark:text-text-tertiary-dark hover:bg-bg dark:hover:bg-bg-dark transition-colors"
+              className="cursor-pointer rounded-lg p-1.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-base)] transition-colors"
               aria-label="Close panel"
             >
               <X className="w-5 h-5" />

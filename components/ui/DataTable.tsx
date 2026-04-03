@@ -62,10 +62,10 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Table Container */}
-      <div className="rounded-2xl border border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark overflow-hidden shadow-[var(--shadow-ambient)]">
+      <div className="rounded-2xl border border-divider dark:border-divider-dark bg-[var(--bg-surface)] overflow-hidden shadow-[var(--shadow-ambient)]">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left relative">
-            <thead className="text-xs text-text-secondary dark:text-text-secondary-dark uppercase bg-bg-light dark:bg-bg-light-dark border-b border-divider dark:border-divider-dark">
+            <thead className="text-xs text-[var(--text-secondary)] uppercase bg-bg-light dark:bg-bg-light-dark border-b border-divider dark:border-divider-dark">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
@@ -74,7 +74,7 @@ export function DataTable<TData, TValue>({
                         key={header.id}
                         className={cn(
                           "px-6 py-4 font-medium",
-                          header.column.getCanSort() && "cursor-pointer select-none hover:bg-bg/50 dark:hover:bg-bg-dark/50 transition-colors"
+                          header.column.getCanSort() && "cursor-pointer select-none hover:bg-bg/50/50 transition-colors"
                         )}
                         onClick={header.column.getToggleSortingHandler()}
                       >
@@ -102,7 +102,7 @@ export function DataTable<TData, TValue>({
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y divide-divider/50 dark:divide-divider-dark/50 text-text-primary dark:text-text-primary-dark">
+            <tbody className="divide-y divide-divider/50 dark:divide-divider-dark/50 text-[var(--text-primary)]">
               <AnimatePresence initial={false}>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
@@ -123,7 +123,7 @@ export function DataTable<TData, TValue>({
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={columns.length} className="px-6 py-8 text-center text-text-secondary dark:text-text-secondary-dark">
+                    <td colSpan={columns.length} className="px-6 py-8 text-center text-[var(--text-secondary)]">
                       No results found.
                     </td>
                   </tr>

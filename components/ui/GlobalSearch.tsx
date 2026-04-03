@@ -41,22 +41,22 @@ export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
   return (
     <div ref={wrapperRef} className="relative w-full max-w-lg mx-auto mb-6 z-40">
       <div className={cn(
-        "relative flex items-center bg-surface dark:bg-surface-dark border rounded-2xl transition-all shadow-sm",
-        isFocused ? "border-sapphire-500 ring-4 ring-sapphire-500/20" : "border-card-border dark:border-card-border-dark hover:border-sapphire-500/50"
+        "relative flex items-center bg-[var(--bg-surface)] border rounded-2xl transition-all shadow-sm",
+        isFocused ? "border-sapphire-500 ring-4 ring-sapphire-500/20" : "border-[var(--border-default)] hover:border-sapphire-500/50"
       )}>
-        <Search className="absolute left-4 w-5 h-5 text-text-tertiary dark:text-text-tertiary-dark" />
+        <Search className="absolute left-4 w-5 h-5 text-[var(--text-tertiary)]" />
         <input
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
           placeholder="Search member name, phone, or seat #..."
-          className="w-full bg-transparent border-none py-3.5 pl-11 pr-10 text-sm font-medium text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none"
+          className="w-full bg-transparent border-none py-3.5 pl-11 pr-10 text-sm font-medium text-[var(--text-primary)] placeholder:text-text-tertiary dark:placeholder:text-text-tertiary-dark focus:outline-none"
         />
         {query && (
           <button 
             onClick={() => { setQuery(''); setIsFocused(false); }}
-            className="absolute right-3 p-1 rounded-full hover:bg-bg dark:hover:bg-bg-dark text-text-tertiary dark:text-text-tertiary-dark cursor-pointer transition-colors"
+            className="absolute right-3 p-1 rounded-full hover:bg-[var(--bg-base)] text-[var(--text-tertiary)] cursor-pointer transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -69,7 +69,7 @@ export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-2xl shadow-xl overflow-hidden"
+            className="absolute top-full left-0 right-0 mt-2 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-xl overflow-hidden"
           >
             {results.length > 0 ? (
               <ul className="divide-y divide-card-border/50 dark:divide-card-border-dark/50">
@@ -81,18 +81,18 @@ export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
                         setQuery('');
                         setIsFocused(false);
                       }}
-                      className="w-full text-left px-4 py-3 hover:bg-bg/80 dark:hover:bg-bg-dark/80 transition-colors flex items-center justify-between group cursor-pointer"
+                      className="w-full text-left px-4 py-3 hover:bg-bg/80/80 transition-colors flex items-center justify-between group cursor-pointer"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-sapphire-500/10 flex items-center justify-center text-sapphire-500 font-mono font-bold border border-sapphire-500/20 group-hover:scale-105 transition-transform">
                           {String(member.seat).padStart(2, '0')}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-text-primary dark:text-text-primary-dark">
+                          <p className="text-sm font-bold text-[var(--text-primary)]">
                             {!member.vacant ? member.name : <span className="text-text-tertiary font-medium">Vacant</span>}
                           </p>
                           {!member.vacant && member.phone && (
-                            <p className="text-xs text-text-tertiary dark:text-text-tertiary-dark mt-0.5 tracking-wider">
+                            <p className="text-xs text-[var(--text-tertiary)] mt-0.5 tracking-wider">
                               {member.phone}
                             </p>
                           )}
@@ -108,7 +108,7 @@ export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
                 ))}
               </ul>
             ) : (
-              <div className="p-8 text-center text-text-tertiary dark:text-text-tertiary-dark">
+              <div className="p-8 text-center text-[var(--text-tertiary)]">
                 <Search className="w-8 h-8 opacity-50 mx-auto mb-3" />
                 <p className="text-sm font-medium">No results found for &quot;{query}&quot;</p>
                 <p className="text-xs mt-1 opacity-70">Try searching by seat number or phone</p>

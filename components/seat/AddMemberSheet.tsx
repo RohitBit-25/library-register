@@ -77,11 +77,11 @@ export default function AddMemberSheet({
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: '100%', opacity: 0 }}
               transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              className="fixed top-0 right-0 h-screen w-full max-w-[480px] bg-surface dark:bg-surface-dark border-l border-card-border dark:border-card-border-dark shadow-2xl z-40 flex flex-col"
+              className="fixed top-0 right-0 h-screen w-full max-w-[480px] bg-[var(--bg-surface)] border-l border-[var(--border-default)] shadow-2xl z-40 flex flex-col"
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-5 border-b border-card-border/50 dark:border-card-border-dark/50 bg-bg/50 dark:bg-bg-dark/50 backdrop-blur-md sticky top-0 z-10">
-                <h3 className="text-base font-black text-text-primary dark:text-text-primary-dark font-mono flex items-center gap-2">
+              <div className="flex items-center justify-between p-5 border-b border-card-border/50/50 bg-bg/50/50 backdrop-blur-md sticky top-0 z-10">
+                <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
                   <span className="w-8 h-8 bg-[var(--sapphire-500)] rounded-lg flex items-center justify-center text-[var(--text-inverse)] shadow-sm">
                     <UserPlus className="w-4 h-4" />
                   </span>
@@ -89,7 +89,7 @@ export default function AddMemberSheet({
                 </h3>
                 <button
                   onClick={onClose}
-                  className="cursor-pointer rounded-xl p-2 text-text-tertiary dark:text-text-tertiary-dark hover:bg-surface dark:hover:bg-surface-dark hover:text-text-primary transition-all hover:rotate-90 duration-200"
+                  className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-surface)] hover:text-text-primary transition-all hover:rotate-90 duration-200"
                 >
                   <X className="w-5 h-5" />
                 </button>

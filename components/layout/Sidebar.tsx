@@ -83,10 +83,10 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
             <BookOpen className="w-[18px] h-[18px] text-[#1a1a16]" />
           </div>
           <div>
-            <h1 className="text-sm font-extrabold text-text-primary dark:text-text-primary-dark leading-tight tracking-tight">
+            <h1 className="text-sm font-extrabold text-[var(--text-primary)] leading-tight tracking-tight">
               Library Register
             </h1>
-            <p className="text-[11px] text-text-tertiary dark:text-text-tertiary-dark font-medium">
+            <p className="text-[11px] text-[var(--text-tertiary)] font-medium">
               {dateStr}
             </p>
           </div>
@@ -113,7 +113,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
                 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer relative',
                 isActive
                   ? 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)] font-bold'
-                  : 'text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark hover:text-text-primary dark:hover:text-text-primary-dark',
+                  : 'text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-[var(--text-primary)]',
               )}
             >
               <span className={cn(
@@ -136,13 +136,13 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
       {/* Footer */}
       <div className="p-4 shrink-0 relative z-10">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-mono text-text-tertiary dark:text-text-tertiary-dark">
+          <span className="text-xs font-mono text-[var(--text-tertiary)]">
             {timeStr}
           </span>
           <Tooltip content={isDark ? 'Switch to light mode' : 'Switch to dark mode'} side="right">
             <button
               onClick={toggle}
-              className="cursor-pointer flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-medium text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark transition-all group"
+              className="cursor-pointer flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-base)] transition-all group"
               aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               <span className="transition-transform duration-300 group-hover:rotate-45">
@@ -155,7 +155,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
         <Tooltip content="Sign out of the system" side="right">
           <button
             onClick={handleLogout}
-            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-text-secondary dark:text-text-secondary-dark hover:text-expired-border hover:bg-expired-fill/50 dark:hover:bg-expired-fill-dark/50 transition-colors border border-card-border dark:border-card-border-dark"
+            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] hover:text-expired-border hover:bg-expired-fill/50 dark:hover:bg-expired-fill-dark/50 transition-colors border border-[var(--border-default)]"
           >
             <LogOut className="w-4 h-4" />
             Logout

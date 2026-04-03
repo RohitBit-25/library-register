@@ -89,11 +89,11 @@ export default function BrowsePage() {
       {/* Header */}
       <div className="mb-5 flex items-start justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
             <Eye className="w-6 h-6 text-[var(--sapphire-500)]" />
             Browse Seats
           </h1>
-          <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5">
+          <p className="text-sm text-[var(--text-secondary)] mt-0.5">
             {stats.occupied} occupied · <span className="text-active-border font-bold">{stats.vacant} vacant</span> · Tap a vacant seat to request it
           </p>
         </div>
@@ -112,7 +112,7 @@ export default function BrowsePage() {
           )}
           <button
             onClick={handleLogout}
-            className="cursor-pointer flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-text-secondary dark:text-text-secondary-dark bg-bg dark:bg-bg-dark hover:text-expired-border transition-colors border border-card-border dark:border-card-border-dark"
+            className="cursor-pointer flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] bg-[var(--bg-base)] hover:text-expired-border transition-colors border border-[var(--border-default)]"
           >
             <LogOut className="w-4 h-4" />
             <span className="hidden sm:inline">Exit</span>
@@ -122,7 +122,7 @@ export default function BrowsePage() {
 
       {/* Shift Filter */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-        <div className="flex items-center gap-1 bg-surface dark:bg-surface-dark border border-card-border dark:border-card-border-dark rounded-xl p-1 shadow-sm">
+        <div className="flex items-center gap-1 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-1 shadow-sm">
           {shifts.map(s => (
             <button
               key={s.value}
@@ -131,7 +131,7 @@ export default function BrowsePage() {
                 'flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer',
                 shiftFilter === s.value
                   ? 'bg-[var(--sapphire-500)] text-[#1a1a16] shadow-sm'
-                  : 'text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:bg-bg dark:hover:bg-bg-dark',
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-base)]',
               )}
             >
               {s.icon}
@@ -146,7 +146,7 @@ export default function BrowsePage() {
             <span className="text-base font-black">{stats.occupied}</span>
             Occupied
           </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold shadow-sm bg-vacant-fill dark:bg-vacant-fill-dark text-text-secondary dark:text-text-secondary-dark border-vacant-border dark:border-vacant-border-dark">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold shadow-sm bg-vacant-fill dark:bg-vacant-fill-dark text-[var(--text-secondary)] border-vacant-border dark:border-vacant-border-dark">
             <span className="text-base font-black">{stats.vacant}</span>
             Vacant
           </span>
@@ -154,7 +154,7 @@ export default function BrowsePage() {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-3 mb-4 text-[11px] font-bold text-text-secondary dark:text-text-secondary-dark uppercase tracking-wider">
+      <div className="flex flex-wrap items-center gap-3 mb-4 text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
         {[
           { cls: 'bg-active-fill dark:bg-active-fill-dark ring-active-border', label: 'Occupied' },
           { cls: 'bg-vacant-fill dark:bg-vacant-fill-dark ring-vacant-border dark:ring-vacant-border-dark', label: 'Vacant (Tap to request)' },
@@ -168,9 +168,9 @@ export default function BrowsePage() {
 
       {/* Grid */}
       <div className="card-base rounded-[2.5rem] border border-[var(--border-default)] bg-[var(--bg-glass)] shadow-sm overflow-hidden mb-8">
-        <div className="flex items-center gap-2 px-6 pt-5 pb-3 border-b border-card-border/50 dark:border-card-border-dark/50">
+        <div className="flex items-center gap-2 px-6 pt-5 pb-3 border-b border-card-border/50/50">
           <Grid3X3 className="w-4 h-4 text-[var(--sapphire-500)]" />
-          <h3 className="text-sm font-black text-text-primary dark:text-text-primary-dark">
+          <h3 className="text-sm font-black text-[var(--text-primary)]">
             {shiftFilter === 'all' ? 'Floorplan Map' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift Mapping`}
           </h3>
           <span className="text-xs font-mono font-bold text-text-tertiary ml-auto">
@@ -228,7 +228,7 @@ function BrowseSeatTile({
         'relative flex flex-col items-center justify-between rounded-xl border transition-all duration-200 w-full h-full p-1 z-10',
         isVacant
           ? 'tile-vacant cursor-pointer hover:ring-2 hover:ring-[var(--saffron-500)]/40 hover:scale-105 hover:shadow-lg active:scale-95'
-          : 'cursor-default backdrop-blur-md bg-white/40 dark:bg-black/30 border-card-border dark:border-card-border-dark',
+          : 'cursor-default backdrop-blur-md bg-white/40 dark:bg-black/30 border-[var(--border-default)]',
         !isVacant && status === 'active' && 'tile-active opacity-90',
         !isVacant && status === 'expiring' && 'tile-expiring opacity-90',
         !isVacant && status === 'expired' && 'tile-expired opacity-90',
@@ -257,7 +257,7 @@ function BrowseSeatTile({
           {hasRequest ? '⏳' : 'Vac'}
         </span>
       ) : (
-        <span className="text-[9px] font-black truncate w-full px-0.5 text-center leading-tight z-10 text-text-primary/70 dark:text-text-primary-dark/80">
+        <span className="text-[9px] font-black truncate w-full px-0.5 text-center leading-tight z-10 text-text-primary/70/80">
           {firstName(member.name)}
         </span>
       )}

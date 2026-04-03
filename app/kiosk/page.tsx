@@ -60,7 +60,7 @@ export default function KioskPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg dark:bg-bg-dark flex items-center justify-center p-4 selection:bg-[var(--saffron-500)]/30">
+    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center p-4 selection:bg-[var(--saffron-500)]/30">
       
       {/* Background Decor */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -69,7 +69,7 @@ export default function KioskPage() {
       </div>
 
       <div className="absolute top-6 left-6 z-50">
-        <Link href="/" className="flex items-center gap-2 text-text-tertiary hover:text-text-primary dark:hover:text-text-primary-dark transition-colors bg-surface/80 dark:bg-surface-dark/80 backdrop-blur-md px-4 py-2 rounded-full border border-card-border dark:border-card-border-dark font-medium cursor-pointer shadow-sm hover:shadow-md">
+        <Link href="/" className="flex items-center gap-2 text-text-tertiary hover:text-[var(--text-primary)] transition-colors bg-surface/80/80 backdrop-blur-md px-4 py-2 rounded-full border border-[var(--border-default)] font-medium cursor-pointer shadow-sm hover:shadow-md">
           <ArrowLeft className="w-4 h-4" />
           Exit Kiosk
         </Link>
@@ -89,20 +89,20 @@ export default function KioskPage() {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--sapphire-500)] to-purple-600 outline outline-4 outline-surface dark:outline-surface-dark shadow-xl mb-6">
                 <UserCheck className="w-8 h-8 text-white" />
               </div>
-              <h1 className="text-4xl font-black tracking-tight text-text-primary dark:text-text-primary-dark">
+              <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
                 Self Check-In
               </h1>
-              <p className="text-text-secondary dark:text-text-secondary-dark mt-2 font-medium">
+              <p className="text-[var(--text-secondary)] mt-2 font-medium">
                 Enter your seat number to begin
               </p>
             </div>
 
             <div className="card-base p-6 sm:p-8 rounded-[2rem] bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] shadow-2xl">
               <div className="mb-8">
-                <div className="h-20 w-full bg-bg dark:bg-bg-dark border-2 border-card-border dark:border-card-border-dark rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-inner">
+                <div className="h-20 w-full bg-[var(--bg-base)] border-2 border-[var(--border-default)] rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-inner">
                   <span className={cn(
                     "text-5xl font-mono font-black tracking-widest leading-none",
-                    seatInput ? "text-text-primary dark:text-text-primary-dark" : "text-text-tertiary/40"
+                    seatInput ? "text-[var(--text-primary)]" : "text-text-tertiary/40"
                   )}>
                     {seatInput || "---"}
                   </span>
@@ -114,7 +114,7 @@ export default function KioskPage() {
                   <button
                     key={num}
                     onClick={() => handleNumpad(num.toString())}
-                    className="aspect-square rounded-2xl bg-bg dark:bg-bg-dark border border-card-border/50 dark:border-card-border-dark/50 text-2xl font-black text-text-primary dark:text-text-primary-dark shadow-sm hover:shadow-md hover:bg-surface dark:hover:bg-surface-dark hover:-translate-y-1 transition-all active:scale-95 cursor-pointer"
+                    className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-card-border/50/50 text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-all active:scale-95 cursor-pointer"
                   >
                     {num}
                   </button>
@@ -127,7 +127,7 @@ export default function KioskPage() {
                 </button>
                 <button
                   onClick={() => handleNumpad('0')}
-                  className="aspect-square rounded-2xl bg-bg dark:bg-bg-dark border border-card-border/50 dark:border-card-border-dark/50 text-2xl font-black text-text-primary dark:text-text-primary-dark shadow-sm hover:shadow-md hover:bg-surface dark:hover:bg-surface-dark hover:-translate-y-1 transition-all active:scale-95 cursor-pointer"
+                  className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-card-border/50/50 text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-all active:scale-95 cursor-pointer"
                 >
                   0
                 </button>
@@ -150,11 +150,11 @@ export default function KioskPage() {
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="w-full max-w-sm"
           >
-            <div className="glass p-8 rounded-[2rem] border border-card-border dark:border-card-border-dark shadow-2xl relative overflow-hidden text-center">
+            <div className="glass p-8 rounded-[2rem] border border-[var(--border-default)] shadow-2xl relative overflow-hidden text-center">
               
               <button 
                 onClick={() => setActiveMember(null)}
-                className="absolute top-4 left-4 p-2 bg-bg dark:bg-bg-dark rounded-full text-text-tertiary hover:text-text-primary dark:hover:text-text-primary-dark transition-colors cursor-pointer"
+                className="absolute top-4 left-4 p-2 bg-[var(--bg-base)] rounded-full text-text-tertiary hover:text-[var(--text-primary)] transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -165,14 +165,14 @@ export default function KioskPage() {
                 </span>
               </div>
               
-              <h2 className="text-3xl font-black tracking-tight text-text-primary dark:text-text-primary-dark mb-1">
+              <h2 className="text-3xl font-black tracking-tight text-[var(--text-primary)] mb-1">
                 {activeMember.name}
               </h2>
               <p className="text-text-tertiary font-medium mb-8">
                 Current Status: {isPresent(todayStr, activeMember.seat) ? (
                   <span className="text-green-600 dark:text-green-400 font-bold inline-flex items-center gap-1">Checked In <CheckCircle2 className="w-4 h-4" /></span>
                 ) : (
-                  <span className="text-text-secondary dark:text-text-secondary-dark font-bold inline-flex items-center gap-1">Checked Out <XCircle className="w-4 h-4" /></span>
+                  <span className="text-[var(--text-secondary)] font-bold inline-flex items-center gap-1">Checked Out <XCircle className="w-4 h-4" /></span>
                 )}
               </p>
 
@@ -188,7 +188,7 @@ export default function KioskPage() {
                 <button
                   onClick={() => handleCheckAction('out')}
                   disabled={!isPresent(todayStr, activeMember.seat)}
-                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-bg dark:bg-bg-dark border border-card-border dark:border-card-border-dark text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark hover:-translate-y-1 transition-all disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
+                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:-translate-y-1 transition-all disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
                 >
                   <LogOut className="w-8 h-8 mb-2" />
                   <span className="font-extrabold uppercase tracking-widest text-[11px]">Check Out</span>

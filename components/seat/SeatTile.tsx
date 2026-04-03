@@ -20,7 +20,7 @@ const tileClass: Record<SeatStatus, string> = {
   expiring: 'bg-amber-500/10 dark:bg-amber-500/20 ring-1 ring-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] text-amber-700 dark:text-amber-300',
   expired: 'bg-ruby-500/10 dark:bg-ruby-500/20 ring-1 ring-ruby-500/50 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] text-ruby-700 dark:text-ruby-300',
   due: 'bg-saffron-500/10 dark:bg-saffron-500/20 ring-1 ring-saffron-500/50 hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] text-saffron-800 dark:text-saffron-300',
-  vacant: 'bg-surface dark:bg-surface-dark border-card-border dark:border-card-border-dark border-dashed opacity-80 hover:opacity-100 text-text-secondary dark:text-text-secondary-dark',
+  vacant: 'bg-[var(--bg-surface)] border-[var(--border-default)] border-dashed opacity-80 hover:opacity-100 text-[var(--text-secondary)]',
 };
 
 function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps) {
@@ -175,18 +175,18 @@ function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 5, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-48 p-3 rounded-xl bg-surface/95 dark:bg-surface-dark/95 backdrop-blur-xl border border-card-border dark:border-card-border-dark shadow-2xl z-50 pointer-events-none"
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-48 p-3 rounded-xl bg-surface/95/95 backdrop-blur-xl border border-[var(--border-default)] shadow-2xl z-50 pointer-events-none"
             >
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h4 className="text-sm font-black text-text-primary dark:text-text-primary-dark">{member.name}</h4>
+                    <h4 className="text-sm font-black text-[var(--text-primary)]">{member.name}</h4>
                     <p className="text-[10px] text-text-tertiary font-mono">#{String(member.seat).padStart(2, '0')} • {member.phone || 'No phone'}</p>
                   </div>
                   <div className={cn('w-2 h-2 rounded-full mt-1', status === 'active' ? 'bg-green-500' : status === 'expiring' ? 'bg-yellow-500' : 'bg-red-500')} />
                 </div>
                 
-                <div className="pt-1.5 border-t border-card-border/50 dark:border-card-border-dark/50 flex flex-col gap-1">
+                <div className="pt-1.5 border-t border-card-border/50/50 flex flex-col gap-1">
                   <div className="flex items-center gap-1.5 text-[10px] font-medium text-text-secondary">
                     <CalendarIcon className="w-3 h-3 text-[var(--saffron-500)]" />
                     <span>Due: {fmtDateShort(member.expiry)} <span className="opacity-70">({days}d)</span></span>
@@ -198,7 +198,7 @@ function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps
                 </div>
               </div>
               {/* Popover Arrow */}
-              <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 w-2 h-2 rotate-45 bg-surface/95 dark:bg-surface-dark/95 border-r border-b border-card-border dark:border-card-border-dark"></div>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 w-2 h-2 rotate-45 bg-surface/95/95 border-r border-b border-[var(--border-default)]"></div>
             </m.div>
           )}
         </AnimatePresence>

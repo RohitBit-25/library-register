@@ -27,7 +27,7 @@ export default function DurationDonut({ data }: DurationDonutProps) {
     <div className="flex items-center gap-8">
       <div className="relative" style={{ width: size, height: size }}>
         {total === 0 ? (
-          <div className="w-full h-full rounded-full border-[24px] border-card-border dark:border-card-border-dark flex items-center justify-center">
+          <div className="w-full h-full rounded-full border-[24px] border-[var(--border-default)] flex items-center justify-center">
             <span className="text-xs font-semibold text-text-tertiary">Empty</span>
           </div>
         ) : (
@@ -66,7 +66,7 @@ export default function DurationDonut({ data }: DurationDonutProps) {
         
         {/* Center Text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-black text-text-primary dark:text-text-primary-dark">{total}</span>
+          <span className="text-2xl font-black text-[var(--text-primary)]">{total}</span>
           <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider">Members</span>
         </div>
       </div>
@@ -77,7 +77,7 @@ export default function DurationDonut({ data }: DurationDonutProps) {
           <div key={cat.key} className="flex items-center gap-3">
             <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: cat.color }} />
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-text-primary dark:text-text-primary-dark leading-none">{cat.label}</span>
+              <span className="text-sm font-bold text-[var(--text-primary)] leading-none">{cat.label}</span>
               <span className="text-xs text-text-secondary mt-1">{data[cat.key] || 0} members</span>
             </div>
           </div>

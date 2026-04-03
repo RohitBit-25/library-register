@@ -39,10 +39,10 @@ function UrgencyStat({
         {icon}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-lg font-extrabold text-text-primary dark:text-text-primary-dark leading-none truncate">
+        <div className="text-lg font-extrabold text-[var(--text-primary)] leading-none truncate">
           {count}
         </div>
-        <div className="text-[11px] font-medium text-text-tertiary dark:text-text-tertiary-dark mt-0.5 truncate">
+        <div className="text-[11px] font-medium text-[var(--text-tertiary)] mt-0.5 truncate">
           {label}
         </div>
       </div>
@@ -109,7 +109,7 @@ export default function ExpiryPage() {
                 ? 'bg-expired-fill dark:bg-expired-fill-dark text-expired-text dark:text-expired-text-dark border-expired-border/50'
                 : dLeft <= 7
                 ? 'bg-expiring-fill dark:bg-expiring-fill-dark text-expiring-text dark:text-expiring-text-dark border-expiring-border/50'
-                : 'bg-surface dark:bg-surface-dark text-text-primary dark:text-text-primary-dark border-divider dark:border-divider-dark'
+                : 'bg-[var(--bg-surface)] text-[var(--text-primary)] border-divider dark:border-divider-dark'
             )}
           >
             {row.getValue('seat')}
@@ -122,9 +122,9 @@ export default function ExpiryPage() {
       header: 'Member',
       cell: ({ row }) => (
         <div>
-          <div className="font-bold text-text-primary dark:text-text-primary-dark text-sm tracking-tight">{row.original.name}</div>
+          <div className="font-bold text-[var(--text-primary)] text-sm tracking-tight">{row.original.name}</div>
           {row.original.phone && (
-            <div className="text-[11px] font-mono text-text-tertiary dark:text-text-tertiary-dark font-medium mt-0.5">
+            <div className="text-[11px] font-mono text-[var(--text-tertiary)] font-medium mt-0.5">
               {row.original.phone}
             </div>
           )}
@@ -171,7 +171,7 @@ export default function ExpiryPage() {
             >
               {daysText}
             </span>
-            <div className="flex-1 h-1.5 rounded-full bg-bg dark:bg-bg-dark overflow-hidden border border-divider/50 dark:border-divider-dark/50 shadow-inner">
+            <div className="flex-1 h-1.5 rounded-full bg-[var(--bg-base)] overflow-hidden border border-divider/50 dark:border-divider-dark/50 shadow-inner">
               <div
                 className={cn('h-full rounded-full transition-all duration-1000 ease-out shadow-sm', barColor)}
                 style={{ width: `${fillPct}%` }}
@@ -185,7 +185,7 @@ export default function ExpiryPage() {
       accessorKey: 'expiry',
       header: 'Expiry Date',
       cell: ({ row }) => (
-        <span className="text-xs font-mono font-medium text-text-secondary dark:text-text-secondary-dark whitespace-nowrap">
+        <span className="text-xs font-mono font-medium text-[var(--text-secondary)] whitespace-nowrap">
           {fmtDate(row.getValue('expiry'))}
         </span>
       ),
@@ -221,11 +221,11 @@ export default function ExpiryPage() {
       {/* ── Header ─────────────────────────────────────────────── */}
       <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-text-primary dark:text-text-primary-dark tracking-tight flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
             <CalendarSearch className="w-6 h-6 text-expired-border" />
             Expiry Tracker
           </h1>
-          <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mt-1">
+          <p className="text-sm font-medium text-[var(--text-secondary)] mt-1">
             Monitor memberships nearing expiration via an advanced data grid.
           </p>
         </div>

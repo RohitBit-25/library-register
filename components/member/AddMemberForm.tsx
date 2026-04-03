@@ -122,9 +122,9 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6" noValidate>
       {/* Seat Selection */}
-      <div className="rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-6 shadow-sm space-y-5">
-        <div className="flex items-center justify-between border-b border-card-border dark:border-card-border-dark pb-4">
-          <h3 className="text-sm font-black text-text-primary dark:text-text-primary-dark uppercase tracking-wide">
+      <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-5">
+        <div className="flex items-center justify-between border-b border-[var(--border-default)] pb-4">
+          <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-wide">
             Seat Allotment
           </h3>
           <span className="flex items-center gap-1.5 rounded-lg bg-[var(--sapphire-500)]/10 px-3 py-1.5 text-xs font-bold text-[var(--sapphire-500)] hover:bg-[var(--sapphire-500)]/20 transition-colors">
@@ -136,7 +136,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <FieldGroup label="Seat Number" required error={errors.seat?.message}>
           <select
             {...register('seat', { valueAsNumber: true })}
-            className="w-full cursor-pointer rounded-xl border border-card-border dark:border-card-border-dark px-4 py-3.5 text-sm font-mono font-bold bg-surface/50 dark:bg-surface-dark/50 text-text-primary dark:text-text-primary-dark focus:outline-none focus:ring-4 focus:ring-[var(--saffron-500)]/10 focus:border-[var(--saffron-500)]/50 backdrop-blur-md transition-all duration-300"
+            className="w-full cursor-pointer rounded-xl border border-[var(--border-default)] px-4 py-3.5 text-sm font-mono font-bold bg-surface/50/50 text-[var(--text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--saffron-500)]/10 focus:border-[var(--saffron-500)]/50 backdrop-blur-md transition-all duration-300"
           >
             {vacantSeats.length === 0 ? (
               <option value="-1">No seats available</option>
@@ -152,8 +152,8 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
       </div>
 
       {/* Form fields */}
-      <div className="rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-6 shadow-sm space-y-6">
-        <h3 className="text-sm font-black text-text-primary dark:text-text-primary-dark uppercase tracking-wide border-b border-card-border dark:border-card-border-dark pb-4">
+      <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-6">
+        <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-wide border-b border-[var(--border-default)] pb-4">
           Member Details
         </h3>
 
@@ -227,7 +227,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         {/* Document Upload */}
         <div className="pt-2">
           <FieldGroup label="Aadhar/Pan card" required error={errors.documentStatus?.message}>
-            <div className="relative border-2 border-dashed border-card-border dark:border-card-border-dark rounded-xl p-8 hover:bg-bg dark:hover:bg-bg-dark transition-all duration-200 text-center group cursor-pointer bg-surface/30">
+            <div className="relative border-2 border-dashed border-[var(--border-default)] rounded-xl p-8 hover:bg-[var(--bg-base)] transition-all duration-200 text-center group cursor-pointer bg-surface/30">
               <input 
                 type="file" 
                 onChange={handleFileChange}
@@ -237,12 +237,12 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
               {watchDocumentStatus ? (
                 <div className="flex flex-col items-center gap-2">
                   <CheckCircle2 className="w-10 h-10 text-green-500 shrink-0 drop-shadow-sm" />
-                  <span className="text-sm font-bold text-text-primary dark:text-text-primary-dark">{watchDocumentStatus}</span>
-                  <span className="text-xs font-semibold text-text-secondary dark:text-text-secondary-dark group-hover:text-[var(--saffron-500)] transition-colors">Click to replace file</span>
+                  <span className="text-sm font-bold text-[var(--text-primary)]">{watchDocumentStatus}</span>
+                  <span className="text-xs font-semibold text-[var(--text-secondary)] group-hover:text-[var(--saffron-500)] transition-colors">Click to replace file</span>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-3 text-text-secondary dark:text-text-secondary-dark group-hover:text-[var(--saffron-500)] transition-colors">
-                  <div className="bg-bg dark:bg-bg-dark p-3 rounded-full shadow-sm border border-card-border dark:border-card-border-dark transition-transform group-hover:scale-110 duration-200">
+                <div className="flex flex-col items-center gap-3 text-[var(--text-secondary)] group-hover:text-[var(--saffron-500)] transition-colors">
+                  <div className="bg-[var(--bg-base)] p-3 rounded-full shadow-sm border border-[var(--border-default)] transition-transform group-hover:scale-110 duration-200">
                     <Upload className="w-5 h-5 text-current" />
                   </div>
                   <div>
@@ -257,8 +257,8 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
       </div>
 
       {/* Payment Section */}
-      <div className="rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-6 shadow-sm space-y-5">
-        <h3 className="text-sm font-black text-text-primary dark:text-text-primary-dark uppercase tracking-wide border-b border-card-border dark:border-card-border-dark pb-4">
+      <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-5">
+        <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-wide border-b border-[var(--border-default)] pb-4">
           Payment Details
         </h3>
         
@@ -280,9 +280,9 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         </FieldGroup>
         
         {watchPaymentMode === 'upi' && (
-          <div className="bg-bg dark:bg-bg-dark rounded-xl p-6 flex flex-col items-center justify-center border border-card-border dark:border-card-border-dark mt-2 text-center animate-in fade-in zoom-in-95 duration-200 shadow-sm relative overflow-hidden">
+          <div className="bg-[var(--bg-base)] rounded-xl p-6 flex flex-col items-center justify-center border border-[var(--border-default)] mt-2 text-center animate-in fade-in zoom-in-95 duration-200 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
-            <p className="text-[13px] font-black tracking-wide text-text-primary dark:text-text-primary-dark mb-4 uppercase">Scan to pay via UPI</p>
+            <p className="text-[13px] font-black tracking-wide text-[var(--text-primary)] mb-4 uppercase">Scan to pay via UPI</p>
             <div className="p-3 bg-white rounded-xl shadow-sm border border-black/5">
               <QRCodeCanvas 
                 value={`upi://pay?pa=9462572575@axl&pn=KAMLESH%20SINGH%20ASDLIYA&cu=INR`}
@@ -291,19 +291,19 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
                 includeMargin={true}
               />
             </div>
-            <p className="text-[11px] font-bold text-text-secondary dark:text-text-secondary-dark mt-4 px-4 py-1.5 bg-surface dark:bg-surface-dark border rounded-full drop-shadow-sm">UPI ID: 9462572575@axl</p>
+            <p className="text-[11px] font-bold text-[var(--text-secondary)] mt-4 px-4 py-1.5 bg-[var(--bg-surface)] border rounded-full drop-shadow-sm">UPI ID: 9462572575@axl</p>
           </div>
         )}
       </div>
 
       {/* Terms & Conditions */}
-      <div className="rounded-xl border border-card-border dark:border-card-border-dark bg-surface dark:bg-surface-dark p-6 shadow-sm space-y-4">
-        <h3 className="text-[13px] font-black text-red-500 uppercase tracking-wide border-b border-card-border dark:border-card-border-dark pb-4 mb-5 flex items-center gap-2">
+      <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-4">
+        <h3 className="text-[13px] font-black text-red-500 uppercase tracking-wide border-b border-[var(--border-default)] pb-4 mb-5 flex items-center gap-2">
           Declaration & Terms and Condition 
           <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block animate-pulse"></span>
         </h3>
         
-        <label className="flex items-start gap-4 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-bg dark:hover:bg-bg-dark transition-colors">
+        <label className="flex items-start gap-4 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-[var(--bg-base)] transition-colors">
           <input 
             type="checkbox" 
             {...register('termsAccepted.rules')}
@@ -311,13 +311,13 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           />
           <span className={cn(
             "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-500)] transition-colors pt-0.5",
-            errors.termsAccepted?.rules ? "text-red-500 font-bold" : "text-text-primary dark:text-text-primary-dark"
+            errors.termsAccepted?.rules ? "text-red-500 font-bold" : "text-[var(--text-primary)]"
           )}>
             I agree to follow all rules and regulations of the library.
           </span>
         </label>
         
-        <label className="flex items-start gap-4 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-bg dark:hover:bg-bg-dark transition-colors">
+        <label className="flex items-start gap-4 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-[var(--bg-base)] transition-colors">
           <input 
             type="checkbox" 
             {...register('termsAccepted.damage')}
@@ -325,13 +325,13 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           />
           <span className={cn(
             "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-500)] transition-colors pt-0.5",
-            errors.termsAccepted?.damage ? "text-red-500 font-bold" : "text-text-primary dark:text-text-primary-dark"
+            errors.termsAccepted?.damage ? "text-red-500 font-bold" : "text-[var(--text-primary)]"
           )}>
             I will be held responsible for any damage caused by me and agree to pay for the same.
           </span>
         </label>
         
-        <label className="flex items-start gap-4 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-bg dark:hover:bg-bg-dark transition-colors">
+        <label className="flex items-start gap-4 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-[var(--bg-base)] transition-colors">
           <input 
             type="checkbox" 
             {...register('termsAccepted.nonRefundable')}
@@ -339,7 +339,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           />
           <span className={cn(
             "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-500)] transition-colors pt-0.5",
-            errors.termsAccepted?.nonRefundable ? "text-red-500 font-bold" : "text-text-primary dark:text-text-primary-dark"
+            errors.termsAccepted?.nonRefundable ? "text-red-500 font-bold" : "text-[var(--text-primary)]"
           )}>
             Membership is Non-refundable and Non-transferable.
           </span>
@@ -358,7 +358,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <button
           type="button"
           onClick={clearForm}
-          className="rounded-xl border border-card-border dark:border-card-border-dark px-6 text-[13px] font-black uppercase text-text-secondary dark:text-text-secondary-dark hover:bg-bg dark:hover:bg-bg-dark hover:text-red-500 transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98]"
+          className="rounded-xl border border-[var(--border-default)] px-6 text-[13px] font-black uppercase text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-red-500 transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98]"
         >
           Clear
         </button>
@@ -382,7 +382,7 @@ function FieldGroup({
 }) {
   return (
     <div className="flex flex-col">
-      <label className="block text-xs font-black uppercase tracking-wider text-text-secondary dark:text-text-secondary-dark mb-2 ml-1">
+      <label className="block text-xs font-black uppercase tracking-wider text-[var(--text-secondary)] mb-2 ml-1">
         {label}
         {required && <span className="text-red-500 ml-1.5 text-sm leading-none">*</span>}
       </label>
@@ -407,7 +407,7 @@ function SegmentedControl({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex gap-1.5 bg-bg dark:bg-bg-dark p-1.5 rounded-xl border border-card-border dark:border-card-border-dark w-full shadow-inner shadow-black/5 dark:shadow-black/20">
+    <div className="flex gap-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] w-full shadow-inner shadow-black/5 dark:shadow-black/20">
       {options.map(opt => (
         <button
           key={opt.value}

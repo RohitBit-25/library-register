@@ -24,7 +24,7 @@ export default function OccupancySparkline({ data }: OccupancySparklineProps) {
   const pathD = `M ${points.join(' L ')}`;
 
   return (
-    <div className="w-full relative h-[120px] bg-gradient-to-tr from-surface to-bg dark:from-surface-dark dark:to-bg-dark rounded-xl border border-card-border dark:border-card-border-dark overflow-hidden p-2 flex flex-col justify-end">
+    <div className="w-full relative h-[120px] bg-gradient-to-tr from-surface to-bg dark:from-surface-dark dark:to-bg-dark rounded-xl border border-[var(--border-default)] overflow-hidden p-2 flex flex-col justify-end">
       
       {/* Background Area fill */}
       <svg className="absolute bottom-0 left-0 w-full h-[100px]" preserveAspectRatio="none" viewBox={`0 0 ${w} ${h}`}>
@@ -67,7 +67,7 @@ export default function OccupancySparkline({ data }: OccupancySparklineProps) {
       
       <div className="absolute top-3 left-4">
         <span className="text-xs font-bold text-text-tertiary uppercase tracking-wider">30-Day Trend</span>
-        <div className="text-2xl font-black text-text-primary dark:text-text-primary-dark leading-tight mt-1 truncate">
+        <div className="text-2xl font-black text-[var(--text-primary)] leading-tight mt-1 truncate">
           {data[data.length - 1]} occupied
         </div>
       </div>
