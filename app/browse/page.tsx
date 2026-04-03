@@ -66,9 +66,16 @@ export default function BrowsePage() {
     }
   }, [members, requests, addToast]);
 
-  const handleSubmitRequest = (seat: number, name: string, phone: string, message: string, transactionId: string) => {
-    addRequest({ seat, userName: name, userPhone: phone, message, transactionId });
-    addToast('success', `Seat #${seat} and payment details submitted!`);
+  const handleSubmitRequest = async (seat: number, name: string, phone: string, message: string, transactionId: string) => {
+    const result = await addRequest({ seat, userName: name, userPhone: phone, message, transactionId });
+    if (result.success) {
+      addToast('success', `Seat #${seat} and payment details submitted!`);
+      // No need to close the sheet or reset state here, the SeatRequestSheet handles its own success state / timeout
+    } else if (result.error === 'duplicate') {
+      addToast('warning', `You already have a pending request for Seat #${seat}`);
+    } else {
+      addToast('error', `Failed to submit request. Please try again.`);
+    }
   };
 
   const handleLogout = () => {
@@ -100,7 +107,7 @@ export default function BrowsePage() {
         <div className="flex items-center gap-2">
           {myPendingRequests > 0 && (
             <button
-              onClick={() => addToast('success', `You have ${myPendingRequests} pending request(s)`)}
+              onClick={() => router.push('/my-requests')}
               className="cursor-pointer relative flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)] hover:bg-[var(--sapphire-500)]/15 transition-colors"
             >
               <Inbox className="w-4 h-4" />

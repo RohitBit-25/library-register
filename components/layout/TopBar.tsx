@@ -1,8 +1,8 @@
 'use client';
-
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { useAuth } from '@/hooks/useAuth';
-import { Sun, Moon, BookOpen, Shield, Eye } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Sun, Moon, BookOpen, Shield, Eye, LogOut } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 
 interface TopBarProps {
@@ -11,10 +11,14 @@ interface TopBarProps {
 
 export default function TopBar({ title = 'Library Register' }: TopBarProps) {
   const { isDark, toggle } = useDarkMode();
-  const { isAdmin, isAuthenticated } = useAuth();
+  const { isAdmin, isAuthenticated, logout } = useAuth();
+
+  // If admin, TopBar is mobile-only (Sidebar handles desktop).
+  // If user, TopBar is visible on both mobile and desktop.
+  const displayClass = isAdmin ? 'lg:hidden fixed top-4 left-4 right-4' : 'fixed top-4 left-4 right-4 lg:left-8 lg:right-8 lg:top-6';
 
   return (
-    <header className="lg:hidden fixed top-4 left-4 right-4 z-30 flex items-center justify-between h-14 px-4 rounded-2xl glass noise-pattern shadow-floating dark:shadow-floating-dark overflow-hidden">
+    <header className={cn('z-30 flex items-center justify-between h-14 px-4 rounded-2xl glass noise-pattern shadow-floating dark:shadow-floating-dark overflow-hidden', displayClass)}>
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-transparent dark:from-white/10 pointer-events-none" />
       <div className="relative z-10 flex items-center gap-2.5">
         <div className="w-7 h-7 rounded-lg bg-[var(--saffron-500)] flex items-center justify-center shadow-sm shadow-[var(--saffron-500)]/20">
@@ -51,6 +55,18 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
             </span>
           </button>
         </Tooltip>
+        
+        {isAuthenticated && (
+          <Tooltip content="Sign out">
+            <button
+              onClick={logout}
+              className="cursor-pointer rounded-xl p-2 text-[var(--ruby-500)] hover:bg-[var(--ruby-500)]/10 transition-all ml-1"
+              aria-label="Sign out"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          </Tooltip>
+        )}
       </div>
     </header>
   );
