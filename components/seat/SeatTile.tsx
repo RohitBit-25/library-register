@@ -13,6 +13,7 @@ interface SeatTileProps {
   onClick: (seat: number) => void;
   compact?: boolean;
   face?: FaceDir;
+  selected?: boolean;
 }
 
 const tileClass: Record<SeatStatus, string> = {
@@ -23,7 +24,7 @@ const tileClass: Record<SeatStatus, string> = {
   vacant: 'bg-[var(--bg-surface)] border-[var(--border-default)] border-dashed opacity-80 hover:opacity-100 text-[var(--text-secondary)]',
 };
 
-function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps) {
+function SeatTileInner({ member, onClick, compact = false, face, selected = false }: SeatTileProps) {
   const [isHovered, setIsHovered] = useState(false);
   const status = getSeatStatus(member);
   const days = !member.vacant ? daysUntilExpiry(member.expiry) : Infinity;
@@ -74,6 +75,7 @@ function SeatTileInner({ member, onClick, compact = false, face }: SeatTileProps
             'relative flex flex-col items-center justify-between rounded-[10px] transition-all cursor-pointer z-10 w-full h-full border border-transparent',
             tileClass[status],
             compact ? 'p-1' : 'p-1.5',
+            selected ? 'ring-2 ring-[var(--saffron-500)] shadow-[0_0_20px_rgba(232,133,58,0.5)] z-20 scale-105' : ''
           )}
           aria-label={ariaLabel}
         >
