@@ -10,7 +10,7 @@ interface SeatRequestSheetProps {
   member: Member | null;
   open: boolean;
   onClose: () => void;
-  onSubmit: (seat: number, name: string, phone: string, message: string, transactionId: string) => void;
+  onSubmit: (seat: number, name: string, phone: string, message: string, transactionId: string) => Promise<{success: boolean, error: string | null}>;
 }
 
 export default function SeatRequestSheet({
@@ -24,24 +24,41 @@ export default function SeatRequestSheet({
   const [message, setMessage] = useState('');
   const [transactionId, setTransactionId] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   if (!open || !member) return null;
 
-  // Placeholder UPI link without fixed amount so user can pay agreed fee
-  const upiUrl = `upi://pay?pa=library@upi&pn=Gangaur%20Library&cu=INR`;
+  // Real UPI link for the Gangaur Library
+  const upiUrl = `upi://pay?pa=gangaur.972327@sbi&pn=Gangaur%20Library&cu=INR`;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim() || !phone.trim() || !transactionId.trim()) return;
-    onSubmit(member.seat, name.trim(), phone.trim(), message.trim(), transactionId.trim());
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setName('');
-      setPhone('');
-      setMessage('');
-      setTransactionId('');
-      onClose();
-    }, 2000);
+    
+    setLoading(true);
+    setErrorMsg('');
+    
+    try {
+      const res = await onSubmit(member.seat, name.trim(), phone.trim(), message.trim(), transactionId.trim());
+      
+      if (res.success) {
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+          setName('');
+          setPhone('');
+          setMessage('');
+          setTransactionId('');
+          onClose();
+        }, 2000);
+      } else {
+        setErrorMsg(res.error === 'duplicate' ? 'You already requested this seat.' : 'Failed to submit request.');
+      }
+    } catch (err) {
+      setErrorMsg('An error occurred.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const isValid = name.trim().length >= 2 && phone.trim().length >= 10 && transactionId.trim().length >= 4;
@@ -61,7 +78,43 @@ export default function SeatRequestSheet({
           <div className="w-10 h-1 rounded-full bg-text-tertiary/30" />
         </div>
 
-        {submitted ? (
+        {!member.vacant ? (
+          /* ── Occupied State ──────────────────────────────── */
+          <div className="px-5 pb-8 animate-fade-in">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[var(--rose-500)]/10 flex items-center justify-center">
+                  <Armchair className="w-5 h-5 text-[var(--rose-500)]" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[var(--text-primary)]">
+                    Seat #{member.seat}
+                  </h3>
+                  <p className="text-xs text-[var(--text-tertiary)]">Currently Occupied</p>
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="cursor-pointer rounded-lg p-1.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-base)] transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 rounded-xl bg-[var(--bg-base)] border border-[var(--border-default)] flex flex-col gap-3">
+              <div className="flex justify-between items-center pb-3 border-b border-[var(--border-default)]">
+                <span className="text-xs text-[var(--text-tertiary)] font-medium">Occupant</span>
+                <span className="text-sm font-bold text-[var(--text-primary)]">{member.name}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-[var(--text-tertiary)] font-medium">Shift</span>
+                <span className="text-sm font-bold text-[var(--text-primary)] capitalize">{member.shift}</span>
+              </div>
+            </div>
+            <p className="text-xs text-center text-text-tertiary mt-5 leading-relaxed">
+              This seat is currently assigned.<br/>Check back later or browse other available seats.
+            </p>
+          </div>
+        ) : submitted ? (
           /* ── Success State ───────────────────────────────── */
           <div className="px-5 py-10 text-center animate-fade-in">
             <div className="w-16 h-16 rounded-2xl bg-[var(--emerald-500)]/15 flex items-center justify-center mx-auto mb-4 animate-check-bounce">
@@ -184,19 +237,30 @@ export default function SeatRequestSheet({
                 />
               </div>
 
+              {/* Error Message */}
+              {errorMsg && (
+                <div className="p-3 rounded-xl bg-[var(--rose-500)]/10 border border-[var(--rose-500)]/20 text-[var(--rose-500)] text-sm text-center">
+                  {errorMsg}
+                </div>
+              )}
+
               {/* Submit */}
               <button
                 onClick={handleSubmit}
-                disabled={!isValid}
+                disabled={!isValid || loading}
                 className={cn(
                   'cursor-pointer w-full py-3 rounded-xl text-sm font-bold text-white transition-all shadow-md flex items-center justify-center gap-2 mt-2',
-                  isValid
+                  isValid && !loading
                     ? 'bg-[var(--gradient-glow)] hover:shadow-[var(--shadow-glow-saffron)] active:scale-[0.98]'
                     : 'bg-text-tertiary/30 cursor-not-allowed shadow-none'
                 )}
               >
-                <Send className="w-4 h-4" />
-                Submit Verification
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+                {loading ? 'Submitting...' : 'Submit Verification'}
               </button>
 
               <p className="text-center text-[10px] text-[var(--text-tertiary)]">

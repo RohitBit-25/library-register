@@ -2,7 +2,7 @@
 
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { useAuth } from '@/hooks/useAuth';
-import { Sun, Moon, BookOpen, Shield, Eye } from 'lucide-react';
+import { Sun, Moon, BookOpen, Shield, Eye, LogOut } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 
 interface TopBarProps {
@@ -11,10 +11,16 @@ interface TopBarProps {
 
 export default function TopBar({ title = 'Library Register' }: TopBarProps) {
   const { isDark, toggle } = useDarkMode();
-  const { isAdmin, isAuthenticated } = useAuth();
+  const { isAdmin, isAuthenticated, logout } = useAuth();
+  
+  // Admin shows sidebar on desktop (TopBar hidden)
+  // User shows TopBar on all screens
+  const headerClass = isAdmin 
+    ? "lg:hidden fixed top-4 left-4 right-4 z-30 flex items-center justify-between h-14 px-4 rounded-2xl glass noise-pattern shadow-floating dark:shadow-floating-dark overflow-hidden" 
+    : "fixed top-4 left-4 right-4 z-30 flex items-center justify-between h-14 px-4 rounded-2xl glass noise-pattern shadow-floating dark:shadow-floating-dark overflow-hidden";
 
   return (
-    <header className="lg:hidden fixed top-4 left-4 right-4 z-30 flex items-center justify-between h-14 px-4 rounded-2xl glass noise-pattern shadow-floating dark:shadow-floating-dark overflow-hidden">
+    <header className={headerClass}>
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-transparent dark:from-white/10 pointer-events-none" />
       <div className="relative z-10 flex items-center gap-2.5">
         <div className="w-7 h-7 rounded-lg bg-[var(--saffron-500)] flex items-center justify-center shadow-sm shadow-[var(--saffron-500)]/20">
@@ -51,6 +57,17 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
             </span>
           </button>
         </Tooltip>
+        {!isAdmin && isAuthenticated && (
+           <Tooltip content="Sign out">
+             <button
+               onClick={logout}
+               className="hidden lg:flex cursor-pointer rounded-xl p-2 text-[var(--text-secondary)] hover:bg-[var(--rose-500)] hover:text-white transition-all group ml-1"
+               aria-label="Sign out"
+             >
+               <LogOut className="w-5 h-5" />
+             </button>
+           </Tooltip>
+        )}
       </div>
     </header>
   );
