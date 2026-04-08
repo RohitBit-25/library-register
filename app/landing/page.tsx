@@ -3,154 +3,164 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { Shield, Sparkles, ArrowRight, BookOpen } from 'lucide-react';
+import { Shield, ArrowRight, BookOpen, GraduationCap, MapPin, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LandingPage() {
   const router = useRouter();
   const { loginAsAdmin, loginAsUser, isAuthenticated, isAdmin } = useAuth();
-
   const [pin, setPin] = useState('');
   const [pinError, setPinError] = useState(false);
 
-  // Redirect authenticated users after render (not during)
   useEffect(() => {
-    if (isAuthenticated) {
-      router.replace(isAdmin ? '/' : '/browse');
-    }
+    if (isAuthenticated) router.replace(isAdmin ? '/' : '/browse');
   }, [isAuthenticated, isAdmin, router]);
 
-  if (isAuthenticated) {
-    return null;
-  }
-
-  const handleAdminLogin = () => {
-    // loginAsAdmin always returns a boolean synchronously based on useAuth code? Wait, the lint says it's a Promise<boolean> that is always truthy if not awaited. Let's make it async/await.
-    const attemptLogin = async () => {
-      const success = await loginAsAdmin(pin);
-      if (success) {
-        router.push('/');
-      } else {
-        setPinError(true);
-        setTimeout(() => setPinError(false), 3000);
-      }
-    };
-    attemptLogin();
-  };
-
-  const handleUserEnter = () => {
-    loginAsUser();
-    router.push('/browse');
-  };
+  if (isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-[var(--bg-void)] relative overflow-hidden flex flex-col">
-      {/* Background gradient orbs (Atmospheric glow) */}
-      <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] rounded-full bg-[var(--saffron-500)]/10 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[10%] right-[5%] w-[500px] h-[500px] rounded-full bg-[var(--sapphire-500)]/5 blur-[120px] pointer-events-none" />
-
-      {/* Jaali Decorative Border - Top */}
-      <div className="absolute top-0 left-0 right-0 h-[8px] bg-[var(--gradient-jaali)] opacity-40 pointer-events-none border-b border-[var(--border-subtle)]" />
-
-      {/* Content */}
-      <div className="relative z-10 max-w-lg mx-auto px-[var(--space-5)] py-[var(--space-10)] min-h-[100dvh] flex flex-col justify-center items-center">
-
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col items-center text-center w-full"
-        >
-          {/* Logo Mark */}
-          <div className="relative mb-[var(--space-8)]">
-            <div className="w-[88px] h-[88px] rounded-[var(--radius-2xl)] bg-[var(--gradient-primary)] flex items-center justify-center shadow-[var(--shadow-glow-saffron)] relative before:absolute before:inset-0 before:bg-[var(--gradient-glass)] before:rounded-[var(--radius-2xl)]">
-              <BookOpen className="w-10 h-10 text-[var(--text-inverse)] relative z-10" />
-            </div>
-            <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-[var(--bg-elevated)] border-2 border-[var(--border-subtle)] flex items-center justify-center shadow-[var(--shadow-sm)]">
-              <Sparkles className="w-3.5 h-3.5 text-[var(--saffron-400)]" />
-            </div>
-          </div>
-
-          {/* Title Area */}
-          <div className="mb-[var(--space-12)] space-y-[var(--space-3)]">
-            <h1 className="font-[var(--font-devanagari)] text-[var(--text-4xl)] leading-[var(--leading-tight)] bg-clip-text text-transparent bg-[var(--gradient-primary)] drop-shadow-md">
-              श्री गणगौर Library
-            </h1>
-            <p className="font-[var(--font-display)] text-[var(--text-lg)] text-[var(--text-secondary)] italic font-[var(--weight-medium)] tracking-[var(--tracking-wide)]">
-              ✦ Rajsamand's Premier Study Space ✦
-            </p>
-          </div>
-
-          {/* Actions */}
-          <div className="w-full flex flex-col gap-[var(--space-5)]">
-            <Button
-              variant="primary"
-              size="lg"
-              className="w-full text-lg shadow-[var(--shadow-lg)] justify-between px-[var(--space-6)]"
-              onClick={handleUserEnter}
-            >
-              <span>Browse Available Seats</span>
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-
-            <div className="flex items-center gap-[var(--space-4)] w-full py-[var(--space-2)]">
-              <div className="h-[1px] flex-1 bg-[var(--border-subtle)]" />
-              <div className="w-2 h-2 rotate-45 border-[1px] border-[var(--saffron-500)]/40" />
-              <div className="h-[1px] flex-1 bg-[var(--border-subtle)]" />
-            </div>
-
-            {/* Admin Access Form Wrapper */}
-            <motion.div
-              animate={pinError ? { x: [-5, 5, -5, 5, 0] } : {}}
-              transition={{ duration: 0.4 }}
-              className="w-full"
-            >
-              <Card variant="base" className={cn("p-[var(--space-5)] relative transition-colors duration-500", pinError && "border-[var(--ruby-400)] shadow-[var(--shadow-glow-ruby)]")}>
-                <h3 className="font-[var(--font-body)] text-[var(--text-base)] text-[var(--text-primary)] font-[var(--weight-semibold)] mb-[var(--space-4)] flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-[var(--text-tertiary)]" />
-                  Admin Access
-                </h3>
-
-                <div className="space-y-[var(--space-4)]">
-                  <Input
-                    label="Admin PIN"
-                    type="password"
-                    inputMode="numeric"
-                    maxLength={6}
-                    value={pin}
-                    onChange={(e) => {
-                      setPin(e.target.value.replace(/\D/g, ''));
-                      setPinError(false);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleAdminLogin();
-                    }}
-                    error={pinError ? "Incorrect PIN" : undefined}
-                    className="font-[var(--font-mono)] tracking-[0.2em]"
-                  />
-
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-between"
-                    onClick={handleAdminLogin}
-                    disabled={pin.length < 4}
-                  >
-                    <span>Enter Admin Area</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </Card>
-            </motion.div>
-          </div>
-        </motion.div>
+    <div className="min-h-screen bg-[#080808] text-white selection:bg-amber-500/30 overflow-hidden font-light">
+      
+      {/* --- BACKGROUND ARTISTRY --- */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {/* Animated Mesh Gradient */}
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.1, 1],
+            rotate: [0, 5, 0]
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-[20%] -right-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-br from-amber-600/10 to-transparent blur-[120px]" 
+        />
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-30 mix-blend-overlay" />
+        
+        {/* Large Decorative Floating Devanagari */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center opacity-[0.02] pointer-events-none select-none">
+          <span className="text-[30vw] font-bold font-[var(--font-devanagari)] leading-none">
+            गणगौर
+          </span>
+        </div>
       </div>
 
-      {/* Jaali Decorative Border - Bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-[8px] bg-[var(--gradient-jaali)] opacity-40 pointer-events-none border-t border-[var(--border-subtle)]" />
+      {/* --- HEADER --- */}
+      <header className="relative z-50 flex justify-between items-center p-8 lg:px-12">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-white flex items-center justify-center rounded-full group cursor-pointer hover:scale-110 transition-transform duration-500">
+            <BookOpen className="w-5 h-5 text-black" />
+          </div>
+          <div className="h-px w-8 bg-white/20" />
+          <span className="text-[10px] tracking-[0.5em] font-bold uppercase text-amber-500/80">
+            Shree Gangaur Library
+          </span>
+        </div>
+        <div className="hidden md:flex items-center gap-6 text-[10px] tracking-[0.2em] font-bold uppercase opacity-40">
+          <span>Focus</span>
+          <span className="w-1 h-1 bg-amber-500 rounded-full" />
+          <span>Silence</span>
+          <span className="w-1 h-1 bg-amber-500 rounded-full" />
+          <span>Success</span>
+        </div>
+      </header>
+
+      {/* --- MAIN CONTENT --- */}
+      <main className="relative z-10 flex flex-col items-center justify-center min-h-[70vh] px-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center space-y-8"
+        >
+          {/* Main Title with Gold Foil Effect */}
+          <div className="relative inline-block">
+            <h1 className="font-[var(--font-devanagari)] text-8xl md:text-[10rem] leading-none text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+              श्री गणगौर
+            </h1>
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: '100%' }}
+              transition={{ delay: 0.8, duration: 1.5 }}
+              className="h-px bg-gradient-to-r from-transparent via-amber-500 to-transparent absolute -bottom-4" 
+            />
+          </div>
+
+          <p className="text-lg md:text-xl text-white/40 tracking-[0.1em] font-extralight max-w-2xl mx-auto italic leading-relaxed">
+            Rajsamand's premier study environment designed for <span className="text-white/80">deep work</span> and <span className="text-white/80">academic mastery</span>.
+          </p>
+
+          {/* Call to Action Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl pt-12">
+            
+            {/* User CTA */}
+            <motion.div whileHover={{ y: -5 }} className="relative group">
+              <div className="absolute inset-0 bg-amber-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+              <button
+                onClick={() => { loginAsUser(); router.push('/browse'); }}
+                className="relative w-full h-24 bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-between px-8 transition-all group-hover:bg-white group-hover:text-black overflow-hidden"
+              >
+                <div className="text-left">
+                  <p className="text-[8px] font-bold uppercase tracking-widest opacity-50 mb-1">Student Portal</p>
+                  <p className="text-lg font-medium tracking-tight">Reserve Your Space</p>
+                </div>
+                <GraduationCap className="w-6 h-6 group-hover:scale-110 transition-transform" />
+              </button>
+            </motion.div>
+
+            {/* Admin Portal Interaction */}
+            <div className="relative group">
+              <div className={cn(
+                "w-full h-24 bg-black/40 backdrop-blur-md border border-white/5 flex flex-col justify-center px-8 transition-all duration-500",
+                pinError ? "border-red-500/50" : "hover:border-amber-500/40"
+              )}>
+                <div className="flex justify-between items-center mb-1">
+                   <p className="text-[10px] font-bold uppercase tracking-widest opacity-30">Management PIN</p>
+                   {pinError && <span className="text-[9px] text-red-500 font-bold uppercase">Invalid</span>}
+                </div>
+                <div className="flex items-center">
+                  <input 
+                    type="password"
+                    maxLength={6}
+                    value={pin}
+                    onChange={(e) => { setPin(e.target.value.replace(/\D/g, '')); setPinError(false); }}
+                    onKeyDown={(e) => e.key === 'Enter' && loginAsAdmin(pin)}
+                    placeholder="••••••"
+                    className="bg-transparent border-none outline-none text-2xl tracking-[0.4em] font-mono text-amber-500 w-full placeholder:text-white/5"
+                  />
+                  <button 
+                    onClick={() => loginAsAdmin(pin)}
+                    className="p-2 hover:bg-white/5 rounded-full transition-colors"
+                  >
+                    <Shield className="w-4 h-4 text-white/40" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </motion.div>
+      </main>
+
+      {/* --- FOOTER --- */}
+      <footer className="absolute bottom-0 w-full p-8 lg:px-12 flex flex-col md:flex-row justify-between items-end md:items-center gap-6 border-t border-white/5">
+        <div className="flex items-center gap-4 text-[10px] font-black tracking-[0.3em] uppercase text-white/20">
+          <MapPin className="w-3 h-3 text-amber-500" />
+          Kankroli, Rajsamand
+        </div>
+        
+        <div className="flex items-center gap-8">
+          <a href="#" className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors">
+             Rules & Conduct <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </a>
+          <div className="h-4 w-px bg-white/10" />
+          <p className="text-[10px] font-bold text-white/10 tracking-[0.5em] uppercase">© 2026 GANGAUR</p>
+        </div>
+      </footer>
+
+      {/* Decorative Golden Corner */}
+      <div className="absolute bottom-0 right-0 w-px h-24 bg-gradient-to-t from-amber-500 to-transparent opacity-40" />
+      <div className="absolute bottom-0 right-0 h-px w-24 bg-gradient-to-l from-amber-500 to-transparent opacity-40" />
+
     </div>
   );
 }
