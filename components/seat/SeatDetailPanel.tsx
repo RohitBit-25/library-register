@@ -32,10 +32,10 @@ interface SeatDetailPanelProps {
 
 // ── Status gradient banner config ──────────────────
 const statusGradient: Record<SeatStatus, string> = {
-  active: 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20',
-  expiring: 'bg-amber-500 text-white shadow-lg shadow-amber-500/20',
-  expired: 'bg-ruby-500 text-white shadow-lg shadow-ruby-500/20',
-  due: 'bg-saffron-500 text-white shadow-lg shadow-saffron-500/20',
+  active: 'bg-emerald-500 text-[var(--saffron-50)] shadow-lg shadow-emerald-500/20',
+  expiring: 'bg-amber-500 text-[var(--saffron-50)] shadow-lg shadow-amber-500/20',
+  expired: 'bg-ruby-500 text-[var(--saffron-50)] shadow-lg shadow-ruby-500/20',
+  due: 'bg-saffron-500 text-[var(--saffron-50)] shadow-lg shadow-saffron-500/20',
   vacant: 'bg-[var(--bg-surface)] border-2 border-dashed border-[var(--border-default)] text-[var(--text-primary)] opacity-90',
 };
 
@@ -110,7 +110,7 @@ export default function SeatDetailPanel({
         {!renewMode ? (
           <>
             {/* Status Banner */}
-            <div className={cn('rounded-xl p-4 text-white relative overflow-hidden', statusGradient[status])}>
+            <div className={cn('rounded-xl p-4 text-[var(--saffron-50)] relative overflow-hidden', statusGradient[status])}>
               <div className="absolute top-0 right-0 w-28 h-28 rounded-bl-[100px] bg-white/10 pointer-events-none" />
               <div className="relative z-10">
                 <p className="text-xs font-bold uppercase tracking-wider opacity-80">
@@ -173,7 +173,7 @@ export default function SeatDetailPanel({
                       <ActionBtn 
                         onClick={() => { onMarkPaid(member.seat); onClose(); }} 
                         icon={<CreditCard className="w-4 h-4" />}
-                        className="bg-emerald-500 text-white shadow-sm hover:shadow-md hover:bg-emerald-600 border-transparent"
+                        className="bg-emerald-500 text-[var(--saffron-50)] shadow-sm hover:shadow-md hover:bg-emerald-600 border-transparent"
                       >
                         Mark Paid
                       </ActionBtn>
@@ -189,7 +189,7 @@ export default function SeatDetailPanel({
                     <ActionBtn 
                       onClick={() => { reset({ renewDate: todayISO(), renewDuration: '3M' }); setRenewMode(true); }} 
                       icon={<RefreshCw className="w-4 h-4" />}
-                      className="bg-sapphire-500 text-white shadow-sm hover:shadow-md hover:bg-sapphire-600 border-transparent"
+                      className="bg-sapphire-500 text-[var(--saffron-50)] shadow-sm hover:shadow-md hover:bg-sapphire-600 border-transparent"
                     >
                       Renew
                     </ActionBtn>
@@ -231,7 +231,7 @@ export default function SeatDetailPanel({
             animate={{ opacity: 1, x: 0 }}
             className="space-y-4"
           >
-            <div className="bg-sapphire-500 rounded-xl p-4 text-white shadow-lg shadow-sapphire-500/20">
+            <div className="bg-sapphire-500 rounded-xl p-4 text-[var(--saffron-50)] shadow-lg shadow-sapphire-500/20">
               <p className="text-xs font-bold uppercase tracking-wider opacity-80">Renewal</p>
               <h4 className="text-lg font-black mt-1 tracking-tight">
                 Seat {member.seat} — {member.name.split(' ')[0]}
@@ -260,7 +260,7 @@ export default function SeatDetailPanel({
                           className={cn(
                             'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer relative overflow-hidden',
                             field.value === d
-                              ? 'bg-sapphire-500 text-white shadow-md scale-100 ring-1 ring-sapphire-500/50 z-10'
+                              ? 'bg-sapphire-500 text-[var(--saffron-50)] shadow-md scale-100 ring-1 ring-sapphire-500/50 z-10'
                               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] scale-[0.98] hover:scale-100 z-0',
                           )}
                         >
@@ -291,7 +291,7 @@ export default function SeatDetailPanel({
               </button>
               <button
                 type="submit"
-                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-sapphire-500 text-white hover:bg-sapphire-600 transition-all cursor-pointer shadow-lg shadow-sapphire-500/20 hover:shadow-xl hover:shadow-sapphire-500/30 active:scale-95"
+                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-sapphire-500 text-[var(--saffron-50)] hover:bg-sapphire-600 transition-all cursor-pointer shadow-lg shadow-sapphire-500/20 hover:shadow-xl hover:shadow-sapphire-500/30 active:scale-95"
               >
                 Confirm Renewal
               </button>
@@ -353,7 +353,7 @@ export default function SeatDetailPanel({
               <div className="p-5">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
-                    <span className="w-8 h-8 bg-gradient-to-br from-sapphire-500 to-sapphire-600 rounded-lg flex items-center justify-center text-white text-xs font-black shadow-sm">
+                    <span className="w-8 h-8 bg-gradient-to-br from-sapphire-500 to-sapphire-600 rounded-lg flex items-center justify-center text-[var(--saffron-50)] text-xs font-black shadow-sm">
                       {String(member.seat).padStart(2, '0')}
                     </span>
                     Seat Details

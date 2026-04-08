@@ -73,7 +73,7 @@ export default function Modal({
             className={cn(
               'cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors',
               confirmVariant === 'danger'
-                ? 'bg-[var(--ruby-500)] text-white hover:brightness-110'
+                ? 'bg-[var(--ruby-500)] text-[var(--saffron-50)] hover:brightness-110'
                 : 'bg-[var(--sapphire-500)] text-[var(--text-inverse)] hover:brightness-110',
             )}
           >

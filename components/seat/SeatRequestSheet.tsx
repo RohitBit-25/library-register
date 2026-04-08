@@ -249,7 +249,7 @@ export default function SeatRequestSheet({
                 onClick={handleSubmit}
                 disabled={!isValid || loading}
                 className={cn(
-                  'cursor-pointer w-full py-3 rounded-xl text-sm font-bold text-white transition-all shadow-md flex items-center justify-center gap-2 mt-2',
+                  'cursor-pointer w-full py-3 rounded-xl text-sm font-bold text-[var(--saffron-50)] transition-all shadow-md flex items-center justify-center gap-2 mt-2',
                   isValid && !loading
                     ? 'bg-[var(--gradient-glow)] hover:shadow-[var(--shadow-glow-saffron)] active:scale-[0.98]'
                     : 'bg-text-tertiary/30 cursor-not-allowed shadow-none'

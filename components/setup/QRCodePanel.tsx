@@ -103,7 +103,7 @@ export default function QRCodePanel() {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-[#25D366] text-white rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-sm"
+                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-[#25D366] text-[var(--saffron-50)] rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-sm"
               >
                 <Share2 className="w-4 h-4" />
                 WhatsApp
@@ -134,7 +134,7 @@ export default function QRCodePanel() {
           <button
             onClick={handleDownload}
             disabled={!url}
-            className="mt-6 flex items-center justify-center gap-2 px-6 py-2.5 bg-[var(--saffron-500)]/15 text-[var(--saffron-400)] hover:bg-[var(--saffron-500)] hover:text-white rounded-[var(--radius-full)] font-bold text-sm transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 flex items-center justify-center gap-2 px-6 py-2.5 bg-[var(--saffron-500)]/15 text-[var(--saffron-400)] hover:bg-[var(--saffron-500)] hover:text-[var(--saffron-50)] rounded-[var(--radius-full)] font-bold text-sm transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="w-4 h-4" />
             Download PNG

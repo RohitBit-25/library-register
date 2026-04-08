@@ -203,7 +203,7 @@ export default function MemberTable({
             <Tooltip content="Mark selected members as paid">
               <button
                 onClick={() => { onBulkMarkPaid(Array.from(selected)); setSelected(new Set()); }}
-                className="cursor-pointer rounded-lg bg-green-500 px-3.5 py-2 text-xs font-bold text-white hover:bg-green-600 transition-colors shadow-sm"
+                className="cursor-pointer rounded-lg bg-green-500 px-3.5 py-2 text-xs font-bold text-[var(--saffron-50)] hover:bg-green-600 transition-colors shadow-sm"
               >
                 Mark Paid
               </button>
@@ -211,7 +211,7 @@ export default function MemberTable({
             <Tooltip content="Remove selected members from system">
               <button
                 onClick={() => setBulkRemoveConfirm(true)}
-                className="cursor-pointer rounded-lg bg-red-500 px-3.5 py-2 text-xs font-bold text-white hover:bg-red-600 transition-colors shadow-sm"
+                className="cursor-pointer rounded-lg bg-red-500 px-3.5 py-2 text-xs font-bold text-[var(--saffron-50)] hover:bg-red-600 transition-colors shadow-sm"
               >
                 Remove
               </button>
@@ -219,7 +219,7 @@ export default function MemberTable({
             <Tooltip content="Send payment reminders via WhatsApp">
               <button
                 onClick={() => onBulkWhatsApp(Array.from(selected))}
-                className="cursor-pointer rounded-lg bg-[#25D366] px-3.5 py-2 text-xs font-bold text-white hover:bg-[#20bd5a] transition-colors shadow-sm"
+                className="cursor-pointer rounded-lg bg-[#25D366] px-3.5 py-2 text-xs font-bold text-[var(--saffron-50)] hover:bg-[#20bd5a] transition-colors shadow-sm"
               >
                 WhatsApp
               </button>

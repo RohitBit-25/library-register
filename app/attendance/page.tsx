@@ -104,7 +104,7 @@ export default function AttendancePage() {
             onClick={() => setView('today')}
             className={cn(
               "px-[var(--space-5)] py-[var(--space-2)] text-sm font-semibold rounded-[var(--radius-md)] transition-all",
-              view === 'today' ? "bg-[var(--sapphire-500)] text-white shadow-[var(--shadow-sm)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+              view === 'today' ? "bg-[var(--sapphire-500)] text-[var(--saffron-50)] shadow-[var(--shadow-sm)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
             )}
           >
             Today
@@ -113,7 +113,7 @@ export default function AttendancePage() {
             onClick={() => setView('history')}
             className={cn(
               "px-[var(--space-5)] py-[var(--space-2)] text-sm font-semibold rounded-[var(--radius-md)] transition-all",
-              view === 'history' ? "bg-[var(--sapphire-500)] text-white shadow-[var(--shadow-sm)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+              view === 'history' ? "bg-[var(--sapphire-500)] text-[var(--saffron-50)] shadow-[var(--shadow-sm)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
             )}
           >
             History
@@ -194,7 +194,7 @@ export default function AttendancePage() {
                   size="lg"
                   variant="primary"
                   onClick={() => setConfirmMarkAll(true)}
-                  className="px-[var(--space-6)] py-[var(--space-4)] bg-[var(--sapphire-500)] text-white hover:bg-[var(--sapphire-600)]"
+                  className="px-[var(--space-6)] py-[var(--space-4)] bg-[var(--sapphire-500)] text-[var(--saffron-50)] hover:bg-[var(--sapphire-600)]"
                 >
                   <UserCheck className="w-5 h-5 mr-2" />
                   Mark All Present
@@ -254,7 +254,7 @@ export default function AttendancePage() {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 exit={{ scale: 0 }}
-                                className="absolute -top-2 -right-2 bg-[var(--emerald-500)] text-white rounded-full p-0.5 shadow-[var(--shadow-sm)] border-2 border-[var(--bg-elevated)]"
+                                className="absolute -top-2 -right-2 bg-[var(--emerald-500)] text-[var(--saffron-50)] rounded-full p-0.5 shadow-[var(--shadow-sm)] border-2 border-[var(--bg-elevated)]"
                               >
                                 <CheckCircle2 className="w-4 h-4" />
                               </motion.div>
@@ -295,7 +295,7 @@ export default function AttendancePage() {
                   let colorClass = "bg-[var(--bg-muted)] border-[1.5px] border-[var(--border-subtle)] text-[var(--text-tertiary)]";
                   if (d.rate > 0) colorClass = "bg-[var(--emerald-500)]/10 border-[var(--emerald-500)]/30 text-[var(--text-primary)]";
                   if (d.rate >= 40) colorClass = "bg-[var(--emerald-500)]/30 border-[var(--emerald-500)]/50 text-[var(--text-primary)]";
-                  if (d.rate >= 80) colorClass = "bg-[var(--emerald-500)] border-[var(--emerald-500)] text-white shadow-[var(--shadow-sm)] drop-shadow-sm font-semibold";
+                  if (d.rate >= 80) colorClass = "bg-[var(--emerald-500)] border-[var(--emerald-500)] text-[var(--saffron-50)] shadow-[var(--shadow-sm)] drop-shadow-sm font-semibold";
 
                   const isToday = i === thirtyDayData.length - 1;
 

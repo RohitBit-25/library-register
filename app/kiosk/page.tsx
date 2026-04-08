@@ -87,7 +87,7 @@ export default function KioskPage() {
           >
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--sapphire-500)] to-purple-600 outline outline-4 outline-surface dark:outline-surface-dark shadow-xl mb-6">
-                <UserCheck className="w-8 h-8 text-white" />
+                <UserCheck className="w-8 h-8 text-[var(--saffron-50)]" />
               </div>
               <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
                 Self Check-In
@@ -160,7 +160,7 @@ export default function KioskPage() {
               </button>
 
               <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-500 to-[var(--sapphire-500)] rounded-[2rem] rotate-3 mb-6 shadow-xl flex items-center justify-center border-4 border-surface dark:border-surface-dark">
-                <span className="text-4xl font-black text-white -rotate-3 font-mono">
+                <span className="text-4xl font-black text-[var(--saffron-50)] -rotate-3 font-mono">
                   {String(activeMember.seat).padStart(2, '0')}
                 </span>
               </div>

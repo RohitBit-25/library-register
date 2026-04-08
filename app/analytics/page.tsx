@@ -160,7 +160,7 @@ export default function DashboardPage() {
                         variant="primary"
                         size="sm"
                         onClick={() => handleMarkPaid(m.seat)}
-                        className="bg-[var(--emerald-500)] text-white border-transparent hover:bg-[var(--emerald-600)]"
+                        className="bg-[var(--emerald-500)] text-[var(--saffron-50)] border-transparent hover:bg-[var(--emerald-600)]"
                       >
                         <Check className="w-3.5 h-3.5 mr-1" />
                         Mark paid
