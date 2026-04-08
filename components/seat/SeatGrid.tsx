@@ -11,9 +11,10 @@ import { Sun, Moon, Layers, Grid3X3 } from 'lucide-react';
 interface SeatGridProps {
   members: Member[];
   onSeatClick: (seat: number) => void;
+  selectedSeat?: number | null;
 }
 
-export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
+export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGridProps) {
   const [shiftFilter, setShiftFilter] = useState<Shift | 'all'>('all');
 
   // Stable callback for tile clicks
@@ -132,6 +133,7 @@ export default function SeatGrid({ members, onSeatClick }: SeatGridProps) {
                         onClick={handleSeatClick}
                         compact={true}
                         face={face}
+                        selected={selectedSeat === member.seat}
                       />
                     </m.div>
                   )}
