@@ -36,10 +36,10 @@ export function SeatMapWrapper({
     <div 
       className={cn("absolute", className)}
       style={{
-        left: `calc(${(x - 1)} * 58px + 24px)`, // Cell width = 58px + 24px padding
-        top: `calc(${(y - 1)} * 58px + 24px)`,  
-        width: '50px',                          // Inner tile 50px (leaves 8px gap)
-        height: '50px'
+        left: `calc(${(x - 1)} * 58px + 21px)`, // Cell width = 58px + padding
+        top: `calc(${(y - 1)} * 58px + 21px)`,  
+        width: '54px',                          // Inner tile 54px (leaves 4px gap)
+        height: '54px'
       }}
       data-seat={seatNum}
     >

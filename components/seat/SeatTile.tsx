@@ -74,7 +74,7 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
           className={cn(
             'relative flex flex-col items-center justify-between rounded-[0.65rem] transition-all cursor-pointer z-10 w-full h-full border backdrop-blur-sm',
             tileClass[status],
-            compact ? 'p-[5px]' : 'p-2',
+            compact ? 'px-0.5 py-1' : 'p-1.5',
             selected ? 'ring-2 ring-[var(--saffron-500)] shadow-[0_0_20px_rgba(232,133,58,0.4)] z-20 scale-105 border-[var(--saffron-500)]' : ''
           )}
           aria-label={ariaLabel}
@@ -124,8 +124,8 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
 
           {/* Seat number */}
           <span className={cn(
-            'font-mono font-bold self-start leading-none z-10 opacity-80',
-            compact ? 'text-[9px]' : 'text-[11px]',
+            'font-mono font-bold self-start leading-none z-10 opacity-80 pl-1',
+            compact ? 'text-[10px]' : 'text-xs',
           )}>
             {String(member.seat).padStart(2, '0')}
           </span>
@@ -135,15 +135,15 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
             <Plus className={cn('opacity-40 z-10 mt-1', compact ? 'w-4 h-4' : 'w-5 h-5')} />
           ) : (
             <span className={cn(
-              'font-black truncate w-full text-center leading-tight z-10 tracking-tight drop-shadow-sm',
-              compact ? 'text-[9.5px]' : 'text-[11px]',
+              'font-black w-full text-center z-10 tracking-tight drop-shadow-sm overflow-hidden text-ellipsis whitespace-nowrap px-0.5',
+              compact ? 'text-[10.5px] leading-normal pb-0.5' : 'text-xs leading-normal pb-0.5',
             )}>
               {firstName(member.name)}
             </span>
           )}
 
           {/* Shift icon or days info */}
-          <div className={cn('flex items-center gap-0.5 z-10 font-bold opacity-80', compact ? 'text-[7.5px]' : 'text-[9px]')}>
+          <div className={cn('flex items-center justify-center w-full gap-0.5 z-10 font-bold opacity-80', compact ? 'text-[8.5px] leading-none mb-0.5' : 'text-[10px] leading-none mb-0.5')}>
             {member.vacant ? (
               <span className="font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Add</span>
             ) : (
