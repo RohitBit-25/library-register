@@ -17,11 +17,11 @@ interface SeatTileProps {
 }
 
 const tileClass: Record<SeatStatus, string> = {
-  active: 'bg-emerald-500/10 dark:bg-emerald-500/20 ring-1 ring-emerald-500/50 hover:shadow-[0_0_15px_rgba(34,195,106,0.3)] text-emerald-700 dark:text-emerald-300',
-  expiring: 'bg-amber-500/10 dark:bg-amber-500/20 ring-1 ring-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] text-amber-700 dark:text-amber-300',
-  expired: 'bg-ruby-500/10 dark:bg-ruby-500/20 ring-1 ring-ruby-500/50 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] text-ruby-700 dark:text-ruby-300',
-  due: 'bg-saffron-500/10 dark:bg-saffron-500/20 ring-1 ring-saffron-500/50 hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] text-saffron-800 dark:text-saffron-300',
-  vacant: 'bg-[var(--bg-surface)] border-[var(--border-default)] border-dashed opacity-80 hover:opacity-100 text-[var(--text-secondary)]',
+  active: 'bg-white/5 border-[var(--border-default)] hover:border-[var(--emerald-500)]/50 hover:bg-emerald-500/10 shadow-sm text-[#C4A882]',
+  expiring: 'bg-[var(--saffron-500)]/10 border-[var(--saffron-500)]/30 hover:border-[var(--saffron-400)] text-[var(--saffron-300)] shadow-[0_0_10px_rgba(232,133,58,0.1)]',
+  expired: 'bg-[var(--ruby-500)]/10 border-[var(--ruby-500)]/30 hover:border-[var(--ruby-400)] text-[var(--ruby-300)] shadow-[0_0_10px_rgba(232,66,66,0.1)]',
+  due: 'bg-white/5 border-[var(--marigold-500)]/30 hover:border-[var(--marigold-400)] text-[var(--marigold-300)] shadow-[inset_0_0_8px_rgba(200,144,14,0.2)]',
+  vacant: 'bg-[var(--bg-surface)] border-[var(--border-default)] border-dashed opacity-50 hover:opacity-100 hover:border-white/30 text-[var(--text-disabled)]',
 };
 
 function SeatTileInner({ member, onClick, compact = false, face, selected = false }: SeatTileProps) {
@@ -50,9 +50,9 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
   const progressPercent = Math.max(0, Math.min(100, (days / 30) * 100));
   const dashoffset = circumference - (progressPercent / 100) * circumference;
   
-  let ringStroke = 'stroke-green-400 dark:stroke-green-500';
-  if (status === 'expiring') ringStroke = 'stroke-yellow-400 dark:stroke-yellow-500';
-  if (status === 'expired' || status === 'due') ringStroke = 'stroke-red-400 dark:stroke-red-500';
+  let ringStroke = 'stroke-[#22C36A]'; // Emerald for active
+  if (status === 'expiring') ringStroke = 'stroke-[var(--saffron-400)]';
+  if (status === 'expired' || status === 'due') ringStroke = 'stroke-[var(--ruby-500)]';
 
   return (
     <LazyMotion features={domAnimation}>
@@ -63,19 +63,19 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
       >
         <m.button
           onClick={() => onClick(member.seat)}
-          whileHover={{ scale: 1.05, y: -4 }}
-          whileTap={{ scale: 0.95, y: 0 }}
+          whileHover={{ scale: 1.04, y: -2 }}
+          whileTap={{ scale: 0.96, y: 0 }}
           transition={{ 
             type: "spring", 
-            stiffness: 500, 
+            stiffness: 400, 
             damping: 25,
             mass: 0.5,
           }}
           className={cn(
-            'relative flex flex-col items-center justify-between rounded-[10px] transition-all cursor-pointer z-10 w-full h-full border border-transparent',
+            'relative flex flex-col items-center justify-between rounded-[0.65rem] transition-all cursor-pointer z-10 w-full h-full border backdrop-blur-sm',
             tileClass[status],
-            compact ? 'p-1' : 'p-1.5',
-            selected ? 'ring-2 ring-[var(--saffron-500)] shadow-[0_0_20px_rgba(232,133,58,0.5)] z-20 scale-105' : ''
+            compact ? 'p-[5px]' : 'p-2',
+            selected ? 'ring-2 ring-[var(--saffron-500)] shadow-[0_0_20px_rgba(232,133,58,0.4)] z-20 scale-105 border-[var(--saffron-500)]' : ''
           )}
           aria-label={ariaLabel}
         >
@@ -83,14 +83,15 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
           {face && (
             <div className={cn(
               "absolute rounded-full transition-colors",
-              status === 'vacant' ? 'bg-[var(--border-default)]/30' : 
-              status === 'active' ? 'bg-green-400 dark:bg-green-500 shadow-sm border border-green-500/30' : 
-              status === 'expiring' ? 'bg-yellow-400 dark:bg-yellow-500 shadow-sm border border-yellow-500/30' : 
-              'bg-red-400 dark:bg-red-500 shadow-sm border border-red-500/30',
-              face === 'up' && "bottom-[-6px] left-[15%] right-[15%] h-[4px]",
-              face === 'down' && "top-[-6px] left-[15%] right-[15%] h-[4px]",
-              face === 'left' && "right-[-6px] top-[15%] bottom-[15%] w-[4px]",
-              face === 'right' && "left-[-6px] top-[15%] bottom-[15%] w-[4px]"
+              status === 'vacant' ? 'bg-white/10' : 
+              status === 'active' ? 'bg-[#22C36A] shadow-[0_0_8px_rgba(34,195,106,0.5)]' : 
+              status === 'expiring' ? 'bg-[var(--saffron-400)] shadow-[0_0_8px_rgba(245,154,60,0.5)]' : 
+              status === 'due' ? 'bg-[var(--marigold-400)] shadow-[0_0_8px_rgba(245,200,66,0.5)]' :
+              'bg-[var(--ruby-500)] shadow-[0_0_8px_rgba(232,66,66,0.5)]',
+              face === 'up' && "bottom-[-4px] left-[20%] right-[20%] h-[2px]",
+              face === 'down' && "top-[-4px] left-[20%] right-[20%] h-[2px]",
+              face === 'left' && "right-[-4px] top-[20%] bottom-[20%] w-[2px]",
+              face === 'right' && "left-[-4px] top-[20%] bottom-[20%] w-[2px]"
             )} />
           )}
           {/* SVG Expiry Visual Ring Background */}
@@ -123,36 +124,36 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
 
           {/* Seat number */}
           <span className={cn(
-            'font-mono font-bold self-start leading-none z-10 drop-shadow-sm',
-            compact ? 'text-[10px]' : 'text-xs',
+            'font-mono font-bold self-start leading-none z-10 opacity-80',
+            compact ? 'text-[9px]' : 'text-[11px]',
           )}>
             {String(member.seat).padStart(2, '0')}
           </span>
 
           {/* Name or + icon */}
           {member.vacant ? (
-            <Plus className={cn('opacity-60 z-10', compact ? 'w-4 h-4' : 'w-5 h-5')} />
+            <Plus className={cn('opacity-40 z-10 mt-1', compact ? 'w-4 h-4' : 'w-5 h-5')} />
           ) : (
             <span className={cn(
-              'font-black truncate w-full text-center leading-tight z-10 text-opacity-90',
-              compact ? 'text-[9px]' : 'text-[11px]',
+              'font-black truncate w-full text-center leading-tight z-10 tracking-tight drop-shadow-sm',
+              compact ? 'text-[9.5px]' : 'text-[11px]',
             )}>
               {firstName(member.name)}
             </span>
           )}
 
           {/* Shift icon or days info */}
-          <div className={cn('flex items-center gap-0.5 z-10 font-bold', compact ? 'text-[8px]' : 'text-[9px]')}>
+          <div className={cn('flex items-center gap-0.5 z-10 font-bold opacity-80', compact ? 'text-[7.5px]' : 'text-[9px]')}>
             {member.vacant ? (
-              <span className="font-medium opacity-60">Add</span>
+              <span className="font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Add</span>
             ) : (
               <>
-                {shiftIcon}
+                <span className="opacity-70">{shiftIcon}</span>
                 {status === 'expiring' && (
-                  <span className="text-yellow-600 dark:text-yellow-400 ml-0.5">{days}d</span>
+                  <span className="text-[var(--saffron-400)] ml-0.5 drop-shadow-[0_0_2px_rgba(245,154,60,0.5)]">{days}d</span>
                 )}
                 {status === 'expired' && (
-                  <span className="text-red-600 dark:text-red-400 ml-0.5">{-days}d</span>
+                  <span className="text-[var(--ruby-400)] ml-0.5 drop-shadow-[0_0_2px_rgba(232,66,66,0.5)]">{-days}d</span>
                 )}
               </>
             )}
@@ -164,7 +165,10 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 500, delay: 0.2 }}
-              className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full bg-red-500 border-2 border-white dark:border-[#121212] shadow-sm z-20" 
+              className={cn(
+                "absolute -top-1 -right-1 w-3 h-3 rounded-full border border-[#0a0a0a] shadow-sm z-20",
+                status === 'due' ? "bg-[var(--marigold-500)] shadow-[0_0_8px_rgba(245,200,66,0.8)]" : "bg-[var(--ruby-500)] shadow-[0_0_8px_rgba(232,66,66,0.8)]"
+              )}
             />
           )}
         </m.button>
