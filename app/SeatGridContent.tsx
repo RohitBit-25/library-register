@@ -60,7 +60,7 @@ export default function SeatGridContent() {
 
   const handleRemove = (seat: number) => {
     vacate(seat);
-    addToast('info', `Seat ${seat} is now vacant`);
+    addToast('success', `Seat ${seat} is now vacant`);
   };
 
   const handleAddSubmit = async (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => {

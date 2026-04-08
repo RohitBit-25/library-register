@@ -9,9 +9,10 @@ import { AnimatePresence, m } from 'framer-motion';
 
 interface GlobalSearchProps {
   onSelect: (seat: number) => void;
+  className?: string;
 }
 
-export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
+export default function GlobalSearch({ onSelect, className }: GlobalSearchProps) {
   const { members } = useMembers();
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -39,7 +40,7 @@ export default function GlobalSearch({ onSelect }: GlobalSearchProps) {
   }).slice(0, 5); // Limit to top 5 results
 
   return (
-    <div ref={wrapperRef} className="relative w-full max-w-lg mx-auto mb-6 z-40">
+    <div ref={wrapperRef} className={cn("relative w-full max-w-lg mb-0 z-40", className)}>
       <div className={cn(
         "relative flex items-center bg-[var(--bg-surface)] border rounded-2xl transition-all shadow-sm",
         isFocused ? "border-sapphire-500 ring-4 ring-sapphire-500/20" : "border-[var(--border-default)] hover:border-sapphire-500/50"
