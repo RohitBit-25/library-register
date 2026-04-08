@@ -45,7 +45,7 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
     : `Seat ${member.seat}, ${member.name}, ${status === 'due' ? 'Fee Due' : status}`;
 
   // Calculate Expiry Ring Progress
-  const ringRadius = compact ? 26 : 34;
+  const ringRadius = compact ? 25 : 34; // Fit perfectly inside 52px tile (50px diameter = 1px padding to edge)
   const circumference = 2 * Math.PI * ringRadius;
   const progressPercent = Math.max(0, Math.min(100, (days / 30) * 100));
   const dashoffset = circumference - (progressPercent / 100) * circumference;
@@ -74,7 +74,7 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
           className={cn(
             'relative flex flex-col items-center justify-between rounded-[0.65rem] transition-all cursor-pointer z-10 w-full h-full border backdrop-blur-sm',
             tileClass[status],
-            compact ? 'px-0.5 py-1' : 'p-1.5',
+            compact ? 'px-[3px] py-[3px]' : 'p-1.5',
             selected ? 'ring-2 ring-[var(--saffron-500)] shadow-[0_0_20px_rgba(232,133,58,0.4)] z-20 scale-105 border-[var(--saffron-500)]' : ''
           )}
           aria-label={ariaLabel}
@@ -124,19 +124,19 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
 
           {/* Seat number */}
           <span className={cn(
-            'font-mono font-bold self-start leading-none z-10 opacity-80 pl-1',
-            compact ? 'text-[10px]' : 'text-xs',
+            'font-mono font-bold self-start leading-none z-10 opacity-80 pl-0.5 pt-0.5',
+            compact ? 'text-[9.5px]' : 'text-xs',
           )}>
             {String(member.seat).padStart(2, '0')}
           </span>
 
           {/* Name or + icon */}
           {member.vacant ? (
-            <Plus className={cn('opacity-40 z-10 mt-1', compact ? 'w-4 h-4' : 'w-5 h-5')} />
+            <Plus className={cn('opacity-40 z-10 mt-0.5', compact ? 'w-4 h-4' : 'w-5 h-5')} />
           ) : (
             <span className={cn(
               'font-black w-full text-center z-10 tracking-tight drop-shadow-sm overflow-hidden text-ellipsis whitespace-nowrap px-0.5',
-              compact ? 'text-[10.5px] leading-normal pb-0.5' : 'text-xs leading-normal pb-0.5',
+              compact ? 'text-[10px] leading-tight pb-0.5' : 'text-xs leading-normal pb-0.5',
             )}>
               {firstName(member.name)}
             </span>
@@ -166,8 +166,8 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 500, delay: 0.2 }}
               className={cn(
-                "absolute -top-1 -right-1 w-3 h-3 rounded-full border border-[#0a0a0a] shadow-sm z-20",
-                status === 'due' ? "bg-[var(--marigold-500)] shadow-[0_0_8px_rgba(245,200,66,0.8)]" : "bg-[var(--ruby-500)] shadow-[0_0_8px_rgba(232,66,66,0.8)]"
+                "absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border border-[#0a0a0a] shadow-sm z-20",
+                status === 'due' ? "bg-[var(--marigold-500)] shadow-[0_0_6px_rgba(245,200,66,0.8)]" : "bg-[var(--ruby-500)] shadow-[0_0_6px_rgba(232,66,66,0.8)]"
               )}
             />
           )}
