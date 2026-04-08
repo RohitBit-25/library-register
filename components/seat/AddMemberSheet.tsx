@@ -59,50 +59,27 @@ export default function AddMemberSheet({
     );
   }
 
-  // Desktop: right panel
+  // Desktop: fill container
   return (
-    <LazyMotion features={domAnimation}>
-      <AnimatePresence>
-        {open && (
-          <>
-            <m.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30"
-              onClick={onClose}
-            />
-            <m.div 
-              initial={{ x: '100%', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: '100%', opacity: 0 }}
-              transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              className="fixed top-0 right-0 h-screen w-full max-w-[480px] bg-[var(--bg-surface)] border-l border-[var(--border-default)] shadow-2xl z-40 flex flex-col"
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between p-5 border-b border-[var(--border-subtle)] bg-[var(--bg-base)]/50 backdrop-blur-md sticky top-0 z-10">
-                <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
-                  <span className="w-8 h-8 bg-[var(--sapphire-500)] rounded-lg flex items-center justify-center text-[var(--text-inverse)] shadow-sm">
-                    <UserPlus className="w-4 h-4" />
-                  </span>
-                  {seat ? `Assign Seat ${String(seat).padStart(2, '0')}` : 'New Registration'}
-                </h3>
-                <button
-                  onClick={onClose}
-                  className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-surface)] hover:text-text-primary transition-all hover:rotate-90 duration-200"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-              {/* Scrollable form area */}
-              <div className="flex-1 overflow-y-auto p-5 custom-scrollbar">
-                {content}
-              </div>
-            </m.div>
-          </>
-        )}
-      </AnimatePresence>
-    </LazyMotion>
+    <div className="h-full flex flex-col bg-transparent text-[var(--text-primary)]">
+      <div className="flex items-center justify-between p-5 border-b border-[var(--border-subtle)] bg-[var(--bg-base)]/50 backdrop-blur-md sticky top-0 z-10">
+        <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
+          <span className="w-8 h-8 bg-sapphire-500 rounded-lg flex items-center justify-center text-[var(--saffron-50)] shadow-sm">
+            <UserPlus className="w-4 h-4" />
+          </span>
+          {seat ? `Assign Seat ${String(seat).padStart(2, '0')}` : 'Registration'}
+        </h3>
+        <button
+          onClick={onClose}
+          className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] transition-all hover:rotate-90 duration-200"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+      
+      <div className="flex-1 overflow-y-auto p-5 custom-scrollbar">
+        {content}
+      </div>
+    </div>
   );
 }

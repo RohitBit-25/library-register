@@ -138,7 +138,14 @@ export default function SeatGridContent() {
       {/* --- FLOATING DETAILS PANEL (THE SLIDE-OVER) --- */}
       <AnimatePresence>
         {selectedSeat !== null && (
-          <aside className="fixed inset-y-0 right-0 z-[100] w-full lg:w-[380px] bg-[var(--bg-elevated)] border-l border-[var(--border-subtle)] shadow-[-30px_0_60px_rgba(0,0,0,0.4)] backdrop-blur-3xl transform-gpu">
+          <motion.aside
+            initial={{ x: '100%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: '100%', opacity: 0 }}
+            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+            className="fixed inset-y-0 right-0 z-[100] w-full lg:w-[380px] bg-[var(--bg-surface)] border-l border-[var(--border-default)] shadow-[-30px_0_60px_rgba(0,0,0,0.4)]"
+          >
+            {/* Backdrop for mobile covered by BottomSheet, for Desktop we just slide the side panel. If we want a backdrop on mobile, BottomSheet handles it. For desktop, the user can click other seats so no backdrop needed. */}
             {!isAdmin ? (
               <SeatDetailPanel
                 member={selectedMember}
@@ -172,7 +179,7 @@ export default function SeatGridContent() {
                 isMobile={isMobile}
               />
             )}
-          </aside>
+          </motion.aside>
         )}
       </AnimatePresence>
     </div>
