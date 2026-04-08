@@ -226,12 +226,11 @@ function BrowseSeatTile({
   return (
     <button
       onClick={() => onClick(member.seat)}
-      disabled={!isVacant}
       className={cn(
-        'relative flex flex-col items-center justify-between rounded-xl border transition-all duration-200 w-full h-full p-1 z-10',
+        'relative flex flex-col items-center justify-between rounded-xl border transition-all duration-200 w-full h-full p-1 z-10 cursor-pointer active:scale-95 hover:scale-105',
         isVacant
-          ? 'tile-vacant cursor-pointer hover:ring-2 hover:ring-[var(--saffron-500)]/40 hover:scale-105 hover:shadow-lg active:scale-95'
-          : 'cursor-default backdrop-blur-md bg-white/40 dark:bg-black/30 border-[var(--border-default)]',
+          ? 'tile-vacant hover:ring-2 hover:ring-[var(--saffron-500)]/40 hover:shadow-lg'
+          : 'backdrop-blur-md bg-white/40 dark:bg-black/30 border-[var(--border-default)] hover:ring-2 hover:ring-white/20',
         !isVacant && status === 'active' && 'tile-active opacity-90',
         !isVacant && status === 'expiring' && 'tile-expiring opacity-90',
         !isVacant && status === 'expired' && 'tile-expired opacity-90',
