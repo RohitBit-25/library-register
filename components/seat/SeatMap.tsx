@@ -54,35 +54,45 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
   const height = 12 * 58 + 48;
   
   return (
-    <div className="w-full overflow-x-auto pb-8 pt-4 custom-scrollbar smooth-scroll relative z-0">
+    <div className="w-full overflow-x-auto pb-8 pt-6 custom-scrollbar smooth-scroll relative z-0">
       <div 
-        className="relative mx-auto bg-[#e5e5f7]/50 dark:bg-[#1a1a24]/50 rounded-[2rem] border-2 border-[var(--border-subtle)] shadow-inner" 
+        className="relative mx-auto bg-[#0a0a0a]/80 dark:bg-[#0a0a0a]/80 rounded-[2.5rem] border border-[var(--border-subtle)] shadow-2xl" 
         style={{ 
           width: `${width}px`, 
           height: `${height}px`, 
           minWidth: `${width}px`,
-          backgroundImage: 'radial-gradient(#444cf7 0.5px, transparent 0.5px), radial-gradient(#444cf7 0.5px, #e5e5f7 0.5px)',
-          backgroundSize: '20px 20px',
-          backgroundPosition: '0 0, 10px 10px'
+          backgroundImage: `
+            linear-gradient(to right, rgba(232, 133, 58, 0.03) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(232, 133, 58, 0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: '58px 58px',
+          backgroundPosition: '24px 24px'
         }}
       >
-        <div className="absolute inset-0 bg-[var(--bg-surface)]/90 rounded-[2rem] backdrop-blur-[2px]" />
+        <div className="absolute inset-0 rounded-[2.5rem] ring-1 ring-inset ring-white/5 pointer-events-none" />
+        
+        {/* Soft Ambient Glow within the Map */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[var(--saffron-500)]/5 blur-[100px] pointer-events-none rounded-full" />
         
         {/* Entry Placeholder */}
-        <div className="absolute top-0 left-[38.5%] w-32 h-2 -translate-x-[50%] -translate-y-full flex flex-col items-center opacity-80 z-10">
-           <span className="text-[12px] font-black uppercase tracking-[0.2em] text-[#d32f2f] dark:text-[#ef5350] mb-2 drop-shadow-sm">Entry</span>
+        <div className="absolute top-0 left-[38.5%] w-40 h-10 -translate-x-[50%] -translate-y-[60%] flex flex-col items-center justify-end opacity-90 z-10">
+           <div className="flex items-center gap-3 w-full">
+             <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[var(--saffron-500)]/50"></div>
+             <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--saffron-400)] drop-shadow-[0_0_8px_rgba(232,133,58,0.5)]">Entry</span>
+             <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[var(--saffron-500)]/50"></div>
+           </div>
         </div>
 
         {/* Windows / AC units matching diagram aesthetic */}
-        <div className="z-10">
-          <MapDetail label="Window" x={20} y={0} color="text-blue-600 dark:text-blue-400" />
-          <MapDetail label="Window" x={86} y={0} color="text-blue-600 dark:text-blue-400" />
-          <MapDetail label="Window" x={15} y={100} color="text-blue-600 dark:text-blue-400" />
-          <MapDetail label="AC" x={28} y={100} color="text-[#d32f2f] dark:text-[#ef5350]" />
-          <MapDetail label="Window" x={45} y={100} color="text-blue-600 dark:text-blue-400" />
-          <MapDetail label="Window" x={63} y={100} color="text-blue-600 dark:text-blue-400" />
-          <MapDetail label="AC" x={75} y={100} color="text-[#d32f2f] dark:text-[#ef5350]" />
-          <MapDetail label="Window" x={85} y={100} color="text-blue-600 dark:text-blue-400" />
+        <div className="z-10 relative">
+          <MapDetail label="Window" x={20} y={0} color="text-[#60B4FF]/60" />
+          <MapDetail label="Window" x={86} y={0} color="text-[#60B4FF]/60" />
+          <MapDetail label="Window" x={15} y={100} color="text-[#60B4FF]/60" />
+          <MapDetail label="AC" x={28} y={100} color="text-[var(--ruby-400)]/70" />
+          <MapDetail label="Window" x={45} y={100} color="text-[#60B4FF]/60" />
+          <MapDetail label="Window" x={63} y={100} color="text-[#60B4FF]/60" />
+          <MapDetail label="AC" x={75} y={100} color="text-[var(--ruby-400)]/70" />
+          <MapDetail label="Window" x={85} y={100} color="text-[#60B4FF]/60" />
         </div>
 
         <div className="z-20 relative">{children}</div>
@@ -94,15 +104,17 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
 function MapDetail({ label, x, y, color }: { label: string, x: number, y: number, color: string }) {
   return (
     <div 
-      className={cn("absolute bg-transparent text-[13px] font-black uppercase tracking-wider opacity-90", color)}
+      className={cn("absolute flex flex-col items-center gap-1 bg-transparent text-[9px] font-bold uppercase tracking-[0.25em]", color)}
       style={{
         left: `${x}%`,
-        top: y === 0 ? '-26px' : 'auto',
-        bottom: y === 100 ? '-26px' : 'auto',
+        top: y === 0 ? '-32px' : 'auto',
+        bottom: y === 100 ? '-32px' : 'auto',
         transform: 'translateX(-50%)'
       }}
     >
-      {label}
+      {y === 100 && <div className={cn("w-12 h-px mb-1 opacity-50", label === "AC" ? "bg-[var(--ruby-500)]" : "bg-[#60B4FF]")} />}
+      <span className="drop-shadow-sm">{label}</span>
+      {y === 0 && <div className={cn("w-12 h-px mt-1 opacity-50", label === "AC" ? "bg-[var(--ruby-500)]" : "bg-[#60B4FF]")} />}
     </div>
   );
 }
