@@ -329,50 +329,28 @@ export default function SeatDetailPanel({
     );
   }
 
-  // Desktop: right panel — glassmorphism treatment
+  // Desktop: fill container (parent defines positioning)
   return (
-    <LazyMotion features={domAnimation}>
-      <AnimatePresence>
-        {open && (
-          <>
-            {/* Backdrop overlay */}
-            <m.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-[var(--bg-void)]/20 backdrop-blur-sm z-30"
-              onClick={() => { setRenewMode(false); onClose(); }}
-            />
-            <m.div 
-              initial={{ x: '100%', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: '100%', opacity: 0 }}
-              transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              className="fixed top-0 right-0 h-screen w-[340px] bg-[var(--bg-surface)] border-l border-[var(--border-default)] shadow-[var(--shadow-xl)] z-40 overflow-y-auto"
-            >
-              <div className="p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
-                    <span className="w-8 h-8 bg-gradient-to-br from-sapphire-500 to-sapphire-600 rounded-lg flex items-center justify-center text-[var(--saffron-50)] text-xs font-black shadow-sm">
-                      {String(member.seat).padStart(2, '0')}
-                    </span>
-                    Seat Details
-                  </h3>
-                  <button
-                    onClick={() => { setRenewMode(false); onClose(); }}
-                    className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-base)] transition-all hover:rotate-90 duration-200"
-                    aria-label="Close panel"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-                {content}
-              </div>
-            </m.div>
-          </>
-        )}
-      </AnimatePresence>
-    </LazyMotion>
+    <div className="h-full flex flex-col pt-3 bg-transparent text-[var(--text-primary)]">
+      <div className="flex-1 overflow-y-auto p-5 sm:p-6 pb-24 scrollbar-hide">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
+            <span className="w-8 h-8 bg-gradient-to-br from-sapphire-500 to-sapphire-600 rounded-lg flex items-center justify-center text-[var(--saffron-50)] text-xs font-black shadow-sm">
+              {String(member.seat).padStart(2, '0')}
+            </span>
+            Seat Details
+          </h3>
+          <button 
+            onClick={() => { setRenewMode(false); onClose(); }}
+            className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-base)] transition-all hover:rotate-90 duration-200"
+            aria-label="Close panel"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        {content}
+      </div>
+    </div>
   );
 }
 

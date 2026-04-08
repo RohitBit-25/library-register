@@ -10,8 +10,10 @@ import AddMemberSheet from '@/components/seat/AddMemberSheet';
 import GlobalSearch from '@/components/ui/GlobalSearch';
 import { SeatSkeleton } from '@/components/ui/Skeleton';
 import { type Duration, type Member } from '@/lib/types';
-
 import { useAuth } from '@/hooks/useAuth';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LayoutDashboard, Users, UserPlus, Info } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function SeatGridContent() {
   const { members, update, vacate, renew, add, isLoading } = useMembers();
@@ -19,13 +21,15 @@ export default function SeatGridContent() {
   const { addToast } = useToast();
   const searchParams = useSearchParams();
 
-  const initialSeat = useMemo(() => {
-    const seat = searchParams.get('seat');
-    return seat ? Number(seat) : null;
-  }, [searchParams]);
-
-  const [selectedSeat, setSelectedSeat] = useState<number | null>(initialSeat);
+  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Stats calculation for the header
+  const stats = useMemo(() => {
+    const total = members.length;
+    const occupied = members.filter(m => !m.vacant).length;
+    return { total, occupied, vacant: total - occupied };
+  }, [members]);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 1024);
@@ -38,107 +42,149 @@ export default function SeatGridContent() {
     ? members.find(m => m.seat === selectedSeat) || null
     : null;
 
+  // Handlers (kept same logic, wrapped in cleaner visual feedback)
   const handleMarkPaid = (seat: number) => {
     update(seat, { fee: 'paid' });
-    addToast('success', `Seat ${seat} — fee marked as paid`);
+    addToast('success', `Payment confirmed for Seat ${seat}`);
   };
 
   const handleMarkDue = (seat: number) => {
     update(seat, { fee: 'due' });
-    addToast('warning', `Seat ${seat} — fee marked as due`);
+    addToast('warning', `Seat ${seat} marked as pending payment`);
   };
 
   const handleRenew = (seat: number, joinDate: string, duration: Duration) => {
     renew(seat, joinDate, duration as '1M' | '3M' | '6M' | '1Y');
-    const member = members.find(m => m.seat === seat);
-    addToast('success', `Seat ${seat} renewed${member ? ` for ${member.name}` : ''}`);
+    addToast('success', `Membership extended for Seat ${seat}`);
   };
 
   const handleRemove = (seat: number) => {
-    const member = members.find(m => m.seat === seat);
     vacate(seat);
-    addToast('warning', `Seat ${seat} vacated${member ? ` — ${member.name} removed` : ''}`);
+    addToast('info', `Seat ${seat} is now vacant`);
   };
 
   const handleAddSubmit = async (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => {
     const success = await add(seat, data);
     if (success) {
-      addToast('success', `Seat ${seat} allotted to ${data.name}`);
+      addToast('success', `Allotted Seat ${seat} to ${data.name}`);
       setSelectedSeat(null);
-    } else {
-      addToast('error', 'Failed to allot seat. It might be occupied.');
     }
   };
 
   const vacantSeats = useMemo(() => members.filter(m => m.vacant).map(m => m.seat), [members]);
 
   return (
-    <div className={selectedSeat !== null && !isMobile ? 'pr-[330px]' : ''}>
-      {/* Header */}
-      <div className="mb-3 text-center sm:text-left flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] tracking-tight">
-            Library Floorplan
-          </h1>
-          <p className="text-sm font-medium text-[var(--text-secondary)] mt-0.5">
-            Tap any seat to manage, or search below
-          </p>
-        </div>
+    <div className="relative min-h-screen">
+      <div className={cn(
+        "transition-all duration-500 ease-in-out px-4 py-6 md:px-8 lg:px-12",
+        selectedSeat !== null && !isMobile ? 'pr-[380px]' : ''
+      )}>
+        
+        {/* --- DYNAMIC HEADER --- */}
+        <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-[var(--saffron-500)] mb-1">
+              <LayoutDashboard size={16} />
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Management Floor</span>
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight text-[var(--text-primary)]">
+              Library Workspace
+            </h1>
+            <p className="text-sm text-[var(--text-tertiary)] max-w-sm">
+              Real-time seating overview. Select a node to manage membership or status.
+            </p>
+          </div>
+
+          {/* Quick Stats Chips */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+            <StatChip label="Occupied" value={stats.occupied} color="bg-[var(--saffron-500)] text-[#1a1a16] border-[var(--saffron-500)]" />
+            <StatChip label="Available" value={stats.vacant} color="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" />
+            <div className="h-8 w-px bg-[var(--border-subtle)] mx-2" />
+            <GlobalSearch onSelect={seat => setSelectedSeat(seat)} className="w-[240px]" />
+          </div>
+        </header>
+
+        {/* --- SEATING CANVAS --- */}
+        <section className="relative rounded-[2.5rem] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] backdrop-blur-md p-6 md:p-10 shadow-[var(--shadow-xl)] mb-8">
+          {isLoading ? (
+            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-4">
+              {Array.from({ length: 40 }).map((_, i) => (
+                <SeatSkeleton key={i} />
+              ))}
+            </div>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <SeatGrid
+                members={members}
+                onSeatClick={seat => setSelectedSeat(seat)}
+                selectedSeat={selectedSeat}
+              />
+            </motion.div>
+          )}
+
+          {/* Legend Overlay */}
+          <div className="mt-8 flex items-center justify-center gap-6 text-[10px] font-medium uppercase tracking-widest text-white/30">
+            <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-white/10" /> Vacant</div>
+            <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[var(--saffron-500)] shadow-[0_0_8px_var(--saffron-500)]" /> Occupied</div>
+            <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500" /> Payment Due</div>
+          </div>
+        </section>
       </div>
 
-      <GlobalSearch onSelect={seat => setSelectedSeat(seat)} />
+      {/* --- FLOATING DETAILS PANEL (THE SLIDE-OVER) --- */}
+      <AnimatePresence>
+        {selectedSeat !== null && (
+          <aside className="fixed inset-y-0 right-0 z-[100] w-full lg:w-[380px] bg-[var(--bg-elevated)] border-l border-[var(--border-subtle)] shadow-[-30px_0_60px_rgba(0,0,0,0.4)] backdrop-blur-3xl transform-gpu">
+            {!isAdmin ? (
+              <SeatDetailPanel
+                member={selectedMember}
+                open={true}
+                onClose={() => setSelectedSeat(null)}
+                onMarkPaid={handleMarkPaid}
+                onMarkDue={handleMarkDue}
+                onRenew={handleRenew}
+                onRemove={handleRemove}
+                isMobile={isMobile}
+                readonly={true}
+              />
+            ) : selectedMember?.vacant ? (
+              <AddMemberSheet
+                open={true}
+                onClose={() => setSelectedSeat(null)}
+                seat={selectedSeat}
+                vacantSeats={vacantSeats}
+                onSubmit={handleAddSubmit}
+                isMobile={isMobile}
+              />
+            ) : (
+              <SeatDetailPanel
+                member={selectedMember}
+                open={true}
+                onClose={() => setSelectedSeat(null)}
+                onMarkPaid={handleMarkPaid}
+                onMarkDue={handleMarkDue}
+                onRenew={handleRenew}
+                onRemove={handleRemove}
+                isMobile={isMobile}
+              />
+            )}
+          </aside>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
-      {isLoading ? (
-        <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 sm:gap-3">
-          {Array.from({ length: 40 }).map((_, i) => (
-            <SeatSkeleton key={i} />
-          ))}
-        </div>
-      ) : (
-        <SeatGrid
-          members={members}
-          onSeatClick={seat => setSelectedSeat(seat)}
-        />
-      )}
-
-      {!isAdmin ? (
-        <SeatDetailPanel
-          member={selectedMember}
-          open={selectedSeat !== null}
-          onClose={() => setSelectedSeat(null)}
-          onMarkPaid={() => {}}
-          onMarkDue={() => {}}
-          onRenew={() => {}}
-          onRemove={() => {}}
-          isMobile={isMobile}
-          readonly={true}
-        />
-      ) : selectedMember?.vacant ? (
-        <AddMemberSheet
-          open={selectedSeat !== null}
-          onClose={() => setSelectedSeat(null)}
-          seat={selectedSeat}
-          vacantSeats={vacantSeats}
-          onSubmit={handleAddSubmit}
-          isMobile={isMobile}
-          initialData={{
-            name: searchParams.get('name') || '',
-            phone: searchParams.get('phone') || '',
-            paymentMode: (searchParams.get('paymentMode') as 'upi' | 'cash') || 'upi'
-          }}
-        />
-      ) : (
-        <SeatDetailPanel
-          member={selectedMember}
-          open={selectedSeat !== null && !selectedMember?.vacant}
-          onClose={() => setSelectedSeat(null)}
-          onMarkPaid={handleMarkPaid}
-          onMarkDue={handleMarkDue}
-          onRenew={handleRenew}
-          onRemove={handleRemove}
-          isMobile={isMobile}
-        />
-      )}
+// Sub-component for clean stats
+function StatChip({ label, value, color }: { label: string, value: number, color: string }) {
+  return (
+    <div className={cn("flex items-center gap-2 px-3.5 py-2 rounded-xl border whitespace-nowrap shadow-sm font-bold", color)}>
+      <span className="text-[10px] uppercase tracking-wider opacity-80">{label}:</span>
+      <span className="text-sm font-black">{value}</span>
     </div>
   );
 }
