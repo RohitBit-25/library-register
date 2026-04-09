@@ -16,8 +16,6 @@ export interface SeatRequest {
 
 const ROLE_KEY = 'library-role';
 const REQUESTS_KEY = 'library-seat-requests';
-const ADMIN_PIN_KEY = 'library-admin-pin';
-const DEFAULT_PIN = '1234';
 
 // ─── Role Persistence ───────────────────────────────────────────
 
@@ -37,21 +35,8 @@ export function setStoredRole(role: UserRole | null): void {
   }
 }
 
-// ─── Admin PIN ──────────────────────────────────────────────────
-
-export function getAdminPin(): string {
-  if (typeof window === 'undefined') return DEFAULT_PIN;
-  return localStorage.getItem(ADMIN_PIN_KEY) || DEFAULT_PIN;
-}
-
-export function setAdminPin(pin: string): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(ADMIN_PIN_KEY, pin);
-}
-
-export function verifyAdminPin(pin: string): boolean {
-  return pin === getAdminPin();
-}
+// Admin verification is handled on the server side via /api/auth.
+// Local role persistence is managed via setStoredRole('admin').
 
 // ─── Seat Requests ──────────────────────────────────────────────
 
