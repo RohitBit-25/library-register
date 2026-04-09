@@ -31,6 +31,19 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
   const [hoveredRowId, setHoveredRowId] = React.useState<string | null>(null);
+  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = (rowId: string) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredRowId(rowId);
+    }, 150);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setHoveredRowId(null);
+  };
 
   const table = useReactTable({
     data,
@@ -113,8 +126,8 @@ export function DataTable<TData, TValue>({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        onMouseEnter={() => setHoveredRowId(row.id)}
-                        onMouseLeave={() => setHoveredRowId(null)}
+                        onMouseEnter={() => handleMouseEnter(row.id)}
+                        onMouseLeave={handleMouseLeave}
                         className={cn(
                           "group-hover/tbody:opacity-40 hover:!opacity-100 hover:bg-[var(--bg-base)]/40 transition-all duration-300 cursor-pointer relative",
                           hoveredRowId === row.id ? "z-10 shadow-sm" : "z-0"

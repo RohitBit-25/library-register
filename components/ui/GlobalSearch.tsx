@@ -29,7 +29,10 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
 
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        setIsOpen((open) => !open);
+        setIsOpen((open) => {
+          if (!open) return true;
+          return false;
+        });
       }
     };
     document.addEventListener('keydown', down);
