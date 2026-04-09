@@ -8,8 +8,10 @@ export async function GET() {
     await dbConnect();
     let members = await Member.find({}).sort({ seat: 1 }).lean();
     
-    // Auto-seed if empty
-    if (members.length === 0) {
+    // Auto-seed if empty, or refresh if old hardcoded 2025 seeds are detected
+    const hasOldSeeds = members.some((m) => m.expiry && m.expiry.startsWith('2025-') && m.name === 'Shivani Lakhara');
+    if (members.length === 0 || hasOldSeeds) {
+      if (hasOldSeeds) await Member.deleteMany({});
       const { getDefaultMembers } = await import('@/lib/defaultData');
       const seeds = getDefaultMembers();
       await Member.insertMany(seeds);

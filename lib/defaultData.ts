@@ -1,19 +1,26 @@
 import { type Member } from './types';
 
-/**
- * Seed data – 95 seats with a realistic mix mirroring the wireframe.
- * Seats 1–95, some occupied with various statuses, some vacant.
- */
-function makeMember(
+function makeDynamicMember(
   seat: number,
   name: string,
   phone: string,
-  joinDate: string,
   duration: '1M' | '3M' | '6M' | '1Y',
-  expiry: string,
   fee: 'paid' | 'due',
   shift: 'morning' | 'evening' | 'full',
+  daysOffset: number // offset for expiry relative to today
 ): Member {
+  const d = new Date();
+  d.setDate(d.getDate() + daysOffset);
+  const expiry = d.toISOString().split('T')[0];
+
+  // Approximate joinDate based on duration backwards from expiry
+  const prevD = new Date(d);
+  if (duration === '1M') prevD.setMonth(prevD.getMonth() - 1);
+  else if (duration === '3M') prevD.setMonth(prevD.getMonth() - 3);
+  else if (duration === '6M') prevD.setMonth(prevD.getMonth() - 6);
+  else if (duration === '1Y') prevD.setFullYear(prevD.getFullYear() - 1);
+  const joinDate = prevD.toISOString().split('T')[0];
+
   return { seat, name, phone, joinDate, duration, expiry, fee, shift, vacant: false };
 }
 
@@ -25,102 +32,143 @@ function makeVacant(seat: number): Member {
 }
 
 export function getDefaultMembers(): Member[] {
+  // Generate dynamically relative to today
   return [
-    // ─── Occupied seats (matching wireframe names) ──────────
-    makeMember(1, 'Shivani Lakhara', '9876543210', '2025-01-15', '6M', '2025-07-15', 'paid', 'morning'),
-    makeMember(2, 'Sapna Kanwar', '9876543211', '2025-02-01', '3M', '2025-05-01', 'paid', 'morning'),
+    // Active (offset > 7)
+    makeDynamicMember(1, 'Shivani Lakhara', '9876543210', '6M', 'paid', 'morning', 45),
+    makeDynamicMember(2, 'Sapna Kanwar', '9876543211', '3M', 'paid', 'morning', 14),
     makeVacant(3),
     makeVacant(4),
-    makeMember(5, 'Mithlesh', '9876543212', '2025-03-06', '1M', '2025-04-06', 'paid', 'morning'),
+    
+    // Expiring (0 to 7)
+    makeDynamicMember(5, 'Mithlesh', '9876543212', '1M', 'paid', 'morning', 5),
     makeVacant(6),
-    makeMember(7, 'Sejal Parihar', '9876543213', '2025-02-10', '3M', '2025-05-10', 'paid', 'morning'),
+    makeDynamicMember(7, 'Sejal Parihar', '9876543213', '3M', 'paid', 'morning', 2),
     makeVacant(8),
     makeVacant(9),
-    makeMember(10, 'Chetana Mehta', '9876543214', '2025-01-20', '6M', '2025-07-20', 'paid', 'morning'),
+    
+    // Active
+    makeDynamicMember(10, 'Chetana Mehta', '9876543214', '6M', 'paid', 'morning', 60),
     makeVacant(11),
-    makeMember(12, 'Bittu', '9876543215', '2025-03-04', '1M', '2025-04-04', 'due', 'morning'),
-    makeMember(13, 'Kumawat', '9876543216', '2025-03-04', '1M', '2025-04-04', 'due', 'morning'),
+    
+    // Fee Due
+    makeDynamicMember(12, 'Bittu', '9876543215', '1M', 'due', 'morning', 15),
+    makeDynamicMember(13, 'Kumawat', '9876543216', '1M', 'due', 'morning', 10),
     makeVacant(14),
-    makeMember(15, 'Nikita Sharma', '9876543217', '2025-02-15', '3M', '2025-05-15', 'paid', 'morning'),
-    makeMember(16, 'Alok Raj', '9876543218', '2025-01-10', '6M', '2025-07-10', 'paid', 'morning'),
-    makeMember(17, 'Ravi Kiran', '9876543219', '2025-03-01', '1M', '2025-04-01', 'paid', 'evening'),
+    
+    // Expiring
+    makeDynamicMember(15, 'Nikita Sharma', '9876543217', '3M', 'paid', 'morning', 0),
+    
+    // Active
+    makeDynamicMember(16, 'Alok Raj', '9876543218', '6M', 'paid', 'morning', 30),
+    makeDynamicMember(17, 'Ravi Kiran', '9876543219', '1M', 'paid', 'evening', 25),
     makeVacant(18),
-    makeMember(19, 'Priya Gupta', '9876543220', '2025-02-20', '3M', '2025-05-20', 'paid', 'evening'),
-    makeMember(20, 'Ankit Verma', '9876543221', '2025-01-05', '1Y', '2026-01-05', 'paid', 'full'),
-    makeMember(21, 'Pooja Yadav', '9876543222', '2025-03-10', '1M', '2025-04-10', 'paid', 'morning'),
-    makeMember(22, 'Deepak Soni', '9876543223', '2025-02-01', '3M', '2025-05-01', 'paid', 'morning'),
+    
+    // Expired (offset < 0)
+    makeDynamicMember(19, 'Priya Gupta', '9876543220', '3M', 'paid', 'evening', -4),
+    makeDynamicMember(20, 'Ankit Verma', '9876543221', '1Y', 'paid', 'full', -10),
+    
+    makeDynamicMember(21, 'Pooja Yadav', '9876543222', '1M', 'paid', 'morning', 12),
+    makeDynamicMember(22, 'Deepak Soni', '9876543223', '3M', 'paid', 'morning', 8),
     makeVacant(23),
-    makeMember(24, 'Kavita Jain', '9876543224', '2025-01-25', '6M', '2025-07-25', 'paid', 'evening'),
-    makeMember(25, 'Rahul Sharma', '9876543225', '2025-03-15', '3M', '2025-06-15', 'paid', 'morning'),
+    makeDynamicMember(24, 'Kavita Jain', '9876543224', '6M', 'paid', 'evening', 22),
+    makeDynamicMember(25, 'Rahul Sharma', '9876543225', '3M', 'paid', 'morning', 40),
     makeVacant(26),
-    makeMember(27, 'Sunita Devi', '9876543226', '2025-02-10', '3M', '2025-05-10', 'paid', 'morning'),
-    makeMember(28, 'Hari Singh', '9876543227', '2025-01-01', '1Y', '2026-01-01', 'paid', 'full'),
-    makeMember(29, 'Meena Kumari', '9876543228', '2025-03-05', '1M', '2025-04-05', 'paid', 'evening'),
-    makeMember(30, 'Vijay Patel', '9876543229', '2025-02-18', '3M', '2025-05-18', 'paid', 'morning'),
+    
+    // Expiring
+    makeDynamicMember(27, 'Sunita Devi', '9876543226', '3M', 'paid', 'morning', 3),
+    makeDynamicMember(28, 'Hari Singh', '9876543227', '1Y', 'paid', 'full', 6),
+    
+    makeDynamicMember(29, 'Meena Kumari', '9876543228', '1M', 'paid', 'evening', 18),
+    makeDynamicMember(30, 'Vijay Patel', '9876543229', '3M', 'paid', 'morning', 21),
     makeVacant(31),
-    makeMember(32, 'Neha Tiwari', '9876543230', '2025-01-12', '6M', '2025-07-12', 'paid', 'morning'),
-    makeMember(33, 'Rohit Singh', '9876543231', '2025-03-08', '1M', '2025-04-08', 'paid', 'morning'),
+    
+    // Expired
+    makeDynamicMember(32, 'Neha Tiwari', '9876543230', '6M', 'paid', 'morning', -2),
+    makeDynamicMember(33, 'Rohit Singh', '9876543231', '1M', 'paid', 'morning', -1),
+    
     makeVacant(34),
-    makeMember(35, 'Anjali Mishra', '9876543232', '2025-02-22', '3M', '2025-05-22', 'paid', 'evening'),
-    makeMember(36, 'Manoj Kumar', '9876543233', '2025-01-30', '6M', '2025-07-30', 'paid', 'full'),
+    makeDynamicMember(35, 'Anjali Mishra', '9876543232', '3M', 'paid', 'evening', 110),
+    makeDynamicMember(36, 'Manoj Kumar', '9876543233', '6M', 'paid', 'full', 80),
     makeVacant(37),
-    makeMember(38, 'Rekha Bai', '9876543234', '2025-03-12', '1M', '2025-04-12', 'paid', 'morning'),
-    makeMember(39, 'Suresh Nagar', '9876543235', '2025-02-05', '3M', '2025-05-05', 'paid', 'morning'),
-    makeMember(40, 'Lata Pandey', '9876543236', '2025-01-18', '6M', '2025-07-18', 'paid', 'morning'),
+    makeDynamicMember(38, 'Rekha Bai', '9876543234', '1M', 'paid', 'morning', 16),
+    makeDynamicMember(39, 'Suresh Nagar', '9876543235', '3M', 'paid', 'morning', 44),
+    makeDynamicMember(40, 'Lata Pandey', '9876543236', '6M', 'paid', 'morning', 34),
     makeVacant(41),
-    makeMember(42, 'Gopal Das', '9876543237', '2025-03-01', '1M', '2025-04-01', 'due', 'morning'),
-    makeMember(43, 'Kamla Devi', '9876543238', '2025-02-14', '3M', '2025-05-14', 'paid', 'evening'),
+    
+    // Fee Due
+    makeDynamicMember(42, 'Gopal Das', '9876543237', '1M', 'due', 'morning', 28),
+    makeDynamicMember(43, 'Kamla Devi', '9876543238', '3M', 'paid', 'evening', 55),
     makeVacant(44),
-    makeMember(45, 'Ramesh Chandra', '9876543239', '2025-01-08', '1Y', '2026-01-08', 'paid', 'full'),
-    makeMember(46, 'Sita Ram', '9876543240', '2025-03-18', '1M', '2025-04-18', 'paid', 'morning'),
+    makeDynamicMember(45, 'Ramesh Chandra', '9876543239', '1Y', 'paid', 'full', 200),
+    makeDynamicMember(46, 'Sita Ram', '9876543240', '1M', 'paid', 'morning', 19),
     makeVacant(47),
-    makeMember(48, 'Geeta Rani', '9876543241', '2025-02-25', '3M', '2025-05-25', 'paid', 'morning'),
-    makeMember(49, 'Ashok Thakur', '9876543242', '2025-01-22', '6M', '2025-07-22', 'paid', 'morning'),
-    makeMember(50, 'Radha Kumari', '9876543243', '2025-03-03', '1M', '2025-04-03', 'paid', 'evening'),
+    makeDynamicMember(48, 'Geeta Rani', '9876543241', '3M', 'paid', 'morning', 77),
+    makeDynamicMember(49, 'Ashok Thakur', '9876543242', '6M', 'paid', 'morning', 99),
+    
+    // Expiring
+    makeDynamicMember(50, 'Radha Kumari', '9876543243', '1M', 'paid', 'evening', 4),
     makeVacant(51),
-    makeMember(52, 'Dinesh Rao', '9876543244', '2025-02-08', '3M', '2025-05-08', 'paid', 'morning'),
-    makeMember(53, 'Urmila Sahu', '9876543245', '2025-01-15', '6M', '2025-07-15', 'paid', 'morning'),
+    makeDynamicMember(52, 'Dinesh Rao', '9876543244', '3M', 'paid', 'morning', 29),
+    makeDynamicMember(53, 'Urmila Sahu', '9876543245', '6M', 'paid', 'morning', 140),
     makeVacant(54),
-    makeMember(55, 'Jyoti Mali', '9876543246', '2025-03-15', '1M', '2025-04-15', 'due', 'morning'),
-    makeMember(56, 'Bhagwan Singh', '9876543247', '2025-02-01', '3M', '2025-05-01', 'paid', 'full'),
+    
+    // Fee Due & Expired (but fee due takes precedence currently)
+    makeDynamicMember(55, 'Jyoti Mali', '9876543246', '1M', 'due', 'morning', -5),
+    
+    // Active
+    makeDynamicMember(56, 'Bhagwan Singh', '9876543247', '3M', 'paid', 'full', 88),
     makeVacant(57),
-    makeMember(58, 'Saroj Bala', '9876543248', '2025-01-28', '6M', '2025-07-28', 'paid', 'morning'),
-    makeMember(59, 'Kailash Nath', '9876543249', '2025-03-10', '1M', '2025-04-10', 'paid', 'evening'),
-    makeMember(60, 'Rohit Kumawat', '9876543250', '2025-02-23', '1M', '2025-03-23', 'paid', 'morning'),
+    makeDynamicMember(58, 'Saroj Bala', '9876543248', '6M', 'paid', 'morning', 17),
+    
+    // Expired
+    makeDynamicMember(59, 'Kailash Nath', '9876543249', '1M', 'paid', 'evening', -12),
+    makeDynamicMember(60, 'Rohit Kumawat', '9876543250', '1M', 'paid', 'morning', -30),
+    
     makeVacant(61),
-    makeMember(62, 'Sunil Rasganiya', '9876543251', '2025-03-20', '1M', '2025-04-20', 'due', 'morning'),
-    makeMember(63, 'Piyush Tanwar', '9876543252', '2025-02-06', '1M', '2025-03-06', 'paid', 'morning'),
+    makeDynamicMember(62, 'Sunil Rasganiya', '9876543251', '1M', 'due', 'morning', 12),
+    makeDynamicMember(63, 'Piyush Tanwar', '9876543252', '1M', 'paid', 'morning', 26),
     makeVacant(64),
-    makeMember(65, 'Manju Lata', '9876543253', '2025-01-10', '6M', '2025-07-10', 'paid', 'morning'),
+    makeDynamicMember(65, 'Manju Lata', '9876543253', '6M', 'paid', 'morning', 48),
     makeVacant(66),
-    makeMember(67, 'Naresh Kumar', '9876543254', '2025-03-05', '3M', '2025-06-05', 'paid', 'evening'),
-    makeMember(68, 'Savitri Devi', '9876543255', '2025-02-12', '3M', '2025-05-12', 'paid', 'morning'),
+    
+    // Expiring
+    makeDynamicMember(67, 'Naresh Kumar', '9876543254', '3M', 'paid', 'evening', 1),
+    makeDynamicMember(68, 'Savitri Devi', '9876543255', '3M', 'paid', 'morning', 9),
     makeVacant(69),
-    makeMember(70, 'Prem Singh', '9876543256', '2025-01-05', '1Y', '2026-01-05', 'paid', 'full'),
+    makeDynamicMember(70, 'Prem Singh', '9876543256', '1Y', 'paid', 'full', 150),
     makeVacant(71),
-    makeMember(72, 'Lakshmi Bai', '9876543257', '2025-03-14', '1M', '2025-04-14', 'paid', 'morning'),
-    makeMember(73, 'Rajendra Prasad', '9876543258', '2025-02-20', '3M', '2025-05-20', 'paid', 'morning'),
+    makeDynamicMember(72, 'Lakshmi Bai', '9876543257', '1M', 'paid', 'morning', 31),
+    makeDynamicMember(73, 'Rajendra Prasad', '9876543258', '3M', 'paid', 'morning', 42),
     makeVacant(74),
-    makeMember(75, 'Komal Sharma', '9876543259', '2025-01-25', '6M', '2025-07-25', 'paid', 'evening'),
+    makeDynamicMember(75, 'Komal Sharma', '9876543259', '6M', 'paid', 'evening', 68),
     makeVacant(76),
-    makeMember(77, 'Devendra Joshi', '9876543260', '2025-03-08', '1M', '2025-04-08', 'due', 'morning'),
-    makeMember(78, 'Anita Rawat', '9876543261', '2025-02-15', '3M', '2025-05-15', 'paid', 'morning'),
+    
+    // Expired
+    makeDynamicMember(77, 'Devendra Joshi', '9876543260', '1M', 'due', 'morning', -3),
+    makeDynamicMember(78, 'Anita Rawat', '9876543261', '3M', 'paid', 'morning', -8),
+    
     makeVacant(79),
-    makeMember(80, 'Ghanshyam', '9876543262', '2025-01-18', '6M', '2025-07-18', 'paid', 'morning'),
+    makeDynamicMember(80, 'Ghanshyam', '9876543262', '6M', 'paid', 'morning', 49),
     makeVacant(81),
-    makeMember(82, 'Pushpa Rani', '9876543263', '2025-03-11', '1M', '2025-04-11', 'paid', 'evening'),
-    makeMember(83, 'Yogesh Patel', '9876543264', '2025-02-03', '3M', '2025-05-03', 'paid', 'morning'),
+    makeDynamicMember(82, 'Pushpa Rani', '9876543263', '1M', 'paid', 'evening', 13),
+    makeDynamicMember(83, 'Yogesh Patel', '9876543264', '3M', 'paid', 'morning', 27),
     makeVacant(84),
-    makeMember(85, 'Sharda Devi', '9876543265', '2025-01-12', '6M', '2025-07-12', 'paid', 'full'),
+    makeDynamicMember(85, 'Sharda Devi', '9876543265', '6M', 'paid', 'full', 81),
     makeVacant(86),
-    makeMember(87, 'Trilok Chand', '9876543266', '2025-03-16', '1M', '2025-04-16', 'paid', 'morning'),
-    makeMember(88, 'Rina Sen', '9876543267', '2025-02-08', '3M', '2025-05-08', 'paid', 'morning'),
+    
+    // Expiring
+    makeDynamicMember(87, 'Trilok Chand', '9876543266', '1M', 'paid', 'morning', 7),
+    makeDynamicMember(88, 'Rina Sen', '9876543267', '3M', 'paid', 'morning', 23),
+    
     makeVacant(89),
-    makeMember(90, 'Mahendra Singh', '9876543268', '2025-01-22', '1Y', '2026-01-22', 'paid', 'morning'),
+    makeDynamicMember(90, 'Mahendra Singh', '9876543268', '1Y', 'paid', 'morning', 210),
     makeVacant(91),
-    makeMember(92, 'Usha Kiran', '9876543269', '2025-03-02', '1M', '2025-04-02', 'paid', 'evening'),
-    makeMember(93, 'Balram Yadav', '9876543270', '2025-02-18', '3M', '2025-05-18', 'paid', 'morning'),
+    makeDynamicMember(92, 'Usha Kiran', '9876543269', '1M', 'paid', 'evening', 15),
+    
+    // Expired
+    makeDynamicMember(93, 'Balram Yadav', '9876543270', '3M', 'paid', 'morning', -15),
     makeVacant(94),
-    makeMember(95, 'Santosh Kumar', '9876543271', '2025-01-08', '6M', '2025-07-08', 'paid', 'morning'),
+    makeDynamicMember(95, 'Santosh Kumar', '9876543271', '6M', 'paid', 'morning', 55),
   ];
 }
