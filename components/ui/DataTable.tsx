@@ -41,16 +41,19 @@ function useRowExpansion(
   const expandedRowIds = isControlled ? expandedState : internalState;
 
   const toggleRow = React.useCallback((rowId: string) => {
-    const newSet = new Set(expandedRowIds);
-    if (newSet.has(rowId)) newSet.delete(rowId);
-    else newSet.add(rowId);
-    
-    if (!isControlled) {
+    if (isControlled) {
+      const newSet = new Set(expandedState);
+      if (newSet.has(rowId)) newSet.delete(rowId);
+      else newSet.add(rowId);
+      onExpandedChange?.(newSet);
+    } else {
+      const newSet = new Set(internalState);
+      if (newSet.has(rowId)) newSet.delete(rowId);
+      else newSet.add(rowId);
       setInternalState(newSet);
+      onExpandedChange?.(newSet);
     }
-    
-    onExpandedChange?.(newSet);
-  }, [expandedRowIds, isControlled, onExpandedChange]);
+  }, [internalState, expandedState, isControlled, onExpandedChange]);
 
   return { expandedRowIds, toggleRow };
 }
