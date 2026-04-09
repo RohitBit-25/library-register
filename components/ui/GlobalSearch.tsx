@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useMembers } from '@/hooks/useMembers';
 import { Search, X, Command } from 'lucide-react';
 import { cn, getSeatStatus } from '@/lib/utils';
@@ -16,7 +16,29 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
   const { members } = useMembers();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 150);
+    return () => clearTimeout(handler);
+  }, [query]);
+
+  // Derived filtered data using debounced query
+  const results = useMemo(() => {
+    if (!debouncedQuery) return [];
+    
+    const lower = debouncedQuery.toLowerCase();
+    return members.filter(m => {
+      const isOccupied = !m.vacant;
+      const nameMatch = isOccupied && m.name.toLowerCase().includes(lower);
+      const phoneMatch = isOccupied && m.phone?.includes(debouncedQuery);
+      const seatMatch = String(m.seat).includes(debouncedQuery);
+      return nameMatch || phoneMatch || seatMatch;
+    }).slice(0, 5);
+  }, [debouncedQuery, members]);
 
   // Toggle on Cmd+K
   useEffect(() => {
@@ -38,16 +60,6 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
   }, []);
-
-  // Filter members
-  const results = query.trim() === '' ? [] : members.filter(m => {
-    const q = query.toLowerCase();
-    const isOccupied = !m.vacant;
-    const nameMatch = isOccupied && m.name.toLowerCase().includes(q);
-    const phoneMatch = isOccupied && m.phone?.includes(q);
-    const seatMatch = String(m.seat).includes(q);
-    return nameMatch || phoneMatch || seatMatch;
-  }).slice(0, 5); // Limit to top 5 results
 
   return (
     <>

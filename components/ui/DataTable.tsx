@@ -19,6 +19,10 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchPlaceholder?: string;
+  /**
+   * Optional render function for an expandable sub-component.
+   * Renders below the row when the row is clicked.
+   */
   renderSubComponent?: (row: TData) => React.ReactNode;
 }
 
@@ -30,19 +34,10 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
-  const [hoveredRowId, setHoveredRowId] = React.useState<string | null>(null);
-  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const [expandedRowId, setExpandedRowId] = React.useState<string | null>(null);
 
-  const handleMouseEnter = (rowId: string) => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    hoverTimeoutRef.current = setTimeout(() => {
-      setHoveredRowId(rowId);
-    }, 150);
-  };
-
-  const handleMouseLeave = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    setHoveredRowId(null);
+  const toggleRow = (rowId: string) => {
+    setExpandedRowId((prev) => (prev === rowId ? null : rowId));
   };
 
   const table = useReactTable({
@@ -126,11 +121,10 @@ export function DataTable<TData, TValue>({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        onMouseEnter={() => handleMouseEnter(row.id)}
-                        onMouseLeave={handleMouseLeave}
+                        onClick={() => toggleRow(row.id)}
                         className={cn(
                           "group-hover/tbody:opacity-40 hover:!opacity-100 hover:bg-[var(--bg-base)]/40 transition-all duration-300 cursor-pointer relative",
-                          hoveredRowId === row.id ? "z-10 shadow-sm" : "z-0"
+                          expandedRowId === row.id ? "z-10 shadow-sm" : "z-0"
                         )}
                       >
                         {row.getVisibleCells().map((cell) => (
@@ -141,11 +135,9 @@ export function DataTable<TData, TValue>({
                       </motion.tr>
                       {renderSubComponent && (
                         <AnimatePresence>
-                          {hoveredRowId === row.id && (
+                          {expandedRowId === row.id && (
                             <tr
                               className="bg-gradient-to-b from-[var(--bg-base)]/50 to-transparent border-none"
-                              onMouseEnter={() => setHoveredRowId(row.id)}
-                              onMouseLeave={() => setHoveredRowId(null)}
                             >
                               <td colSpan={columns.length} className="p-0 border-none">
                                 <motion.div
