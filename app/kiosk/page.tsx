@@ -64,8 +64,8 @@ export default function KioskPage() {
       
       {/* Background Decor */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-[var(--sapphire-500)]/5 blur-3xl mix-blend-multiply dark:mix-blend-overlay"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-amber-accent/5 blur-3xl mix-blend-multiply dark:mix-blend-overlay"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-[var(--sapphire-500)]/5 blur-3xl"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-amber-accent/5 blur-3xl"></div>
       </div>
 
       <div className="absolute top-6 left-6 z-50">
@@ -86,7 +86,7 @@ export default function KioskPage() {
             className="w-full max-w-sm"
           >
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--sapphire-500)] to-purple-600 outline outline-4 outline-surface dark:outline-surface-dark shadow-xl mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--sapphire-500)] to-purple-600 outline outline-4 outline-[var(--bg-surface)] shadow-xl mb-6">
                 <UserCheck className="w-8 h-8 text-[var(--saffron-50)]" />
               </div>
               <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
@@ -159,7 +159,7 @@ export default function KioskPage() {
                 <ArrowLeft className="w-5 h-5" />
               </button>
 
-              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-500 to-[var(--sapphire-500)] rounded-[2rem] rotate-3 mb-6 shadow-xl flex items-center justify-center border-4 border-surface dark:border-surface-dark">
+              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-500 to-[var(--sapphire-500)] rounded-[2rem] rotate-3 mb-6 shadow-xl flex items-center justify-center border-4 border-[var(--bg-surface)]">
                 <span className="text-4xl font-black text-[var(--saffron-50)] -rotate-3 font-mono">
                   {String(activeMember.seat).padStart(2, '0')}
                 </span>
@@ -170,7 +170,7 @@ export default function KioskPage() {
               </h2>
               <p className="text-[var(--text-tertiary)] font-medium mb-8">
                 Current Status: {isPresent(todayStr, activeMember.seat) ? (
-                  <span className="text-green-600 dark:text-green-400 font-bold inline-flex items-center gap-1">Checked In <CheckCircle2 className="w-4 h-4" /></span>
+                  <span className="text-[var(--emerald-500)] font-bold inline-flex items-center gap-1">Checked In <CheckCircle2 className="w-4 h-4" /></span>
                 ) : (
                   <span className="text-[var(--text-secondary)] font-bold inline-flex items-center gap-1">Checked Out <XCircle className="w-4 h-4" /></span>
                 )}

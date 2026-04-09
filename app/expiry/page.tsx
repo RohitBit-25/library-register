@@ -108,8 +108,8 @@ export default function ExpiryPage() {
               isExpired
                 ? 'bg-[var(--ruby-500)]/15 text-[var(--ruby-400)] border-[var(--ruby-500)]/30/50'
                 : dLeft <= 7
-                ? 'bg-expiring-fill dark:bg-expiring-fill-dark text-expiring-text dark:text-expiring-text-dark border-expiring-border/50'
-                : 'bg-[var(--bg-surface)] text-[var(--text-primary)] border-divider dark:border-divider-dark'
+                ? 'bg-[var(--saffron-500)]/10 text-[var(--saffron-500)] border-[var(--saffron-500)]/50'
+                : 'bg-[var(--bg-surface)] text-[var(--text-primary)] border-[var(--border-default)]'
             )}
           >
             {row.getValue('seat')}
@@ -163,7 +163,7 @@ export default function ExpiryPage() {
                   : dLeft === 0
                   ? 'bg-[#DC2626]/10 text-[#DC2626]'
                   : dLeft <= 7
-                  ? 'bg-expiring-fill dark:bg-expiring-fill-dark text-expiring-text dark:text-expiring-text-dark'
+                  ? 'bg-[var(--saffron-500)]/10 text-[var(--saffron-500)]'
                   : dLeft <= 30
                   ? 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]'
                   : 'bg-[var(--emerald-500)]/15 text-[var(--emerald-400)]'
@@ -171,7 +171,7 @@ export default function ExpiryPage() {
             >
               {daysText}
             </span>
-            <div className="flex-1 h-1.5 rounded-full bg-[var(--bg-base)] overflow-hidden border border-divider/50 dark:border-divider-dark/50 shadow-inner">
+            <div className="flex-1 h-1.5 rounded-full bg-[var(--bg-base)] overflow-hidden border border-[var(--border-default)]/50 shadow-inner">
               <div
                 className={cn('h-full rounded-full transition-all duration-1000 ease-out shadow-sm', barColor)}
                 style={{ width: `${fillPct}%` }}
@@ -198,7 +198,7 @@ export default function ExpiryPage() {
           <Tooltip content="Send WhatsApp Reminder">
             <button
               onClick={() => handleWhatsApp(row.original)}
-              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-active-fill/50/50 text-[var(--emerald-400)] hover:bg-active-fill shadow-sm hover:scale-105 transition-all active:scale-95 border border-[var(--emerald-500)]/30/20 dark:border-[var(--emerald-500)]/30-dark/20"
+              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--emerald-500)]/10 text-[var(--emerald-400)] hover:bg-[var(--emerald-500)]/20 shadow-sm hover:scale-105 transition-all active:scale-95 border border-[var(--emerald-500)]/20"
             >
               <MessageCircle className="w-4 h-4" />
             </button>
@@ -251,7 +251,7 @@ export default function ExpiryPage() {
           count={totalWeek}
           label="This Week"
           gradient="from-[#EF9F27] to-[#FBBF24]"
-          iconBg="bg-expiring-fill dark:bg-expiring-fill-dark text-expiring-border"
+          iconBg="bg-[var(--saffron-500)]/10 text-[var(--saffron-500)]"
           icon={<Clock className="w-4 h-4" />}
         />
         <UrgencyStat
