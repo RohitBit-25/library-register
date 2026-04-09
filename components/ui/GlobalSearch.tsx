@@ -21,6 +21,12 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
   // Toggle on Cmd+K
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
+      // Prevent toggling if user is typing in another input/textarea
+      const target = e.target as HTMLElement;
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) && target.id !== 'global-search-input') {
+        return;
+      }
+
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setIsOpen((open) => !open);
@@ -79,6 +85,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
               <div className="flex items-center px-4 py-4 border-b border-[var(--border-subtle)]">
                 <Search className="w-5 h-5 text-[var(--sapphire-500)] mr-3 shrink-0" />
                 <input
+                  id="global-search-input"
                   ref={inputRef}
                   autoFocus
                   type="text"

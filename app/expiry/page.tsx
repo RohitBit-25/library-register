@@ -268,6 +268,24 @@ export default function ExpiryPage() {
         columns={columns}
         data={occupiedMembers}
         searchPlaceholder="Search seat, name..."
+        renderSubComponent={(member) => (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+            <div className="flex flex-col">
+              <span className="text-[var(--text-tertiary)] text-[10px] uppercase font-bold tracking-widest mb-1 shadow-sm">Fee Status</span>
+              <span className={cn("font-medium", member.fee === 'due' ? 'text-[var(--ruby-400)]' : 'text-[var(--saffron-500)]')}>
+                {member.fee === 'due' ? 'Pending Payment' : 'Fully Paid'}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[var(--text-tertiary)] text-[10px] uppercase font-bold tracking-widest mb-1 shadow-sm">Contact Info</span>
+              <span className="font-mono text-[var(--text-primary)]">{member.phone || 'N/A'}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[var(--text-tertiary)] text-[10px] uppercase font-bold tracking-widest mb-1 shadow-sm">Joined</span>
+              <span className="font-mono text-[var(--text-secondary)]">{fmtDate(member.joinDate)}</span>
+            </div>
+          </div>
+        )}
       />
     </div>
   );
