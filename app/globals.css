@@ -1,6 +1,4 @@
-  @import url('https://fonts.googleapis.com/css2?family=Yatra+One&family=Tiro+Devanagari+Hindi:ital@0;1&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-
-  @import "tailwindcss";
+@import "tailwindcss";
 
   /* === TAILWIND V4 INTEGRATION === */
   /* Maps custom CSS variables to Tailwind utility classes */
@@ -153,10 +151,10 @@
     --gradient-sapphire:linear-gradient(135deg, #3D9EFF, #1A7FE8);
 
     /* === FONT FAMILIES === */
-    --font-devanagari: 'Tiro Devanagari Hindi', 'Yatra One', serif;
-    --font-display:    'Playfair Display', Georgia, serif;
-    --font-body:       'Outfit', -apple-system, sans-serif;
-    --font-mono:       'DM Mono', 'Cascadia Code', monospace;
+    --font-devanagari: var(--font-tiro), var(--font-yatra), serif;
+    --font-display:    var(--font-playfair), Georgia, serif;
+    --font-body:       var(--font-outfit), -apple-system, sans-serif;
+    --font-mono:       var(--font-dm-mono), 'Cascadia Code', monospace;
 
     /* === SPACING SCALE === */
     --space-0:   0px;
