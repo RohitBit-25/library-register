@@ -51,7 +51,6 @@ function useRowExpansion(
       if (newSet.has(rowId)) newSet.delete(rowId);
       else newSet.add(rowId);
       setInternalState(newSet);
-      onExpandedChange?.(newSet);
     }
   }, [internalState, expandedState, isControlled, onExpandedChange]);
 
