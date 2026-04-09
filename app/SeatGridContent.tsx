@@ -74,7 +74,7 @@ export default function SeatGridContent() {
   return (
     <div className="relative min-h-screen">
       <div className={cn(
-        "transition-all duration-500 ease-in-out px-4 py-6 md:px-8 lg:px-12",
+        "transition-all duration-500 ease-in-out px-4 py-4 md:px-8 lg:px-12 lg:pt-2",
         selectedSeat !== null && !isMobile ? 'pr-[380px]' : ''
       )}>
         

@@ -65,8 +65,8 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
       {isAdmin && <Sidebar dueCount={stats.due} pendingRequests={pendingCount} />}
       <TopBar />
-      <main className={isAdmin ? 'lg:ml-[252px] min-h-screen pb-28 pt-20 lg:pt-4 lg:pb-4' : 'min-h-screen pb-28 pt-20 lg:pt-20 lg:pb-4'}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
+      <main className={isAdmin ? 'lg:ml-[252px] min-h-screen pb-28 pt-20 lg:pt-8 lg:pb-8' : 'min-h-screen pb-28 pt-20 lg:pt-20 lg:pb-8'}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           {children}
         </div>
       </main>
