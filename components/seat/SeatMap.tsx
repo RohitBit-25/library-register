@@ -159,8 +159,8 @@ function WallLabel({ detail }: { detail: WallDetail }) {
   const offset = PAD + (start - 1) * CELL + 8;
 
   const colorCls = isWindow
-    ? 'text-[#63b3ed] border-[rgba(99,179,237,0.35)]'
-    : 'text-[#f87171] border-[rgba(248,113,113,0.35)]';
+    ? 'text-[#63b3ed] border-[rgba(99,179,237,0.15)] shadow-[0_0_15px_rgba(99,179,237,0.05)]'
+    : 'text-[#f87171] border-[rgba(248,113,113,0.15)] shadow-[0_0_15px_rgba(248,113,113,0.05)]';
 
   const isVertical = wall === 'left' || wall === 'right';
 
@@ -170,7 +170,7 @@ function WallLabel({ detail }: { detail: WallDetail }) {
 
   return (
     <div
-      className={`flex items-center justify-center rounded-[3px] border border-dashed bg-[#080a0f] pointer-events-none z-10 ${colorCls}`}
+      className={`flex items-center justify-center rounded-[3px] border border-dashed bg-white/[0.01] backdrop-blur-md pointer-events-none z-10 ${colorCls}`}
       style={style}
     >
       <span className="text-[8px] font-semibold tracking-[0.2em] uppercase leading-none">
@@ -185,12 +185,12 @@ function GridDots() {
   for (let cx = 0; cx <= COLS; cx++) {
     for (let cy = 0; cy <= ROWS; cy++) {
       dots.push(
-        <circle
+          <circle
           key={`${cx}-${cy}`}
           cx={PAD + cx * CELL}
           cy={PAD + cy * CELL}
-          r={1}
-          fill="rgba(255,255,255,0.035)"
+          r={1.5}
+          fill="rgba(212, 142, 58, 0.08)"
         />
       );
     }
@@ -211,7 +211,7 @@ function EntryMarker() {
   const width = 4 * CELL;
   return (
     <div
-      className="absolute flex items-center justify-center gap-2 top-[20px] -translate-y-1/2 bg-[#080a0f] px-3 z-20"
+      className="absolute flex items-center justify-center gap-2 top-[20px] -translate-y-1/2 glass-elite !border-t-0 !border-b-0 px-3 z-20"
       style={{ left, width }}
     >
       <span className="w-[5px] h-[5px] rounded-full bg-[rgba(248,113,113,0.35)] border border-[rgba(248,113,113,0.65)] flex-shrink-0" />
@@ -339,14 +339,14 @@ export function SeatMap() {
         {/* Canvas scroll container */}
         <div className="w-full overflow-x-auto pb-2 [&::-webkit-scrollbar]:h-[3px] [&::-webkit-scrollbar-thumb]:bg-[#1e293b] [&::-webkit-scrollbar-track]:bg-transparent">
           <div
-            className="relative mx-auto bg-[#080a0f] rounded-[20px] border border-[rgba(255,255,255,0.05)]"
+            className="relative mx-auto rounded-[20px] glass-elite shadow-none"
             style={{ width: CANVAS_W, height: CANVAS_H, minWidth: CANVAS_W }}
           >
             {/* Background dots */}
             <GridDots />
 
             {/* Room boundary */}
-            <div className="absolute inset-[20px] rounded-[14px] border border-[rgba(99,179,237,0.16)] pointer-events-none z-0" />
+            <div className="absolute inset-[20px] rounded-[14px] border border-[var(--border-default)] pointer-events-none z-0" />
 
             {/* Entry marker */}
             <EntryMarker />
@@ -433,11 +433,11 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
   return (
     <div className="w-full overflow-x-auto pb-4">
       <div
-        className="relative mx-auto bg-[#080a0f] rounded-[20px] border border-[rgba(255,255,255,0.05)]"
+        className="relative mx-auto rounded-[20px] glass-elite shadow-none"
         style={{ width: CANVAS_W, height: CANVAS_H, minWidth: CANVAS_W }}
       >
         <GridDots />
-        <div className="absolute inset-[20px] rounded-[14px] border border-[rgba(99,179,237,0.16)] pointer-events-none z-0" />
+        <div className="absolute inset-[20px] rounded-[14px] border border-[var(--border-default)] pointer-events-none z-0" />
         <EntryMarker />
         {WALL_DETAILS.map((d, i) => <WallLabel key={i} detail={d} />)}
         <div className="absolute inset-0 z-20">{children}</div>

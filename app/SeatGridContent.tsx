@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
 import SeatGrid from '@/components/seat/SeatGrid';
@@ -12,14 +11,13 @@ import { SeatSkeleton } from '@/components/ui/Skeleton';
 import { type Duration, type Member } from '@/lib/types';
 import { useAuth } from '@/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Users, UserPlus, Info } from 'lucide-react';
+import { LayoutDashboard, Users, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function SeatGridContent() {
   const { members, update, vacate, renew, add, isLoading } = useMembers();
   const { isAdmin } = useAuth();
   const { addToast } = useToast();
-  const searchParams = useSearchParams();
 
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -140,11 +138,11 @@ export default function SeatGridContent() {
         </header>
 
         {/* --- SEATING CANVAS --- */}
-        <section className="relative rounded-[2.5rem] border border-[var(--border-subtle)] bg-[#120C07]/60 backdrop-blur-2xl p-6 md:p-12 shadow-[0_30px_60px_-15px_rgba(0,0,0,1)] mb-8 overflow-hidden">
+        <section className="relative rounded-[2.5rem] glass-elite-panel glow-saffron-chill p-6 md:p-12 mb-8 overflow-hidden">
           {/* Elite Ambient Glows */}
-          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[var(--saffron-500)]/10 blur-[120px] rounded-full pointer-events-none" />
-          <div className="absolute bottom-[-20%] right-[-10%] w-[40%] h-[40%] bg-[var(--marigold-500)]/5 blur-[100px] rounded-full pointer-events-none" />
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22 opacity=%220.015%22/%3E%3C/svg%3E')] pointer-events-none mix-blend-overlay"></div>
+          <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-[var(--saffron-500)]/10 blur-[130px] rounded-full pointer-events-none mix-blend-screen" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[var(--sapphire-500)]/5 blur-[120px] rounded-full pointer-events-none mix-blend-screen" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22 opacity=%220.025%22/%3E%3C/svg%3E')] pointer-events-none mix-blend-overlay"></div>
           
           <div className="relative z-10">
             {isLoading ? (

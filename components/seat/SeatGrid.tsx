@@ -104,18 +104,18 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
 </div>
 
         {/* Grid */}
-        <div className="rounded-[3rem] border border-white/5 bg-[#0a0a0a]/80 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)] backdrop-blur-xl overflow-hidden mb-8 relative">
+        <div className="rounded-[3rem] glass-elite overflow-hidden mb-8 relative">
   {/* Add a subtle highlight to the top edge */}
-  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+  <div className="absolute top-0 left-0 right-0 h-px bg-[var(--gradient-glass)]"></div>
   
-  <div className="flex items-center gap-4 px-8 pt-7 pb-5 border-b border-white/5 bg-[#120c07]/60">
+  <div className="flex items-center gap-4 px-8 pt-7 pb-5 border-b border-[var(--border-default)] bg-[var(--bg-elevated)]/30 backdrop-blur-md">
     <div className="p-2.5 rounded-2xl bg-[var(--saffron-500)]/10 ring-1 ring-[var(--saffron-500)]/20 shadow-[inset_0_0_20px_rgba(232,133,58,0.1),0_0_15px_rgba(232,133,58,0.1)]">
       <Grid3X3 className="w-4 h-4 text-[var(--saffron-500)] drop-shadow-[0_0_5px_rgba(232,133,58,0.8)]" />
     </div>
     <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 tracking-wider">
       {shiftFilter === 'all' ? 'Topography' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Topography`}
     </h3>
-    <span className="text-[10px] font-mono tracking-[0.3em] font-black text-[var(--saffron-400)] ml-auto bg-[var(--saffron-500)]/5 px-4 py-1.5 rounded-full border border-[var(--saffron-500)]/20 shadow-[0_0_15px_rgba(232,133,58,0.1)]">
+    <span className="text-[10px] font-mono tracking-[0.3em] font-black text-[var(--saffron-400)] ml-auto bg-[var(--saffron-500)]/5 px-4 py-1.5 rounded-full border border-[var(--saffron-500)]/20 shadow-[0_0_15px_rgba(232,133,58,0.15)] glow-saffron-chill">
       {(shiftFilter === 'all' ? members : filtered).length} SEATS
     </span>
   </div>
