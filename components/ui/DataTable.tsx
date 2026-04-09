@@ -31,6 +31,30 @@ interface DataTableProps<TData, TValue> {
   onExpandedChange?: (expandedIds: Set<string>) => void;
 }
 
+function useRowExpansion(
+  expandedState?: Set<string>,
+  onExpandedChange?: (expandedIds: Set<string>) => void
+) {
+  const isControlled = expandedState !== undefined;
+  const [internalState, setInternalState] = React.useState<Set<string>>(new Set());
+
+  const expandedRowIds = isControlled ? expandedState : internalState;
+
+  const toggleRow = React.useCallback((rowId: string) => {
+    const newSet = new Set(expandedRowIds);
+    if (newSet.has(rowId)) newSet.delete(rowId);
+    else newSet.add(rowId);
+    
+    if (!isControlled) {
+      setInternalState(newSet);
+    }
+    
+    onExpandedChange?.(newSet);
+  }, [expandedRowIds, isControlled, onExpandedChange]);
+
+  return { expandedRowIds, toggleRow };
+}
+
 function DataTableRow<TData>({
   row,
   columnsLength,
@@ -99,31 +123,8 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
-  const [internalExpandedRowIds, setInternalExpandedRowIds] = React.useState<Set<string>>(new Set());
-
-  const isControlled = expandedState !== undefined;
-  const expandedRowIds = isControlled ? expandedState : internalExpandedRowIds;
-
-
-
-  const toggleRow = (rowId: string) => {
-    let newSet: Set<string>;
-
-    if (!isControlled) {
-      setInternalExpandedRowIds((prev) => {
-        newSet = new Set(prev);
-        if (newSet.has(rowId)) newSet.delete(rowId);
-        else newSet.add(rowId);
-        if (onExpandedChange) onExpandedChange(newSet);
-        return newSet;
-      });
-    } else {
-      newSet = new Set(expandedRowIds);
-      if (newSet.has(rowId)) newSet.delete(rowId);
-      else newSet.add(rowId);
-      if (onExpandedChange) onExpandedChange(newSet);
-    }
-  };
+  
+  const { expandedRowIds, toggleRow } = useRowExpansion(expandedState, onExpandedChange);
 
   const table = useReactTable({
     data,
