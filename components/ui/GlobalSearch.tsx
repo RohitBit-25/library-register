@@ -13,12 +13,8 @@ interface GlobalSearchProps {
   className?: string;
 }
 
-export default function GlobalSearch({ onSelect, className }: GlobalSearchProps) {
-  const { members } = useMembers();
-  const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState('');
+function useMemberSearch(query: string, members: Member[]) {
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -41,7 +37,10 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
     }).slice(0, 5);
   }, [debouncedQuery, members]);
 
-  // Toggle on Cmd+K
+  return results;
+}
+
+function useCommandPalette(setIsOpen: React.Dispatch<React.SetStateAction<boolean>>) {
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       // Prevent toggling if user is typing in another input/textarea
@@ -52,15 +51,22 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
 
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        setIsOpen((open) => {
-          if (!open) return true;
-          return false;
-        });
+        setIsOpen((open) => !open);
       }
     };
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
-  }, []);
+  }, [setIsOpen]);
+}
+
+export default function GlobalSearch({ onSelect, className }: GlobalSearchProps) {
+  const { members } = useMembers();
+  const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const results = useMemberSearch(query, members);
+  useCommandPalette(setIsOpen);
 
   return (
     <>
