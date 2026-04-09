@@ -35,6 +35,20 @@ export function setStoredRole(role: UserRole | null): void {
   }
 }
 
+export async function loginAsAdminService(pin: string): Promise<boolean> {
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin }),
+    });
+    return res.ok;
+  } catch (err) {
+    console.error('Admin login service error:', err);
+    return false;
+  }
+}
+
 // Admin verification is handled on the server side via /api/auth.
 // Local role persistence is managed via setStoredRole('admin').
 

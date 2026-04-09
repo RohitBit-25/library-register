@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
-import { type UserRole, getStoredRole, setStoredRole } from '@/lib/auth';
+import { type UserRole, getStoredRole, setStoredRole, loginAsAdminService } from '@/lib/auth';
 
 // ─── Context Shape ──────────────────────────────────────────────
 
@@ -43,20 +43,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loginAsAdmin = useCallback(async (pin: string): Promise<boolean> => {
-    try {
-      const res = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin }),
-      });
-
-      if (res.ok) {
-        setState(prev => ({ ...prev, role: 'admin' }));
-        setStoredRole('admin');
-        return true;
-      }
-    } catch (err) {
-      console.error('Auth error:', err);
+    const success = await loginAsAdminService(pin);
+    if (success) {
+      setState(prev => ({ ...prev, role: 'admin' }));
+      setStoredRole('admin');
+      return true;
     }
     return false;
   }, []);
