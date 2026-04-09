@@ -34,10 +34,23 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
-  const [expandedRowId, setExpandedRowId] = React.useState<string | null>(null);
+  const [expandedRowIds, setExpandedRowIds] = React.useState<Set<string>>(new Set());
+
+  // Clear expanded rows if data changes to prevent memory leaks from stale IDs
+  React.useEffect(() => {
+    setExpandedRowIds(new Set());
+  }, [data]);
 
   const toggleRow = (rowId: string) => {
-    setExpandedRowId((prev) => (prev === rowId ? null : rowId));
+    setExpandedRowIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(rowId)) {
+        next.delete(rowId);
+      } else {
+        next.add(rowId);
+      }
+      return next;
+    });
   };
 
   const table = useReactTable({
@@ -111,7 +124,7 @@ export function DataTable<TData, TValue>({
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y divide-[var(--border-subtle)] text-[var(--text-primary)] group/tbody">
+            <tbody className="divide-y divide-[var(--border-subtle)] text-[var(--text-primary)] relative z-0">
               <AnimatePresence initial={false}>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
@@ -121,21 +134,22 @@ export function DataTable<TData, TValue>({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        onClick={() => toggleRow(row.id)}
+                        onClick={() => { if (renderSubComponent) toggleRow(row.id); }}
                         className={cn(
-                          "group-hover/tbody:opacity-40 hover:!opacity-100 hover:bg-[var(--bg-base)]/40 transition-all duration-300 cursor-pointer relative",
-                          expandedRowId === row.id ? "z-10 shadow-sm" : "z-0"
+                          "transition-colors duration-300 relative",
+                          renderSubComponent && "hover:bg-[var(--bg-base)]/40 cursor-pointer",
+                          expandedRowIds.has(row.id) ? "z-10 shadow-sm bg-[var(--bg-base)]/20" : "z-0 border-b border-[var(--border-subtle)]"
                         )}
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id} className="px-6 py-4 whitespace-nowrap">
+                          <td key={cell.id} className="py-4 px-6 border-none">
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </td>
                         ))}
                       </motion.tr>
                       {renderSubComponent && (
-                        <AnimatePresence>
-                          {expandedRowId === row.id && (
+                        <AnimatePresence mode="wait">
+                          {expandedRowIds.has(row.id) && (
                             <tr
                               className="bg-gradient-to-b from-[var(--bg-base)]/50 to-transparent border-none"
                             >
