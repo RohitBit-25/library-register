@@ -181,7 +181,7 @@ export default function SeatDetailPanel({
                       <ActionBtn 
                         onClick={() => { onMarkDue(member.seat); onClose(); }} 
                         icon={<CreditCard className="w-4 h-4" />}
-                        className="bg-saffron-50 dark:bg-saffron-900/10 text-saffron-800 dark:text-saffron-400 border border-saffron-500/30 hover:bg-saffron-500/10"
+                        className="bg-[var(--saffron-500)]/10 text-[var(--saffron-500)] border border-[var(--saffron-500)]/30 hover:bg-[var(--saffron-500)]/15"
                       >
                         Mark Due
                       </ActionBtn>
@@ -209,7 +209,7 @@ export default function SeatDetailPanel({
 
                   <button
                     onClick={() => setConfirmRemove(true)}
-                    className="w-full flex items-center justify-center gap-2 text-center text-sm font-bold text-ruby-600 dark:text-ruby-400 py-2.5 rounded-xl border border-ruby-500/20 hover:bg-ruby-500/10 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 text-center text-sm font-bold text-[var(--ruby-500)] py-2.5 rounded-xl border border-[var(--ruby-500)]/20 hover:bg-[var(--ruby-500)]/10 transition-colors cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4" />
                     Remove Member
@@ -251,7 +251,7 @@ export default function SeatDetailPanel({
                   name="renewDuration"
                   control={control}
                   render={({ field }) => (
-                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5 dark:shadow-black/20">
+                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
                       {(['1M', '3M', '6M', '1Y'] as Duration[]).map(d => (
                         <button
                           key={d}
@@ -273,8 +273,8 @@ export default function SeatDetailPanel({
               </div>
 
               <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 shadow-sm text-center border-dashed">
-                <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">New expiry date</span>
-                <p className="text-lg font-black text-emerald-700 dark:text-emerald-300 mt-1 flex justify-center items-center gap-2">
+                <span className="text-xs font-bold text-[var(--emerald-500)] uppercase tracking-wider">New expiry date</span>
+                <p className="text-lg font-black text-[var(--emerald-500)] mt-1 flex justify-center items-center gap-2">
                   <Calendar className="w-4 h-4 opacity-70" />
                   {renewExpiry ? fmtDate(renewExpiry) : '—'}
                 </p>

@@ -76,29 +76,29 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
 
           {/* Quick stats — pill badges */}
           <div className="flex flex-wrap items-center gap-2">
-            <StatPill label="Occupied" value={stats.occupied} accent="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30" />
+            <StatPill label="Occupied" value={stats.occupied} accent="bg-[var(--emerald-500)]/10 text-[var(--emerald-500)] border-[var(--emerald-500)]/30" />
             <StatPill label="Vacant" value={stats.vacant} accent="bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-default)] border-dashed" />
             {stats.due > 0 && (
-              <StatPill label="Due" value={stats.due} accent="bg-saffron-500/10 text-saffron-800 dark:text-saffron-300 border-saffron-500/30" />
+              <StatPill label="Due" value={stats.due} accent="bg-[var(--saffron-500)]/10 text-[var(--saffron-500)] border-[var(--saffron-500)]/30" />
             )}
             {(stats.expiring + stats.expired) > 0 && (
-              <StatPill label="Expiry" value={stats.expiring + stats.expired} accent="bg-ruby-500/10 text-ruby-700 dark:text-ruby-300 border-ruby-500/30" />
+              <StatPill label="Expiry" value={stats.expiring + stats.expired} accent="bg-[var(--ruby-500)]/10 text-[var(--ruby-500)] border-[var(--ruby-500)]/30" />
             )}
           </div>
         </div>
 
         {/* Legend — enhanced */}
-        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-5 md:gap-7 mb-7 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em]">
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-5 md:gap-7 mb-7 text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-[0.2em]">
   {[
     { cls: 'bg-[#10b981] shadow-[0_0_10px_rgba(16,185,129,0.5)]', label: 'Active' },
     { cls: 'bg-[#fbbf24] shadow-[0_0_10px_rgba(251,191,36,0.5)]', label: 'Expiring' },
     { cls: 'bg-[#ef4444] shadow-[0_0_10px_rgba(239,68,68,0.5)]', label: 'Expired' },
     { cls: 'bg-[#f5c842] shadow-[0_0_10px_rgba(245,200,66,0.5)]', label: 'Fee Due' },
-    { cls: 'bg-transparent ring-1 ring-white/20 border-dashed opacity-60', label: 'Vacant' },
+    { cls: 'bg-transparent ring-1 ring-[var(--border-default)] border-dashed opacity-60', label: 'Vacant' },
   ].map(l => (
     <span key={l.label} className="flex items-center gap-2 group">
       <span className={cn('w-2 h-2 rounded-full transition-transform group-hover:scale-150', l.cls)} />
-      <span className="group-hover:text-white transition-colors">{l.label}</span>
+      <span className="group-hover:text-[var(--text-primary)] transition-colors">{l.label}</span>
     </span>
   ))}
 </div>
@@ -112,7 +112,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
     <div className="p-2.5 rounded-2xl bg-[var(--saffron-500)]/10 ring-1 ring-[var(--saffron-500)]/20 shadow-[inset_0_0_20px_rgba(232,133,58,0.1),0_0_15px_rgba(232,133,58,0.1)]">
       <Grid3X3 className="w-4 h-4 text-[var(--saffron-500)] drop-shadow-[0_0_5px_rgba(232,133,58,0.8)]" />
     </div>
-    <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 tracking-wider">
+    <h3 className="text-lg font-black text-[var(--text-primary)] tracking-wider">
       {shiftFilter === 'all' ? 'Topography' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Topography`}
     </h3>
     <span className="text-[10px] font-mono tracking-[0.3em] font-black text-[var(--saffron-400)] ml-auto bg-[var(--saffron-500)]/5 px-4 py-1.5 rounded-full border border-[var(--saffron-500)]/20 shadow-[0_0_15px_rgba(232,133,58,0.15)] glow-saffron-chill">

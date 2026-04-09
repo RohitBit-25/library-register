@@ -24,7 +24,7 @@ export default function OccupancySparkline({ data }: OccupancySparklineProps) {
   const pathD = `M ${points.join(' L ')}`;
 
   return (
-    <div className="w-full relative h-[120px] bg-gradient-to-tr from-surface to-bg dark:from-surface-dark dark:to-bg-dark rounded-xl border border-[var(--border-default)] overflow-hidden p-2 flex flex-col justify-end">
+    <div className="w-full relative h-[120px] bg-gradient-to-tr from-[var(--bg-surface)] to-[var(--bg-base)] rounded-xl border border-[var(--border-default)] overflow-hidden p-2 flex flex-col justify-end">
       
       {/* Background Area fill */}
       <svg className="absolute bottom-0 left-0 w-full h-[100px]" preserveAspectRatio="none" viewBox={`0 0 ${w} ${h}`}>

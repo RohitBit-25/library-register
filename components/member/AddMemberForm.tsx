@@ -407,7 +407,7 @@ function SegmentedControl({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex gap-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] w-full shadow-inner shadow-black/5 dark:shadow-black/20">
+    <div className="flex gap-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] w-full shadow-inner shadow-black/5">
       {options.map(opt => (
         <button
           key={opt.value}
