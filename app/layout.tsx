@@ -54,7 +54,10 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#1a1a16",
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FEFCF9' },
+    { media: '(prefers-color-scheme: dark)', color: '#120C07' },
+  ],
 };
 
 export default function RootLayout({
@@ -63,9 +66,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full dark ${yatraOne.variable} ${tiroDevanagari.variable} ${playfair.variable} ${outfit.variable} ${dmMono.variable}`} data-theme="dark" suppressHydrationWarning>
+    <html lang="en" className={`h-full ${yatraOne.variable} ${tiroDevanagari.variable} ${playfair.variable} ${outfit.variable} ${dmMono.variable}`} suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('library-theme');var d=t==='light'?false:t==='dark'?true:window.matchMedia('(prefers-color-scheme:dark)').matches;if(d){document.documentElement.classList.add('dark');document.documentElement.setAttribute('data-theme','dark')}else{document.documentElement.setAttribute('data-theme','light')}}catch(e){document.documentElement.classList.add('dark');document.documentElement.setAttribute('data-theme','dark')}})()`,
+          }}
+        />
       </head>
       <body className="min-h-full bg-[var(--bg-base)] text-[var(--text-primary)] antialiased font-body">
         <ServiceWorkerRegister />
