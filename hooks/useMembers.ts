@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import useSWR from 'swr';
 import { type Member } from '@/lib/types';
 import { getDefaultMembers } from '@/lib/defaultData';
@@ -9,10 +9,12 @@ import { calcExpiry } from '@/lib/utils';
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export function useMembers() {
-  const { data: members = [], mutate, isLoading } = useSWR<Member[]>('/api/members', fetcher, {
-    fallbackData: getDefaultMembers(), // Optimistic initial data
+  const { data: rawMembers, mutate, isLoading } = useSWR<Member[]>('/api/members', fetcher, {
+    fallbackData: getDefaultMembers(),
     revalidateOnFocus: true,
   });
+
+  const members = useMemo(() => Array.isArray(rawMembers) ? rawMembers : [], [rawMembers]);
 
   const update = useCallback(async (seat: number, patch: Partial<Member>) => {
     // Optimistic update

@@ -14,12 +14,14 @@ export function useAttendance() {
   const { isAdmin } = useAuth();
   const { members } = useMembers();
   
-  // Use SWR for remote data fetching, but only if Admin (otherwise it's empty)
-  const { data: history = [], mutate } = useSWR<AttendanceEntry[]>(
+  // Use SWR for remote data fetching
+  const { data: rawHistory, mutate } = useSWR<AttendanceEntry[]>(
     isAdmin ? '/api/attendance' : null,
     fetcher,
     { revalidateOnFocus: false }
   );
+
+  const history = useMemo(() => Array.isArray(rawHistory) ? rawHistory : [], [rawHistory]);
 
   // --- API Helpers ---
 
