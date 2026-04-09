@@ -32,6 +32,7 @@ export default function LandingPage() {
             rotate: [0, 5, 0]
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          style={{ willChange: 'transform' }}
           className="absolute -top-[20%] -right-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-br from-amber-600/10 to-transparent blur-[120px]" 
         />
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-30 mix-blend-overlay" />
@@ -90,54 +91,83 @@ export default function LandingPage() {
           </p>
 
           {/* Call to Action Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl pt-12">
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.2, delayChildren: 0.6 }
+              }
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl pt-12"
+          >
             
             {/* User CTA */}
-            <motion.div whileHover={{ y: -5 }} className="relative group">
-              <div className="absolute inset-0 bg-amber-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <button
-                onClick={() => { loginAsUser(); router.push('/browse'); }}
-                className="relative w-full h-24 bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-between px-8 transition-all group-hover:bg-white group-hover:text-black overflow-hidden"
-              >
-                <div className="text-left">
+            <motion.div 
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+              }}
+              whileHover={{ y: -5, scale: 1.02 }} 
+              whileTap={{ scale: 0.98 }}
+              className="relative group cursor-pointer"
+              onClick={() => { loginAsUser(); router.push('/browse'); }}
+            >
+              <div className="absolute inset-0 bg-amber-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative w-full h-24 bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-between px-8 transition-all group-hover:bg-white group-hover:text-black overflow-hidden rounded-md">
+                <div className="text-left pointer-events-none">
                   <p className="text-[8px] font-bold uppercase tracking-widest opacity-50 mb-1">Student Portal</p>
                   <p className="text-lg font-medium tracking-tight">Reserve Your Space</p>
                 </div>
-                <GraduationCap className="w-6 h-6 group-hover:scale-110 transition-transform" />
-              </button>
+                <GraduationCap className="w-6 h-6 group-hover:scale-110 transition-transform pointer-events-none" />
+              </div>
             </motion.div>
 
             {/* Admin Portal Interaction */}
-            <div className="relative group">
+            <motion.div 
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+              }}
+              className="relative group"
+            >
               <div className={cn(
-                "w-full h-24 bg-black/40 backdrop-blur-md border border-white/5 flex flex-col justify-center px-8 transition-all duration-500",
+                "w-full h-24 bg-black/40 backdrop-blur-md border border-white/5 flex flex-col justify-center px-8 transition-all duration-500 rounded-md",
                 pinError ? "border-red-500/50" : "hover:border-amber-500/40"
               )}>
-                <div className="flex justify-between items-center mb-1">
+                <div className="flex justify-between items-center mb-1 drop-shadow-md">
                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-30">Management PIN</p>
                    {pinError && <span className="text-[9px] text-red-500 font-bold uppercase">Invalid</span>}
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center group/input">
                   <input 
                     type="password"
                     maxLength={6}
                     value={pin}
                     onChange={(e) => { setPin(e.target.value.replace(/\D/g, '')); setPinError(false); }}
-                    onKeyDown={(e) => e.key === 'Enter' && loginAsAdmin(pin)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') loginAsAdmin(pin);
+                    }}
                     placeholder="••••••"
                     className="bg-transparent border-none outline-none text-2xl tracking-[0.4em] font-mono text-amber-500 w-full placeholder:text-white/5"
                   />
-                  <button 
+                  <div 
+                    role="button"
+                    tabIndex={0}
                     onClick={() => loginAsAdmin(pin)}
-                    className="p-2 hover:bg-white/5 rounded-full transition-colors"
+                    onKeyDown={(e) => e.key === 'Enter' && loginAsAdmin(pin)}
+                    className="p-2 hover:bg-white/5 active:scale-90 rounded-full transition-all cursor-pointer focus-visible"
+                    aria-label="Login as Admin"
                   >
-                    <Shield className="w-4 h-4 text-white/40" />
-                  </button>
+                    <Shield className="w-4 h-4 text-white/40 group-hover/input:text-amber-500/70 transition-colors" />
+                  </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-          </div>
+          </motion.div>
         </motion.div>
       </main>
 

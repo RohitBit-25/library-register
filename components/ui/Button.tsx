@@ -66,7 +66,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(baseClasses, variants[variant], appliedSize, className)}
         {...(variant === 'primary' 
             ? { whileHover: { scale: 1.03 }, whileTap: { scale: 0.97 } } 
-            : { whileTap: { scale: 0.95 } })}
+            : { whileHover: { scale: 1.01 }, whileTap: { scale: 0.95 } })}
+        transition={{ type: "spring", stiffness: 400, damping: 15, mass: 0.8 }}
         {...props}
       >
         {children}
