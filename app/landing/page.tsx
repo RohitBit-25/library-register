@@ -48,8 +48,8 @@ export default function LandingPage() {
       {/* --- HEADER --- */}
       <header className="relative z-50 flex justify-between items-center p-8 lg:px-12">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-white flex items-center justify-center rounded-full group cursor-pointer hover:scale-110 transition-transform duration-500">
-            <BookOpen className="w-5 h-5 text-black" />
+          <div className="w-12 h-12 bg-[var(--saffron-500)] flex items-center justify-center rounded-full shadow-[0_0_20px_rgba(208,106,32,0.3)] group cursor-pointer hover:scale-110 transition-transform duration-500">
+            <BookOpen className="w-5 h-5 text-[#1a1a16]" />
           </div>
           <div className="h-px w-8 bg-white/20" />
           <span className="text-[10px] tracking-[0.5em] font-bold uppercase text-amber-500/80">
@@ -115,13 +115,13 @@ export default function LandingPage() {
               className="relative group cursor-pointer"
               onClick={() => { loginAsUser(); router.push('/browse'); }}
             >
-              <div className="absolute inset-0 bg-amber-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative w-full h-24 bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-between px-8 transition-all group-hover:bg-white group-hover:text-black overflow-hidden rounded-md">
+              <div className="absolute inset-0 bg-[var(--saffron-500)]/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative w-full h-24 bg-[var(--bg-glass)] backdrop-blur-md border border-[var(--border-default)] flex items-center justify-between px-8 transition-all group-hover:border-[var(--saffron-500)]/40 group-hover:bg-[var(--saffron-500)]/5 overflow-hidden rounded-xl">
                 <div className="text-left pointer-events-none">
-                  <p className="text-[8px] font-bold uppercase tracking-widest opacity-50 mb-1">Student Portal</p>
-                  <p className="text-lg font-medium tracking-tight">Reserve Your Space</p>
+                  <p className="text-[8px] font-bold uppercase tracking-widest text-[var(--saffron-400)] mb-1">Student Portal</p>
+                  <p className="text-lg font-medium tracking-tight text-[var(--text-primary)]">Reserve Your Space</p>
                 </div>
-                <GraduationCap className="w-6 h-6 group-hover:scale-110 transition-transform pointer-events-none" />
+                <GraduationCap className="w-6 h-6 text-[var(--saffron-400)] group-hover:scale-110 transition-transform pointer-events-none" />
               </div>
             </motion.div>
 
@@ -134,12 +134,12 @@ export default function LandingPage() {
               className="relative group"
             >
               <div className={cn(
-                "w-full h-24 bg-black/40 backdrop-blur-md border border-white/5 flex flex-col justify-center px-8 transition-all duration-500 rounded-md",
-                pinError ? "border-red-500/50" : "hover:border-amber-500/40"
+                "w-full h-24 bg-white/5 backdrop-blur-md border border-white/5 flex flex-col justify-center px-8 transition-all duration-500 rounded-xl",
+                pinError ? "border-[var(--ruby-500)]/50" : "hover:border-[var(--saffron-500)]/40"
               )}>
                 <div className="flex justify-between items-center mb-1 drop-shadow-md">
-                   <p className="text-[10px] font-bold uppercase tracking-widest opacity-30">Management PIN</p>
-                   {pinError && <span className="text-[9px] text-red-500 font-bold uppercase">Invalid</span>}
+                   <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)]">Management PIN</p>
+                   {pinError && <span className="text-[9px] text-[var(--ruby-500)] font-bold uppercase">Invalid</span>}
                 </div>
                 <div className="flex items-center group/input">
                   <input 
@@ -151,7 +151,7 @@ export default function LandingPage() {
                       if (e.key === 'Enter') loginAsAdmin(pin);
                     }}
                     placeholder="••••••"
-                    className="bg-transparent border-none outline-none text-2xl tracking-[0.4em] font-mono text-amber-500 w-full placeholder:text-white/5"
+                    className="bg-transparent border-none outline-none text-2xl tracking-[0.4em] font-mono text-[var(--saffron-500)] w-full placeholder:text-white/5"
                   />
                   <div 
                     role="button"
@@ -161,7 +161,7 @@ export default function LandingPage() {
                     className="p-2 hover:bg-white/5 active:scale-90 rounded-full transition-all cursor-pointer focus-visible"
                     aria-label="Login as Admin"
                   >
-                    <Shield className="w-4 h-4 text-white/40 group-hover/input:text-amber-500/70 transition-colors" />
+                    <Shield className="w-4 h-4 text-[var(--text-tertiary)] group-hover/input:text-[var(--saffron-500)] transition-colors" />
                   </div>
                 </div>
               </div>
