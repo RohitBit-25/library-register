@@ -59,13 +59,13 @@ export default function BottomSheet({
         aria-modal="true"
         aria-label={title || 'Detail panel'}
         className={cn(
-          'fixed bottom-0 left-0 right-0 z-50 rounded-t-[32px] glass noise-pattern shadow-floating dark:shadow-floating-dark border-t border-white/20 dark:border-white/5 animate-slide-up overflow-hidden',
+          'fixed bottom-0 left-0 right-0 z-50 rounded-t-[32px] glass noise-pattern shadow-floating border-t border-[var(--border-subtle)] animate-slide-up overflow-hidden',
           snapHeights[snapPoint],
         )}
       >
         {/* Drag handle */}
         <div className="relative z-10 flex justify-center pt-4 pb-2">
-          <div className="w-12 h-1.5 rounded-full bg-text-tertiary/30 dark:bg-text-tertiary-dark/30" />
+          <div className="w-12 h-1.5 rounded-full bg-[var(--text-tertiary)]/30" />
         </div>
 
         {/* Header */}

@@ -94,7 +94,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-md"
+              className="fixed inset-0 bg-black/30 backdrop-blur-md"
             />
             
             <m.div

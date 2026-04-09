@@ -73,7 +73,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
   };
 
   return (
-    <aside className="hidden lg:flex flex-col w-[220px] h-[calc(100vh-2rem)] fixed left-4 top-4 rounded-3xl glass noise-pattern shadow-floating dark:shadow-floating-dark z-30 overflow-hidden">
+    <aside className="hidden lg:flex flex-col w-[220px] h-[calc(100vh-2rem)] fixed left-4 top-4 rounded-3xl glass noise-pattern shadow-floating z-30 overflow-hidden">
       <div className="flex items-center gap-3 px-6 h-16 shrink-0 relative z-10">
         {/* Subtle gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--saffron-500)]/5 via-transparent to-transparent pointer-events-none" />
@@ -124,7 +124,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
               </span>
               <span className="flex-1">{item.label}</span>
               {item.badge && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-due-fill dark:bg-due-fill-dark text-due-text dark:text-due-text-dark animate-pulse-subtle">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--saffron-500)]/15 text-[var(--saffron-500)] animate-pulse-subtle">
                   {item.badge}
                 </span>
               )}
@@ -155,7 +155,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
         <Tooltip content="Sign out of the system" side="right">
           <button
             onClick={handleLogout}
-            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] hover:text-expired-border hover:bg-expired-fill/50 dark:hover:bg-expired-fill-dark/50 transition-colors border border-[var(--border-default)]"
+            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--ruby-500)] hover:bg-[var(--ruby-500)]/10 transition-colors border border-[var(--border-default)]"
           >
             <LogOut className="w-4 h-4" />
             Logout
