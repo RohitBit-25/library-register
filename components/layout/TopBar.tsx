@@ -1,8 +1,7 @@
 'use client';
 
-import { useDarkMode } from '@/hooks/useDarkMode';
 import { useAuth } from '@/hooks/useAuth';
-import { Sun, Moon, BookOpen, Shield, Eye, LogOut } from 'lucide-react';
+import { BookOpen, Shield, Eye, LogOut } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 
 interface TopBarProps {
@@ -10,7 +9,6 @@ interface TopBarProps {
 }
 
 export default function TopBar({ title = 'Library Register' }: TopBarProps) {
-  const { isDark, toggle } = useDarkMode();
   const { isAdmin, isAuthenticated, logout } = useAuth();
   
   // Admin shows sidebar on desktop (TopBar hidden)
@@ -46,17 +44,6 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
         )}
       </div>
       <div className="relative z-10 flex items-center gap-1">
-        <Tooltip content={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>
-          <button
-            onClick={toggle}
-            className="cursor-pointer rounded-xl p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-base)] transition-all group"
-            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            <span className="block transition-transform duration-300 group-hover:rotate-45">
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </span>
-          </button>
-        </Tooltip>
         {!isAdmin && isAuthenticated && (
            <Tooltip content="Sign out">
              <button

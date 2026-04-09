@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { useDarkMode } from '@/hooks/useDarkMode';
 import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard,
@@ -12,8 +11,6 @@ import {
   CalendarSearch,
   BarChart3,
   Settings,
-  Sun,
-  Moon,
   BookOpen,
   Inbox,
   LogOut,
@@ -38,7 +35,6 @@ interface SidebarProps {
 
 export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarProps) {
   const pathname = usePathname();
-  const { isDark, toggle } = useDarkMode();
   const { logout } = useAuth();
   const router = useRouter();
 
@@ -135,22 +131,8 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
 
       {/* Footer */}
       <div className="p-4 shrink-0 relative z-10">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-mono text-[var(--text-tertiary)]">
-            {timeStr}
-          </span>
-          <Tooltip content={isDark ? 'Switch to light mode' : 'Switch to dark mode'} side="right">
-            <button
-              onClick={toggle}
-              className="cursor-pointer flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-base)] transition-all group"
-              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              <span className="transition-transform duration-300 group-hover:rotate-45">
-                {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </span>
-              <span>{isDark ? 'Light' : 'Dark'}</span>
-            </button>
-          </Tooltip>
+        <div className="flex items-center justify-between mb-3 text-xs font-mono text-[var(--text-tertiary)]">
+          {timeStr}
         </div>
         <Tooltip content="Sign out of the system" side="right">
           <button

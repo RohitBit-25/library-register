@@ -13,15 +13,13 @@ import {
   CalendarSearch,
   BarChart3,
   Settings,
-  Sun,
-  Moon,
   X,
   Inbox,
   Eye,
   LogOut,
   MonitorSmartphone,
 } from 'lucide-react';
-import { useDarkMode } from '@/hooks/useDarkMode';
+
 
 /* ─── Admin Tabs ──────────────────────────────────────────────── */
 
@@ -41,7 +39,6 @@ const userTabs = [
 export default function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isDark, toggle } = useDarkMode();
   const { isAdmin, logout } = useAuth();
   const [moreOpen, setMoreOpen] = useState(false);
 
@@ -144,24 +141,6 @@ export default function BottomNav() {
                 /* User More Options — no extra items needed */
                 <></>
               )}
-
-              {/* Common: Dark mode + Logout */}
-              <button
-                onClick={toggle}
-                className="w-full flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] rounded-[var(--radius-lg)] text-[var(--text-sm)] font-[var(--weight-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] transition-colors cursor-pointer"
-              >
-                {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                <span>{isDark ? 'Light mode' : 'Dark mode'}</span>
-                <div className={cn(
-                  'ml-auto w-9 h-5 rounded-[var(--radius-full)] transition-colors relative',
-                  isDark ? 'bg-[var(--indigo-500)]' : 'bg-[var(--text-tertiary)]/30',
-                )}>
-                  <div className={cn(
-                    'absolute top-0.5 w-4 h-4 rounded-[var(--radius-full)] bg-white shadow-[var(--shadow-sm)] transition-transform',
-                    isDark ? 'translate-x-4' : 'translate-x-0.5',
-                  )} />
-                </div>
-              </button>
 
               <button
                 onClick={handleLogout}
