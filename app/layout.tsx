@@ -1,7 +1,42 @@
 import type { Metadata, Viewport } from "next";
+import { Yatra_One, Tiro_Devanagari_Hindi, Playfair_Display, Outfit, DM_Mono } from "next/font/google";
 import "./globals.css";
 import AppShell from "@/components/layout/AppShell";
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
+
+const yatraOne = Yatra_One({
+  subsets: ["devanagari", "latin"],
+  weight: "400",
+  variable: "--font-yatra",
+  display: "swap",
+});
+
+const tiroDevanagari = Tiro_Devanagari_Hindi({
+  subsets: ["devanagari", "latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  variable: "--font-tiro",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+});
+
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-dm-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Library Register — Seat Management",
@@ -28,14 +63,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full dark" data-theme="dark" suppressHydrationWarning>
+    <html lang="en" className={`h-full dark ${yatraOne.variable} ${tiroDevanagari.variable} ${playfair.variable} ${outfit.variable} ${dmMono.variable}`} data-theme="dark" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Tiro+Devanagari+Hindi:ital@0;1&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className="min-h-full bg-[var(--bg-base)] text-[var(--text-primary)] antialiased" style={{fontFamily: 'var(--font-body)'}}>
+      <body className="min-h-full bg-[var(--bg-base)] text-[var(--text-primary)] antialiased font-body">
         <ServiceWorkerRegister />
         <AppShell>{children}</AppShell>
       </body>
