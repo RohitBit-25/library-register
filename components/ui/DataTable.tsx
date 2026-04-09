@@ -10,6 +10,7 @@ import {
   SortingState,
   getFilteredRowModel,
   useReactTable,
+  Row,
 } from '@tanstack/react-table';
 import { Search, ChevronDown, ChevronUp, ChevronsUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -24,6 +25,64 @@ interface DataTableProps<TData, TValue> {
    * Renders below the row when the row is clicked.
    */
   renderSubComponent?: (row: TData) => React.ReactNode;
+}
+
+function DataTableRow<TData>({
+  row,
+  columnsLength,
+  renderSubComponent,
+  isExpanded,
+  toggleExpand,
+}: {
+  row: Row<TData>;
+  columnsLength: number;
+  renderSubComponent?: (row: TData) => React.ReactNode;
+  isExpanded: boolean;
+  toggleExpand: (id: string) => void;
+}) {
+  return (
+    <React.Fragment>
+      <motion.tr
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        onClick={() => { if (renderSubComponent) toggleExpand(row.id); }}
+        className={cn(
+          "transition-colors duration-300 relative",
+          renderSubComponent && "hover:bg-[var(--bg-base)]/40 cursor-pointer",
+          isExpanded ? "z-10 shadow-sm bg-[var(--bg-base)]/20" : "z-0 border-b border-[var(--border-subtle)]"
+        )}
+      >
+        {row.getVisibleCells().map((cell) => (
+          <td key={cell.id} className="py-4 px-6 border-none">
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </td>
+        ))}
+      </motion.tr>
+      {renderSubComponent && (
+        <AnimatePresence mode="wait">
+          {isExpanded && (
+            <tr className="bg-gradient-to-b from-[var(--bg-base)]/50 to-transparent border-none">
+              <td colSpan={columnsLength} className="p-0 border-none">
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-6 py-4 border-b border-[var(--border-subtle)] shadow-[inset_0_4px_6px_-6px_rgba(0,0,0,0.1)]">
+                    {renderSubComponent(row.original)}
+                  </div>
+                </motion.div>
+              </td>
+            </tr>
+          )}
+        </AnimatePresence>
+      )}
+    </React.Fragment>
+  );
 }
 
 export function DataTable<TData, TValue>({
@@ -128,49 +187,14 @@ export function DataTable<TData, TValue>({
               <AnimatePresence initial={false}>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <React.Fragment key={row.id}>
-                      <motion.tr
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        onClick={() => { if (renderSubComponent) toggleRow(row.id); }}
-                        className={cn(
-                          "transition-colors duration-300 relative",
-                          renderSubComponent && "hover:bg-[var(--bg-base)]/40 cursor-pointer",
-                          expandedRowIds.has(row.id) ? "z-10 shadow-sm bg-[var(--bg-base)]/20" : "z-0 border-b border-[var(--border-subtle)]"
-                        )}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id} className="py-4 px-6 border-none">
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </td>
-                        ))}
-                      </motion.tr>
-                      {renderSubComponent && (
-                        <AnimatePresence mode="wait">
-                          {expandedRowIds.has(row.id) && (
-                            <tr
-                              className="bg-gradient-to-b from-[var(--bg-base)]/50 to-transparent border-none"
-                            >
-                              <td colSpan={columns.length} className="p-0 border-none">
-                                <motion.div
-                                  initial={{ height: 0, opacity: 0 }}
-                                  animate={{ height: 'auto', opacity: 1 }}
-                                  exit={{ height: 0, opacity: 0 }}
-                                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                  className="overflow-hidden"
-                                >
-                                  <div className="px-6 py-4 border-b border-[var(--border-subtle)] shadow-[inset_0_4px_6px_-6px_rgba(0,0,0,0.1)]">
-                                    {renderSubComponent(row.original)}
-                                  </div>
-                                </motion.div>
-                              </td>
-                            </tr>
-                          )}
-                        </AnimatePresence>
-                      )}
-                    </React.Fragment>
+                    <DataTableRow
+                      key={row.id}
+                      row={row}
+                      columnsLength={columns.length}
+                      renderSubComponent={renderSubComponent}
+                      isExpanded={expandedRowIds.has(row.id)}
+                      toggleExpand={toggleRow}
+                    />
                   ))
                 ) : (
                   <tr>
