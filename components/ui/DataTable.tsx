@@ -104,12 +104,7 @@ export function DataTable<TData, TValue>({
   const isControlled = expandedState !== undefined;
   const expandedRowIds = isControlled ? expandedState : internalExpandedRowIds;
 
-  // Clear expanded rows if data changes to prevent memory leaks from stale IDs
-  React.useEffect(() => {
-    if (!isControlled) {
-      setInternalExpandedRowIds(new Set());
-    }
-  }, [data, isControlled]);
+
 
   const toggleRow = (rowId: string) => {
     let newSet: Set<string>;
