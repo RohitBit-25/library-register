@@ -43,21 +43,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loginAsAdmin = useCallback(async (pin: string): Promise<boolean> => {
-    if (verifyAdminPin(pin)) {
-      // Set the server-side JWT cookie for API route protection
-      try {
-        await fetch('/api/auth', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pin }),
-        });
-      } catch {
-        // Server auth is a bonus layer; client-side still works
-      }
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin }),
+      });
 
-      setState(prev => ({ ...prev, role: 'admin' }));
-      setStoredRole('admin');
-      return true;
+      if (res.ok) {
+        setState(prev => ({ ...prev, role: 'admin' }));
+        setStoredRole('admin');
+        return true;
+      }
+    } catch (err) {
+      console.error('Auth error:', err);
     }
     return false;
   }, []);
