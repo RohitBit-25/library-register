@@ -5,7 +5,10 @@ import { cookies } from 'next/headers';
 export async function POST(request: Request) {
   try {
     const { pin } = await request.json();
-    const adminPin = process.env.ADMIN_PIN || '1234';
+    const adminPin = process.env.ADMIN_PIN;
+    if (!adminPin) {
+      return NextResponse.json({ success: false, error: 'Auth configuration error' }, { status: 500 });
+    }
 
     if (pin === adminPin) {
       const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
@@ -21,6 +24,8 @@ export async function POST(request: Request) {
 
       return NextResponse.json({ success: true, isAdmin: true });
     } else {
+      // Basic rate limiting: delay response on failure
+      await new Promise(resolve => setTimeout(resolve, 2000));
       return NextResponse.json({ success: false, error: 'Invalid PIN' }, { status: 401 });
     }
   } catch {
