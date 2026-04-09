@@ -87,7 +87,7 @@ export default function SeatGridContent() {
               className="flex items-center gap-2 text-[var(--saffron-400)] mb-2"
             >
               <LayoutDashboard size={14} className="drop-shadow-[0_0_8px_var(--saffron-500)]" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] bg-clip-text text-transparent bg-gradient-to-r from-[var(--saffron-300)] to-[var(--saffron-600)]">
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] bg-clip-text text-transparent bg-[var(--gradient-header-tag)]">
                 Management Quarters
               </span>
             </motion.div>
@@ -95,7 +95,7 @@ export default function SeatGridContent() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-4xl md:text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-[#F5E8D4] to-[#C4A882] drop-shadow-sm"
+              className="text-4xl md:text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-[var(--gradient-header-title)] drop-shadow-sm"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               The Reading Hall
@@ -121,7 +121,7 @@ export default function SeatGridContent() {
               label="Occupied" 
               value={stats.occupied} 
               icon={<Users size={14} />}
-              color="bg-[var(--saffron-500)] text-[#0D0905] shadow-[0_0_20px_rgba(232,133,58,0.3)] border-transparent" 
+              color="bg-[var(--saffron-500)] text-[var(--bg-base)] shadow-[0_0_20px_rgba(208,106,32,0.2)] border-transparent" 
             />
             <StatChip 
               label="Available" 

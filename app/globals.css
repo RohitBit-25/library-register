@@ -86,8 +86,8 @@
     --saffron-100: #FEECDA;
     --saffron-200: #FCD5A8;
     --saffron-300: #F9B86E;
-    --saffron-400: #E8853A;
-    --saffron-500: #D06A20;
+    --saffron-400: #D9792F;
+    --saffron-500: #C05A10;
     --saffron-600: #B85A18;
     --saffron-700: #964810;
     --saffron-800: #7A3610;
@@ -99,13 +99,13 @@
     --marigold-600: #A87800;
 
     /* === EMERALD === */
-    --emerald-400: #22A85C;
-    --emerald-500: #1A8F4E;
+    --emerald-400: #148040;
+    --emerald-500: #0F6B34;
     --emerald-glow: rgba(26, 143, 78, 0.12);
 
     /* === RUBY === */
-    --ruby-400: #D94040;
-    --ruby-500: #C03030;
+    --ruby-400: #B02020;
+    --ruby-500: #901010;
     --ruby-glow: rgba(192, 48, 48, 0.12);
 
     /* === AMBER === */
@@ -114,8 +114,8 @@
     --amber-glow: rgba(184, 130, 0, 0.12);
 
     /* === SAPPHIRE === */
-    --sapphire-400: #3080E0;
-    --sapphire-500: #2070D0;
+    --sapphire-400: #1860B8;
+    --sapphire-500: #124D96;
     --sapphire-glow: rgba(32, 112, 208, 0.12);
 
     /* === INDIGO === */
@@ -125,9 +125,9 @@
 
     /* === TEXT === */
     --text-primary:   #1C1209;
-    --text-secondary: #5A4433;
-    --text-tertiary:  #8A7560;
-    --text-disabled:  #C4B8A8;
+    --text-secondary: #4A3628;
+    --text-tertiary:  #6B5744;
+    --text-disabled:  #968878;
     --text-inverse:   #F5E8D4;
     --text-accent:    #D06A20;
     --text-link:      #B85A18;
@@ -139,6 +139,9 @@
     --gradient-glass:   linear-gradient(135deg, rgba(200,106,32,0.05) 0%, rgba(212,168,32,0.03) 100%);
     --gradient-hero:    radial-gradient(ellipse at 30% 20%, rgba(208,106,32,0.08) 0%, transparent 60%),
                         radial-gradient(ellipse at 70% 80%, rgba(32,112,208,0.05) 0%, transparent 50%);
+    
+    --gradient-header-title: linear-gradient(to bottom, var(--text-primary), var(--text-secondary));
+    --gradient-header-tag:   linear-gradient(to right, var(--saffron-500), var(--saffron-700));
     
     --gradient-jaali: repeating-linear-gradient(
       45deg,
@@ -333,6 +336,9 @@
     --gradient-glass:   linear-gradient(135deg, rgba(232,133,58,0.08) 0%, rgba(245,200,66,0.04) 100%);
     --gradient-hero:    radial-gradient(ellipse at 30% 20%, rgba(232,133,58,0.15) 0%, transparent 60%),
                         radial-gradient(ellipse at 70% 80%, rgba(61,158,255,0.08) 0%, transparent 50%);
+    
+    --gradient-header-title: linear-gradient(to bottom, #FFFFFF, #F5E8D4, #C4A882);
+    --gradient-header-tag:   linear-gradient(to right, var(--saffron-300), var(--saffron-600));
     
     --gradient-jaali: repeating-linear-gradient(
       45deg,
