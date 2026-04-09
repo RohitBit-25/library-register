@@ -127,7 +127,7 @@ export default function SeatGridContent() {
               label="Available" 
               value={stats.vacant} 
               icon={<UserPlus size={14} />}
-              color="bg-white/5 text-[var(--emerald-400)] border-[var(--emerald-400)]/20 shadow-[0_0_15px_rgba(34,195,106,0.05)] backdrop-blur-md" 
+              color="bg-[var(--emerald-500)]/10 text-[var(--emerald-400)] border-[var(--emerald-400)]/20 shadow-[0_0_15px_rgba(34,195,106,0.05)] backdrop-blur-md" 
             />
             <div className="h-10 w-px bg-gradient-to-b from-transparent via-[var(--border-strong)] to-transparent mx-2" />
             <div className="relative group">
