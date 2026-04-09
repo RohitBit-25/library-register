@@ -5,6 +5,7 @@ import { useMembers } from '@/hooks/useMembers';
 import { Search, X, Command } from 'lucide-react';
 import { cn, getSeatStatus } from '@/lib/utils';
 import Badge, { type BadgeVariant } from '@/components/ui/Badge';
+import { type Member } from '@/lib/types';
 import { AnimatePresence, m } from 'framer-motion';
 
 interface GlobalSearchProps {
@@ -27,7 +28,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
   }, [query]);
 
   // Derived filtered data using debounced query
-  const results = useMemo(() => {
+  const results = useMemo<Member[]>(() => {
     if (!debouncedQuery) return [];
     
     const lower = debouncedQuery.toLowerCase();
@@ -128,7 +129,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
                   </div>
                 ) : results.length > 0 ? (
                   <ul className="p-2 space-y-1">
-                    {results.map((member, i) => (
+                    {results.map((member: Member, i: number) => (
                       <m.li 
                         key={member.seat}
                         initial={{ opacity: 0, x: -10 }}
