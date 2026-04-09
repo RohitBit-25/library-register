@@ -36,10 +36,11 @@ export async function POST(request: Request) {
 
   try {
     await dbConnect();
-    const { date, seat, present, allPresent } = await request.json();
+    const body = await request.json();
+    const { date, seat, present, allPresent, seats: bulkSeats } = body;
 
     if (allPresent) {
-      const seats = await request.json().then(j => j.seats); // Optional: Bulk update
+      const seats = bulkSeats || [];
       await Attendance.findOneAndUpdate(
         { date },
         { date, seats },
