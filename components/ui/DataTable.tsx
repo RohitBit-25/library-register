@@ -25,6 +25,10 @@ interface DataTableProps<TData, TValue> {
    * Renders below the row when the row is clicked.
    */
   renderSubComponent?: (row: TData) => React.ReactNode;
+  /** Controlled expansion state */
+  expandedState?: Set<string>;
+  /** Callback for when expansion changes */
+  onExpandedChange?: (expandedIds: Set<string>) => void;
 }
 
 function DataTableRow<TData>({
@@ -90,26 +94,40 @@ export function DataTable<TData, TValue>({
   data,
   searchPlaceholder = 'Search...',
   renderSubComponent,
+  expandedState,
+  onExpandedChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
-  const [expandedRowIds, setExpandedRowIds] = React.useState<Set<string>>(new Set());
+  const [internalExpandedRowIds, setInternalExpandedRowIds] = React.useState<Set<string>>(new Set());
+
+  const isControlled = expandedState !== undefined;
+  const expandedRowIds = isControlled ? expandedState : internalExpandedRowIds;
 
   // Clear expanded rows if data changes to prevent memory leaks from stale IDs
   React.useEffect(() => {
-    setExpandedRowIds(new Set());
-  }, [data]);
+    if (!isControlled) {
+      setInternalExpandedRowIds(new Set());
+    }
+  }, [data, isControlled]);
 
   const toggleRow = (rowId: string) => {
-    setExpandedRowIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(rowId)) {
-        next.delete(rowId);
-      } else {
-        next.add(rowId);
-      }
-      return next;
-    });
+    let newSet: Set<string>;
+
+    if (!isControlled) {
+      setInternalExpandedRowIds((prev) => {
+        newSet = new Set(prev);
+        if (newSet.has(rowId)) newSet.delete(rowId);
+        else newSet.add(rowId);
+        if (onExpandedChange) onExpandedChange(newSet);
+        return newSet;
+      });
+    } else {
+      newSet = new Set(expandedRowIds);
+      if (newSet.has(rowId)) newSet.delete(rowId);
+      else newSet.add(rowId);
+      if (onExpandedChange) onExpandedChange(newSet);
+    }
   };
 
   const table = useReactTable({

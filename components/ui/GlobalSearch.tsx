@@ -37,7 +37,7 @@ function useMemberSearch(query: string, members: Member[]) {
     }).slice(0, 5);
   }, [debouncedQuery, members]);
 
-  return results;
+  return { results, debouncedQuery };
 }
 
 function useCommandPalette(setIsOpen: React.Dispatch<React.SetStateAction<boolean>>) {
@@ -65,7 +65,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const results = useMemberSearch(query, members);
+  const { results, debouncedQuery } = useMemberSearch(query, members);
   useCommandPalette(setIsOpen);
 
   return (
@@ -177,7 +177,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
                 ) : (
                   <div className="p-8 text-center text-[var(--text-tertiary)]">
                     <Search className="w-8 h-8 opacity-30 mx-auto mb-3" />
-                    <p className="text-sm font-medium">No results found for &quot;{query}&quot;</p>
+                    <p className="text-sm font-medium">No results found for &quot;{debouncedQuery}&quot;</p>
                   </div>
                 )}
               </div>
