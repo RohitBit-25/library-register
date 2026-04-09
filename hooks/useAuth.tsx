@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
-import { type UserRole, getStoredRole, setStoredRole, verifyAdminPin } from '@/lib/auth';
+import { type UserRole, getStoredRole, setStoredRole } from '@/lib/auth';
 
 // ─── Context Shape ──────────────────────────────────────────────
 
