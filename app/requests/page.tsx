@@ -80,7 +80,7 @@ export default function RequestsPage() {
     <div className="animate-fade-in">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[var(--text-xl)] sm:text-[var(--text-2xl)] font-[var(--weight-extrabold)] text-[var(--text-primary)] dark:text-[var(--text-primary-dark)] tracking-tight flex items-center gap-[var(--space-2)]">
+        <h1 className="text-[var(--text-xl)] sm:text-[var(--text-2xl)] font-[var(--weight-extrabold)] text-[var(--text-primary)] tracking-tight flex items-center gap-[var(--space-2)]">
           <Inbox className="w-6 h-6 text-[var(--indigo-500)]" />
           Seat Requests
           {counts.pending > 0 && (

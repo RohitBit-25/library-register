@@ -243,7 +243,7 @@ export default function AttendancePage() {
                           <span className="font-display text-2xl font-semibold tracking-[var(--tracking-tight)]">{member.seat}</span>
                           <span className={cn(
                             "text-[11px] font-medium truncate w-full text-center px-1",
-                            checkedIn ? "text-[var(--emerald-600)] dark:text-[var(--emerald-400)]" : "text-[var(--text-secondary)]"
+                            checkedIn ? "text-[var(--emerald-500)]" : "text-[var(--text-secondary)]"
                           )}>
                             {member.name.split(' ')[0]}
                           </span>
@@ -310,7 +310,7 @@ export default function AttendancePage() {
                         <div className={cn(
                           "w-10 h-10 sm:w-12 sm:h-12 rounded-[var(--radius-md)] flex flex-col items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1 hover:shadow-lg",
                           colorClass,
-                          isToday && "ring-4 ring-[var(--saffron-500)]/30 ring-offset-2 dark:ring-offset-[var(--bg-elevated)]"
+                          isToday && "ring-4 ring-[var(--saffron-500)]/30 ring-offset-2 ring-offset-[var(--bg-elevated)]"
                         )}>
                           <span className="text-xs sm:text-sm font-display font-semibold tracking-[var(--tracking-tight)]">
                             {d.day}
