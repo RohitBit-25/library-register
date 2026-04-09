@@ -18,18 +18,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  searchKey?: string;
   searchPlaceholder?: string;
+  renderSubComponent?: (row: TData) => React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  searchKey,
   searchPlaceholder = 'Search...',
+  renderSubComponent,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
+  const [hoveredRowId, setHoveredRowId] = React.useState<string | null>(null);
 
   const table = useReactTable({
     data,
@@ -73,8 +74,8 @@ export function DataTable<TData, TValue>({
                       <th
                         key={header.id}
                         className={cn(
-                          "px-6 py-4 font-medium",
-                          header.column.getCanSort() && "cursor-pointer select-none hover:bg-[var(--bg-base)]/50 transition-colors"
+                          "px-6 py-4 font-medium whitespace-nowrap",
+                          header.column.getCanSort() && "cursor-pointer select-none hover:bg-[var(--bg-base)]/80 transition-colors"
                         )}
                         onClick={header.column.getToggleSortingHandler()}
                       >
@@ -102,24 +103,55 @@ export function DataTable<TData, TValue>({
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y divide-[var(--border-subtle)] text-[var(--text-primary)]">
+            <tbody className="divide-y divide-[var(--border-subtle)] text-[var(--text-primary)] group/tbody">
               <AnimatePresence initial={false}>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <motion.tr
-                      key={row.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      className="hover:bg-[var(--bg-base)]/50 transition-colors group"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-6 py-4 whitespace-nowrap">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </motion.tr>
+                    <React.Fragment key={row.id}>
+                      <motion.tr
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                        onMouseEnter={() => setHoveredRowId(row.id)}
+                        onMouseLeave={() => setHoveredRowId(null)}
+                        className={cn(
+                          "group-hover/tbody:opacity-40 hover:!opacity-100 hover:bg-[var(--bg-base)]/40 transition-all duration-300 cursor-pointer relative",
+                          hoveredRowId === row.id ? "z-10 shadow-sm" : "z-0"
+                        )}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <td key={cell.id} className="px-6 py-4 whitespace-nowrap">
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </td>
+                        ))}
+                      </motion.tr>
+                      {renderSubComponent && (
+                        <AnimatePresence>
+                          {hoveredRowId === row.id && (
+                            <tr
+                              className="bg-gradient-to-b from-[var(--bg-base)]/50 to-transparent border-none"
+                              onMouseEnter={() => setHoveredRowId(row.id)}
+                              onMouseLeave={() => setHoveredRowId(null)}
+                            >
+                              <td colSpan={columns.length} className="p-0 border-none">
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="px-6 py-4 border-b border-[var(--border-subtle)] shadow-[inset_0_4px_6px_-6px_rgba(0,0,0,0.1)]">
+                                    {renderSubComponent(row.original)}
+                                  </div>
+                                </motion.div>
+                              </td>
+                            </tr>
+                          )}
+                        </AnimatePresence>
+                      )}
+                    </React.Fragment>
                   ))
                 ) : (
                   <tr>
@@ -144,20 +176,20 @@ export function DataTable<TData, TValue>({
           )}{' '}
           of {table.getFilteredRowModel().rows.length} entries
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer border border-transparent hover:border-[var(--border-subtle)]"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer border border-transparent hover:border-[var(--border-subtle)]"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-5 h-5" />
           </button>
         </div>
       </div>
