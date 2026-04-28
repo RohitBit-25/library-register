@@ -35,12 +35,13 @@ export default function LandingPage() {
     }
   }
 
-  function handlePinSubmit(val: string) {
+  async function handlePinSubmit(val: string) {
     const clean = val.replace(/\D/g, '').slice(0, 6);
     setPin(clean);
     setPinError(false);
     if (clean.length === 6) {
-      if (loginAsAdmin(clean)) {
+      const success = await loginAsAdmin(clean);
+      if (success) {
         router.push('/');
       } else {
         setPinError(true);
