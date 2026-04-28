@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server';
 import { encrypt } from '@/lib/auth-server';
 import { cookies } from 'next/headers';
+import { getAdminPin } from '@/lib/pin-store';
 
 export async function POST(request: Request) {
   try {
     const { pin } = await request.json();
-    const adminPin = process.env.ADMIN_PIN;
-    if (!adminPin) {
-      return NextResponse.json({ success: false, error: 'Auth configuration error' }, { status: 500 });
-    }
+    const adminPin = getAdminPin();
 
     if (pin === adminPin) {
       const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
