@@ -227,10 +227,11 @@ export default function LandingPage() {
 
         .lp-title-hi {
           font-family: 'Cormorant Garamond', serif;
-          font-size: clamp(56px, 10vw, 80px);
+          font-size: clamp(48px, 10vw, 80px);
           font-weight: 600;
-          line-height: 1;
+          line-height: 1.35;
           letter-spacing: 0.02em;
+          padding: 8px 4px 12px;
           background: linear-gradient(170deg, #f7ecd9 0%, #e8d0a8 38%, #c9980e 68%, #8b610a 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
@@ -427,6 +428,57 @@ export default function LandingPage() {
           font-size: 9px; letter-spacing: 0.3em;
           text-transform: uppercase;
           color: rgba(237,224,202,0.1);
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 768px) {
+          .lp-header { padding: 18px 20px; }
+          .lp-nav { display: none; }
+          .lp-hero { padding: 0 20px 20px; }
+          .lp-title-hi { font-size: clamp(40px, 12vw, 60px); }
+          .lp-title-en { font-size: 10px; letter-spacing: 0.3em; }
+          .lp-orn { width: 240px; }
+          .lp-tagline { font-size: 14px; max-width: 320px; margin-bottom: 28px; }
+          .lp-cards { max-width: 100%; }
+          .lp-stats { flex-wrap: wrap; gap: 12px; justify-content: center; }
+          .lp-stat { padding: 0 16px; }
+          .lp-stat-sep { display: none; }
+          .lp-stat-n { font-size: 22px; }
+          .lp-footer { flex-direction: column; gap: 12px; align-items: center; padding: 14px 20px 20px; }
+          .lp-footer-links { gap: 12px; }
+          .lp-frame { inset: 8px; }
+          .lp-corner { width: 36px; height: 36px; }
+          .lp-top-rule, .lp-bot-rule { left: 36px; right: 36px; }
+          .lp-admin-box { width: 90vw; max-width: 340px; padding: 28px 22px; }
+        }
+        @media (max-width: 480px) {
+          .lp-header { padding: 14px 16px; }
+          .lp-logo-name { font-size: 9px; letter-spacing: 0.28em; }
+          .lp-logo-place { font-size: 8px; }
+          .lp-logo-gem { width: 30px; height: 30px; }
+          .lp-gem-inner { inset: 6px; }
+          .lp-gem-dot { inset: 11px; }
+          .lp-hero { padding: 0 14px 16px; }
+          .lp-eyebrow { gap: 8px; margin-bottom: 14px; }
+          .lp-ey-line-l, .lp-ey-line-r { width: 28px; }
+          .lp-ey-label { font-size: 8px; }
+          .lp-title-hi { font-size: clamp(36px, 14vw, 50px); padding: 6px 2px 10px; }
+          .lp-title-en { font-size: 9px; letter-spacing: 0.22em; }
+          .lp-orn { width: 200px; margin: 12px 0 16px; }
+          .lp-tagline { font-size: 13px; max-width: 280px; margin-bottom: 22px; line-height: 1.6; }
+          .lp-card { padding: 20px 20px 18px; }
+          .lp-card-title { font-size: 18px; }
+          .lp-card-sub { font-size: 10px; }
+          .lp-card-arrow { width: 26px; height: 26px; bottom: 16px; right: 18px; }
+          .lp-stat { padding: 0 12px; }
+          .lp-stat-n { font-size: 20px; }
+          .lp-stat-l { font-size: 8px; }
+          .lp-footer-loc { font-size: 8px; }
+          .lp-footer-link { font-size: 8px; }
+          .lp-footer-copy { font-size: 8px; }
+          .lp-frame { inset: 6px; }
+          .lp-corner { width: 28px; height: 28px; }
+          .lp-top-rule, .lp-bot-rule { left: 28px; right: 28px; }
         }
       `}</style>
 
