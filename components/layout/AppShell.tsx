@@ -65,7 +65,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
       {isAdmin && <Sidebar dueCount={stats.due} pendingRequests={pendingCount} />}
       <TopBar />
-      <main className={isAdmin ? 'lg:ml-[252px] min-h-screen pb-28 pt-16 lg:pt-4 lg:pb-8' : 'min-h-screen pb-28 pt-16 lg:pt-16 lg:pb-8'}>
+      <main className={`min-h-screen pb-28 pt-16 lg:pb-8 transition-all ${isAdmin ? 'lg:ml-[calc(var(--sidebar-width)+calc(var(--sidebar-margin)*2))] lg:pt-4' : 'lg:pt-16'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           {children}
         </div>

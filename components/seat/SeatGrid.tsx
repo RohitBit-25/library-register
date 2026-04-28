@@ -62,7 +62,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
                 key={s.value}
                 onClick={() => setShiftFilter(s.value)}
                 className={cn(
-                  'flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer',
+                  'flex items-center gap-1.5 min-h-[44px] sm:min-h-[36px] px-3.5 py-2 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]',
                   shiftFilter === s.value
                     ? 'bg-[var(--saffron-500)] text-[#1a1a16] shadow-sm'
                     : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-overlay)]',

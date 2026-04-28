@@ -67,7 +67,7 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
           whileTap={{ scale: 0.95, y: 0 }}
           transition={{ type: "spring", stiffness: 400, damping: 20 }}
           className={cn(
-            'relative flex flex-col items-center justify-between rounded-[0.65rem] transition-all duration-300 cursor-pointer z-10 w-full h-full border backdrop-blur-md',
+            'relative flex flex-col items-center justify-between rounded-[0.65rem] transition-all duration-300 cursor-pointer z-10 w-full h-full border backdrop-blur-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2 focus-visible:ring-offset-black',
             tileClass[status],
             compact ? 'px-[3px] py-[3px]' : 'p-1.5',
             selected ? 'ring-2 ring-[var(--saffron-500)] shadow-[0_0_25px_rgba(232,133,58,0.5)] z-20 scale-105 border-[var(--saffron-500)]' : ''

@@ -17,21 +17,21 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         bg-[var(--gradient-glow)] text-[var(--text-inverse)] 
         font-[var(--font-body)] font-[var(--weight-semibold)] tracking-[var(--tracking-wide)]
         rounded-[var(--radius-sm)] border-none shadow-[var(--shadow-glow-saffron)]
-        hover:scale-[1.03] hover:shadow-[var(--shadow-md)] active:scale-[0.97]
-        transition-all duration-200
+        hover:shadow-[var(--shadow-md)]
+        transition-shadow duration-200
         before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/15 before:to-transparent
         before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-500
       `,
       secondary: `
         bg-transparent text-[var(--saffron-400)] 
-        border-[1.5px] border-[var(--border-strong)] rounded-[var(--radius-sm)]
+        border border-[var(--border-strong)] rounded-[var(--radius-sm)]
         font-[var(--font-body)] font-[var(--weight-medium)]
         hover:bg-[rgba(232,133,58,0.08)] hover:border-[var(--border-glow)]
         transition-all duration-200
       `,
       danger: `
         bg-[rgba(232,66,66,0.12)] text-[var(--ruby-400)]
-        border-[1.5px] border-[rgba(232,66,66,0.25)] rounded-[var(--radius-sm)]
+        border border-[rgba(232,66,66,0.25)] rounded-[var(--radius-sm)]
         hover:bg-[rgba(232,66,66,0.22)] hover:shadow-[var(--shadow-glow-ruby)]
         transition-all duration-200
       `,

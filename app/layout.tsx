@@ -1,29 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Yatra_One, Tiro_Devanagari_Hindi, Playfair_Display, Outfit, DM_Mono } from "next/font/google";
+import { Outfit, DM_Mono } from "next/font/google";
 import "./globals.css";
 import AppShell from "@/components/layout/AppShell";
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
-
-const yatraOne = Yatra_One({
-  subsets: ["devanagari", "latin"],
-  weight: "400",
-  variable: "--font-yatra",
-  display: "swap",
-});
-
-const tiroDevanagari = Tiro_Devanagari_Hindi({
-  subsets: ["devanagari", "latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-tiro",
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-});
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -63,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full dark ${yatraOne.variable} ${tiroDevanagari.variable} ${playfair.variable} ${outfit.variable} ${dmMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`h-full dark ${outfit.variable} ${dmMono.variable}`} suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>

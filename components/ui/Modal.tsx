@@ -41,7 +41,7 @@ export default function Modal({
     <dialog
       ref={dialogRef}
       onClose={onClose}
-      className="fixed inset-0 z-50 m-auto rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-xl)] backdrop:bg-[var(--bg-void)]/60 backdrop:backdrop-blur-md p-0 max-w-md w-[calc(100%-2rem)] animate-fade-in overflow-hidden"
+      className="fixed inset-0 z-[var(--z-modal)] m-auto rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-xl)] backdrop:bg-[var(--bg-void)]/60 backdrop:backdrop-blur-md p-0 max-w-md w-full mx-4 sm:mx-auto animate-fade-in overflow-hidden"
     >
       <div className="relative z-10 p-6">
         <div className="flex items-start justify-between mb-3">
@@ -50,7 +50,7 @@ export default function Modal({
           </h3>
           <button
             onClick={onClose}
-            className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
+            className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] rounded-md"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
@@ -64,17 +64,17 @@ export default function Modal({
         <div className="flex items-center justify-end gap-3">
           <button
             onClick={onClose}
-            className="cursor-pointer rounded-lg border border-[var(--border-default)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] transition-colors"
+            className="cursor-pointer rounded-lg border border-[var(--border-default)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-surface)]"
           >
             Cancel
           </button>
           <button
             onClick={() => { onConfirm(); onClose(); }}
             className={cn(
-              'cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors',
+              'cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-surface)]',
               confirmVariant === 'danger'
-                ? 'bg-[var(--ruby-500)] text-[var(--saffron-50)] hover:brightness-110'
-                : 'bg-[var(--sapphire-500)] text-[var(--text-inverse)] hover:brightness-110',
+                ? 'bg-[var(--ruby-500)] text-[var(--text-primary)] hover:brightness-110'
+                : 'bg-[var(--saffron-500)] text-[var(--text-inverse)] hover:brightness-110',
             )}
           >
             {confirmLabel}

@@ -76,8 +76,8 @@ export default function BottomNav() {
                     className={cn(
                       'flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] rounded-[var(--radius-lg)] text-[var(--text-sm)] font-[var(--weight-medium)] transition-colors cursor-pointer',
                       pathname === '/requests'
-                        ? 'bg-[var(--indigo-500)]/10 text-[var(--indigo-500)]'
-                        : 'text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)]',
+                        ? 'bg-[var(--saffron-500)]/10 text-[var(--saffron-500)]'
+                        : 'text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]',
                     )}
                   >
                     <Inbox className="w-5 h-5" />
@@ -163,7 +163,7 @@ export default function BottomNav() {
       )}
 
       {/* Tab bar */}
-      <nav className="lg:hidden fixed bottom-6 left-6 right-6 z-30 h-16 rounded-[var(--radius-3xl)] flex items-center justify-around bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] shadow-[var(--shadow-floating)]">
+      <nav className="lg:hidden fixed bottom-6 left-6 right-6 z-[var(--z-sticky)] h-16 rounded-[var(--radius-3xl)] flex items-center justify-around bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] shadow-[var(--shadow-floating)] pb-safe-bottom">
         <div className="absolute inset-0 z-0 bg-gradient-to-t from-[var(--bg-overlay)] to-transparent rounded-[var(--radius-3xl)] pointer-events-none" />
         {tabs.map(tab => {
           const isActive = pathname === tab.href;
@@ -175,8 +175,8 @@ export default function BottomNav() {
               className={cn(
                 'relative z-10 flex flex-col items-center justify-center gap-[var(--space-1)] min-w-[64px] py-[var(--space-1)] cursor-pointer transition-all',
                 isActive
-                  ? 'text-[var(--indigo-500)]'
-                  : 'text-[var(--text-tertiary)]',
+                  ? 'text-[var(--saffron-500)] scale-110 drop-shadow-[0_0_8px_rgba(232,133,58,0.4)]'
+                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]',
               )}
             >
               <Icon className="w-5 h-5" />

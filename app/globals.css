@@ -66,19 +66,19 @@
      ═══════════════════════════════════════════════════════════════ */
   :root {
     /* === BACKGROUND LAYERS === */
-    --bg-void:       #0D0905;
-    --bg-base:       #120C07;
-    --bg-surface:    #1C1209;
-    --bg-elevated:   #241808;
-    --bg-overlay:    #2E200E;
-    --bg-muted:      #3A2A14;
-    --bg-glass:      rgba(28, 18, 9, 0.72);
-    --bg-glass-light: rgba(44, 28, 12, 0.55);
+    --bg-void:       #09090B; /* zinc-950 */
+    --bg-base:       #18181B; /* zinc-900 */
+    --bg-surface:    #27272A; /* zinc-800 */
+    --bg-elevated:   #3F3F46; /* zinc-700 */
+    --bg-overlay:    #52525B; /* zinc-600 */
+    --bg-muted:      #71717A; /* zinc-500 */
+    --bg-glass:      rgba(39, 39, 42, 0.72);
+    --bg-glass-light: rgba(63, 63, 70, 0.55);
 
     /* === BORDERS & DIVIDERS === */
-    --border-subtle:  rgba(212, 142, 58, 0.12);
-    --border-default: rgba(212, 142, 58, 0.22);
-    --border-strong:  rgba(212, 142, 58, 0.45);
+    --border-subtle:  rgba(255, 255, 255, 0.10);
+    --border-default: rgba(255, 255, 255, 0.15);
+    --border-strong:  rgba(255, 255, 255, 0.25);
     --border-glow:    rgba(232, 133, 58, 0.70);
 
     /* === SAFFRON === */
@@ -124,11 +124,11 @@
     --indigo-glow: rgba(123, 95, 245, 0.20);
 
     /* === TEXT === */
-    --text-primary:   #F5E8D4;
-    --text-secondary: #C4A882;
-    --text-tertiary:  #8A6E52;
-    --text-disabled:  #5A4433;
-    --text-inverse:   #0D0905;
+    --text-primary:   #FAFAFA;
+    --text-secondary: #A1A1AA;
+    --text-tertiary:  #71717A;
+    --text-disabled:  #52525B;
+    --text-inverse:   #09090B;
     --text-accent:    #E8853A;
     --text-link:      #F59A3C;
 
@@ -157,8 +157,8 @@
     --gradient-sapphire:linear-gradient(135deg, #3D9EFF, #1A7FE8);
 
     /* === FONT FAMILIES === */
-    --font-devanagari: var(--font-tiro), var(--font-yatra), serif;
-    --font-display:    var(--font-playfair), Georgia, serif;
+    --font-devanagari: var(--font-outfit), sans-serif;
+    --font-display:    var(--font-outfit), sans-serif;
     --font-body:       var(--font-outfit), -apple-system, sans-serif;
     --font-mono:       var(--font-dm-mono), 'Cascadia Code', monospace;
 
@@ -243,6 +243,10 @@
     --duration-slow:    380ms;
     --duration-lazy:    550ms;
     --duration-dramatic:800ms;
+
+    /* === LAYOUT === */
+    --sidebar-width: 220px;
+    --sidebar-margin: 16px;
 
     /* Z-Index */
     --z-below:    -1;
@@ -478,7 +482,7 @@
 
   .input-field {
     background: var(--bg-muted);
-    border: 1.5px solid var(--border-subtle);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-sm);
     padding: 20px 16px 8px;
     font-family: var(--font-body);
@@ -502,18 +506,18 @@
   .input-field:focus ~ .input-label,
   .input-field:not(:placeholder-shown) ~ .input-label {
     transform: translateY(-9px) scale(0.75);
-    color: var(--saffron-400);
+    color: var(--text-secondary);
   }
 
   .input-field:focus {
-    border-color: var(--border-glow);
-    box-shadow: 0 0 0 3px rgba(232, 133, 58, 0.15), var(--shadow-xs);
+    border-color: var(--saffron-500);
+    box-shadow: 0 0 0 2px rgba(232, 133, 58, 0.25), var(--shadow-sm);
     background: var(--bg-elevated);
   }
 
   .input-field.is-error {
     border-color: var(--ruby-500);
-    box-shadow: 0 0 0 3px rgba(232, 66, 66, 0.15);
+    box-shadow: 0 0 0 2px rgba(232, 66, 66, 0.2);
   }
 
   .input-helper {
