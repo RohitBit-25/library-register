@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { type Member } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { QRCodeSVG } from 'qrcode.react';
-import { X, Send, User, Phone, MessageSquare, Armchair, Receipt } from 'lucide-react';
+import { X, Send, User, Phone, MessageSquare, Armchair, Receipt, CheckCircle2 } from 'lucide-react';
 
 interface SeatRequestSheetProps {
   member: Member | null;
@@ -39,7 +39,8 @@ export default function SeatRequestSheet({
     setErrorMsg('');
     
     try {
-      const res = await onSubmit(member.seat, name.trim(), phone.trim(), message.trim(), transactionId.trim());
+      const cleanPhone = phone.replace(/\D/g, '');
+      const res = await onSubmit(member.seat, name.trim(), cleanPhone, message.trim(), transactionId.trim());
       
       if (res.success) {
         setSubmitted(true);
@@ -61,7 +62,7 @@ export default function SeatRequestSheet({
     }
   };
 
-  const isValid = name.trim().length >= 2 && phone.trim().length >= 10 && transactionId.trim().length >= 4;
+  const isValid = name.trim().length >= 2 && phone.replace(/\D/g, '').length === 10 && transactionId.trim().length >= 4;
 
   return (
     <>
@@ -157,21 +158,22 @@ export default function SeatRequestSheet({
             <div className="space-y-4">
               
               {/* Payment Section */}
-              <div className="p-4 rounded-xl bg-[var(--saffron-500)]/5 border border-[var(--saffron-500)]/20 flex flex-col items-center">
-                <p className="text-xs font-bold text-[var(--saffron-500)] mb-3 text-center uppercase tracking-wide">
-                  Complete Payment
+              <div className="p-5 rounded-xl bg-gradient-to-b from-[var(--saffron-500)]/10 to-transparent border border-[var(--saffron-500)]/20 flex flex-col items-center relative overflow-hidden mb-2">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--saffron-500)] to-transparent opacity-70"></div>
+                <p className="text-[10px] font-black text-[var(--saffron-400)] mb-4 text-center uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Receipt className="w-3.5 h-3.5" /> Complete Verification Payment
                 </p>
-                <div className="p-2 bg-white rounded-xl shadow-sm mb-3">
+                <div className="p-3 bg-white rounded-xl shadow-[0_0_20px_rgba(232,133,58,0.15)] mb-4 ring-4 ring-white/5">
                   <QRCodeSVG
                     value={upiUrl}
                     size={130}
-                    level="Q"
+                    level="H"
                     className="rounded-lg"
                   />
                 </div>
-                <p className="text-[11px] text-[var(--text-secondary)] text-center leading-relaxed">
-                  Scan to pay using Google Pay, PhonePe, or Paytm.<br/>
-                  Enter your Transaction ID below after paying.
+                <p className="text-[11px] text-[var(--text-secondary)] text-center leading-relaxed max-w-[240px]">
+                  Scan QR with <span className="text-white font-medium">GPay, PhonePe or Paytm</span>.<br/>
+                  Enter transaction ID below for admin verification.
                 </p>
               </div>
 
@@ -197,14 +199,25 @@ export default function SeatRequestSheet({
                   <Phone className="w-3.5 h-3.5" />
                   Phone Number *
                 </label>
-                <input
-                  type="tel"
-                  inputMode="numeric"
-                  value={phone}
-                  onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  placeholder="10-digit mobile number"
-                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 transition-all font-mono"
-                />
+                <div className="relative">
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={phone}
+                    onChange={e => {
+                      let val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      if (val.length > 5) {
+                        val = val.slice(0, 5) + ' ' + val.slice(5);
+                      }
+                      setPhone(val);
+                    }}
+                    placeholder="10-digit mobile number"
+                    className="w-full px-4 py-2.5 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 transition-all font-mono"
+                  />
+                  {phone.replace(/\D/g, '').length === 10 && (
+                    <CheckCircle2 className="w-4 h-4 text-[var(--emerald-500)] absolute right-3 top-1/2 -translate-y-1/2 animate-in zoom-in" />
+                  )}
+                </div>
               </div>
 
               {/* Transaction ID */}
@@ -213,13 +226,18 @@ export default function SeatRequestSheet({
                   <Receipt className="w-3.5 h-3.5" />
                   Transaction / UTR ID *
                 </label>
-                <input
-                  type="text"
-                  value={transactionId}
-                  onChange={e => setTransactionId(e.target.value)}
-                  placeholder="e.g. 3084XXXXXXXX"
-                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-[var(--bg-base)] border-emerald-500/30 text-[var(--text-primary)] placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all font-mono"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={transactionId}
+                    onChange={e => setTransactionId(e.target.value)}
+                    placeholder="e.g. 3084XXXXXXXX"
+                    className="w-full px-4 py-2.5 rounded-xl text-sm bg-[var(--bg-base)] border-emerald-500/30 text-[var(--text-primary)] placeholder:text-text-tertiary/50 focus:outline-none focus:ring-2 focus:ring-[var(--emerald-500)]/40 transition-all font-mono"
+                  />
+                  {transactionId.trim().length >= 4 && (
+                    <CheckCircle2 className="w-4 h-4 text-[var(--emerald-500)] absolute right-3 top-1/2 -translate-y-1/2 animate-in zoom-in" />
+                  )}
+                </div>
               </div>
 
               {/* Message */}

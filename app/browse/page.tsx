@@ -9,39 +9,40 @@ import { type Member, type Shift } from '@/lib/types';
 import { getSeatStatus, cn, firstName } from '@/lib/utils';
 import { SeatMapContainer, SeatMapWrapper, type FaceDir } from '@/components/seat/SeatMap';
 import SeatRequestSheet from '@/components/seat/SeatRequestSheet';
-import { Grid3X3, Sun, Moon, Layers, LogOut, Inbox } from 'lucide-react';
+import { Grid3X3, Sun, Moon, Layers, LogOut, Inbox, Wind, VolumeX, Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 // All design tokens live here — change once, cascade everywhere.
 const T = {
-  bg:        '#07080d',
-  surface:   '#0d0f18',
-  overlay:   '#131624',
-  border:    'rgba(255,255,255,0.07)',
-  borderHi:  'rgba(255,255,255,0.13)',
-  blue:      '#4f8ef7',
-  blueGlow:  'rgba(79,142,247,0.18)',
-  blueSubtle:'rgba(79,142,247,0.09)',
-  green:     '#34d399',
-  greenGlow: 'rgba(52,211,153,0.15)',
-  amber:     '#fbbf24',
-  red:       '#f87171',
-  muted:     '#3d4460',
-  textPrim:  '#e8eaf2',
-  textSec:   '#6b7399',
-  textTert:  '#3a3f5c',
-  mono:      "'DM Mono', monospace",
-  display:   "'Syne', sans-serif",
+  bg: 'var(--bg-void)',
+  surface: 'var(--bg-base)',
+  overlay: 'var(--bg-surface)',
+  border: 'var(--border-default)',
+  borderHi: 'var(--border-strong)',
+  blue: 'var(--sapphire-400)',
+  blueGlow: 'rgba(61,158,255,0.15)',
+  blueSubtle: 'rgba(61,158,255,0.08)',
+  green: 'var(--emerald-500)',
+  greenGlow: 'rgba(34,195,106,0.15)',
+  amber: 'var(--amber-500)',
+  red: 'var(--ruby-500)',
+  muted: 'var(--bg-muted)',
+  textPrim: 'var(--text-primary)',
+  textSec: 'var(--text-secondary)',
+  textTert: 'var(--text-tertiary)',
+  mono: 'var(--font-mono)',
+  display: 'var(--font-devanagari)',
 } as const;
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function BrowsePage() {
   const { members } = useMembers();
-  const { logout }  = useAuth();
+  const { logout } = useAuth();
   const { addRequest, requests } = useSeatRequests();
   const { addToast } = useToast();
-  const router = useRouter();
+  const router = useRouter(); z
 
   const [shiftFilter, setShiftFilter] = useState<Shift | 'all'>('all');
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
@@ -82,9 +83,9 @@ export default function BrowsePage() {
   const pendingCount = requests.filter(r => r.status === 'pending').length;
 
   const shiftTabs: { value: Shift | 'all'; label: string; icon: React.ReactNode }[] = [
-    { value: 'all',     label: 'All Shifts', icon: <Layers className="w-3 h-3" /> },
-    { value: 'morning', label: 'Morning',    icon: <Sun    className="w-3 h-3" /> },
-    { value: 'evening', label: 'Evening',    icon: <Moon   className="w-3 h-3" /> },
+    { value: 'all', label: 'All Shifts', icon: <Layers className="w-3 h-3" /> },
+    { value: 'morning', label: 'Morning', icon: <Sun className="w-3 h-3" /> },
+    { value: 'evening', label: 'Evening', icon: <Moon className="w-3 h-3" /> },
   ];
 
   return (
@@ -102,7 +103,7 @@ export default function BrowsePage() {
 
         /* Shift tab */
         .shift-tab { display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border:none;transition:all 0.15s ease; }
-        .shift-tab.active { background:${T.blue};color:#070a14; }
+        .shift-tab.active { background:var(--saffron-500);color:#09090b;box-shadow:0 0 12px rgba(232, 133, 58, 0.4); }
         .shift-tab.inactive { background:transparent;color:${T.textSec}; }
         .shift-tab.inactive:hover { background:${T.overlay};color:${T.textPrim}; }
 
@@ -158,32 +159,32 @@ export default function BrowsePage() {
       <div className="bp-root">
 
         {/* ── Top bar ── */}
-        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28 }}>
           <div>
-            <div style={{ display:'flex', alignItems:'center', gap: 8, marginBottom: 4 }}>
-              <div style={{ width:32, height:32, borderRadius:8, background: T.blueSubtle, border:`1px solid rgba(79,142,247,0.3)`, display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: T.blueSubtle, border: `1px solid rgba(79,142,247,0.3)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Grid3X3 size={15} color={T.blue} />
               </div>
-              <h1 style={{ fontFamily: T.display, fontSize:20, fontWeight:800, color: T.textPrim, letterSpacing:'-0.01em', margin:0 }}>
+              <h1 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 800, color: T.textPrim, letterSpacing: '-0.01em', margin: 0 }}>
                 Seat Browse
               </h1>
             </div>
-            <p style={{ fontSize:11, color: T.textSec, letterSpacing:'0.06em', margin:0, paddingLeft: 40 }}>
+            <p style={{ fontSize: 11, color: T.textSec, letterSpacing: '0.06em', margin: 0, paddingLeft: 40 }}>
               {stats.occupied} occupied &nbsp;·&nbsp;
-              <span style={{ color: T.blue, fontWeight:600 }}>{stats.vacant} vacant</span>
+              <span style={{ color: T.blue, fontWeight: 600 }}>{stats.vacant} vacant</span>
               &nbsp;·&nbsp; tap a vacant seat to request
             </p>
           </div>
 
-          <div style={{ display:'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8 }}>
             {pendingCount > 0 && (
               <button
                 className="icon-btn blue"
                 onClick={() => addToast('success', `${pendingCount} pending request(s)`)}
               >
                 <Inbox size={13} />
-                <span style={{ display:'none' }} className="sm:inline">Requests</span>
-                <span style={{ minWidth:18, height:18, borderRadius:9, background: T.blue, color:'#070a14', fontSize:10, fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center', padding:'0 4px' }}>
+                <span style={{ display: 'none' }} className="sm:inline">Requests</span>
+                <span style={{ minWidth: 18, height: 18, borderRadius: 9, background: T.blue, color: '#070a14', fontSize: 10, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
                   {pendingCount}
                 </span>
               </button>
@@ -199,19 +200,19 @@ export default function BrowsePage() {
         </div>
 
         {/* ── Stat pills ── */}
-        <div style={{ display:'flex', gap: 10, marginBottom: 24, flexWrap:'wrap' }}>
+        <div style={{ display: 'flex', gap: 10, marginBottom: 24, flexWrap: 'wrap' }}>
           <div className="stat-pill">
             <span className="stat-pill-num" style={{ color: T.green }}>{stats.occupied}</span>
             <div>
               <div className="stat-pill-lbl">Occupied</div>
-              <div style={{ width: Math.round((stats.occupied / stats.total) * 64), height:2, borderRadius:1, background: T.green, marginTop:3, opacity:0.5 }} />
+              <div style={{ width: Math.round((stats.occupied / stats.total) * 64), height: 2, borderRadius: 1, background: T.green, marginTop: 3, opacity: 0.5 }} />
             </div>
           </div>
           <div className="stat-pill">
             <span className="stat-pill-num" style={{ color: T.blue }}>{stats.vacant}</span>
             <div>
               <div className="stat-pill-lbl">Vacant</div>
-              <div style={{ width: Math.round((stats.vacant / stats.total) * 64), height:2, borderRadius:1, background: T.blue, marginTop:3, opacity:0.5 }} />
+              <div style={{ width: Math.round((stats.vacant / stats.total) * 64), height: 2, borderRadius: 1, background: T.blue, marginTop: 3, opacity: 0.5 }} />
             </div>
           </div>
           <div className="stat-pill">
@@ -221,8 +222,8 @@ export default function BrowsePage() {
         </div>
 
         {/* ── Filters row ── */}
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: 20, flexWrap:'wrap', gap: 12 }}>
-          <div style={{ display:'flex', gap:4, background: T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 4, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 4 }}>
             {shiftTabs.map(tab => (
               <button
                 key={tab.value}
@@ -236,15 +237,15 @@ export default function BrowsePage() {
           </div>
 
           {/* Legend */}
-          <div style={{ display:'flex', gap: 14, alignItems:'center' }}>
+          <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
             {[
-              { color: T.green, border: 'rgba(52,211,153,0.35)',  label:'Occupied' },
-              { color: T.blue,  border: 'rgba(79,142,247,0.35)',   label:'Vacant'   },
-              { color: T.amber, border: 'rgba(251,191,36,0.35)',   label:'Expiring' },
-              { color: T.red,   border: 'rgba(248,113,113,0.35)',  label:'Expired'  },
+              { color: T.green, border: 'rgba(52,211,153,0.35)', label: 'Occupied' },
+              { color: T.blue, border: 'rgba(79,142,247,0.35)', label: 'Vacant' },
+              { color: T.amber, border: 'rgba(251,191,36,0.35)', label: 'Expiring' },
+              { color: T.red, border: 'rgba(248,113,113,0.35)', label: 'Expired' },
             ].map(l => (
-              <div key={l.label} style={{ display:'flex', alignItems:'center', gap:6, fontSize:10, letterSpacing:'0.1em', textTransform:'uppercase', color: T.textSec }}>
-                <div className="legend-dot" style={{ background:`${l.color}22`, borderColor: l.border }} />
+              <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: T.textSec }}>
+                <div className="legend-dot" style={{ background: `${l.color}22`, borderColor: l.border }} />
                 {l.label}
               </div>
             ))}
@@ -255,28 +256,38 @@ export default function BrowsePage() {
         <div className="map-card">
           <div className="map-card-header">
             <Grid3X3 size={13} color={T.blue} />
-            <span style={{ fontFamily: T.display, fontSize:12, fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color: T.textPrim }}>
+            <span style={{ fontFamily: T.display, fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textPrim }}>
               {shiftFilter === 'all' ? 'Full Floorplan' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift`}
             </span>
-            <span style={{ marginLeft:'auto', fontFamily: T.mono, fontSize:10, color: T.textTert, letterSpacing:'0.08em' }}>
+            <span style={{ marginLeft: 'auto', fontFamily: T.mono, fontSize: 10, color: T.textTert, letterSpacing: '0.08em' }}>
               {filtered.length} seats
             </span>
           </div>
 
-          <SeatMapContainer>
-            {filtered.map(member => (
-              <SeatMapWrapper key={member.seat} seatNum={member.seat}>
-                {(face: FaceDir) => (
-                  <BrowseSeatTile
-                    member={member}
-                    face={face}
-                    onClick={handleSeatClick}
-                    hasRequest={requests.some(r => r.seat === member.seat && r.status === 'pending')}
-                  />
-                )}
-              </SeatMapWrapper>
-            ))}
-          </SeatMapContainer>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={shiftFilter}
+              initial={{ opacity: 0, scale: 0.98, filter: 'blur(4px)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, scale: 0.98, filter: 'blur(4px)' }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+            >
+              <SeatMapContainer>
+                {filtered.map(member => (
+                  <SeatMapWrapper key={member.seat} seatNum={member.seat}>
+                    {(face: FaceDir) => (
+                      <BrowseSeatTile
+                        member={member}
+                        face={face}
+                        onClick={handleSeatClick}
+                        hasRequest={requests.some(r => r.seat === member.seat && r.status === 'pending')}
+                      />
+                    )}
+                  </SeatMapWrapper>
+                ))}
+              </SeatMapContainer>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
       </div>
@@ -305,45 +316,78 @@ function BrowseSeatTile({
   onClick: (seat: number) => void;
   hasRequest: boolean;
 }) {
-  const status   = getSeatStatus(member);
+  const status = getSeatStatus(member);
   const isVacant = member.vacant;
 
   const tileClass = isVacant ? 'seat-vacant'
     : status === 'expiring' ? 'seat-expiring'
-    : status === 'expired'  ? 'seat-expired'
-    : status === 'due'      ? 'seat-due'
-    : 'seat-occupied';
+      : status === 'expired' ? 'seat-expired'
+        : status === 'due' ? 'seat-due'
+          : 'seat-occupied';
 
   const shiftIcon = member.shift === 'evening' ? <Moon size={8} />
     : member.shift === 'full' ? <><Sun size={7} /><Moon size={7} /></>
-    : <Sun size={8} />;
+      : <Sun size={8} />;
+
+  // Mock amenities based on seat num for the tooltip
+  const isWindow = member.seat % 4 === 0 || member.seat > 80;
+  const isAC = member.seat % 3 === 0;
+  const isSilent = member.seat > 40 && member.seat < 60;
+
+  const amenities = [
+    isWindow && { label: 'Near Window', icon: Eye },
+    isAC && { label: 'Cooling Zone', icon: Wind },
+    isSilent && { label: 'Silent Corner', icon: VolumeX }
+  ].filter(Boolean) as { label: string; icon: any }[];
 
   return (
-    <button
-      onClick={() => onClick(member.seat)}
-      className={cn('seat-tile', tileClass, `face-${face}`)}
-      aria-label={`Seat ${member.seat} — ${isVacant ? 'vacant' : member.name}`}
-    >
-      <div className="seat-chair" />
+    <div className="group relative w-full h-full">
+      <button
+        onClick={() => onClick(member.seat)}
+        className={cn('seat-tile', tileClass, `face-${face}`, 'w-full h-full relative z-10')}
+        aria-label={`Seat ${member.seat} — ${isVacant ? 'vacant' : member.name}`}
+      >
+        <div className="seat-chair" />
 
-      <span className="seat-num">{String(member.seat).padStart(2, '0')}</span>
+        <span className="seat-num">{String(member.seat).padStart(2, '0')}</span>
 
-      {isVacant ? (
-        <span style={{ fontSize:9, fontWeight:600, color: hasRequest ? T.amber : T.blue, letterSpacing:'0.06em' }}>
-          {hasRequest ? 'Pending' : 'Vacant'}
-        </span>
-      ) : (
-        <span className="seat-name">{firstName(member.name)}</span>
+        {isVacant ? (
+          <span style={{ fontSize: 9, fontWeight: 600, color: hasRequest ? 'var(--amber-500)' : 'var(--sapphire-400)', letterSpacing: '0.06em' }}>
+            {hasRequest ? 'Pending' : 'Vacant'}
+          </span>
+        ) : (
+          <span className="seat-name">{firstName(member.name)}</span>
+        )}
+
+        <div className="seat-shift" style={{ color: isVacant ? 'var(--text-tertiary)' : 'var(--text-secondary)' }}>
+          {isVacant
+            ? <span style={{ fontSize: 8, letterSpacing: '0.08em' }}>{hasRequest ? '⏳' : 'tap'}</span>
+            : shiftIcon
+          }
+        </div>
+
+        {hasRequest && <div className="seat-pending-badge" />}
+      </button>
+
+      {/* Tooltip for vacant seats */}
+      {isVacant && amenities.length > 0 && (
+        <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 mb-1 w-max min-w-[110px] bg-[var(--bg-void)] border border-[var(--saffron-500)]/30 rounded-lg p-2.5 shadow-[0_4px_20px_rgba(232,133,58,0.2)] opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 pointer-events-none transition-all duration-200 z-[999]">
+          <div className="text-[8px] font-black text-[var(--saffron-500)] mb-1.5 uppercase tracking-widest flex items-center justify-center gap-1 border-b border-[var(--saffron-500)]/20 pb-1">
+            <span className="w-1.5 h-1.5 bg-[var(--saffron-500)] rounded-full animate-pulse" />
+            Amenities
+          </div>
+          <ul className="space-y-1.5">
+            {amenities.map(a => (
+              <li key={a.label} className="flex items-center gap-1.5 text-[9px] font-medium text-[var(--text-secondary)]">
+                <a.icon className="w-3 h-3 text-[var(--text-tertiary)]" />
+                {a.label}
+              </li>
+            ))}
+          </ul>
+          {/* Tooltip arrow */}
+          <div className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 w-2 h-2 bg-[var(--bg-void)] border-b border-r border-[var(--saffron-500)]/30 rotate-45" />
+        </div>
       )}
-
-      <div className="seat-shift" style={{ color: isVacant ? T.textTert : T.textSec }}>
-        {isVacant
-          ? <span style={{ fontSize:8, letterSpacing:'0.08em' }}>{hasRequest ? '⏳' : 'tap'}</span>
-          : shiftIcon
-        }
-      </div>
-
-      {hasRequest && <div className="seat-pending-badge" />}
-    </button>
+    </div>
   );
 }
