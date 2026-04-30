@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { type Member, type Shift } from '@/lib/types';
 import { getSeatStatus, cn } from '@/lib/utils';
 import SeatTile from './SeatTile';
-import { SeatMapContainer, SeatMapWrapper } from './SeatMap';
+import { SeatMapContainer, SeatMapWrapper, type FaceDir } from './SeatMap';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Layers, Grid3X3 } from 'lucide-react';
 
@@ -121,12 +121,11 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
   </div>
 
           <SeatMapContainer>
-            <AnimatePresence mode="popLayout">
+            <AnimatePresence>
               {(shiftFilter === 'all' ? members : filtered).map(member => (
                 <SeatMapWrapper key={member.seat} seatNum={member.seat}>
-                  {(face) => (
+                  {(face: FaceDir) => (
                     <m.div
-                      layout
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8 }}

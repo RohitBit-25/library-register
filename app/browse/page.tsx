@@ -197,7 +197,7 @@ export default function BrowsePage() {
               { color: 'var(--ruby-500)', label: 'Expired' },
             ].map(l => (
               <div key={l.label} className="flex items-center gap-2 text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-                <span className="w-2.5 h-2.5 rounded-full ring-2 ring-offset-2 ring-offset-[var(--bg-void)]" style={{ background: l.color, ringColor: `${l.color}40` }} />
+                <span className="w-2.5 h-2.5 rounded-full ring-2 ring-offset-2 ring-offset-[var(--bg-void)]" style={{ background: l.color, '--tw-ring-color': `${l.color}40` } as React.CSSProperties} />
                 {l.label}
               </div>
             ))}
@@ -226,31 +226,34 @@ export default function BrowsePage() {
 
           {/* Map Area */}
           <div className="p-4 sm:p-6 md:p-8 bg-[var(--bg-void)]/40 min-h-[500px] flex justify-center">
-            <AnimatePresence mode="wait">
               <motion.div
-                key={shiftFilter}
-                initial={{ opacity: 0, scale: 0.98, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, scale: 0.98, filter: 'blur(8px)' }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 className="w-full max-w-[800px]"
               >
                 <SeatMapContainer>
-                  {filtered.map(member => (
-                    <SeatMapWrapper key={member.seat} seatNum={member.seat}>
-                      {(face: FaceDir) => (
-                        <BrowseSeatTile
-                          member={member}
-                          face={face}
-                          onClick={handleSeatClick}
-                          hasRequest={requests.some(r => r.seat === member.seat && r.status === 'pending')}
-                        />
-                      )}
-                    </SeatMapWrapper>
-                  ))}
+                  <AnimatePresence>
+                    {filtered.map(member => (
+                      <SeatMapWrapper key={member.seat} seatNum={member.seat}>
+                        {(face: FaceDir) => (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.3, ease: 'easeOut' }}
+                            className="w-full h-full"
+                          >
+                            <BrowseSeatTile
+                              member={member}
+                              face={face}
+                              onClick={handleSeatClick}
+                              hasRequest={requests.some(r => r.seat === member.seat && r.status === 'pending')}
+                            />
+                          </motion.div>
+                        )}
+                      </SeatMapWrapper>
+                    ))}
+                  </AnimatePresence>
                 </SeatMapContainer>
               </motion.div>
-            </AnimatePresence>
           </div>
         </motion.div>
       </main>

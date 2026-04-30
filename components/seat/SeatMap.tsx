@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, ReactNode, JSX } from 'react';
+import React, { useState, useCallback, ReactNode, JSX, memo } from 'react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -152,17 +152,18 @@ function WallLabel({ detail }: { detail: WallDetail }) {
   );
 }
 
-function GridDots() {
-  const dots: JSX.Element[] = [];
-  for (let cx = 0; cx <= COLS; cx++) {
-    for (let cy = 0; cy <= ROWS; cy++) {
-      dots.push(
-        <circle key={`${cx}-${cy}`} cx={PAD + cx * CELL} cy={PAD + cy * CELL} r={1} fill="white" opacity="0.1" />
-      );
-    }
-  }
-  return <svg className="absolute inset-0 pointer-events-none" width={CANVAS_W} height={CANVAS_H}>{dots}</svg>;
-}
+const GridDots = memo(function GridDots() {
+  return (
+    <svg className="absolute inset-0 pointer-events-none" width={CANVAS_W} height={CANVAS_H}>
+      <defs>
+        <pattern id="grid-dots" x={PAD} y={PAD} width={CELL} height={CELL} patternUnits="userSpaceOnUse">
+          <circle cx="0" cy="0" r="1.5" fill="var(--text-tertiary, white)" opacity="0.15" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid-dots)" />
+    </svg>
+  );
+});
 
 function EntryMarker() {
   return (
@@ -218,6 +219,56 @@ export default function SeatMap() {
             {[...seats.values()].map(s => <Seat key={s.number} data={s} onToggle={toggleSeat} />)}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Legacy wrappers (backward-compatible) ───────────────────────────────────
+
+export const SeatMapWrapper = memo(function SeatMapWrapper({
+  seatNum,
+  children,
+  className = '',
+}: {
+  seatNum: number;
+  children: (face: FaceDir) => ReactNode;
+  className?: string;
+}) {
+  const { x, y, face } = getSeatPosition(seatNum);
+  const { left, top } = toPixel(x, y);
+  return (
+    <div
+      className={`absolute ${className}`}
+      style={{
+        left,
+        top,
+        width:  48,
+        height: 48,
+      }}
+      data-seat={seatNum}
+    >
+      {children(face)}
+    </div>
+  );
+});
+
+export function SeatMapContainer({ children }: { children: ReactNode }) {
+  return (
+    <div className="w-full overflow-auto pb-4 relative group" style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y pinch-zoom' }}>
+      <div
+        className="relative mx-auto rounded-[20px] glass-elite shadow-none transform-origin-top-left transition-transform"
+        style={{ width: CANVAS_W, height: CANVAS_H, minWidth: CANVAS_W }}
+      >
+        <GridDots />
+        <div className="absolute inset-[20px] rounded-[14px] border border-[var(--border-default)] pointer-events-none z-0" />
+        <EntryMarker />
+        {WALL_DETAILS.map((d, i) => <WallLabel key={i} detail={d} />)}
+        <div className="absolute inset-0 z-20">{children}</div>
+      </div>
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[var(--bg-void)]/90 backdrop-blur-md text-[var(--saffron-400)] text-[10px] uppercase font-bold tracking-widest px-4 py-2 rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity md:hidden border border-[var(--saffron-500)]/20 z-50 shadow-lg flex items-center gap-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-[var(--saffron-500)] animate-pulse" />
+        Pinch to zoom map
       </div>
     </div>
   );
