@@ -63,7 +63,16 @@ export function useSeatRequests() {
       const response = await fetch('/api/requests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...request, status: 'pending' }),
+        body: JSON.stringify({
+          seat: request.seat,
+          userName: request.userName,
+          userPhone: request.userPhone,
+          message: request.message,
+          transactionId: request.transactionId,
+          paymentMode: request.paymentMode || 'upi',
+          documentUrl: request.documentUrl || '',
+          status: 'pending',
+        }),
       });
 
       if (response.status === 409) {

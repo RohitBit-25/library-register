@@ -35,18 +35,20 @@ export default function LandingPage() {
     }
   }
 
-  async function handlePinSubmit(val: string) {
-    const clean = val.replace(/\D/g, '').slice(0, 6);
+  function handlePinInput(val: string) {
+    const clean = val.replace(/\D/g, '').slice(0, 8);
     setPin(clean);
     setPinError(false);
-    if (clean.length === 6) {
-      const success = await loginAsAdmin(clean);
-      if (success) {
-        router.push('/');
-      } else {
-        setPinError(true);
-        setTimeout(() => { setPin(''); setPinError(false); }, 1100);
-      }
+  }
+
+  async function submitPin() {
+    if (pin.length < 4) return;
+    const success = await loginAsAdmin(pin);
+    if (success) {
+      router.push('/');
+    } else {
+      setPinError(true);
+      setTimeout(() => { setPin(''); setPinError(false); }, 1200);
     }
   }
 
@@ -677,20 +679,35 @@ export default function LandingPage() {
           <div className="lp-admin-box">
             <button className="lp-admin-close" onClick={() => { setShowAdmin(false); setPin(''); setPinError(false); }} aria-label="Close">&times;</button>
             <div className="lp-admin-title">Admin Access</div>
-            <div className="lp-admin-sub">Enter 6-digit PIN</div>
+            <div className="lp-admin-sub">Enter PIN &amp; press Enter</div>
             <input
               className="lp-pin-input"
               type="password"
               inputMode="numeric"
-              maxLength={6}
+              maxLength={8}
               value={pin}
-              placeholder="••••••"
+              placeholder="••••"
               autoComplete="off"
               autoFocus
               aria-label="Admin PIN"
-              onChange={(e) => handlePinSubmit(e.target.value)}
+              onChange={(e) => handlePinInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') submitPin(); }}
               style={{ borderBottomColor: pinError ? 'rgba(180,70,70,0.55)' : undefined }}
             />
+            <button
+              onClick={submitPin}
+              disabled={pin.length < 4}
+              style={{
+                marginTop: 18, width: '100%', padding: '10px 0',
+                background: pin.length >= 4 ? 'rgba(185,118,14,0.2)' : 'transparent',
+                border: '0.5px solid rgba(185,118,14,0.3)',
+                color: pin.length >= 4 ? '#b8760e' : 'rgba(237,224,202,0.2)',
+                fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase' as const,
+                cursor: pin.length >= 4 ? 'pointer' : 'default',
+                transition: 'all 0.2s',
+                fontFamily: 'inherit',
+              }}
+            >Enter</button>
             <div className={`lp-pin-error${pinError ? ' show' : ''}`} role="alert">Incorrect PIN</div>
           </div>
         </div>

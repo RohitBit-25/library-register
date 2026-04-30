@@ -32,9 +32,16 @@ export async function POST(request: Request) {
     await dbConnect();
     const data = await request.json();
     
+    const paymentMode = data.paymentMode === 'cash' ? 'cash' : 'upi';
+
     // Minimal validation
-    if (!data.seat || !data.userName || !data.userPhone || !data.transactionId) {
-      return NextResponse.json({ error: 'Missing required fields including transaction ID' }, { status: 400 });
+    if (!data.seat || !data.userName || !data.userPhone) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // UPI requires a transaction ID
+    if (paymentMode === 'upi' && !data.transactionId) {
+      return NextResponse.json({ error: 'Transaction ID is required for UPI payments' }, { status: 400 });
     }
 
     // Duplicate prevention: check if a pending request already exists for this seat + phone
@@ -55,7 +62,9 @@ export async function POST(request: Request) {
       userName: data.userName,
       userPhone: data.userPhone,
       message: data.message || '',
-      transactionId: data.transactionId,
+      transactionId: data.transactionId || '',
+      paymentMode,
+      documentUrl: data.documentUrl || '',
       status: 'pending'
     });
 

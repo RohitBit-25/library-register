@@ -48,6 +48,8 @@ export interface SeatRequest {
   userPhone: string;
   message: string;
   transactionId: string;
+  paymentMode: 'upi' | 'cash';
+  documentUrl?: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string | Date;
 }

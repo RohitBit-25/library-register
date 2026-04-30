@@ -13,36 +13,12 @@ import { Grid3X3, Sun, Moon, Layers, LogOut, Inbox, Wind, VolumeX, Eye } from 'l
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// ─── Tokens ───────────────────────────────────────────────────────────────────
-// All design tokens live here — change once, cascade everywhere.
-const T = {
-  bg: 'var(--bg-void)',
-  surface: 'var(--bg-base)',
-  overlay: 'var(--bg-surface)',
-  border: 'var(--border-default)',
-  borderHi: 'var(--border-strong)',
-  blue: 'var(--sapphire-400)',
-  blueGlow: 'rgba(61,158,255,0.15)',
-  blueSubtle: 'rgba(61,158,255,0.08)',
-  green: 'var(--emerald-500)',
-  greenGlow: 'rgba(34,195,106,0.15)',
-  amber: 'var(--amber-500)',
-  red: 'var(--ruby-500)',
-  muted: 'var(--bg-muted)',
-  textPrim: 'var(--text-primary)',
-  textSec: 'var(--text-secondary)',
-  textTert: 'var(--text-tertiary)',
-  mono: 'var(--font-mono)',
-  display: 'var(--font-devanagari)',
-} as const;
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
 export default function BrowsePage() {
   const { members } = useMembers();
   const { logout } = useAuth();
   const { addRequest, requests } = useSeatRequests();
   const { addToast } = useToast();
-  const router = useRouter(); z
+  const router = useRouter();
 
   const [shiftFilter, setShiftFilter] = useState<Shift | 'all'>('all');
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
@@ -73,9 +49,18 @@ export default function BrowsePage() {
   }, [members, requests, addToast]);
 
   const handleSubmitRequest = async (
-    seat: number, name: string, phone: string, message: string, transactionId: string
+    seat: number, name: string, phone: string, message: string,
+    transactionId: string, paymentMode: 'upi' | 'cash', documentUrl: string
   ) => {
-    const result = await addRequest({ seat, userName: name, userPhone: phone, message, transactionId });
+    const result = await addRequest({
+      seat,
+      userName: name,
+      userPhone: phone,
+      message,
+      transactionId,
+      paymentMode,
+      documentUrl,
+    });
     if (result.success) addToast('success', `Seat #${seat} request submitted.`);
     return result;
   };
@@ -83,152 +68,119 @@ export default function BrowsePage() {
   const pendingCount = requests.filter(r => r.status === 'pending').length;
 
   const shiftTabs: { value: Shift | 'all'; label: string; icon: React.ReactNode }[] = [
-    { value: 'all', label: 'All Shifts', icon: <Layers className="w-3 h-3" /> },
-    { value: 'morning', label: 'Morning', icon: <Sun className="w-3 h-3" /> },
-    { value: 'evening', label: 'Evening', icon: <Moon className="w-3 h-3" /> },
+    { value: 'all', label: 'All Shifts', icon: <Layers className="w-4 h-4" /> },
+    { value: 'morning', label: 'Morning', icon: <Sun className="w-4 h-4" /> },
+    { value: 'evening', label: 'Evening', icon: <Moon className="w-4 h-4" /> },
   ];
 
   return (
-    <>
-      {/* Google fonts */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap');
+    <div className="min-h-screen bg-[var(--bg-void)] text-[var(--text-primary)] font-body relative selection:bg-[var(--saffron-500)] selection:text-[var(--bg-void)] pb-20 overflow-x-hidden">
+      {/* Background Ambient Effects */}
+      <div className="fixed inset-0 pointer-events-none noise-pattern mix-blend-overlay opacity-30 z-0"></div>
+      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[var(--saffron-500)]/5 blur-[120px] pointer-events-none z-0"></div>
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[var(--sapphire-400)]/5 blur-[120px] pointer-events-none z-0"></div>
 
-        .bp-root { font-family: ${T.mono}; background: ${T.bg}; color: ${T.textPrim}; min-height: 100vh; padding: 28px 20px 48px; }
-
-        /* Stat pill */
-        .stat-pill { display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1px solid ${T.border};background:${T.surface}; }
-        .stat-pill-num { font-size:22px;font-weight:700;line-height:1; }
-        .stat-pill-lbl { font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:${T.textSec}; }
-
-        /* Shift tab */
-        .shift-tab { display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border:none;transition:all 0.15s ease; }
-        .shift-tab.active { background:var(--saffron-500);color:#09090b;box-shadow:0 0 12px rgba(232, 133, 58, 0.4); }
-        .shift-tab.inactive { background:transparent;color:${T.textSec}; }
-        .shift-tab.inactive:hover { background:${T.overlay};color:${T.textPrim}; }
-
-        /* Map card */
-        .map-card { border-radius:20px;border:1px solid ${T.border};background:${T.surface};overflow:hidden; }
-        .map-card-header { display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid ${T.border}; }
-
-        /* Legend dot */
-        .legend-dot { width:10px;height:10px;border-radius:3px;border:1px solid; }
-
-        /* Icon btn */
-        .icon-btn { display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid ${T.border};background:${T.surface};font-size:11px;font-weight:500;letter-spacing:0.08em;cursor:pointer;transition:all 0.15s ease;color:${T.textSec}; }
-        .icon-btn:hover { border-color:${T.borderHi};color:${T.textPrim}; }
-        .icon-btn.blue { border-color:rgba(79,142,247,0.35);background:${T.blueSubtle};color:${T.blue}; }
-        .icon-btn.blue:hover { background:${T.blueGlow}; }
-
-        /* Seat tiles */
-        .seat-occupied  { background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.22); }
-        .seat-vacant    { background:${T.overlay};border:1px solid ${T.borderHi};cursor:pointer; }
-        .seat-vacant:hover { border-color:rgba(79,142,247,0.55);background:${T.blueSubtle}; transform:scale(1.06); }
-        .seat-expiring  { background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.25); }
-        .seat-expired   { background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.22); }
-        .seat-due       { background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.35); }
-
-        .seat-tile { position:relative;display:flex;flex-direction:column;align-items:center;justify-content:space-between;border-radius:9px;width:100%;height:100%;padding:5px 4px 4px;transition:all 0.14s ease; }
-        .seat-tile:active { transform:scale(0.95); }
-
-        .seat-chair { position:absolute;border-radius:99px;background:${T.muted};opacity:0.5; }
-        .face-up    .seat-chair { bottom:-5px;left:18%;right:18%;height:3px; }
-        .face-down  .seat-chair { top:-5px;left:18%;right:18%;height:3px; }
-        .face-left  .seat-chair { right:-5px;top:18%;bottom:18%;width:3px; }
-        .face-right .seat-chair { left:-5px;top:18%;bottom:18%;width:3px; }
-
-        .seat-num { font-size:10px;font-weight:500;color:${T.textSec};align-self:flex-start;line-height:1; }
-        .seat-name { font-size:9px;font-weight:600;color:${T.textPrim};text-align:center;width:100%;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px; }
-        .seat-shift { font-size:8px;color:${T.textTert};display:flex;align-items:center;gap:2px; }
-
-        .seat-pending-badge { position:absolute;top:-3px;right:-3px;width:7px;height:7px;border-radius:50%;background:${T.amber};border:1.5px solid ${T.surface}; }
-
-        /* Divider */
-        .divider { width:100%;height:1px;background:${T.border};margin:0; }
-
-        /* Animate in */
-        @keyframes fadeUp { from { opacity:0;transform:translateY(12px); } to { opacity:1;transform:translateY(0); } }
-        .bp-root > * { animation: fadeUp 0.35s ease both; }
-        .bp-root > *:nth-child(1) { animation-delay:0ms; }
-        .bp-root > *:nth-child(2) { animation-delay:60ms; }
-        .bp-root > *:nth-child(3) { animation-delay:110ms; }
-        .bp-root > *:nth-child(4) { animation-delay:160ms; }
-        .bp-root > *:nth-child(5) { animation-delay:200ms; }
-      `}</style>
-
-      <div className="bp-root">
-
-        {/* ── Top bar ── */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28 }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: T.blueSubtle, border: `1px solid rgba(79,142,247,0.3)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Grid3X3 size={15} color={T.blue} />
-              </div>
-              <h1 style={{ fontFamily: T.display, fontSize: 20, fontWeight: 800, color: T.textPrim, letterSpacing: '-0.01em', margin: 0 }}>
-                Seat Browse
-              </h1>
+      {/* ── Top bar / Header ── */}
+      <header className="sticky top-0 z-40 glass-elite border-b border-[var(--border-default)]/50 px-4 md:px-8 py-4 mb-8 w-full backdrop-blur-3xl shadow-sm">
+        <motion.div 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap"
+        >
+          {/* Title & Branding */}
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-[var(--sapphire-400)]/10 border border-[var(--sapphire-400)]/30 flex items-center justify-center shrink-0 shadow-[var(--shadow-glow-sapphire)]">
+              <Grid3X3 className="w-6 h-6 text-[var(--sapphire-400)]" />
             </div>
-            <p style={{ fontSize: 11, color: T.textSec, letterSpacing: '0.06em', margin: 0, paddingLeft: 40 }}>
-              {stats.occupied} occupied &nbsp;·&nbsp;
-              <span style={{ color: T.blue, fontWeight: 600 }}>{stats.vacant} vacant</span>
-              &nbsp;·&nbsp; tap a vacant seat to request
-            </p>
+            <div>
+              <h1 className="text-xl md:text-2xl font-display font-bold text-[var(--text-primary)] tracking-tight">
+                Library Seats
+              </h1>
+              <p className="text-xs md:text-sm text-[var(--text-secondary)] font-medium flex items-center gap-2 mt-0.5">
+                <span className="text-[var(--emerald-400)]">{stats.occupied} Occupied</span>
+                <span className="w-1 h-1 rounded-full bg-[var(--text-tertiary)]" />
+                <span className="text-[var(--sapphire-400)]">{stats.vacant} Vacant</span>
+              </p>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 8 }}>
+          {/* Actions */}
+          <div className="flex items-center gap-3">
             {pendingCount > 0 && (
               <button
-                className="icon-btn blue"
+                className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--sapphire-400)]/10 border border-[var(--sapphire-400)]/30 text-[var(--sapphire-400)] font-bold text-xs hover:bg-[var(--sapphire-400)]/20 transition-all shadow-[var(--shadow-glow-sapphire)] active:scale-95"
                 onClick={() => addToast('success', `${pendingCount} pending request(s)`)}
               >
-                <Inbox size={13} />
-                <span style={{ display: 'none' }} className="sm:inline">Requests</span>
-                <span style={{ minWidth: 18, height: 18, borderRadius: 9, background: T.blue, color: '#070a14', fontSize: 10, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+                <Inbox className="w-4 h-4" />
+                <span className="bg-[var(--sapphire-400)] text-[var(--bg-void)] px-1.5 py-0.5 rounded-md text-[10px] leading-none">
                   {pendingCount}
                 </span>
               </button>
             )}
             <button
-              className="icon-btn"
+              className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-[var(--text-secondary)] font-medium text-xs hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-all active:scale-95"
               onClick={() => { logout(); router.push('/landing'); }}
             >
-              <LogOut size={13} />
-              <span>Exit</span>
+              <LogOut className="w-4 h-4" />
+              Exit
             </button>
           </div>
-        </div>
+        </motion.div>
+      </header>
 
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 space-y-8">
+        
         {/* ── Stat pills ── */}
-        <div style={{ display: 'flex', gap: 10, marginBottom: 24, flexWrap: 'wrap' }}>
-          <div className="stat-pill">
-            <span className="stat-pill-num" style={{ color: T.green }}>{stats.occupied}</span>
-            <div>
-              <div className="stat-pill-lbl">Occupied</div>
-              <div style={{ width: Math.round((stats.occupied / stats.total) * 64), height: 2, borderRadius: 1, background: T.green, marginTop: 3, opacity: 0.5 }} />
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"
+        >
+          {[
+            { label: 'Occupied', value: stats.occupied, color: 'var(--emerald-400)', glow: 'var(--shadow-glow-emerald)' },
+            { label: 'Available', value: stats.vacant, color: 'var(--sapphire-400)', glow: 'var(--shadow-glow-sapphire)' },
+            { label: 'Total Seats', value: stats.total, color: 'var(--text-primary)', glow: 'none' },
+          ].map((stat, i) => (
+            <div key={stat.label} className={cn("card-base p-5 md:p-6 flex flex-col justify-between relative overflow-hidden group", i === 2 && "col-span-2 md:col-span-1")}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3 opacity-20 group-hover:opacity-40 transition-opacity" />
+              <span className="text-[10px] md:text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-3">
+                {stat.label}
+              </span>
+              <div className="flex items-end justify-between">
+                <span className="text-4xl md:text-5xl font-display font-black leading-none" style={{ color: stat.color, textShadow: stat.glow !== 'none' ? `0 0 24px ${stat.color}80` : 'none' }}>
+                  {stat.value}
+                </span>
+                {stat.label !== 'Total Seats' && (
+                   <div className="w-16 h-1.5 rounded-full bg-[var(--bg-muted)] overflow-hidden hidden sm:block">
+                     <div className="h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${(stat.value / stats.total) * 100}%`, background: stat.color }} />
+                   </div>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="stat-pill">
-            <span className="stat-pill-num" style={{ color: T.blue }}>{stats.vacant}</span>
-            <div>
-              <div className="stat-pill-lbl">Vacant</div>
-              <div style={{ width: Math.round((stats.vacant / stats.total) * 64), height: 2, borderRadius: 1, background: T.blue, marginTop: 3, opacity: 0.5 }} />
-            </div>
-          </div>
-          <div className="stat-pill">
-            <span className="stat-pill-num" style={{ color: T.textSec }}>{stats.total}</span>
-            <div><div className="stat-pill-lbl">Total Seats</div></div>
-          </div>
-        </div>
+          ))}
+        </motion.div>
 
         {/* ── Filters row ── */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ display: 'flex', gap: 4, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 4 }}>
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+        >
+          {/* Shift Filter */}
+          <div className="flex items-center gap-1.5 bg-[var(--bg-surface)] border border-[var(--border-default)] p-1.5 rounded-2xl shadow-sm w-full md:w-auto overflow-x-auto no-scrollbar">
             {shiftTabs.map(tab => (
               <button
                 key={tab.value}
-                className={`shift-tab ${shiftFilter === tab.value ? 'active' : 'inactive'}`}
                 onClick={() => setShiftFilter(tab.value)}
+                className={cn(
+                  "cursor-pointer flex items-center justify-center gap-2 px-4 md:px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 capitalize tracking-wide flex-1 md:flex-auto whitespace-nowrap",
+                  shiftFilter === tab.value
+                    ? "bg-[var(--saffron-500)] text-[var(--bg-void)] shadow-[var(--shadow-glow-saffron)]"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-muted)]/40"
+                )}
               >
                 {tab.icon}
                 {tab.label}
@@ -237,60 +189,71 @@ export default function BrowsePage() {
           </div>
 
           {/* Legend */}
-          <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+          <div className="flex items-center gap-3 md:gap-5 flex-wrap bg-[var(--bg-surface)]/50 px-4 py-2.5 rounded-2xl border border-[var(--border-default)]/50 w-full md:w-auto">
             {[
-              { color: T.green, border: 'rgba(52,211,153,0.35)', label: 'Occupied' },
-              { color: T.blue, border: 'rgba(79,142,247,0.35)', label: 'Vacant' },
-              { color: T.amber, border: 'rgba(251,191,36,0.35)', label: 'Expiring' },
-              { color: T.red, border: 'rgba(248,113,113,0.35)', label: 'Expired' },
+              { color: 'var(--emerald-500)', label: 'Occupied' },
+              { color: 'var(--sapphire-400)', label: 'Vacant' },
+              { color: 'var(--amber-500)', label: 'Expiring' },
+              { color: 'var(--ruby-500)', label: 'Expired' },
             ].map(l => (
-              <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: T.textSec }}>
-                <div className="legend-dot" style={{ background: `${l.color}22`, borderColor: l.border }} />
+              <div key={l.label} className="flex items-center gap-2 text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                <span className="w-2.5 h-2.5 rounded-full ring-2 ring-offset-2 ring-offset-[var(--bg-void)]" style={{ background: l.color, ringColor: `${l.color}40` }} />
                 {l.label}
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* ── Map card ── */}
-        <div className="map-card">
-          <div className="map-card-header">
-            <Grid3X3 size={13} color={T.blue} />
-            <span style={{ fontFamily: T.display, fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: T.textPrim }}>
-              {shiftFilter === 'all' ? 'Full Floorplan' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift`}
-            </span>
-            <span style={{ marginLeft: 'auto', fontFamily: T.mono, fontSize: 10, color: T.textTert, letterSpacing: '0.08em' }}>
-              {filtered.length} seats
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="card-base glass-elite-panel overflow-hidden border-[var(--border-strong)]"
+        >
+          {/* Map Header */}
+          <div className="px-6 py-5 border-b border-[var(--border-default)] bg-[var(--bg-surface)]/50 flex items-center justify-between backdrop-blur-md">
+            <div className="flex items-center gap-3">
+              <Grid3X3 className="w-5 h-5 text-[var(--saffron-500)]" />
+              <h2 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-widest">
+                {shiftFilter === 'all' ? 'Full Floorplan' : `${shiftFilter} Shift`}
+              </h2>
+            </div>
+            <span className="text-xs font-mono font-bold text-[var(--text-tertiary)] bg-[var(--bg-muted)]/50 px-3 py-1.5 rounded-lg border border-[var(--border-default)]">
+              {filtered.length} Seats
             </span>
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={shiftFilter}
-              initial={{ opacity: 0, scale: 0.98, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, scale: 0.98, filter: 'blur(4px)' }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-            >
-              <SeatMapContainer>
-                {filtered.map(member => (
-                  <SeatMapWrapper key={member.seat} seatNum={member.seat}>
-                    {(face: FaceDir) => (
-                      <BrowseSeatTile
-                        member={member}
-                        face={face}
-                        onClick={handleSeatClick}
-                        hasRequest={requests.some(r => r.seat === member.seat && r.status === 'pending')}
-                      />
-                    )}
-                  </SeatMapWrapper>
-                ))}
-              </SeatMapContainer>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-      </div>
+          {/* Map Area */}
+          <div className="p-4 sm:p-6 md:p-8 bg-[var(--bg-void)]/40 min-h-[500px] flex justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={shiftFilter}
+                initial={{ opacity: 0, scale: 0.98, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 0.98, filter: 'blur(8px)' }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="w-full max-w-[800px]"
+              >
+                <SeatMapContainer>
+                  {filtered.map(member => (
+                    <SeatMapWrapper key={member.seat} seatNum={member.seat}>
+                      {(face: FaceDir) => (
+                        <BrowseSeatTile
+                          member={member}
+                          face={face}
+                          onClick={handleSeatClick}
+                          hasRequest={requests.some(r => r.seat === member.seat && r.status === 'pending')}
+                        />
+                      )}
+                    </SeatMapWrapper>
+                  ))}
+                </SeatMapContainer>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      </main>
 
       {/* ── Request sheet ── */}
       <SeatRequestSheet
@@ -299,7 +262,7 @@ export default function BrowsePage() {
         onClose={() => setSelectedSeat(null)}
         onSubmit={handleSubmitRequest}
       />
-    </>
+    </div>
   );
 }
 
@@ -319,15 +282,16 @@ function BrowseSeatTile({
   const status = getSeatStatus(member);
   const isVacant = member.vacant;
 
-  const tileClass = isVacant ? 'seat-vacant'
-    : status === 'expiring' ? 'seat-expiring'
-      : status === 'expired' ? 'seat-expired'
-        : status === 'due' ? 'seat-due'
-          : 'seat-occupied';
+  const tileClass = isVacant 
+    ? "bg-[var(--bg-surface)] border-[var(--border-strong)] hover:border-[var(--sapphire-400)]/70 hover:bg-[var(--sapphire-400)]/15 hover:shadow-[var(--shadow-glow-sapphire)] cursor-pointer hover:scale-[1.08] hover:z-20"
+    : status === 'expiring' ? "bg-[var(--amber-500)]/10 border-[var(--amber-500)]/30"
+    : status === 'expired' ? "bg-[var(--ruby-500)]/10 border-[var(--ruby-500)]/30"
+    : status === 'due' ? "bg-[var(--ruby-500)]/15 border-[var(--ruby-500)]/40"
+    : "bg-[var(--emerald-500)]/10 border-[var(--emerald-500)]/30";
 
-  const shiftIcon = member.shift === 'evening' ? <Moon size={8} />
-    : member.shift === 'full' ? <><Sun size={7} /><Moon size={7} /></>
-      : <Sun size={8} />;
+  const shiftIcon = member.shift === 'evening' ? <Moon className="w-[10px] h-[10px]" />
+    : member.shift === 'full' ? <div className="flex gap-[2px]"><Sun className="w-2.5 h-2.5" /><Moon className="w-2.5 h-2.5" /></div>
+    : <Sun className="w-[10px] h-[10px]" />;
 
   // Mock amenities based on seat num for the tooltip
   const isWindow = member.seat % 4 === 0 || member.seat > 80;
@@ -343,49 +307,73 @@ function BrowseSeatTile({
   return (
     <div className="group relative w-full h-full">
       <button
-        onClick={() => onClick(member.seat)}
-        className={cn('seat-tile', tileClass, `face-${face}`, 'w-full h-full relative z-10')}
+        onClick={() => isVacant && onClick(member.seat)}
+        className={cn(
+          'relative flex flex-col items-center justify-between rounded-xl w-full h-full py-1.5 px-1 transition-all duration-300 border backdrop-blur-sm',
+          tileClass,
+          isVacant ? 'active:scale-95' : 'cursor-default'
+        )}
         aria-label={`Seat ${member.seat} — ${isVacant ? 'vacant' : member.name}`}
       >
-        <div className="seat-chair" />
+        {/* Chair Indicator */}
+        <div className={cn(
+          "absolute rounded-full bg-[var(--bg-muted)] opacity-50",
+          face === 'up' && "bottom-[-5px] left-[20%] right-[20%] h-[3px]",
+          face === 'down' && "top-[-5px] left-[20%] right-[20%] h-[3px]",
+          face === 'left' && "right-[-5px] top-[20%] bottom-[20%] w-[3px]",
+          face === 'right' && "left-[-5px] top-[20%] bottom-[20%] w-[3px]"
+        )} />
 
-        <span className="seat-num">{String(member.seat).padStart(2, '0')}</span>
+        <span className="text-[11px] font-bold text-[var(--text-secondary)] self-start leading-none pl-0.5">
+          {String(member.seat).padStart(2, '0')}
+        </span>
 
         {isVacant ? (
-          <span style={{ fontSize: 9, fontWeight: 600, color: hasRequest ? 'var(--amber-500)' : 'var(--sapphire-400)', letterSpacing: '0.06em' }}>
+          <span className={cn(
+            "text-[10px] font-bold tracking-wider uppercase mt-1",
+            hasRequest ? "text-[var(--amber-500)]" : "text-[var(--sapphire-400)]"
+          )}>
             {hasRequest ? 'Pending' : 'Vacant'}
           </span>
         ) : (
-          <span className="seat-name">{firstName(member.name)}</span>
+          <span className="text-[10px] font-bold text-[var(--text-primary)] text-center w-full leading-tight truncate px-0.5">
+            {firstName(member.name)}
+          </span>
         )}
 
-        <div className="seat-shift" style={{ color: isVacant ? 'var(--text-tertiary)' : 'var(--text-secondary)' }}>
-          {isVacant
-            ? <span style={{ fontSize: 8, letterSpacing: '0.08em' }}>{hasRequest ? '⏳' : 'tap'}</span>
-            : shiftIcon
-          }
+        <div className={cn(
+          "flex items-center gap-0.5 mt-1",
+          isVacant ? "text-[var(--text-tertiary)]" : "text-[var(--text-secondary)]"
+        )}>
+          {isVacant ? (
+             <span className="text-[9px] tracking-widest uppercase font-medium">
+               {hasRequest ? '⏳' : 'Tap'}
+             </span>
+          ) : shiftIcon}
         </div>
 
-        {hasRequest && <div className="seat-pending-badge" />}
+        {hasRequest && (
+          <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[var(--amber-500)] border-2 border-[var(--bg-surface)] animate-pulse" />
+        )}
       </button>
 
       {/* Tooltip for vacant seats */}
       {isVacant && amenities.length > 0 && (
-        <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 mb-1 w-max min-w-[110px] bg-[var(--bg-void)] border border-[var(--saffron-500)]/30 rounded-lg p-2.5 shadow-[0_4px_20px_rgba(232,133,58,0.2)] opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 pointer-events-none transition-all duration-200 z-[999]">
-          <div className="text-[8px] font-black text-[var(--saffron-500)] mb-1.5 uppercase tracking-widest flex items-center justify-center gap-1 border-b border-[var(--saffron-500)]/20 pb-1">
-            <span className="w-1.5 h-1.5 bg-[var(--saffron-500)] rounded-full animate-pulse" />
+        <div className="absolute bottom-[115%] left-1/2 -translate-x-1/2 mb-1 w-max min-w-[120px] bg-[var(--bg-base)]/95 backdrop-blur-xl border border-[var(--saffron-500)]/30 rounded-xl p-3 shadow-xl opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 pointer-events-none transition-all duration-300 z-[999] origin-bottom">
+          <div className="text-[9px] font-black text-[var(--saffron-500)] mb-2 uppercase tracking-[0.15em] flex items-center justify-center gap-1.5 border-b border-[var(--saffron-500)]/20 pb-1.5">
+            <span className="w-1.5 h-1.5 bg-[var(--saffron-500)] rounded-full animate-pulse shadow-[0_0_8px_var(--saffron-500)]" />
             Amenities
           </div>
-          <ul className="space-y-1.5">
+          <ul className="space-y-2">
             {amenities.map(a => (
-              <li key={a.label} className="flex items-center gap-1.5 text-[9px] font-medium text-[var(--text-secondary)]">
-                <a.icon className="w-3 h-3 text-[var(--text-tertiary)]" />
+              <li key={a.label} className="flex items-center gap-2 text-[10px] font-bold text-[var(--text-secondary)]">
+                <a.icon className="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
                 {a.label}
               </li>
             ))}
           </ul>
           {/* Tooltip arrow */}
-          <div className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 w-2 h-2 bg-[var(--bg-void)] border-b border-r border-[var(--saffron-500)]/30 rotate-45" />
+          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[var(--bg-base)]/95 border-b border-r border-[var(--saffron-500)]/30 rotate-45 backdrop-blur-xl" />
         </div>
       )}
     </div>
