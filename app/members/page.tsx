@@ -74,6 +74,11 @@ export default function MembersPage() {
     });
   };
 
+  const handleEdit = (seat: number) => {
+    // Navigate to seat grid with the seat selected for inline editing
+    window.location.href = `/?seat=${seat}`;
+  };
+
   return (
     <div>
       <div className="mb-5 flex items-start justify-between">
@@ -93,6 +98,7 @@ export default function MembersPage() {
         onMarkDue={handleMarkDue}
         onRenew={handleRenew}
         onRemove={handleRemove}
+        onEdit={handleEdit}
         onBulkMarkPaid={handleBulkMarkPaid}
         onBulkRemove={handleBulkRemove}
         onBulkExport={handleBulkExport}

@@ -13,14 +13,27 @@ import { useAuth } from '@/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Users, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSearchParams } from 'next/navigation';
 
 export default function SeatGridContent() {
   const { members, update, vacate, renew, add, isLoading } = useMembers();
   const { isAdmin } = useAuth();
   const { addToast } = useToast();
+  const searchParams = useSearchParams();
 
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Auto-select seat from URL query param (e.g., /?seat=5)
+  useEffect(() => {
+    const seatParam = searchParams.get('seat');
+    if (seatParam) {
+      const seatNum = parseInt(seatParam, 10);
+      if (seatNum >= 1 && seatNum <= 95) {
+        setSelectedSeat(seatNum);
+      }
+    }
+  }, [searchParams]);
 
   // Stats calculation for the header
   const stats = useMemo(() => {
