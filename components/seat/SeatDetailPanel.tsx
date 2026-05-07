@@ -5,7 +5,7 @@ import { type Member, type Duration, type SeatStatus } from '@/lib/types';
 import { getSeatStatus, fmtDate, durationLabel, shiftLabel, calcExpiry, todayISO, cn, daysUntilExpiry } from '@/lib/utils';
 import BottomSheet from '@/components/ui/BottomSheet';
 import Modal from '@/components/ui/Modal';
-import { Phone, Calendar, Clock, Sun, Moon, Zap, X, RefreshCw, Trash2, CreditCard, MessageCircle, Copy } from 'lucide-react';
+import { Phone, Calendar, Clock, Sun, Moon, Zap, X, RefreshCw, Trash2, CreditCard, MessageCircle, Copy, Pencil, Save, XCircle } from 'lucide-react';
 import { LazyMotion, domAnimation, m } from 'framer-motion';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { z } from 'zod';
@@ -18,6 +18,16 @@ const renewSchema = z.object({
 });
 type RenewFormValues = z.infer<typeof renewSchema>;
 
+const editSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  phone: z.string().min(10, 'Valid phone required'),
+  shift: z.enum(['morning', 'evening', 'full']),
+  joinDate: z.string().min(1, 'Join date is required'),
+  duration: z.enum(['1M', '3M', '6M', '1Y']),
+  fee: z.enum(['paid', 'due']),
+});
+type EditFormValues = z.infer<typeof editSchema>;
+
 interface SeatDetailPanelProps {
   member: Member | null;
   open: boolean;
@@ -26,6 +36,7 @@ interface SeatDetailPanelProps {
   onMarkDue: (seat: number) => void;
   onRenew: (seat: number, joinDate: string, duration: Duration) => void;
   onRemove: (seat: number) => void;
+  onUpdate?: (seat: number, patch: Partial<Member>) => void;
   isMobile: boolean;
   readonly?: boolean;
 }
@@ -55,32 +66,44 @@ export default function SeatDetailPanel({
   onMarkDue,
   onRenew,
   onRemove,
+  onUpdate,
   isMobile,
   readonly = false,
 }: SeatDetailPanelProps) {
   const [renewMode, setRenewMode] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const { register, handleSubmit, control, reset } = useForm<RenewFormValues>({
+  // Renew form
+  const { register: renewRegister, handleSubmit: handleRenewSubmit, control: renewControl, reset: renewReset } = useForm<RenewFormValues>({
     resolver: zodResolver(renewSchema),
+    defaultValues: { renewDate: todayISO(), renewDuration: '3M' },
+  });
+  const watchDate = useWatch({ control: renewControl, name: 'renewDate' });
+  const watchDuration = useWatch({ control: renewControl, name: 'renewDuration' });
+
+  // Edit form
+  const { register: editRegister, handleSubmit: handleEditSubmit, control: editControl, reset: editReset } = useForm<EditFormValues>({
+    resolver: zodResolver(editSchema),
     defaultValues: {
-      renewDate: todayISO(),
-      renewDuration: '3M',
+      name: member?.name || '',
+      phone: member?.phone || '',
+      shift: (member?.shift as 'morning' | 'evening' | 'full') || 'morning',
+      joinDate: member?.joinDate || todayISO(),
+      duration: (member?.duration as '1M' | '3M' | '6M' | '1Y') || '3M',
+      fee: (member?.fee as 'paid' | 'due') || 'paid',
     },
   });
+  const editJoinDate = useWatch({ control: editControl, name: 'joinDate' });
+  const editDuration = useWatch({ control: editControl, name: 'duration' });
 
-  const watchDate = useWatch({ control, name: 'renewDate' });
-  const watchDuration = useWatch({ control, name: 'renewDuration' });
-     
-  // We can remove watch from useForm destructure if not needed anywhere else
+  const editExpiry = useMemo(() => {
+    try { return calcExpiry(editJoinDate, editDuration); } catch { return ''; }
+  }, [editJoinDate, editDuration]);
 
   const renewExpiry = useMemo(() => {
-    try {
-      return calcExpiry(watchDate, watchDuration);
-    } catch {
-      return '';
-    }
+    try { return calcExpiry(watchDate, watchDuration); } catch { return ''; }
   }, [watchDate, watchDuration]);
 
   if (!member) return null;
@@ -104,10 +127,168 @@ export default function SeatDetailPanel({
     }
   };
 
+  const openEditMode = () => {
+    editReset({
+      name: member.name || '',
+      phone: member.phone || '',
+      shift: (member.shift as 'morning' | 'evening' | 'full') || 'morning',
+      joinDate: member.joinDate || todayISO(),
+      duration: (member.duration as '1M' | '3M' | '6M' | '1Y') || '3M',
+      fee: (member.fee as 'paid' | 'due') || 'paid',
+    });
+    setEditMode(true);
+  };
+
+  const handleSaveEdit = (data: EditFormValues) => {
+    if (!onUpdate) return;
+    const expiry = calcExpiry(data.joinDate, data.duration);
+    onUpdate(member.seat, {
+      name: data.name.trim(),
+      phone: data.phone.trim(),
+      shift: data.shift,
+      joinDate: data.joinDate,
+      duration: data.duration,
+      expiry,
+      fee: data.fee,
+    });
+    setEditMode(false);
+  };
+
   const content = (
     <LazyMotion features={domAnimation}>
       <div className="space-y-4">
-        {!renewMode ? (
+        {editMode ? (
+          /* ── EDIT MODE ── */
+          <m.form
+            onSubmit={handleEditSubmit(handleSaveEdit)}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="space-y-4"
+          >
+            <div className="bg-[var(--indigo-500)] rounded-xl p-4 text-[var(--saffron-50)] shadow-lg shadow-[var(--indigo-500)]/20">
+              <p className="text-xs font-bold uppercase tracking-wider opacity-80">Editing</p>
+              <h4 className="text-lg font-black mt-1 tracking-tight">
+                Seat {member.seat} — {member.name.split(' ')[0]}
+              </h4>
+            </div>
+
+            <div className="space-y-4 pt-2">
+              <FloatingLabelInput label="Full Name" {...editRegister('name')} />
+              <FloatingLabelInput label="WhatsApp Number" type="tel" inputMode="tel" {...editRegister('phone')} />
+
+              <div>
+                <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Shift</span>
+                <Controller
+                  name="shift"
+                  control={editControl}
+                  render={({ field }) => (
+                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
+                      {(['morning', 'evening', 'full'] as const).map(s => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => field.onChange(s)}
+                          className={cn(
+                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer',
+                            field.value === s
+                              ? 'bg-[var(--sapphire-500)] text-[#1a1a16] shadow-md ring-1 ring-[var(--sapphire-500)]/50 z-10'
+                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100',
+                          )}
+                        >
+                          {shiftLabel(s)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                />
+              </div>
+
+              <FloatingLabelInput label="Date of Joining" type="date" {...editRegister('joinDate')} />
+
+              <div>
+                <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Duration</span>
+                <Controller
+                  name="duration"
+                  control={editControl}
+                  render={({ field }) => (
+                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
+                      {(['1M', '3M', '6M', '1Y'] as Duration[]).map(d => (
+                        <button
+                          key={d}
+                          type="button"
+                          onClick={() => field.onChange(d)}
+                          className={cn(
+                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer',
+                            field.value === d
+                              ? 'bg-[var(--sapphire-500)] text-[#1a1a16] shadow-md ring-1 ring-[var(--sapphire-500)]/50 z-10'
+                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100',
+                          )}
+                        >
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                />
+              </div>
+
+              <div>
+                <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Fee Status</span>
+                <Controller
+                  name="fee"
+                  control={editControl}
+                  render={({ field }) => (
+                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
+                      {(['paid', 'due'] as const).map(f => (
+                        <button
+                          key={f}
+                          type="button"
+                          onClick={() => field.onChange(f)}
+                          className={cn(
+                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer capitalize',
+                            field.value === f
+                              ? (f === 'paid' ? 'bg-emerald-500 text-[var(--saffron-50)] shadow-md' : 'bg-[var(--saffron-500)] text-[#1a1a16] shadow-md')
+                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100',
+                          )}
+                        >
+                          {f}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                />
+              </div>
+
+              {editExpiry && (
+                <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 shadow-sm text-center border-dashed">
+                  <span className="text-xs font-bold text-[var(--emerald-500)] uppercase tracking-wider">Calculated Expiry</span>
+                  <p className="text-lg font-black text-[var(--emerald-500)] mt-1 flex justify-center items-center gap-2">
+                    <Calendar className="w-4 h-4 opacity-70" />
+                    {fmtDate(editExpiry)}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 pt-3">
+              <button
+                type="button"
+                onClick={() => setEditMode(false)}
+                className="flex-1 py-3.5 rounded-xl text-xs font-black uppercase text-[var(--text-secondary)] border border-[var(--border-default)] hover:bg-[var(--bg-base)] hover:text-[var(--ruby-400)] transition-colors cursor-pointer active:scale-95 shadow-sm flex items-center justify-center gap-2"
+              >
+                <XCircle className="w-4 h-4" />
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-[var(--indigo-500)] text-[var(--saffron-50)] hover:brightness-110 transition-all cursor-pointer shadow-lg shadow-[var(--indigo-500)]/20 active:scale-95 flex items-center justify-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                Save Changes
+              </button>
+            </div>
+          </m.form>
+        ) : !renewMode ? (
           <>
             {/* Status Banner */}
             <div className={cn('rounded-xl p-4 text-[var(--saffron-50)] relative overflow-hidden', statusGradient[status])}>
@@ -168,6 +349,17 @@ export default function SeatDetailPanel({
                 {/* Actions — admin only */}
                 {!readonly && (
                 <div className="space-y-2">
+                  {/* Edit button */}
+                  {onUpdate && (
+                    <button
+                      onClick={openEditMode}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-[var(--indigo-500)] bg-[var(--indigo-500)]/10 border border-[var(--indigo-500)]/20 hover:bg-[var(--indigo-500)]/20 transition-colors cursor-pointer"
+                    >
+                      <Pencil className="w-4 h-4" />
+                      Edit Details
+                    </button>
+                  )}
+
                   <div className="grid grid-cols-2 gap-2">
                     {member.fee === 'due' ? (
                       <ActionBtn 
@@ -187,7 +379,7 @@ export default function SeatDetailPanel({
                       </ActionBtn>
                     )}
                     <ActionBtn 
-                      onClick={() => { reset({ renewDate: todayISO(), renewDuration: '3M' }); setRenewMode(true); }} 
+                      onClick={() => { renewReset({ renewDate: todayISO(), renewDuration: '3M' }); setRenewMode(true); }} 
                       icon={<RefreshCw className="w-4 h-4" />}
                       className="bg-sapphire-500 text-[var(--saffron-50)] shadow-sm hover:shadow-md hover:bg-sapphire-600 border-transparent"
                     >
@@ -222,7 +414,7 @@ export default function SeatDetailPanel({
         ) : (
           /* Renewal form */
           <m.form
-            onSubmit={handleSubmit((data) => {
+            onSubmit={handleRenewSubmit((data) => {
               onRenew(member.seat, data.renewDate, data.renewDuration);
               setRenewMode(false);
               onClose();
@@ -242,14 +434,14 @@ export default function SeatDetailPanel({
               <FloatingLabelInput
                 label="New join date"
                 type="date"
-                {...register('renewDate')}
+                {...renewRegister('renewDate')}
               />
 
               <div>
                 <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Duration</span>
                 <Controller
                   name="renewDuration"
-                  control={control}
+                  control={renewControl}
                   render={({ field }) => (
                     <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
                       {(['1M', '3M', '6M', '1Y'] as Duration[]).map(d => (
@@ -320,7 +512,7 @@ export default function SeatDetailPanel({
     return (
       <BottomSheet
         open={open}
-        onClose={() => { setRenewMode(false); onClose(); }}
+        onClose={() => { setRenewMode(false); setEditMode(false); onClose(); }}
         title={`Seat ${String(member.seat).padStart(2, '0')}`}
         snapPoint="60%"
       >
@@ -341,7 +533,7 @@ export default function SeatDetailPanel({
             Seat Details
           </h3>
           <button 
-            onClick={() => { setRenewMode(false); onClose(); }}
+            onClick={() => { setRenewMode(false); setEditMode(false); onClose(); }}
             className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-base)] transition-all hover:rotate-90 duration-200"
             aria-label="Close panel"
           >
