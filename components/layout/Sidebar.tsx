@@ -7,15 +7,11 @@ import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard,
   Users,
-  CalendarCheck,
-  CalendarSearch,
   BarChart3,
-  Settings,
   BookOpen,
   Inbox,
   LogOut,
   Shield,
-  MonitorSmartphone,
 } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { useRouter } from 'next/navigation';
@@ -25,7 +21,6 @@ interface NavItem {
   label: string;
   icon: React.ReactNode;
   badge?: string;
-  isNew?: boolean;
 }
 
 interface SidebarProps {
@@ -39,8 +34,8 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
   const router = useRouter();
 
   const navItems: NavItem[] = [
-    { href: '/', label: 'Floorplan Map', icon: <LayoutDashboard className="w-5 h-5" /> },
-    { href: '/analytics', label: 'Insights Overview', icon: <BarChart3 className="w-5 h-5" /> },
+    { href: '/', label: 'Seat Map', icon: <LayoutDashboard className="w-5 h-5" /> },
+    { href: '/analytics', label: 'Dashboard', icon: <BarChart3 className="w-5 h-5" /> },
     {
       href: '/members',
       label: 'All Members',
@@ -49,14 +44,10 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
     },
     {
       href: '/requests',
-      label: 'Seat Requests',
+      label: 'Requests',
       icon: <Inbox className="w-5 h-5" />,
       badge: pendingRequests > 0 ? `${pendingRequests}` : undefined,
     },
-    { href: '/expiry', label: 'Expiry Tracker', icon: <CalendarSearch className="w-5 h-5" /> },
-    { href: '/attendance', label: 'Attendance', icon: <CalendarCheck className="w-5 h-5" /> },
-    { href: '/kiosk', label: 'Launch Kiosk', icon: <MonitorSmartphone className="w-5 h-5" /> },
-    { href: '/setup', label: 'Google Setup', icon: <Settings className="w-5 h-5" /> },
   ];
 
   const now = new Date();
