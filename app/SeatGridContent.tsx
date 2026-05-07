@@ -61,6 +61,11 @@ export default function SeatGridContent() {
     addToast('success', `Seat ${seat} is now vacant`);
   };
 
+  const handleUpdate = (seat: number, patch: Partial<Member>) => {
+    update(seat, patch);
+    addToast('success', `Updated details for Seat ${seat}`);
+  };
+
   const handleAddSubmit = async (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => {
     const success = await add(seat, data);
     if (success) {
@@ -225,6 +230,7 @@ export default function SeatGridContent() {
                 onMarkDue={handleMarkDue}
                 onRenew={handleRenew}
                 onRemove={handleRemove}
+                onUpdate={handleUpdate}
                 isMobile={isMobile}
               />
             )}
