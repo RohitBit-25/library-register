@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { type Member } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
+import { QRCodeSVG } from 'qrcode.react';
 import {
   X, Send, User, Phone, MessageSquare, Armchair,
   CheckCircle2, Banknote, Smartphone, FileText, Camera, Upload,
@@ -303,30 +304,36 @@ export default function SeatRequestSheet({
                     </div>
 
                     {/* ─── Info Banner ──────────────────────── */}
-                    <div className={cn(
-                      "p-4 rounded-xl border flex items-start gap-3 transition-all duration-300",
-                      paymentMode === 'cash'
-                        ? "bg-[var(--emerald-500)]/5 border-[var(--emerald-500)]/20"
-                        : "bg-[var(--sapphire-500)]/5 border-[var(--sapphire-500)]/20"
-                    )}>
-                      <div className={cn(
-                        "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5",
-                        paymentMode === 'cash'
-                          ? "bg-[var(--emerald-500)]/15"
-                          : "bg-[var(--sapphire-500)]/15"
-                      )}>
-                        {paymentMode === 'cash'
-                          ? <Banknote className="w-4 h-4 text-[var(--emerald-400)]" />
-                          : <Smartphone className="w-4 h-4 text-[var(--sapphire-400)]" />
-                        }
+                    {paymentMode === 'cash' ? (
+                      <div className="p-4 rounded-xl border bg-[var(--emerald-500)]/5 border-[var(--emerald-500)]/20 flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-[var(--emerald-500)]/15 flex items-center justify-center shrink-0 mt-0.5">
+                          <Banknote className="w-4 h-4 text-[var(--emerald-400)]" />
+                        </div>
+                        <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                          Please pay at the library counter. Admin will confirm your payment and allot the seat.
+                        </p>
                       </div>
-                      <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-                        {paymentMode === 'cash'
-                          ? 'Please pay at the library counter. Admin will confirm your payment and allot the seat.'
-                          : 'Complete UPI payment at the counter or via scanning. Admin will verify and allot your seat.'
-                        }
-                      </p>
-                    </div>
+                    ) : (
+                      <div className="rounded-xl border border-[var(--sapphire-500)]/20 bg-gradient-to-b from-[var(--sapphire-500)]/8 to-transparent overflow-hidden">
+                        <div className="flex flex-col items-center py-5 px-4">
+                          <p className="text-[10px] font-black text-[var(--sapphire-400)] mb-3 uppercase tracking-[0.2em] flex items-center gap-2">
+                            <Smartphone className="w-3.5 h-3.5" />
+                            Scan & Pay via UPI
+                          </p>
+                          <div className="p-2.5 bg-white rounded-xl shadow-lg shadow-[var(--sapphire-500)]/10 ring-4 ring-white/5 mb-3">
+                            <QRCodeSVG
+                              value="upi://pay?pa=gangaur.972327@sbi&pn=Gangaur%20Library&cu=INR"
+                              size={110}
+                              level="H"
+                              className="rounded-lg"
+                            />
+                          </div>
+                          <p className="text-[11px] text-[var(--text-secondary)] text-center leading-relaxed max-w-[220px]">
+                            Scan with <span className="text-[var(--text-primary)] font-semibold">GPay, PhonePe or Paytm</span>
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
                     {/* ─── Name ─────────────────────────────── */}
                     <div>
