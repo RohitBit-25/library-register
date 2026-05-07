@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { type Member, type SeatStatus } from '@/lib/types';
 import { getSeatStatus, fmtDateShort, firstName, cn } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
-import { Search, MoreVertical, Check, RefreshCw, MessageCircle, Trash2, UserPlus, ChevronUp, ChevronDown, Copy } from 'lucide-react';
+import { Search, MoreVertical, Check, RefreshCw, MessageCircle, Trash2, UserPlus, ChevronUp, ChevronDown, Copy, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import ConfirmDialog from '../ui/ConfirmDialog';
@@ -18,6 +18,7 @@ interface MemberTableProps {
   onMarkDue: (seat: number) => void;
   onRenew: (seat: number) => void;
   onRemove: (seat: number) => void;
+  onEdit?: (seat: number) => void;
   onBulkMarkPaid: (seats: number[]) => void;
   onBulkRemove: (seats: number[]) => void;
   onBulkExport: (seats: number[]) => void;
@@ -38,6 +39,7 @@ export default function MemberTable({
   onMarkDue,
   onRenew,
   onRemove,
+  onEdit,
   onBulkMarkPaid,
   onBulkRemove,
   onBulkExport,
@@ -402,6 +404,15 @@ export default function MemberTable({
             >
               {members.filter(m => m.seat === openActions).map(m => (
                 <div key={m.seat}>
+                  {onEdit && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onEdit(m.seat); setOpenActions(null); }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--indigo-500)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
+                    >
+                      <Pencil className="w-4 h-4" />
+                      Edit details
+                    </button>
+                  )}
                   <button
                     onClick={(e) => { e.stopPropagation(); if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
                     className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"

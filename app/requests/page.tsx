@@ -2,8 +2,9 @@
 
 import { useState, useMemo } from 'react';
 import { useSeatRequests } from '@/hooks/useSeatRequests';
+import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
-import { fmtDate, cn } from '@/lib/utils';
+import { fmtDate, cn, calcExpiry, todayISO } from '@/lib/utils';
 import { type SeatRequest } from '@/lib/types';
 import {
   Inbox,
@@ -31,6 +32,7 @@ type FilterTab = 'pending' | 'approved' | 'rejected' | 'all';
 
 export default function RequestsPage() {
   const { requests, approveRequest, rejectRequest, deleteRequest } = useSeatRequests();
+  const { add } = useMembers();
   const { addToast } = useToast();
   const router = useRouter();
   const [filter, setFilter] = useState<FilterTab>('pending');
@@ -50,17 +52,38 @@ export default function RequestsPage() {
     return { pending, approved, rejected, all: requests.length };
   }, [requests]);
 
-  const handleApprove = (req: SeatRequest) => {
+  const handleApprove = async (req: SeatRequest) => {
     approveRequest(req.id);
-    addToast('success', `Request for Seat #${req.seat} approved`);
-    // Navigate to add member page for this seat and pass metadata to auto-fill
-    const query = new URLSearchParams({
-      seat: String(req.seat),
+
+    // Auto-allot the member to the seat with request data
+    const joinDate = todayISO();
+    const duration = '3M' as const;
+    const expiry = calcExpiry(joinDate, duration);
+
+    const success = await add(req.seat, {
       name: req.userName,
       phone: req.userPhone,
+      shift: 'morning',
+      joinDate,
+      duration,
+      expiry,
+      fee: 'paid',
       paymentMode: req.paymentMode || 'upi',
+      termsAccepted: true,
     });
-    router.push(`/?${query.toString()}`);
+
+    if (success) {
+      addToast('success', `Seat #${req.seat} allotted to ${req.userName}`);
+    } else {
+      addToast('warning', `Request approved but Seat #${req.seat} is occupied. Use the form to assign manually.`);
+      const query = new URLSearchParams({
+        seat: String(req.seat),
+        name: req.userName,
+        phone: req.userPhone,
+        paymentMode: req.paymentMode || 'upi',
+      });
+      router.push(`/?${query.toString()}`);
+    }
   };
 
   const handleReject = (id: string | number, seat: number) => {
