@@ -9,7 +9,7 @@ import { type Member, type Shift } from '@/lib/types';
 import { getSeatStatus, cn, firstName } from '@/lib/utils';
 import { SeatMapContainer, SeatMapWrapper, type FaceDir } from '@/components/seat/SeatMap';
 import SeatRequestSheet from '@/components/seat/SeatRequestSheet';
-import { Grid3X3, Sun, Moon, Layers, LogOut, Inbox, Wind, VolumeX, Eye } from 'lucide-react';
+import { Grid3X3, Sun, Moon, Layers, LogOut, Inbox } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -285,100 +285,88 @@ function BrowseSeatTile({
   const status = getSeatStatus(member);
   const isVacant = member.vacant;
 
-  const tileClass = isVacant 
-    ? "bg-[var(--bg-surface)] border-[var(--border-strong)] hover:border-[var(--sapphire-400)]/70 hover:bg-[var(--sapphire-400)]/15 hover:shadow-[var(--shadow-glow-sapphire)] cursor-pointer hover:scale-[1.08] hover:z-20"
-    : status === 'expiring' ? "bg-[var(--amber-500)]/10 border-[var(--amber-500)]/30"
-    : status === 'expired' ? "bg-[var(--ruby-500)]/10 border-[var(--ruby-500)]/30"
-    : status === 'due' ? "bg-[var(--ruby-500)]/15 border-[var(--ruby-500)]/40"
-    : "bg-[var(--emerald-500)]/10 border-[var(--emerald-500)]/30";
+  // Visual config per status
+  const cfg = isVacant
+    ? hasRequest
+      ? { accent: 'var(--amber-500)', textColor: 'text-[var(--amber-500)]', bg: 'bg-[var(--amber-500)]/8', border: 'border-[var(--amber-500)]/25' }
+      : { accent: 'var(--sapphire-400)', textColor: 'text-[var(--sapphire-400)]', bg: 'bg-[var(--sapphire-400)]/8', border: 'border-[var(--sapphire-400)]/25' }
+    : status === 'expiring'
+      ? { accent: 'var(--amber-500)', textColor: 'text-[var(--amber-400)]', bg: 'bg-[var(--amber-500)]/8', border: 'border-[var(--amber-500)]/25' }
+    : status === 'expired' || status === 'due'
+      ? { accent: 'var(--ruby-500)', textColor: 'text-[var(--ruby-400)]', bg: 'bg-[var(--ruby-500)]/8', border: 'border-[var(--ruby-500)]/25' }
+    : { accent: 'var(--emerald-500)', textColor: 'text-[var(--emerald-400)]', bg: 'bg-[var(--emerald-500)]/8', border: 'border-[var(--emerald-500)]/25' };
 
   const shiftIcon = member.shift === 'evening' ? <Moon className="w-[10px] h-[10px]" />
-    : member.shift === 'full' ? <div className="flex gap-[2px]"><Sun className="w-2.5 h-2.5" /><Moon className="w-2.5 h-2.5" /></div>
+    : member.shift === 'full' ? <><Sun className="w-2.5 h-2.5" /><Moon className="w-2.5 h-2.5" /></>
     : <Sun className="w-[10px] h-[10px]" />;
-
-  // Mock amenities based on seat num for the tooltip
-  const isWindow = member.seat % 4 === 0 || member.seat > 80;
-  const isAC = member.seat % 3 === 0;
-  const isSilent = member.seat > 40 && member.seat < 60;
-
-  const amenities = [
-    isWindow && { label: 'Near Window', icon: Eye },
-    isAC && { label: 'Cooling Zone', icon: Wind },
-    isSilent && { label: 'Silent Corner', icon: VolumeX }
-  ].filter(Boolean) as { label: string; icon: any }[];
 
   return (
     <div className="group relative w-full h-full">
       <button
         onClick={() => isVacant && onClick(member.seat)}
         className={cn(
-          'relative flex flex-col items-center justify-between rounded-xl w-full h-full py-1.5 px-1 transition-all duration-300 border backdrop-blur-sm',
-          tileClass,
-          isVacant ? 'active:scale-95' : 'cursor-default'
+          'relative flex flex-col items-center justify-between rounded-xl w-full h-full py-1.5 px-1 transition-all duration-300 border overflow-hidden',
+          cfg.bg, cfg.border,
+          isVacant
+            ? 'cursor-pointer hover:scale-[1.08] hover:z-20 hover:shadow-lg active:scale-95'
+            : 'cursor-default',
         )}
         aria-label={`Seat ${member.seat} — ${isVacant ? 'vacant' : member.name}`}
       >
-        {/* Chair Indicator */}
-        <div className={cn(
-          "absolute rounded-full bg-[var(--bg-muted)] opacity-50",
-          face === 'up' && "bottom-[-5px] left-[20%] right-[20%] h-[3px]",
-          face === 'down' && "top-[-5px] left-[20%] right-[20%] h-[3px]",
-          face === 'left' && "right-[-5px] top-[20%] bottom-[20%] w-[3px]",
-          face === 'right' && "left-[-5px] top-[20%] bottom-[20%] w-[3px]"
-        )} />
+        {/* Top accent stripe */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2.5px] rounded-t-xl"
+          style={{ background: cfg.accent }}
+        />
 
-        <span className="text-[11px] font-bold text-[var(--text-secondary)] self-start leading-none pl-0.5">
+        {/* Chair direction indicator */}
+        <div className={cn(
+          "absolute rounded-full opacity-40",
+          face === 'up'    && "bottom-[-4px] left-[20%] right-[20%] h-[3px]",
+          face === 'down'  && "top-[-4px] left-[20%] right-[20%] h-[3px]",
+          face === 'left'  && "right-[-4px] top-[20%] bottom-[20%] w-[3px]",
+          face === 'right' && "left-[-4px] top-[20%] bottom-[20%] w-[3px]",
+        )} style={{ background: cfg.accent }} />
+
+        {/* Seat number */}
+        <span className={cn(
+          "text-[12px] font-black font-mono leading-none mt-1",
+          cfg.textColor,
+        )}>
           {String(member.seat).padStart(2, '0')}
         </span>
 
+        {/* Name or status label */}
         {isVacant ? (
           <span className={cn(
-            "text-[10px] font-bold tracking-wider uppercase mt-1",
-            hasRequest ? "text-[var(--amber-500)]" : "text-[var(--sapphire-400)]"
+            "text-[9px] font-bold tracking-wider uppercase mt-auto",
+            cfg.textColor, "opacity-80",
           )}>
             {hasRequest ? 'Pending' : 'Vacant'}
           </span>
         ) : (
-          <span className="text-[10px] font-bold text-[var(--text-primary)] text-center w-full leading-tight truncate px-0.5">
+          <span className="text-[10px] font-bold text-[var(--text-primary)] text-center w-full leading-tight truncate px-0.5 mt-auto">
             {firstName(member.name)}
           </span>
         )}
 
+        {/* Shift icons or tap hint */}
         <div className={cn(
-          "flex items-center gap-0.5 mt-1",
-          isVacant ? "text-[var(--text-tertiary)]" : "text-[var(--text-secondary)]"
+          "flex items-center gap-0.5 mt-0.5 mb-0.5",
+          isVacant ? cn(cfg.textColor, "opacity-60") : "text-[var(--text-secondary)]",
         )}>
           {isVacant ? (
-             <span className="text-[9px] tracking-widest uppercase font-medium">
-               {hasRequest ? '⏳' : 'Tap'}
-             </span>
+            <span className="text-[8px] tracking-widest uppercase font-bold">
+              {hasRequest ? '⏳' : '● TAP'}
+            </span>
           ) : shiftIcon}
         </div>
 
+        {/* Pending request pulse dot */}
         {hasRequest && (
-          <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[var(--amber-500)] border-2 border-[var(--bg-surface)] animate-pulse" />
+          <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--amber-500)] border-2 border-[var(--bg-void)] animate-pulse" />
         )}
       </button>
-
-      {/* Tooltip for vacant seats */}
-      {isVacant && amenities.length > 0 && (
-        <div className="absolute bottom-[115%] left-1/2 -translate-x-1/2 mb-1 w-max min-w-[120px] bg-[var(--bg-base)]/95 backdrop-blur-xl border border-[var(--saffron-500)]/30 rounded-xl p-3 shadow-xl opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 pointer-events-none transition-all duration-300 z-[999] origin-bottom">
-          <div className="text-[9px] font-black text-[var(--saffron-500)] mb-2 uppercase tracking-[0.15em] flex items-center justify-center gap-1.5 border-b border-[var(--saffron-500)]/20 pb-1.5">
-            <span className="w-1.5 h-1.5 bg-[var(--saffron-500)] rounded-full animate-pulse shadow-[0_0_8px_var(--saffron-500)]" />
-            Amenities
-          </div>
-          <ul className="space-y-2">
-            {amenities.map(a => (
-              <li key={a.label} className="flex items-center gap-2 text-[10px] font-bold text-[var(--text-secondary)]">
-                <a.icon className="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
-                {a.label}
-              </li>
-            ))}
-          </ul>
-          {/* Tooltip arrow */}
-          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[var(--bg-base)]/95 border-b border-r border-[var(--saffron-500)]/30 rotate-45 backdrop-blur-xl" />
-        </div>
-      )}
     </div>
   );
 }

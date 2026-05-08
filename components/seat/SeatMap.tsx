@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactNode, memo } from 'react';
+import React, { ReactNode, memo, useState } from 'react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -22,8 +22,8 @@ interface WallDetail {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const CELL = 64;
-const PAD = 32;
+const CELL = 76;   // ↑ from 64 — more breathing room, luxury spacing
+const PAD = 48;   // ↑ from 32 — wider margins, architectural framing
 const COLS = 14;
 const ROWS = 12;
 
@@ -44,11 +44,11 @@ const WALL_DETAILS: WallDetail[] = [
 // ─── Logic ────────────────────────────────────────────────────────────────────
 
 export function getSeatPosition(n: number): SeatPosition {
-  if (n >= 1 && n <= 10) return { x: 1, y: 2 + (n - 1), face: 'right' }; // Flipped to face desk
-  if (n >= 11 && n <= 20) return { x: 3, y: 2 + (n - 11), face: 'left' }; // Flipped to face desk
-  if (n >= 23 && n <= 32) return { x: 4, y: 2 + (n - 23), face: 'right' };
-  if (n === 21) return { x: 3, y: 1, face: 'down' };
-  if (n === 22) return { x: 4, y: 1, face: 'down' };
+  if (n >= 1 && n <= 10) return { x: 1, y: 2 + (n - 1), face: 'right' };
+  if (n >= 11 && n <= 20) return { x: 3, y: 3 + (n - 11), face: 'left' };
+  if (n === 21) return { x: 3, y: 2, face: 'down' };
+  if (n === 22) return { x: 4, y: 2, face: 'down' };
+  if (n >= 23 && n <= 32) return { x: 4, y: 3 + (n - 23), face: 'right' };
   if (n >= 33 && n <= 42) return { x: 6, y: 2 + (n - 33), face: 'left' };
   if (n >= 43 && n <= 52) return { x: 7, y: 2 + (n - 43), face: 'right' };
   if (n >= 80 && n <= 84) return { x: 9 + (n - 80), y: 1, face: 'down' };
@@ -61,31 +61,43 @@ export function getSeatPosition(n: number): SeatPosition {
 }
 
 function toPixel(col: number, row: number) {
-  const SIZE = 48; // Seat size
+  const SIZE = 48;
+  // Tiny sub-pixel row offset by column parity — breaks robotic alignment
+  const jitter = (col % 2 === 0) ? 2 : -2;
   return {
     left: PAD + (col - 1) * CELL + (CELL - SIZE) / 2,
-    top: PAD + (row - 1) * CELL + (CELL - SIZE) / 2,
+    top: PAD + (row - 1) * CELL + (CELL - SIZE) / 2 + jitter,
   };
 }
 
 // ─── Visual Components ────────────────────────────────────────────────────────
 
-// Renders "desks" between facing rows to give the layout architectural context
-const Desk = ({ leftCol, topRow, widthCols, heightRows }: { leftCol: number; topRow: number; widthCols: number; heightRows: number }) => (
+/** Deep, bevelled desk with material depth */
+const Desk = ({
+  leftCol, topRow, widthCols, heightRows,
+}: {
+  leftCol: number; topRow: number; widthCols: number; heightRows: number;
+}) => (
   <div
-    className="absolute rounded-xl bg-gradient-to-br from-[var(--bg-surface)]/40 to-[var(--bg-void)]/80 border border-[var(--border-default)]/40 shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+    className="absolute rounded-2xl border border-white/10"
     style={{
       left: PAD + (leftCol - 1) * CELL + CELL * 0.8,
       top: PAD + (topRow - 1) * CELL + CELL * 0.2,
       width: widthCols * CELL - CELL * 0.6,
       height: heightRows * CELL - CELL * 0.4,
+      background: 'linear-gradient(145deg, #1e293b, #111827 50%, #0f172a)',
+      boxShadow: '0 20px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05)',
     }}
-  />
+  >
+    {/* Inner bevel highlight */}
+    <div className="absolute inset-[1px] rounded-2xl border border-white/[0.04] pointer-events-none" />
+  </div>
 );
 
+/** Layered plant — glowing orb instead of blurry blob */
 const Plant = ({ col, row }: { col: number; row: number }) => (
   <div
-    className="absolute flex items-center justify-center rounded-full bg-[var(--emerald-500)]/10 border border-[var(--emerald-500)]/20 blur-[1px]"
+    className="absolute"
     style={{
       left: PAD + (col - 1) * CELL + CELL * 0.2,
       top: PAD + (row - 1) * CELL + CELL * 0.2,
@@ -93,27 +105,43 @@ const Plant = ({ col, row }: { col: number; row: number }) => (
       height: CELL * 0.6,
     }}
   >
-    <div className="w-1/2 h-1/2 bg-[var(--emerald-400)]/30 rounded-full" />
+    {/* Outer glow */}
+    <div className="absolute inset-0 rounded-full bg-emerald-500/20 blur-md" />
+    {/* Solid core */}
+    <div className="absolute inset-[8px] rounded-full bg-gradient-to-br from-emerald-400/80 to-emerald-600/60 shadow-[0_0_12px_rgba(52,211,153,0.4)]" />
   </div>
 );
 
-function FloorDecorations() {
+/** Subtle grid lines + dot overlay for architectural planning feel */
+const GridDots = memo(function GridDots() {
   return (
-    <div className="absolute inset-0 pointer-events-none z-0">
-      {/* Desks spanning between the seat columns */}
-      <Desk leftCol={1} topRow={2} widthCols={2} heightRows={10} />
-      <Desk leftCol={4} topRow={2} widthCols={2} heightRows={10} />
-      <Desk leftCol={9} topRow={3} widthCols={1} heightRows={7} />
-      <Desk leftCol={12} topRow={3} widthCols={1} heightRows={9} />
-
-      {/* Decorative Plants */}
-      <Plant col={1} row={1} />
-      <Plant col={13} row={12} /> {/* Moved to col 13 to avoid overlapping seat 95 */}
-      <Plant col={1} row={12} />
-    </div>
+    <>
+      {/* Ultra-faint grid lines */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0 opacity-100"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)
+          `,
+          backgroundSize: `${CELL}px ${CELL}px`,
+          backgroundPosition: `${PAD}px ${PAD}px`,
+        }}
+      />
+      {/* Dot intersections */}
+      <svg className="absolute inset-0 pointer-events-none z-0 opacity-30" width={CANVAS_W} height={CANVAS_H}>
+        <defs>
+          <pattern id="grid-dots" x={PAD} y={PAD} width={CELL} height={CELL} patternUnits="userSpaceOnUse">
+            <circle cx="0" cy="0" r="1.2" fill="#94a3b8" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid-dots)" />
+      </svg>
+    </>
   );
-}
+});
 
+/** Wall fixture — windows & ACs embedded in structural rails */
 function WallLabel({ detail }: { detail: WallDetail }) {
   const { label, start, end, wall, type } = detail;
   const size = (end - start + 1) * CELL - 12;
@@ -125,24 +153,21 @@ function WallLabel({ detail }: { detail: WallDetail }) {
     : { left: offset, width: size, height: 24, [wall]: 8, position: 'absolute' };
 
   const isWindow = type === 'window';
-  
-  // Vibrant colors for Window vs AC
-  const colorCls = isWindow
-    ? 'bg-gradient-to-r from-[var(--sapphire-500)]/30 via-[var(--sapphire-400)]/50 to-[var(--sapphire-500)]/30 border-[var(--sapphire-400)]/60 shadow-[0_0_15px_rgba(59,130,246,0.3)_inset]'
-    : 'bg-gradient-to-r from-[var(--rose-500)]/30 via-[var(--rose-400)]/50 to-[var(--rose-500)]/30 border-[var(--rose-400)]/60 shadow-[0_0_15px_rgba(244,63,94,0.3)_inset]';
 
   return (
-    <div className={`rounded-xl border backdrop-blur-md flex items-center justify-center z-10 overflow-hidden ${colorCls}`} style={style}>
-      <div 
+    <div
+      className={`rounded-xl border backdrop-blur-md flex items-center justify-center z-10 overflow-hidden ${isWindow
+          ? 'bg-gradient-to-r from-blue-500/25 via-blue-400/45 to-blue-500/25 border-blue-400/50 shadow-[0_0_18px_rgba(59,130,246,0.35)_inset]'
+          : 'bg-gradient-to-r from-rose-500/25 via-rose-400/45 to-rose-500/25 border-rose-400/50 shadow-[0_0_18px_rgba(244,63,94,0.35)_inset]'
+        }`}
+      style={style}
+    >
+      <div
         className="absolute flex items-center justify-center gap-1.5"
         style={isVertical ? { transform: wall === 'right' ? 'rotate(90deg)' : 'rotate(-90deg)', width: size } : {}}
       >
-        {isWindow ? (
-          <span className="text-[var(--sapphire-200)] text-[10px]">🪟</span>
-        ) : (
-          <span className="text-[var(--rose-200)] text-[10px]">❄️</span>
-        )}
-        <span className={`text-[9px] font-bold tracking-widest uppercase whitespace-nowrap ${isWindow ? 'text-[var(--sapphire-100)]' : 'text-[var(--rose-100)]'}`}>
+        <span className="text-[10px]">{isWindow ? '🪟' : '❄️'}</span>
+        <span className={`text-[9px] font-bold tracking-widest uppercase whitespace-nowrap drop-shadow-md ${isWindow ? 'text-blue-100' : 'text-rose-100'}`}>
           {label}
         </span>
       </div>
@@ -150,29 +175,41 @@ function WallLabel({ detail }: { detail: WallDetail }) {
   );
 }
 
-const GridDots = memo(function GridDots() {
+/** Floor decorations — desks & plants */
+function FloorDecorations() {
   return (
-    <svg className="absolute inset-0 pointer-events-none z-0 opacity-40" width={CANVAS_W} height={CANVAS_H}>
-      <defs>
-        <pattern id="grid-dots" x={PAD} y={PAD} width={CELL} height={CELL} patternUnits="userSpaceOnUse">
-          <circle cx="0" cy="0" r="1" fill="var(--text-disabled, #888)" />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#grid-dots)" />
-    </svg>
-  );
-});
+    <div className="absolute inset-0 pointer-events-none z-0">
+      <Desk leftCol={1} topRow={2} widthCols={2} heightRows={10} />
+      <Desk leftCol={4} topRow={3} widthCols={2} heightRows={10} />
+      <Desk leftCol={9} topRow={3} widthCols={1} heightRows={7} />
+      <Desk leftCol={12} topRow={3} widthCols={1} heightRows={9} />
 
+      <Plant col={1} row={1} />
+      <Plant col={13} row={12} />
+      <Plant col={1} row={12} />
+    </div>
+  );
+}
+
+/** Architecturally-grounded entry gate */
 function EntryMarker() {
   return (
     <div
-      className="absolute top-0 -translate-x-1/2 h-14 border-x-2 border-b-2 border-[var(--amber-500)]/40 bg-gradient-to-b from-[var(--amber-500)]/5 to-[var(--amber-500)]/20 rounded-b-3xl flex items-end justify-center pb-2.5 z-20 backdrop-blur-md shadow-[0_15px_30px_rgba(245,158,11,0.1)]"
+      className="absolute top-0 -translate-x-1/2 z-20"
       style={{ left: PAD + 6 * CELL, width: 4 * CELL }}
     >
-      <div className="flex items-center gap-2 bg-[var(--bg-surface)] px-4 py-1.5 rounded-full border border-[var(--amber-500)]/50 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-        <span className="text-sm">🚪</span>
-        <div className="w-2 h-2 bg-[var(--amber-400)] rounded-full animate-pulse shadow-[0_0_10px_var(--amber-400)]" />
-        <span className="text-[10px] font-black text-[var(--amber-400)] uppercase tracking-[0.2em]">Entrance</span>
+      {/* Structural archway */}
+      <div className="w-full h-16 bg-[#111827] border-x-2 border-b-2 border-white/10 rounded-b-[2rem] shadow-2xl flex items-end justify-center pb-2.5 backdrop-blur-md overflow-hidden">
+        {/* Doorway glow strip */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+        {/* Soft amber wash */}
+        <div className="absolute inset-0 bg-gradient-to-b from-amber-500/8 to-transparent pointer-events-none" />
+        {/* Badge */}
+        <div className="relative flex items-center gap-2 bg-[#0f172a] px-4 py-1.5 rounded-full border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+          <span className="text-sm">🚪</span>
+          <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
+          <span className="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] drop-shadow-sm">Entrance</span>
+        </div>
       </div>
     </div>
   );
@@ -192,56 +229,144 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
   const { x, y, face } = getSeatPosition(seatNum);
   const { left, top } = toPixel(x, y);
 
-  const backrestStyles = {
-    up: "top-0 left-0 w-full h-1.5 rounded-t-md",
-    down: "bottom-0 left-0 w-full h-1.5 rounded-b-md",
-    left: "top-0 left-0 h-full w-1.5 rounded-l-md",
-    right: "top-0 right-0 h-full w-1.5 rounded-r-md"
+  const backrestStyles: Record<FaceDir, string> = {
+    up: 'top-0    left-0 w-full h-1.5 rounded-t-md',
+    down: 'bottom-0 left-0 w-full h-1.5 rounded-b-md',
+    left: 'top-0    left-0 h-full w-1.5 rounded-l-md',
+    right: 'top-0   right-0 h-full w-1.5 rounded-r-md',
   };
 
   return (
-    <div
-      className={`absolute transition-transform duration-300 hover:scale-105 hover:z-30 ${className}`}
+    <button
+      type="button"
+      className={`
+        absolute flex items-center justify-center
+        transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
+        hover:scale-110 hover:-translate-y-1 hover:z-30
+        hover:rotate-[1deg]
+        shadow-[0_6px_12px_rgba(0,0,0,0.35)]
+        hover:shadow-[0_12px_24px_rgba(0,0,0,0.5)]
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:z-30
+        ${className}
+      `}
       style={{ left, top, width: 48, height: 48 }}
       data-seat={seatNum}
+      aria-label={`Seat ${seatNum}`}
     >
-      <div className={`absolute bg-[var(--border-strong)] ${backrestStyles[face]}`} />
+      {/* Seat cushion base */}
+      <div className="absolute inset-[6px] rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 opacity-80" />
+      {/* Backrest rail */}
+      <div className={`absolute bg-slate-500/80 ${backrestStyles[face]}`} />
       {children(face)}
-    </div>
+    </button>
   );
 });
 
 export function SeatMapContainer({ children }: { children: ReactNode }) {
-  return (
-    <div className="w-full overflow-auto pb-8 pt-4 px-4 relative group scroll-smooth" style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y pinch-zoom' }}>
+  const [zoom, setZoom] = useState(1);
 
+  const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.15, 1.5));
+  const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.15, 0.5));
+
+  return (
+    <div
+      className="w-full overflow-auto pb-8 pt-4 px-4 relative group scroll-smooth"
+      style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y pinch-zoom' }}
+    >
+      {/* ── Zoom Controls — glassmorphism card ── */}
+      <div className="sticky left-0 top-0 z-50 flex gap-2 w-max mb-4 rounded-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35)] backdrop-blur-2xl bg-white/[0.04] p-2">
+        <button
+          onClick={handleZoomOut}
+          className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 active:scale-95 hover:scale-105 text-white font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          aria-label="Zoom out"
+        >
+          −
+        </button>
+        <div className="flex items-center justify-center w-12 text-xs font-mono text-white/60">
+          {Math.round(zoom * 100)}%
+        </div>
+        <button
+          onClick={handleZoomIn}
+          className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 active:scale-95 hover:scale-105 text-white font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          aria-label="Zoom in"
+        >
+          +
+        </button>
+      </div>
+
+      {/* ── Main Canvas ── */}
       <div
-        className="relative mx-auto rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.4)] transform-origin-top-left transition-transform duration-500 ease-out border border-white/5 bg-[#0f1115] overflow-hidden"
-        style={{ width: CANVAS_W, height: CANVAS_H, minWidth: CANVAS_W }}
+        className="relative mx-auto rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.55)] transition-transform duration-300 ease-out overflow-hidden"
+        style={{
+          width: CANVAS_W,
+          height: CANVAS_H,
+          minWidth: CANVAS_W,
+          transform: `scale(${zoom})`,
+          transformOrigin: 'top center',
+          // Cinematic layered floor
+          background: `
+            radial-gradient(circle at top left,  rgba(255,255,255,0.025), transparent 30%),
+            radial-gradient(circle at bottom right, rgba(16,185,129,0.04), transparent 35%),
+            linear-gradient(145deg, #111827, #0b1220 40%, #0a0f17)
+          `,
+          // Structural outer wall rail
+          border: '6px solid #1f2937',
+        }}
       >
-        {/* Architectural grid */}
+        {/* ── Ambient lighting layers ── */}
+        {/* Top-center blue wash — overhead light source */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.09),transparent_42%)] pointer-events-none z-0" />
+        {/* Bottom vignette — depth shadow */}
+        <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-black/35 to-transparent pointer-events-none z-0" />
+
+        {/* ── Grid ── */}
         <GridDots />
 
-        {/* Soft studio lighting effect */}
-        <div className="absolute top-0 left-1/4 w-[50%] h-[30%] bg-[var(--sapphire-500)]/10 blur-[120px] pointer-events-none rounded-full z-0" />
-        <div className="absolute bottom-0 right-1/4 w-[40%] h-[40%] bg-[var(--emerald-500)]/5 blur-[120px] pointer-events-none rounded-full z-0" />
+        {/* ── Volumetric glows ── */}
+        <div className="absolute top-0 left-1/4 w-[50%] h-[30%] bg-blue-500/8 blur-[130px] pointer-events-none rounded-full z-0" />
+        <div className="absolute bottom-0 right-1/4 w-[40%] h-[40%] bg-emerald-500/5 blur-[130px] pointer-events-none rounded-full z-0" />
 
-        {/* Structural walls */}
-        <div className="absolute inset-[12px] rounded-3xl border-2 border-[var(--border-strong)]/40 pointer-events-none z-10 shadow-[inset_0_0_100px_rgba(0,0,0,0.5)] bg-gradient-to-br from-white/[0.01] to-transparent" />
+        {/* ── Inner border frame (inset from wall rail) ── */}
+        <div className="absolute inset-[12px] rounded-3xl border border-white/[0.04] pointer-events-none z-10 shadow-[inset_0_0_100px_rgba(0,0,0,0.45)]" />
 
+        {/* ── Noise texture overlay ── */}
+        <div
+          className="absolute inset-0 pointer-events-none z-0 opacity-[0.025]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            backgroundSize: '128px 128px',
+          }}
+        />
+
+        {/* ── Section labels — spatial immersion ── */}
+        <div className="absolute pointer-events-none z-10" style={{ left: PAD + 0 * CELL + 4, top: PAD - 20 }}>
+          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-blue-400/50">Cluster A</span>
+        </div>
+        <div className="absolute pointer-events-none z-10" style={{ left: PAD + 5 * CELL + 4, top: PAD - 20 }}>
+          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-blue-400/50">Cluster B</span>
+        </div>
+        <div className="absolute pointer-events-none z-10" style={{ left: PAD + 8 * CELL + 4, top: PAD - 20 }}>
+          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-emerald-400/50">AI Lab</span>
+        </div>
+        <div className="absolute pointer-events-none z-10" style={{ left: PAD + 12 * CELL + 4, top: PAD - 20 }}>
+          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-violet-400/50">Design Bay</span>
+        </div>
+
+        {/* ── Floor content ── */}
         <FloorDecorations />
         <EntryMarker />
-
         {WALL_DETAILS.map((d, i) => <WallLabel key={i} detail={d} />)}
 
+        {/* ── Seats ── */}
         <div className="absolute inset-0 z-20">
           {children}
         </div>
       </div>
 
-      {/* Mobile Hint - Fades out naturally as user scrolls */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-[var(--bg-surface)]/90 backdrop-blur-xl text-[var(--saffron-400)] text-[11px] uppercase font-bold tracking-[0.2em] px-6 py-3 rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-500 md:hidden border border-[var(--saffron-500)]/20 z-50 shadow-[0_10px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 translate-y-4 group-hover:translate-y-0">
-        <span className="w-2 h-2 rounded-full bg-[var(--saffron-500)] animate-pulse shadow-[0_0_10px_var(--saffron-500)]" />
+      {/* ── Mobile pan hint ── */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-xl text-amber-400 text-[11px] uppercase font-bold tracking-[0.2em] px-6 py-3 rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-500 md:hidden border border-amber-500/20 z-50 shadow-[0_10px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 translate-y-4 group-hover:translate-y-0">
+        <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
         Pan to explore
       </div>
     </div>
