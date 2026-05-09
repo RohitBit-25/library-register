@@ -32,6 +32,8 @@ export default function SeatGridContent() {
     return null;
   });
 
+  const [isMobile, setIsMobile] = useState(false);
+
   // Automatically update selected seat if searchParams changes
   useEffect(() => {
     const seatParam = searchParams.get('seat');
