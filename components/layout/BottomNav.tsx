@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -31,8 +32,7 @@ const userTabs = [
 ];
 
 export default function BottomNav() {
-  const pathname = usePathname();
-  const router = useRouter();
+  const { isAdmin } = useAuth();
   const tabs = isAdmin ? adminTabs : userTabs;
 
   return (

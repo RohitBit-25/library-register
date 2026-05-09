@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import BottomSheet from '@/components/ui/BottomSheet';
 import AddMemberForm from '@/components/member/AddMemberForm';
-import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
+
 import { X, UserPlus } from 'lucide-react';
 import { type Member } from '@/lib/types';
 
