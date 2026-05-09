@@ -183,7 +183,7 @@ export function useMembers() {
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
       mutate();
       return true;
-    } catch (err) {
+    } catch {
       if (previousData) mutate(previousData, false);
 
       const msg = `Failed to add member to Seat ${seatNumber}. Please retry.`;

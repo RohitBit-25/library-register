@@ -32,6 +32,7 @@ const userTabs = [
 ];
 
 export default function BottomNav() {
+  const pathname = usePathname();
   const { isAdmin } = useAuth();
   const tabs = isAdmin ? adminTabs : userTabs;
 
