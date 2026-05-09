@@ -57,7 +57,7 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
   return (
     <LazyMotion features={domAnimation}>
       <div 
-        className="relative group"
+        className="relative group w-full h-full"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >

@@ -237,8 +237,7 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
   };
 
   return (
-    <button
-      type="button"
+    <div
       className={`
         absolute flex items-center justify-center
         transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
@@ -246,7 +245,7 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
         hover:rotate-[1deg]
         shadow-[0_6px_12px_rgba(0,0,0,0.35)]
         hover:shadow-[0_12px_24px_rgba(0,0,0,0.5)]
-        focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:z-30
+        focus-within:ring-2 focus-within:ring-amber-400 focus-within:z-30
         ${className}
       `}
       style={{ left, top, width: 48, height: 48 }}
@@ -258,7 +257,7 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
       {/* Backrest rail */}
       <div className={`absolute bg-slate-500/80 ${backrestStyles[face]}`} />
       {children(face)}
-    </button>
+    </div>
   );
 });
 
