@@ -11,6 +11,7 @@ import TopBar from '@/components/layout/TopBar';
 import ToastContainer from '@/components/ui/Toast';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 // ─── Routes that don't use AppShell chrome ──────────────────────
 const STANDALONE_ROUTES = ['/landing', '/kiosk'];
@@ -65,8 +66,15 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
       {isAdmin && <Sidebar dueCount={stats.due} pendingRequests={pendingCount} />}
       <TopBar />
-      <main className={`min-h-screen pb-28 pt-16 lg:pb-8 transition-all ${isAdmin ? 'lg:ml-[calc(var(--sidebar-width)+calc(var(--sidebar-margin)*2))] lg:pt-4' : 'lg:pt-16'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <main 
+        className={cn(
+          "min-h-screen transition-all flex flex-col pb-28 lg:pb-8",
+          isAdmin 
+            ? "pt-24 lg:ml-[252px] lg:pr-4 lg:pt-4" // Admin mobile needs pt-24 for TopBar, desktop uses Sidebar so pt-4
+            : "pt-24 lg:pt-24" // Users always have TopBar, so pt-24 everywhere
+        )}
+      >
+        <div className="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           {children}
         </div>
       </main>

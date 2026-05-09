@@ -103,7 +103,7 @@ export default function SeatGridContent() {
   return (
     <div className="relative min-h-screen">
       <div className={cn(
-        "transition-all duration-500 ease-in-out px-4 py-4 md:px-8 lg:px-12",
+        "transition-all duration-500 ease-in-out w-full",
         selectedSeat !== null && !isMobile ? 'pr-[380px]' : ''
       )}>
         
@@ -116,7 +116,7 @@ export default function SeatGridContent() {
               className="flex items-center gap-2 text-[var(--saffron-400)] mb-2"
             >
               <LayoutDashboard size={14} className="drop-shadow-[0_0_8px_var(--saffron-500)]" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] bg-clip-text text-transparent bg-[var(--gradient-header-tag)]">
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] bg-gradient-to-r from-[var(--saffron-300)] to-[var(--saffron-600)] bg-clip-text text-transparent">
                 Management Quarters
               </span>
             </motion.div>
@@ -124,7 +124,7 @@ export default function SeatGridContent() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-4xl md:text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-[var(--gradient-header-title)] drop-shadow-sm"
+              className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-b from-white via-[#F5E8D4] to-[#C4A882] bg-clip-text text-transparent drop-shadow-sm"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               The Reading Hall

@@ -289,9 +289,7 @@
     transition: background 350ms var(--ease-smooth), border-color 350ms var(--ease-smooth);
   }
 
-  .noise-pattern {
-    position: relative;
-  }
+
   .noise-pattern::after {
     content: '';
     position: absolute;
