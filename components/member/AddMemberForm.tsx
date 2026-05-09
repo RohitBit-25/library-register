@@ -117,7 +117,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
   };
 
   return (
-    <div className="h-full overflow-y-auto custom-scrollbar px-1 pb-4">
+    <div className="px-1 pb-4">
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6" noValidate>
       {/* Seat Selection */}
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-5">
