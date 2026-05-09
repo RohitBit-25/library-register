@@ -275,7 +275,7 @@ export default function MemberTable({
       </div>
 
       {/* Desktop table */}
-      <div className="hidden md:block overflow-x-auto rounded-2xl border border-[var(--border-default)] shadow-sm bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] relative">
+      <div className="hidden md:block overflow-x-auto overflow-y-auto max-h-[calc(100vh-220px)] rounded-2xl shadow-sm bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] relative custom-scrollbar">
         <table className="w-full text-sm">
           <thead className="sticky top-0 z-10 backdrop-blur-xl bg-[var(--bg-surface)]/90 border-b border-[var(--border-default)]">
             <tr>
