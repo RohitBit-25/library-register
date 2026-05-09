@@ -18,6 +18,11 @@ export default function LandingPage() {
 
   if (isAuthenticated) return null;
 
+  // Function to initialize audio on first interaction to bypass autoplay policies
+  function handleUserInteraction() {
+    // We can add audio logic here if needed later
+  }
+
   function handleStudentClick() {
     loginAsUser();
     router.push('/browse');
@@ -147,13 +152,28 @@ export default function LandingPage() {
         }
         .lp-vign {
           position: absolute; inset: 0;
-          background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 20%, rgba(4,2,1,0.75) 100%);
+          background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 20%, rgba(4,2,1,0.85) 100%);
           pointer-events: none;
         }
         .lp-vign2 {
           position: absolute; inset: 0;
-          background: linear-gradient(to bottom, rgba(4,2,1,0.5) 0%, transparent 20%, transparent 75%, rgba(4,2,1,0.8) 100%);
+          background: linear-gradient(to bottom, rgba(4,2,1,0.6) 0%, transparent 25%, transparent 70%, rgba(4,2,1,0.9) 100%);
           pointer-events: none;
+        }
+
+        /* ── Parallax Background Image ── */
+        .lp-bg-image {
+          position: fixed;
+          top: -5%; left: -5%; right: -5%; bottom: -5%;
+          background: url('/royal-library-bg.png') center/cover no-repeat;
+          opacity: 0.15;
+          z-index: 0;
+          pointer-events: none;
+          animation: bg-pan 30s infinite alternate ease-in-out;
+        }
+        @keyframes bg-pan {
+          0% { transform: scale(1) translate(0, 0); }
+          100% { transform: scale(1.05) translate(1%, 1%); }
         }
 
         /* ── Floating Gold Dust ── */
@@ -680,10 +700,11 @@ export default function LandingPage() {
         }
       `}</style>
 
-      <div className="lp-root">
+      <div className="lp-root" onClick={handleUserInteraction}>
 
         {/* ── Background ── */}
-        <svg className="lp-jaal" xmlns="http://www.w3.org/2000/svg">
+        <div className="lp-bg-image" />
+        <svg className="lp-jaal" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.15 }}>
           <defs>
             <pattern id="jp" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
               <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="#b8760e" strokeWidth="0.5" />
