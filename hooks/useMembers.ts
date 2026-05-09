@@ -11,7 +11,7 @@ const fetcher = async (url: string) => {
   const res = await fetch(url);
   if (!res.ok) {
     const error = new Error(`API Error: ${res.status} ${res.statusText}`);
-    (error as any).status = res.status;
+    Object.assign(error, { status: res.status });
     throw error;
   }
   return res.json();
@@ -103,7 +103,7 @@ export function useMembers() {
       }
 
       mutate(); // Revalidate
-    } catch (err) {
+    } catch {
       // Rollback optimistic update
       if (previousData) mutate(previousData, false);
 
@@ -145,7 +145,7 @@ export function useMembers() {
       const res = await fetchWithRetry(`/api/members/${seat}`, { method: 'DELETE' });
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
       mutate();
-    } catch (err) {
+    } catch {
       if (previousData) mutate(previousData, false);
 
       const msg = `Failed to vacate Seat ${seat}. Please retry.`;

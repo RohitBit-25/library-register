@@ -16,24 +16,33 @@ import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
 
 export default function SeatGridContent() {
-  const { members, update, vacate, renew, add, isLoading, isError, lastError, clearError } = useMembers();
+  const { members, update, vacate, renew, add, isLoading } = useMembers();
   const { isAdmin } = useAuth();
   const { addToast } = useToast();
   const searchParams = useSearchParams();
 
-  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Auto-select seat from URL query param (e.g., /?seat=5)
-  useEffect(() => {
+  const [selectedSeat, setSelectedSeat] = useState<number | null>(() => {
     const seatParam = searchParams.get('seat');
     if (seatParam) {
       const seatNum = parseInt(seatParam, 10);
       if (seatNum >= 1 && seatNum <= 95) {
-        setSelectedSeat(seatNum);
+        return seatNum;
       }
     }
-  }, [searchParams]);
+    return null;
+  });
+
+  // Automatically update selected seat if searchParams changes
+  useEffect(() => {
+    const seatParam = searchParams.get('seat');
+    if (seatParam) {
+      const seatNum = parseInt(seatParam, 10);
+      if (seatNum >= 1 && seatNum <= 95 && seatNum !== selectedSeat) {
+        // queueMicrotask prevents the synchronous setState cascade warning
+        queueMicrotask(() => setSelectedSeat(seatNum));
+      }
+    }
+  }, [searchParams, selectedSeat]);
 
   // Stats calculation for the header
   const stats = useMemo(() => {

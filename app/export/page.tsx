@@ -5,7 +5,7 @@ import { useMembers } from '@/hooks/useMembers';
 import { useAttendance } from '@/hooks/useAttendance';
 import { useSeatRequests } from '@/hooks/useSeatRequests';
 import { useToast } from '@/hooks/useToast';
-import { fmtDate } from '@/lib/utils';
+
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { motion, Variants } from 'framer-motion';

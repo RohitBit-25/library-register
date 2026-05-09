@@ -30,7 +30,10 @@ export default function BrowsePage() {
 
   const stats = useMemo(() => {
     let occupied = 0, vacant = 0;
-    for (const m of members) m.vacant ? vacant++ : occupied++;
+    for (const m of members) {
+      if (m.vacant) vacant++;
+      else occupied++;
+    }
     return { occupied, vacant, total: members.length };
   }, [members]);
 

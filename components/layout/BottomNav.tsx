@@ -1,18 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard,
   Users,
   BarChart3,
-  X,
   Inbox,
   Eye,
-  LogOut,
   HardDrive,
 } from 'lucide-react';
 
@@ -37,14 +33,7 @@ const userTabs = [
 export default function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAdmin, logout } = useAuth();
-
   const tabs = isAdmin ? adminTabs : userTabs;
-
-  const handleLogout = () => {
-    logout();
-    router.push('/landing');
-  };
 
   return (
     <>
