@@ -17,6 +17,7 @@ const addMemberSchema = z.object({
   joinDate: z.string().min(1, 'Join date is required').refine(date => new Date(date) <= new Date(), {
     message: 'Join date cannot be in the future',
   }),
+  duration: z.enum(['1M', '3M', '6M', '1Y']),
   fee: z.enum(['paid', 'due']),
   paymentMode: z.enum(['upi', 'cash']),
   documentStatus: z.string().min(1, 'Document is required'),
@@ -43,6 +44,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
       name: initialData?.name || '',
       phone: initialData?.phone || '',
       joinDate: todayISO(),
+      duration: '3M',
       fee: 'paid',
       paymentMode: initialData?.paymentMode || 'upi',
       documentStatus: '',
@@ -53,6 +55,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
 
   const watchSeat = useWatch({ control, name: 'seat' });
   const watchJoinDate = useWatch({ control, name: 'joinDate' });
+  const watchDuration = useWatch({ control, name: 'duration' });
   const watchPaymentMode = useWatch({ control, name: 'paymentMode' });
   const watchDocumentStatus = useWatch({ control, name: 'documentStatus' });
 
@@ -65,12 +68,11 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
 
   const expiry = useMemo(() => {
     try {
-      // Default duration to 1M if field is removed
-      return calcExpiry(watchJoinDate, '1M');
+      return calcExpiry(watchJoinDate, watchDuration);
     } catch {
       return '';
     }
-  }, [watchJoinDate]);
+  }, [watchJoinDate, watchDuration]);
 
   // Auto-mark fee as paid if picking UPI or Cash
   useEffect(() => {
@@ -91,7 +93,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
       phone: data.phone, 
       shift: 'full', 
       joinDate: data.joinDate, 
-      duration: '1M', 
+      duration: data.duration, 
       expiry, 
       fee: data.fee,
       paymentMode: data.paymentMode,
@@ -106,6 +108,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
       name: '',
       phone: '',
       joinDate: todayISO(),
+      duration: '3M',
       fee: 'paid',
       paymentMode: 'upi',
       documentStatus: '',
@@ -160,8 +163,8 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           {...register('name')}
         />
 
-        {/* WhatsApp + Join Date */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+        {/* WhatsApp + Join Date + Duration */}
+        <div className="grid grid-cols-1 gap-5 mt-4">
           <FloatingLabelInput 
             label="WhatsApp Number" 
             icon={<PhoneIcon className="w-4 h-4" />}
@@ -170,12 +173,32 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
             error={errors.phone?.message}
             {...register('phone')}
           />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
           <FloatingLabelInput 
             label="Date of Joining" 
             type="date"
             error={errors.joinDate?.message}
             {...register('joinDate')}
           />
+          <FieldGroup label="Membership Duration" required error={errors.duration?.message}>
+            <Controller
+              name="duration"
+              control={control}
+              render={({ field }) => (
+                <SegmentedControl
+                  options={[
+                    { value: '1M', label: '1M' },
+                    { value: '3M', label: '3M' },
+                    { value: '6M', label: '6M' },
+                    { value: '1Y', label: '1Y' },
+                  ]}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </FieldGroup>
         </div>
         
         {/* Document Upload */}
