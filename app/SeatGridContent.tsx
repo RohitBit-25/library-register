@@ -64,6 +64,11 @@ export default function SeatGridContent() {
     ? members.find(m => m.seat === selectedSeat) || null
     : null;
 
+  const closeModal = () => {
+    setSelectedSeat(null);
+    window.history.replaceState(null, '', window.location.pathname);
+  };
+
   // Handlers (kept same logic, wrapped in cleaner visual feedback)
   const handleMarkPaid = (seat: number) => {
     update(seat, { fee: 'paid' }, (msg) => addToast('error', msg));
@@ -94,7 +99,7 @@ export default function SeatGridContent() {
     const success = await add(seat, data);
     if (success) {
       addToast('success', `Allotted Seat ${seat} to ${data.name}`);
-      setSelectedSeat(null);
+      closeModal();
     }
   };
 
@@ -214,7 +219,7 @@ export default function SeatGridContent() {
       {/* --- CENTERED MODAL DIALOG --- */}
       <AnimatePresence>
         {selectedSeat !== null && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setSelectedSeat(null)}>
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={closeModal}>
             <motion.div
               initial={{ scale: 0.95, opacity: 0, y: 10 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -227,7 +232,7 @@ export default function SeatGridContent() {
                 selectedMember?.vacant ? (
                   <AddMemberSheet
                     open={true}
-                    onClose={() => setSelectedSeat(null)}
+                    onClose={closeModal}
                     seat={selectedSeat}
                     vacantSeats={vacantSeats}
                     onSubmit={handleAddSubmit}
@@ -237,7 +242,7 @@ export default function SeatGridContent() {
                   <SeatDetailPanel
                     member={selectedMember}
                     open={true}
-                    onClose={() => setSelectedSeat(null)}
+                    onClose={closeModal}
                     onMarkPaid={handleMarkPaid}
                     onMarkDue={handleMarkDue}
                     onRenew={handleRenew}
@@ -249,7 +254,7 @@ export default function SeatGridContent() {
               ) : selectedMember?.vacant ? (
                 <AddMemberSheet
                   open={true}
-                  onClose={() => setSelectedSeat(null)}
+                  onClose={closeModal}
                   seat={selectedSeat}
                   vacantSeats={vacantSeats}
                   onSubmit={handleAddSubmit}
@@ -259,7 +264,7 @@ export default function SeatGridContent() {
                 <SeatDetailPanel
                   member={selectedMember}
                   open={true}
-                  onClose={() => setSelectedSeat(null)}
+                  onClose={closeModal}
                   onMarkPaid={handleMarkPaid}
                   onMarkDue={handleMarkDue}
                   onRenew={handleRenew}
