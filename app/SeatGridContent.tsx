@@ -224,17 +224,28 @@ export default function SeatGridContent() {
               onClick={(e) => e.stopPropagation()}
             >
               {!isAdmin ? (
-                <SeatDetailPanel
-                  member={selectedMember}
-                  open={true}
-                  onClose={() => setSelectedSeat(null)}
-                  onMarkPaid={handleMarkPaid}
-                  onMarkDue={handleMarkDue}
-                  onRenew={handleRenew}
-                  onRemove={handleRemove}
-                  isMobile={isMobile}
-                  readonly={true}
-                />
+                selectedMember?.vacant ? (
+                  <AddMemberSheet
+                    open={true}
+                    onClose={() => setSelectedSeat(null)}
+                    seat={selectedSeat}
+                    vacantSeats={vacantSeats}
+                    onSubmit={handleAddSubmit}
+                    isMobile={isMobile}
+                  />
+                ) : (
+                  <SeatDetailPanel
+                    member={selectedMember}
+                    open={true}
+                    onClose={() => setSelectedSeat(null)}
+                    onMarkPaid={handleMarkPaid}
+                    onMarkDue={handleMarkDue}
+                    onRenew={handleRenew}
+                    onRemove={handleRemove}
+                    isMobile={isMobile}
+                    readonly={true}
+                  />
+                )
               ) : selectedMember?.vacant ? (
                 <AddMemberSheet
                   open={true}
