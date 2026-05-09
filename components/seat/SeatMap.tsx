@@ -51,8 +51,8 @@ export function getSeatPosition(n: number): SeatPosition {
   if (n >= 23 && n <= 32) return { x: 4, y: 3 + (n - 23), face: 'right' };
   if (n >= 33 && n <= 42) return { x: 6, y: 2 + (n - 33), face: 'left' };
   if (n >= 43 && n <= 52) return { x: 7, y: 2 + (n - 43), face: 'right' };
-  if (n >= 80 && n <= 84) return { x: 9 + (n - 80), y: 1, face: 'down' };
-  if (n >= 53 && n <= 55) return { x: 9 + (n - 53), y: 2, face: 'up' };
+  if (n >= 80 && n <= 84) return { x: 10 + (n - 80), y: 1, face: 'down' };
+  if (n >= 53 && n <= 55) return { x: 9, y: 10 + (n - 53), face: 'left' };
   if (n >= 56 && n <= 61) return { x: 9, y: 3 + (n - 55), face: 'left' };
   if (n >= 62 && n <= 70) return { x: 10, y: 3 + (n - 61), face: 'right' };
   if (n >= 71 && n <= 79) return { x: 12, y: 3 + (n - 71), face: 'left' };
