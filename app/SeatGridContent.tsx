@@ -132,8 +132,7 @@ export default function SeatGridContent() {
             <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-sm md:text-base text-[var(--text-secondary)] font-light max-w-md leading-relaxed"
+              className="text-sm md:text-base text-[var(--text-secondary)] font-normal max-w-md leading-relaxed"
             >
               Real-time spatial overview. Select a coordinate to orchestrate membership or review active occupancies.
             </motion.p>
@@ -143,8 +142,7 @@ export default function SeatGridContent() {
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center gap-3 overflow-x-auto pb-4 xl:pb-0 scrollbar-hide pt-2"
+            className="flex items-center gap-3 overflow-x-auto pb-4 xl:pb-0 no-scrollbar pt-2"
           >
             <StatChip 
               label="Occupied" 
