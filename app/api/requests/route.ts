@@ -3,6 +3,8 @@ import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
 import { verifyAdmin } from '@/lib/auth-server';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET: List all seat requests.
  * Admin only.

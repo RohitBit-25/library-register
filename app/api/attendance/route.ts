@@ -3,6 +3,8 @@ import dbConnect from '@/lib/mongodb';
 import Attendance from '@/models/Attendance';
 import { verifyAdmin } from '@/lib/auth-server';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET: Fetch attendance history.
  * Admin only.

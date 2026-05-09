@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/requests/my?phone=XXXXXXXXXX
  * Public endpoint — lets users look up their own requests by phone number.
