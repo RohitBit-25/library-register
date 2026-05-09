@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Attendance from '@/models/Attendance';
+import AuditLog from '@/models/AuditLog';
 import { verifyAdmin } from '@/lib/auth-server';
 
 export const dynamic = 'force-dynamic';
@@ -48,6 +49,12 @@ export async function POST(request: Request) {
         { date, seats },
         { upsert: true, new: true }
       );
+      
+      await AuditLog.create({
+        action: 'Marked Bulk Attendance',
+        details: `Marked all ${seats.length} members as present for ${date}`,
+      });
+      
       return NextResponse.json({ success: true });
     }
 
@@ -67,6 +74,12 @@ export async function POST(request: Request) {
       { date, seats },
       { upsert: true, new: true }
     );
+
+    await AuditLog.create({
+      action: present ? 'Marked Present' : 'Marked Absent',
+      details: `Seat ${seat} marked ${present ? 'present' : 'absent'} for ${date}`,
+      seat,
+    });
 
     return NextResponse.json({ success: true, seats });
   } catch (error) {

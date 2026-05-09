@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
+import AuditLog from '@/models/AuditLog';
 
 import { verifyAdmin } from '@/lib/auth-server';
 
@@ -32,6 +33,18 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
       { new: true, upsert: true } // Upsert in case it was somehow deleted
     ).lean();
     
+    // Determine the action summary
+    let actionDesc = 'Updated Member';
+    if (body.vacant === true) actionDesc = 'Vacated Seat';
+    else if (body.fee) actionDesc = `Fee marked as ${body.fee}`;
+    else if (body.expiry) actionDesc = 'Membership Renewed';
+
+    await AuditLog.create({
+      action: actionDesc,
+      details: body.vacant ? `Seat ${seatId} was vacated.` : `Seat ${seatId} was updated.`,
+      seat: seatId,
+    });
+
     return NextResponse.json(updatedMember);
   } catch (error) {
     console.error(`Error updating member at seat:`, error);
