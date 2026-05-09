@@ -416,7 +416,7 @@ function SegmentedControl({
           className={cn(
             'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer relative overflow-hidden',
             value === opt.value
-              ? 'bg-[var(--sapphire-500)] text-[#1a1a16] shadow-md scale-100 ring-1 ring-[var(--sapphire-500)]/50 z-10'
+              ? 'bg-[var(--saffron-500)] text-white shadow-md scale-100 ring-1 ring-[var(--saffron-500)]/50 z-10'
               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100 z-0',
           )}
         >

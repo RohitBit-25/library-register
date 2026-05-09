@@ -220,7 +220,7 @@ export default function SeatGridContent() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 10 }}
               transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.6)] no-scrollbar"
+              className="relative flex flex-col w-full max-w-md max-h-[90vh] overflow-hidden bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
               onClick={(e) => e.stopPropagation()}
             >
               {!isAdmin ? (

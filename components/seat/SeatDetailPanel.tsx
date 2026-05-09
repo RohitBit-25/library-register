@@ -191,7 +191,7 @@ export default function SeatDetailPanel({
                           className={cn(
                             'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer',
                             field.value === s
-                              ? 'bg-[var(--sapphire-500)] text-[#1a1a16] shadow-md ring-1 ring-[var(--sapphire-500)]/50 z-10'
+                              ? 'bg-[var(--saffron-500)] text-white shadow-md ring-1 ring-[var(--saffron-500)]/50 z-10'
                               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100',
                           )}
                         >
@@ -220,7 +220,7 @@ export default function SeatDetailPanel({
                           className={cn(
                             'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer',
                             field.value === d
-                              ? 'bg-[var(--sapphire-500)] text-[#1a1a16] shadow-md ring-1 ring-[var(--sapphire-500)]/50 z-10'
+                              ? 'bg-[var(--saffron-500)] text-white shadow-md ring-1 ring-[var(--saffron-500)]/50 z-10'
                               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100',
                           )}
                         >
@@ -523,23 +523,23 @@ export default function SeatDetailPanel({
 
   // Desktop: fill container (parent defines positioning)
   return (
-    <div className="h-full flex flex-col pt-3 bg-transparent text-[var(--text-primary)]">
-      <div className="flex-1 overflow-y-auto p-5 sm:p-6 pb-24 scrollbar-hide">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
-            <span className="w-8 h-8 bg-gradient-to-br from-sapphire-500 to-sapphire-600 rounded-lg flex items-center justify-center text-[var(--saffron-50)] text-xs font-black shadow-sm">
-              {String(member.seat).padStart(2, '0')}
-            </span>
-            Seat Details
-          </h3>
-          <button 
-            onClick={() => { setRenewMode(false); setEditMode(false); onClose(); }}
-            className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-base)] transition-all hover:rotate-90 duration-200"
-            aria-label="Close panel"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <div className="h-full flex flex-col bg-transparent text-[var(--text-primary)]">
+      <div className="flex items-center justify-between p-5 sm:px-6 border-b border-[var(--border-subtle)] bg-[var(--bg-base)]/50 backdrop-blur-md sticky top-0 z-10">
+        <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
+          <span className="w-8 h-8 bg-gradient-to-br from-sapphire-500 to-sapphire-600 rounded-lg flex items-center justify-center text-[var(--saffron-50)] text-xs font-black shadow-sm">
+            {String(member.seat).padStart(2, '0')}
+          </span>
+          Seat Details
+        </h3>
+        <button 
+          onClick={() => { setRenewMode(false); setEditMode(false); onClose(); }}
+          className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] transition-all hover:rotate-90 duration-200"
+          aria-label="Close panel"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="flex-1 overflow-y-auto p-5 sm:p-6 pb-8 custom-scrollbar">
         {content}
       </div>
     </div>

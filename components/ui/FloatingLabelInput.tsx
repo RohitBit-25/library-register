@@ -11,12 +11,6 @@ export interface FloatingLabelInputProps
 
 export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInputProps>(
   ({ className, label, error, icon, ...props }, ref) => {
-    const [focused, setFocused] = React.useState(false);
-    
-    // Check if input has value (even unmanaged from ref)
-    const hasValue = props.value !== undefined && props.value !== '' || props.defaultValue !== undefined && props.defaultValue !== '';
-    const active = focused || hasValue;
-
     return (
       <div className="relative w-full group">
         {icon && (
@@ -35,25 +29,19 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
               : 'border-[var(--border-default)] hover:border-[var(--border-strong)] focus:border-[var(--border-glow)] focus:bg-[var(--bg-elevated)] focus:ring-4 focus:ring-[rgba(232,133,58,0.15)]',
             className
           )}
-          onFocus={(e) => {
-            setFocused(true);
-            props.onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setFocused(false);
-            props.onBlur?.(e);
-          }}
+          onFocus={props.onFocus}
+          onBlur={props.onBlur}
           placeholder={label} // peer-placeholder-shown trick
           {...props}
         />
         
         <label
           className={cn(
-            'pointer-events-none absolute left-4 text-[var(--text-tertiary)] transition-all duration-300 transform font-medium select-none z-10',
+            'pointer-events-none absolute left-4 transition-all duration-300 transform font-medium select-none z-10',
             !!icon && 'left-11',
-            active
-              ? 'top-2 text-[11px] font-bold text-[var(--saffron-400)]'
-              : 'top-1/2 -translate-y-1/2 text-sm'
+            props.type === 'date'
+              ? 'top-2 text-[11px] font-bold text-[var(--saffron-400)]' // Date input always elevated
+              : 'top-1/2 -translate-y-1/2 text-sm text-[var(--text-tertiary)] peer-focus:top-2 peer-focus:-translate-y-0 peer-focus:text-[11px] peer-focus:font-bold peer-focus:text-[var(--saffron-400)] peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:-translate-y-0 peer-[&:not(:placeholder-shown)]:text-[11px] peer-[&:not(:placeholder-shown)]:font-bold peer-[&:not(:placeholder-shown)]:text-[var(--text-tertiary)]'
           )}
         >
           {label}
