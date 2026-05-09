@@ -211,52 +211,54 @@ export default function SeatGridContent() {
         </section>
       </div>
 
-      {/* --- FLOATING DETAILS PANEL (THE SLIDE-OVER) --- */}
+      {/* --- CENTERED MODAL DIALOG --- */}
       <AnimatePresence>
         {selectedSeat !== null && (
-          <motion.aside
-            initial={{ x: '100%', opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: '100%', opacity: 0 }}
-            transition={{ type: "spring", stiffness: 350, damping: 30 }}
-            className="fixed inset-y-0 right-0 z-[100] w-full lg:w-[380px] bg-[var(--bg-surface)] border-l border-[var(--border-default)] shadow-[-30px_0_60px_rgba(0,0,0,0.4)]"
-          >
-            {/* Backdrop for mobile covered by BottomSheet, for Desktop we just slide the side panel. If we want a backdrop on mobile, BottomSheet handles it. For desktop, the user can click other seats so no backdrop needed. */}
-            {!isAdmin ? (
-              <SeatDetailPanel
-                member={selectedMember}
-                open={true}
-                onClose={() => setSelectedSeat(null)}
-                onMarkPaid={handleMarkPaid}
-                onMarkDue={handleMarkDue}
-                onRenew={handleRenew}
-                onRemove={handleRemove}
-                isMobile={isMobile}
-                readonly={true}
-              />
-            ) : selectedMember?.vacant ? (
-              <AddMemberSheet
-                open={true}
-                onClose={() => setSelectedSeat(null)}
-                seat={selectedSeat}
-                vacantSeats={vacantSeats}
-                onSubmit={handleAddSubmit}
-                isMobile={isMobile}
-              />
-            ) : (
-              <SeatDetailPanel
-                member={selectedMember}
-                open={true}
-                onClose={() => setSelectedSeat(null)}
-                onMarkPaid={handleMarkPaid}
-                onMarkDue={handleMarkDue}
-                onRenew={handleRenew}
-                onRemove={handleRemove}
-                onUpdate={handleUpdate}
-                isMobile={isMobile}
-              />
-            )}
-          </motion.aside>
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setSelectedSeat(null)}>
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.6)] no-scrollbar"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {!isAdmin ? (
+                <SeatDetailPanel
+                  member={selectedMember}
+                  open={true}
+                  onClose={() => setSelectedSeat(null)}
+                  onMarkPaid={handleMarkPaid}
+                  onMarkDue={handleMarkDue}
+                  onRenew={handleRenew}
+                  onRemove={handleRemove}
+                  isMobile={isMobile}
+                  readonly={true}
+                />
+              ) : selectedMember?.vacant ? (
+                <AddMemberSheet
+                  open={true}
+                  onClose={() => setSelectedSeat(null)}
+                  seat={selectedSeat}
+                  vacantSeats={vacantSeats}
+                  onSubmit={handleAddSubmit}
+                  isMobile={isMobile}
+                />
+              ) : (
+                <SeatDetailPanel
+                  member={selectedMember}
+                  open={true}
+                  onClose={() => setSelectedSeat(null)}
+                  onMarkPaid={handleMarkPaid}
+                  onMarkDue={handleMarkDue}
+                  onRenew={handleRenew}
+                  onRemove={handleRemove}
+                  onUpdate={handleUpdate}
+                  isMobile={isMobile}
+                />
+              )}
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
