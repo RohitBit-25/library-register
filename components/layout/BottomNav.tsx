@@ -13,6 +13,7 @@ import {
   Inbox,
   Eye,
   LogOut,
+  HardDrive,
 } from 'lucide-react';
 
 
@@ -23,6 +24,7 @@ const adminTabs = [
   { href: '/analytics', label: 'Dashboard', icon: BarChart3 },
   { href: '/members', label: 'Members', icon: Users },
   { href: '/requests', label: 'Requests', icon: Inbox },
+  { href: '/export', label: 'Export', icon: HardDrive },
 ];
 
 /* ─── User Tabs ───────────────────────────────────────────────── */

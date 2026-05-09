@@ -55,7 +55,7 @@ export default function DashboardPage() {
   const occupancyData = generateSparklineData(stats.occupied);
 
   const handleMarkPaid = (seat: number) => {
-    update(seat, { fee: 'paid' });
+    update(seat, { fee: 'paid' }, (msg) => addToast('error', msg));
     addToast('success', `Seat ${seat} — fee marked as paid`);
   };
 

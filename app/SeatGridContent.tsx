@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
 
 export default function SeatGridContent() {
-  const { members, update, vacate, renew, add, isLoading } = useMembers();
+  const { members, update, vacate, renew, add, isLoading, isError, lastError, clearError } = useMembers();
   const { isAdmin } = useAuth();
   const { addToast } = useToast();
   const searchParams = useSearchParams();
@@ -55,27 +55,27 @@ export default function SeatGridContent() {
 
   // Handlers (kept same logic, wrapped in cleaner visual feedback)
   const handleMarkPaid = (seat: number) => {
-    update(seat, { fee: 'paid' });
+    update(seat, { fee: 'paid' }, (msg) => addToast('error', msg));
     addToast('success', `Payment confirmed for Seat ${seat}`);
   };
 
   const handleMarkDue = (seat: number) => {
-    update(seat, { fee: 'due' });
+    update(seat, { fee: 'due' }, (msg) => addToast('error', msg));
     addToast('warning', `Seat ${seat} marked as pending payment`);
   };
 
   const handleRenew = (seat: number, joinDate: string, duration: Duration) => {
-    renew(seat, joinDate, duration as '1M' | '3M' | '6M' | '1Y');
+    renew(seat, joinDate, duration as '1M' | '3M' | '6M' | '1Y', (msg) => addToast('error', msg));
     addToast('success', `Membership extended for Seat ${seat}`);
   };
 
   const handleRemove = (seat: number) => {
-    vacate(seat);
+    vacate(seat, (msg) => addToast('error', msg));
     addToast('success', `Seat ${seat} is now vacant`);
   };
 
   const handleUpdate = (seat: number, patch: Partial<Member>) => {
-    update(seat, patch);
+    update(seat, patch, (msg) => addToast('error', msg));
     addToast('success', `Updated details for Seat ${seat}`);
   };
 

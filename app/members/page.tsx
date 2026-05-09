@@ -13,12 +13,12 @@ export default function MembersPage() {
   const [confirmBulkRemove, setConfirmBulkRemove] = useState<number[] | null>(null);
 
   const handleMarkPaid = (seat: number) => {
-    update(seat, { fee: 'paid' });
+    update(seat, { fee: 'paid' }, (msg) => addToast('error', msg));
     addToast('success', `Seat ${seat} — fee marked as paid`);
   };
 
   const handleMarkDue = (seat: number) => {
-    update(seat, { fee: 'due' });
+    update(seat, { fee: 'due' }, (msg) => addToast('error', msg));
     addToast('warning', `Seat ${seat} — fee marked as due`);
   };
 
@@ -32,7 +32,7 @@ export default function MembersPage() {
   };
 
   const handleBulkMarkPaid = (seats: number[]) => {
-    bulkMarkPaid(seats);
+    bulkMarkPaid(seats, (msg) => addToast('error', msg));
     addToast('success', `${seats.length} members marked as paid`);
   };
 
