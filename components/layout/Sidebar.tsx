@@ -54,6 +54,11 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
       label: 'Export Data',
       icon: <HardDrive className="w-5 h-5" />,
     },
+    {
+      href: '/audit',
+      label: 'Activity Log',
+      icon: <Shield className="w-5 h-5" />,
+    },
   ];
 
   const now = new Date();
