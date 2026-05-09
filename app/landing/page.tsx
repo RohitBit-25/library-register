@@ -156,6 +156,23 @@ export default function LandingPage() {
           pointer-events: none;
         }
 
+        /* ── Floating Gold Dust ── */
+        .lp-dust-container { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+        .lp-dust {
+          position: absolute; width: 2px; height: 2px;
+          background: rgba(185,118,14,0.6);
+          border-radius: 50%;
+          box-shadow: 0 0 4px rgba(185,118,14,0.8);
+          animation: float-dust 15s infinite linear;
+          opacity: 0;
+        }
+        @keyframes float-dust {
+          0% { transform: translateY(0) scale(0); opacity: 0; }
+          20% { opacity: 1; }
+          80% { opacity: 1; }
+          100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+        }
+
         /* ── Frame ── */
         .lp-frame {
           position: fixed; inset: 14px;
@@ -212,6 +229,12 @@ export default function LandingPage() {
           position: absolute; inset: 8px;
           border: 0.5px solid rgba(185,118,14,0.3);
           transform: rotate(45deg);
+          transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .lp-logo:hover .lp-gem-inner {
+          transform: rotate(135deg) scale(1.15);
+          border-color: rgba(185,118,14,0.8);
+          box-shadow: inset 0 0 8px rgba(185,118,14,0.3);
         }
         .lp-gem-dot {
           position: absolute; inset: 14px;
@@ -266,24 +289,31 @@ export default function LandingPage() {
 
         .lp-title-hi {
           font-family: 'Cormorant Garamond', serif;
-          font-size: clamp(48px, 10vw, 80px);
-          font-weight: 600;
-          line-height: 1.35;
+          font-size: clamp(54px, 12vw, 96px);
+          font-weight: 700;
+          line-height: 1.25;
           letter-spacing: 0.02em;
           padding: 8px 4px 12px;
-          background: linear-gradient(170deg, #f7ecd9 0%, #e8d0a8 38%, #c9980e 68%, #8b610a 100%);
+          background: linear-gradient(170deg, #fff7e6 0%, #f0d5a3 30%, #c9980e 60%, #8b610a 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
+          filter: drop-shadow(0 0 12px rgba(201,152,14,0.3));
         }
         .lp-title-en {
           font-family: 'Cormorant Garamond', serif;
-          font-size: 12px;
-          letter-spacing: 0.44em;
+          font-size: 14px;
+          letter-spacing: 0.5em;
           text-transform: uppercase;
-          color: rgba(185,130,40,0.45);
+          color: rgba(185,130,40,0.65);
           font-style: italic;
-          margin-top: 4px;
+          margin-top: 8px;
+          text-shadow: 0 0 10px rgba(185,130,40,0.2);
+          animation: text-glow 4s infinite alternate;
+        }
+        @keyframes text-glow {
+          from { text-shadow: 0 0 10px rgba(185,130,40,0.1); }
+          to { text-shadow: 0 0 20px rgba(185,130,40,0.4); }
         }
 
         /* ── Ornament divider ── */
@@ -297,15 +327,21 @@ export default function LandingPage() {
 
         .lp-tagline {
           font-family: 'Cormorant Garamond', serif;
-          font-size: 16px; font-style: italic;
-          color: rgba(237,224,202,0.45);
-          letter-spacing: 0.06em;
+          font-size: 18px; font-style: italic;
+          color: rgba(237,224,202,0.65);
+          letter-spacing: 0.08em;
           line-height: 1.75;
-          max-width: 400px;
-          margin-bottom: 40px;
+          max-width: 440px;
+          margin-bottom: 48px;
           font-weight: 300;
+          text-shadow: 0 2px 10px rgba(0,0,0,0.8);
         }
-        .lp-tagline em { color: rgba(210,170,85,0.85); font-style: normal; }
+        .lp-tagline em { 
+          color: rgba(220,180,95,0.95); 
+          font-style: italic; 
+          font-weight: 400; 
+          text-shadow: 0 0 15px rgba(185,118,14,0.3);
+        }
 
         /* ── CTA cards ── */
         .lp-cards {
@@ -318,21 +354,40 @@ export default function LandingPage() {
           margin-bottom: 40px;
         }
         .lp-card {
-          border: 0.5px solid rgba(185,118,14,0.2);
+          border: 0.5px solid rgba(185,118,14,0.3);
           padding: 26px 26px 22px;
           cursor: pointer;
           position: relative;
           overflow: hidden;
           text-align: left;
-          background: rgba(8,6,4,0.55);
-          transition: border-color 0.25s, background 0.25s;
+          background: linear-gradient(145deg, rgba(16,12,8,0.7), rgba(8,6,4,0.9));
+          box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(185,118,14,0);
+          transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+          border-radius: 4px;
         }
-        .lp-card:hover { border-color: rgba(185,118,14,0.5); background: rgba(185,118,14,0.05); }
-        .lp-card:active { transform: scale(0.99); }
+        .lp-card::before {
+          content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+          background: linear-gradient(to right, transparent, rgba(185,118,14,0.15), transparent);
+          transform: skewX(-20deg); transition: none;
+        }
+        .lp-card:hover { 
+          border-color: rgba(185,118,14,0.7); 
+          background: linear-gradient(145deg, rgba(24,18,12,0.8), rgba(12,8,6,0.95));
+          box-shadow: 0 8px 30px rgba(185,118,14,0.15), inset 0 0 0 1px rgba(185,118,14,0.2);
+          transform: translateY(-2px);
+        }
+        .lp-card:hover::before {
+          animation: card-shine 1.5s ease-out;
+        }
+        @keyframes card-shine {
+          0% { left: -100%; }
+          100% { left: 200%; }
+        }
+        .lp-card:active { transform: scale(0.98); }
         .lp-card-bar {
-          position: absolute; top: 0; left: 0; right: 0; height: 1px;
-          background: linear-gradient(to right, transparent, rgba(185,118,14,0.6), transparent);
-          opacity: 0; transition: opacity 0.25s;
+          position: absolute; top: 0; left: 0; right: 0; height: 2px;
+          background: linear-gradient(to right, transparent, rgba(185,118,14,0.8), transparent);
+          opacity: 0; transition: opacity 0.4s;
         }
         .lp-card:hover .lp-card-bar { opacity: 1; }
 
@@ -364,20 +419,34 @@ export default function LandingPage() {
           width: 30px; height: 30px;
           border: 0.5px solid rgba(185,118,14,0.2);
           display: flex; align-items: center; justify-content: center;
-          transition: border-color 0.2s, background 0.2s;
+          transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+          border-radius: 2px;
         }
         .lp-card:hover .lp-card-arrow {
-          border-color: rgba(185,118,14,0.55);
-          background: rgba(185,118,14,0.1);
+          border-color: rgba(185,118,14,0.8);
+          background: rgba(185,118,14,0.15);
+          transform: translateX(4px);
+          box-shadow: 0 0 10px rgba(185,118,14,0.2);
         }
 
         /* ── Stats ── */
         .lp-stats { display: flex; align-items: center; margin-bottom: 10px; }
-        .lp-stat { text-align: center; padding: 0 28px; }
+        .lp-stat { 
+          text-align: center; padding: 0 28px; 
+          transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+          cursor: default;
+        }
+        .lp-stat:hover { transform: translateY(-4px); }
         .lp-stat-n {
           font-family: 'Cormorant Garamond', serif;
-          font-size: 28px; font-weight: 600;
-          color: #b8760e; line-height: 1;
+          font-size: 32px; font-weight: 600;
+          color: #d18f26; line-height: 1;
+          text-shadow: 0 0 15px rgba(185,118,14,0.2);
+          transition: all 0.4s;
+        }
+        .lp-stat:hover .lp-stat-n {
+          color: #f0e2c8;
+          text-shadow: 0 0 25px rgba(185,118,14,0.6);
         }
         .lp-stat-l {
           font-size: 9px; letter-spacing: 0.22em;
@@ -404,26 +473,56 @@ export default function LandingPage() {
           align-items: center;
           gap: 14px;
           text-align: center;
+          opacity: 0;
+          animation: slide-up-fade 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
+        @keyframes slide-up-fade {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .lp-feature:nth-child(1) { animation-delay: 0.1s; }
+        .lp-feature:nth-child(2) { animation-delay: 0.2s; }
+        .lp-feature:nth-child(3) { animation-delay: 0.3s; }
+        .lp-feature:nth-child(4) { animation-delay: 0.4s; }
+        .lp-feature:nth-child(5) { animation-delay: 0.5s; }
+        .lp-feature:nth-child(6) { animation-delay: 0.6s; }
+        .lp-feature:nth-child(7) { animation-delay: 0.7s; }
+        .lp-feature:nth-child(8) { animation-delay: 0.8s; }
+
         .lp-feature-icon {
-          width: 44px;
-          height: 44px;
+          width: 48px;
+          height: 48px;
           border-radius: 50%;
-          border: 0.5px solid rgba(185,118,14,0.3);
-          background: rgba(185,118,14,0.04);
-          color: #b8760e;
+          border: 0.5px solid rgba(185,118,14,0.4);
+          background: linear-gradient(135deg, rgba(185,118,14,0.02), rgba(185,118,14,0.08));
+          color: #d18f26;
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: background 0.3s, border-color 0.3s;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          position: relative;
+        }
+        .lp-feature-icon::after {
+          content: ""; position: absolute; inset: -4px; border-radius: 50%;
+          border: 1px solid rgba(185,118,14,0); transition: all 0.4s;
         }
         .lp-feature:hover .lp-feature-icon {
-          background: rgba(185,118,14,0.1);
-          border-color: rgba(185,118,14,0.6);
+          background: rgba(185,118,14,0.15);
+          border-color: rgba(185,118,14,0.8);
+          color: #f0e2c8;
+          transform: translateY(-4px) scale(1.05);
+          box-shadow: 0 8px 20px rgba(185,118,14,0.2), inset 0 0 10px rgba(185,118,14,0.3);
+        }
+        .lp-feature:hover .lp-feature-icon::after {
+          inset: -6px; border-color: rgba(185,118,14,0.3);
         }
         .lp-feature-icon svg {
-          width: 20px;
-          height: 20px;
+          width: 22px;
+          height: 22px;
+          transition: transform 0.4s;
+        }
+        .lp-feature:hover .lp-feature-icon svg {
+          transform: scale(1.1);
         }
         .lp-feature-name {
           font-size: 9px;
@@ -613,6 +712,28 @@ export default function LandingPage() {
         <div className="lp-vign" />
         <div className="lp-vign2" />
 
+        {/* ── Floating Gold Dust ── */}
+        <div className="lp-dust-container" aria-hidden="true">
+          {Array.from({ length: 30 }).map((_, i) => {
+            const left = Math.random() * 100;
+            const top = Math.random() * 100;
+            const delay = Math.random() * 10;
+            const duration = 10 + Math.random() * 15;
+            return (
+              <div
+                key={i}
+                className="lp-dust"
+                style={{
+                  left: `${left}%`,
+                  top: `${top}%`,
+                  animationDelay: `${delay}s`,
+                  animationDuration: `${duration}s`
+                }}
+              />
+            );
+          })}
+        </div>
+
         {/* ── Frame ── */}
         <div className="lp-frame">
           <div className="lp-frame-border" />
@@ -729,7 +850,7 @@ export default function LandingPage() {
             {/* Stats */}
             <div className="lp-stats" aria-label="Library at a glance">
               {[
-                { n: '86', l: 'Total seats' },
+                { n: '95', l: 'Total seats' },
                 { n: '2', l: 'Daily shifts' },
                 { n: '06:00 AM', l: 'Opens daily' },
                 { n: '10:00 PM', l: 'Closes daily' },
