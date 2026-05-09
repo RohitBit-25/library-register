@@ -52,6 +52,41 @@ export default function LandingPage() {
     }
   }
 
+  const amenities = [
+    {
+      name: 'Fully Air-Conditioned',
+      icon: <path d="M12 2v20M12 2l4 4M12 2L8 6M12 22l4-4M12 22l-4-4M2 12h20M2 12l4-4M2 12l4 4M22 12l-4-4M22 12l-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    },
+    {
+      name: 'High Speed WIFI',
+      icon: <><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><line x1="12" y1="20" x2="12.01" y2="20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></>
+    },
+    {
+      name: '24/7 CCTV',
+      icon: <><polygon points="23 7 16 12 23 17 23 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><rect x="1" y="5" width="15" height="14" rx="2" ry="2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></>
+    },
+    {
+      name: 'RO Water',
+      icon: <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    },
+    {
+      name: 'Bike Parking',
+      icon: <><circle cx="5.5" cy="17.5" r="3.5" stroke="currentColor" strokeWidth="1.5" /><circle cx="18.5" cy="17.5" r="3.5" stroke="currentColor" strokeWidth="1.5" /><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></>
+    },
+    {
+      name: 'Peaceful Environment',
+      icon: <><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></>
+    },
+    {
+      name: 'Daily Newspaper',
+      icon: <><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M18 14h-8M15 18h-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></>
+    },
+    {
+      name: 'Lunch Area',
+      icon: <><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></>
+    }
+  ];
+
   return (
     <>
       <style>{`
@@ -123,8 +158,9 @@ export default function LandingPage() {
 
         /* ── Frame ── */
         .lp-frame {
-          position: absolute; inset: 14px;
+          position: fixed; inset: 14px;
           pointer-events: none;
+          z-index: 10;
         }
         .lp-frame-border {
           position: absolute; inset: 0;
@@ -215,7 +251,7 @@ export default function LandingPage() {
         .lp-hero {
           flex: 1;
           display: flex; flex-direction: column; align-items: center; justify-content: center;
-          padding: 0 44px 24px;
+          padding: 40px 44px 80px;
           text-align: center;
         }
 
@@ -313,7 +349,6 @@ export default function LandingPage() {
           background: #b8760e;
           flex-shrink: 0;
         }
-        .lp-role-dot-dim { background: rgba(237,224,202,0.2); }
         .lp-card-title {
           font-family: 'Cormorant Garamond', serif;
           font-size: 22px; font-weight: 600;
@@ -334,6 +369,68 @@ export default function LandingPage() {
         .lp-card:hover .lp-card-arrow {
           border-color: rgba(185,118,14,0.55);
           background: rgba(185,118,14,0.1);
+        }
+
+        /* ── Stats ── */
+        .lp-stats { display: flex; align-items: center; margin-bottom: 10px; }
+        .lp-stat { text-align: center; padding: 0 28px; }
+        .lp-stat-n {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 28px; font-weight: 600;
+          color: #b8760e; line-height: 1;
+        }
+        .lp-stat-l {
+          font-size: 9px; letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: rgba(237,224,202,0.22);
+          margin-top: 4px;
+        }
+        .lp-stat-sep { width: 0.5px; height: 36px; background: rgba(185,118,14,0.18); }
+
+        /* ── Features / Amenities ── */
+        .lp-features {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 32px 48px;
+          margin-top: 60px;
+          padding-top: 48px;
+          border-top: 0.5px solid rgba(185,118,14,0.15);
+          max-width: 800px;
+          width: 100%;
+        }
+        .lp-feature {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 14px;
+          text-align: center;
+        }
+        .lp-feature-icon {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          border: 0.5px solid rgba(185,118,14,0.3);
+          background: rgba(185,118,14,0.04);
+          color: #b8760e;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.3s, border-color 0.3s;
+        }
+        .lp-feature:hover .lp-feature-icon {
+          background: rgba(185,118,14,0.1);
+          border-color: rgba(185,118,14,0.6);
+        }
+        .lp-feature-icon svg {
+          width: 20px;
+          height: 20px;
+        }
+        .lp-feature-name {
+          font-size: 9px;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: rgba(237,224,202,0.4);
+          line-height: 1.4;
         }
 
         /* ── Hidden admin overlay ── */
@@ -388,56 +485,40 @@ export default function LandingPage() {
         }
         .lp-pin-error.show { opacity: 1; }
 
-        /* ── Stats ── */
-        .lp-stats { display: flex; align-items: center; margin-bottom: 10px; }
-        .lp-stat { text-align: center; padding: 0 28px; }
-        .lp-stat-n {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 28px; font-weight: 600;
-          color: #b8760e; line-height: 1;
-        }
-        .lp-stat-l {
-          font-size: 9px; letter-spacing: 0.22em;
-          text-transform: uppercase;
-          color: rgba(237,224,202,0.22);
-          margin-top: 4px;
-        }
-        .lp-stat-sep { width: 0.5px; height: 36px; background: rgba(185,118,14,0.18); }
-
         /* ── Footer ── */
         .lp-footer {
           display: flex; align-items: center; justify-content: space-between;
-          padding: 16px 44px 26px;
+          padding: 20px 44px 26px;
           border-top: 0.5px solid rgba(185,118,14,0.1);
         }
         .lp-footer-loc {
           display: flex; align-items: center; gap: 7px;
           font-size: 9px; letter-spacing: 0.22em;
           text-transform: uppercase;
-          color: rgba(237,224,202,0.2);
+          color: rgba(237,224,202,0.3);
         }
         .lp-footer-links { display: flex; gap: 18px; align-items: center; }
         .lp-footer-link {
           font-size: 9px; letter-spacing: 0.18em;
           text-transform: uppercase;
-          color: rgba(237,224,202,0.18);
+          color: rgba(237,224,202,0.4);
           cursor: pointer;
           transition: color 0.15s;
           text-decoration: none;
         }
-        .lp-footer-link:hover { color: rgba(185,118,14,0.65); }
-        .lp-footer-sep { width: 0.5px; height: 12px; background: rgba(237,224,202,0.1); }
+        .lp-footer-link:hover { color: #b8760e; }
+        .lp-footer-sep { width: 0.5px; height: 12px; background: rgba(237,224,202,0.15); }
         .lp-footer-copy {
           font-size: 9px; letter-spacing: 0.3em;
           text-transform: uppercase;
-          color: rgba(237,224,202,0.1);
+          color: rgba(237,224,202,0.15);
         }
 
         /* ═══ RESPONSIVE ═══ */
         @media (max-width: 768px) {
           .lp-header { padding: 18px 20px; }
           .lp-nav { display: none; }
-          .lp-hero { padding: 0 20px 20px; }
+          .lp-hero { padding: 30px 20px 60px; }
           .lp-title-hi { font-size: clamp(40px, 12vw, 60px); }
           .lp-title-en { font-size: 10px; letter-spacing: 0.3em; }
           .lp-orn { width: 240px; }
@@ -447,8 +528,17 @@ export default function LandingPage() {
           .lp-stat { padding: 0 16px; }
           .lp-stat-sep { display: none; }
           .lp-stat-n { font-size: 22px; }
-          .lp-footer { flex-direction: column; gap: 12px; align-items: center; padding: 14px 20px 20px; }
-          .lp-footer-links { gap: 12px; }
+          
+          .lp-features { 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 24px; 
+            margin-top: 40px; 
+            padding-top: 36px; 
+          }
+          
+          .lp-footer { flex-direction: column; gap: 16px; align-items: center; padding: 20px 20px 26px; text-align: center; }
+          .lp-footer-loc { flex-direction: column; gap: 8px; line-height: 1.4; }
+          .lp-footer-links { gap: 12px; flex-wrap: wrap; justify-content: center; }
           .lp-frame { inset: 8px; }
           .lp-corner { width: 36px; height: 36px; }
           .lp-top-rule, .lp-bot-rule { left: 36px; right: 36px; }
@@ -461,7 +551,7 @@ export default function LandingPage() {
           .lp-logo-gem { width: 30px; height: 30px; }
           .lp-gem-inner { inset: 6px; }
           .lp-gem-dot { inset: 11px; }
-          .lp-hero { padding: 0 14px 16px; }
+          .lp-hero { padding: 20px 14px 50px; }
           .lp-eyebrow { gap: 8px; margin-bottom: 14px; }
           .lp-ey-line-l, .lp-ey-line-r { width: 28px; }
           .lp-ey-label { font-size: 8px; }
@@ -476,6 +566,12 @@ export default function LandingPage() {
           .lp-stat { padding: 0 12px; }
           .lp-stat-n { font-size: 20px; }
           .lp-stat-l { font-size: 8px; }
+          
+          .lp-features { gap: 20px 16px; margin-top: 32px; padding-top: 28px; }
+          .lp-feature-icon { width: 36px; height: 36px; }
+          .lp-feature-icon svg { width: 16px; height: 16px; }
+          .lp-feature-name { font-size: 8px; }
+
           .lp-footer-loc { font-size: 8px; }
           .lp-footer-link { font-size: 8px; }
           .lp-footer-copy { font-size: 8px; }
@@ -635,8 +731,8 @@ export default function LandingPage() {
               {[
                 { n: '86', l: 'Total seats' },
                 { n: '2', l: 'Daily shifts' },
-                { n: '6 AM', l: 'Opens daily' },
-                { n: '10 PM', l: 'Closes daily' },
+                { n: '06:00 AM', l: 'Opens daily' },
+                { n: '10:00 PM', l: 'Closes daily' },
               ].map((s, i, arr) => (
                 <span key={s.l} style={{ display: 'contents' }}>
                   <div className="lp-stat">
@@ -648,25 +744,44 @@ export default function LandingPage() {
               ))}
             </div>
 
+            {/* Features Grid */}
+            <div className="lp-features" aria-label="Library Amenities">
+              {amenities.map((item, idx) => (
+                <div className="lp-feature" key={idx}>
+                  <div className="lp-feature-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {item.icon}
+                    </svg>
+                  </div>
+                  <span className="lp-feature-name">{item.name}</span>
+                </div>
+              ))}
+            </div>
+
           </main>
 
           {/* Footer */}
           <footer className="lp-footer">
             <div className="lp-footer-loc">
-              <svg width="11" height="11" viewBox="0 0 16 16" fill="none"
-                stroke="#b8760e" strokeWidth="1.5" aria-hidden="true">
-                <path d="M8 14s-5-5-5-8a5 5 0 0 1 10 0c0 3-5 8-5 8z" />
-                <circle cx="8" cy="6" r="1.5" />
-              </svg>
-              Kankroli, Rajsamand
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', color: '#b8760e' }}>
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                  <path d="M8 14s-5-5-5-8a5 5 0 0 1 10 0c0 3-5 8-5 8z" />
+                  <circle cx="8" cy="6" r="1.5" />
+                </svg>
+              </div>
+              <span>Opp. Maniratna Restaurent, JK Circle, Kankroli</span>
             </div>
+
             <div className="lp-footer-links">
-              <a href="#" className="lp-footer-link">Rules &amp; conduct</a>
+              <a href="tel:9462672576" className="lp-footer-link" aria-label="WhatsApp Number">
+                <span style={{ color: '#b8760e', marginRight: '4px' }}>WA:</span> 9462672576
+              </a>
               <div className="lp-footer-sep" aria-hidden="true" />
-              <a href="#" className="lp-footer-link">Timetable</a>
-              <div className="lp-footer-sep" aria-hidden="true" />
-              <a href="#" className="lp-footer-link">Contact</a>
+              <a href="tel:9829230576" className="lp-footer-link" aria-label="Phone Number">
+                <span style={{ color: '#b8760e', marginRight: '4px' }}>PH:</span> 9829230576
+              </a>
             </div>
+
             <div className="lp-footer-copy">© 2026 Gangaur</div>
           </footer>
 
