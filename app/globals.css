@@ -3,10 +3,10 @@
   /* === TAILWIND V4 INTEGRATION === */
   /* Maps custom CSS variables to Tailwind utility classes */
   @theme inline {
-    --font-devanagari: var(--font-devanagari);
-    --font-display: var(--font-display);
-    --font-body: var(--font-body);
-    --font-mono: var(--font-mono);
+    --font-devanagari: var(--font-outfit), sans-serif;
+    --font-display: var(--font-outfit), sans-serif;
+    --font-body: var(--font-outfit), -apple-system, sans-serif;
+    --font-mono: var(--font-dm-mono), 'Cascadia Code', monospace;
 
     --color-void: var(--bg-void);
     --color-base: var(--bg-base);
@@ -124,13 +124,13 @@
     --indigo-glow: rgba(123, 95, 245, 0.20);
 
     /* === TEXT === */
-    --text-primary:   #FAFAFA;
-    --text-secondary: #A1A1AA;
-    --text-tertiary:  #71717A;
-    --text-disabled:  #52525B;
+    --text-primary:   #FFFFFF;
+    --text-secondary: #D4D4D8;
+    --text-tertiary:  #A1A1AA;
+    --text-disabled:  #71717A;
     --text-inverse:   #09090B;
-    --text-accent:    #E8853A;
-    --text-link:      #F59A3C;
+    --text-accent:    #F59A3C;
+    --text-link:      #FCD5A8;
 
     /* === GRADIENTS === */
     --gradient-primary: linear-gradient(135deg, #E8853A 0%, #F5C842 100%);
@@ -156,11 +156,7 @@
     --gradient-amber:   linear-gradient(135deg, #E8A20A, #C8820A);
     --gradient-sapphire:linear-gradient(135deg, #3D9EFF, #1A7FE8);
 
-    /* === FONT FAMILIES === */
-    --font-devanagari: var(--font-outfit), sans-serif;
-    --font-display:    var(--font-outfit), sans-serif;
-    --font-body:       var(--font-outfit), -apple-system, sans-serif;
-    --font-mono:       var(--font-dm-mono), 'Cascadia Code', monospace;
+    /* Fonts are now defined directly in @theme to prevent circular references */
 
     /* === SPACING SCALE === */
     --space-0:   0px;
