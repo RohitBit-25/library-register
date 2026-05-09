@@ -364,7 +364,7 @@ export default function MemberTable({
                   <td className="p-3 text-[var(--text-secondary)] font-medium">{fmtDateShort(m.expiry)}</td>
                   <td className="p-3">
                     {m.vacant ? (
-                      <Link href="/add" className="text-[var(--sapphire-500)] text-xs font-bold cursor-pointer hover:underline bg-[var(--sapphire-500)]/10 py-1 px-3 rounded-md">+ Add</Link>
+                      <Link href={`/?seat=${m.seat}`} className="text-[var(--sapphire-500)] text-xs font-bold cursor-pointer hover:underline bg-[var(--sapphire-500)]/10 py-1 px-3 rounded-md">+ Add</Link>
                     ) : (
                       <Badge variant={status} />
                     )}
