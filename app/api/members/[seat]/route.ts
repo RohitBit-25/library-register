@@ -4,6 +4,8 @@ import Member from '@/models/Member';
 
 import { verifyAdmin } from '@/lib/auth-server';
 
+export const dynamic = 'force-dynamic';
+
 export async function PATCH(request: Request, { params }: { params: Promise<{ seat: string }> }) {
   try {
     const isAdmin = await verifyAdmin();

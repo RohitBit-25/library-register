@@ -3,6 +3,8 @@ import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
 import { verifyAdmin } from '@/lib/auth-server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     await dbConnect();
