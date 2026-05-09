@@ -14,11 +14,9 @@ const addMemberSchema = z.object({
   seat: z.number().min(1, 'Seat is required'),
   name: z.string().min(1, 'Name is required'),
   phone: z.string().min(10, 'Valid phone number is required'),
-  shift: z.enum(['morning', 'evening', 'full']),
   joinDate: z.string().min(1, 'Join date is required').refine(date => new Date(date) <= new Date(), {
     message: 'Join date cannot be in the future',
   }),
-  duration: z.enum(['1M', '3M', '6M', '1Y']),
   fee: z.enum(['paid', 'due']),
   paymentMode: z.enum(['upi', 'cash']),
   documentStatus: z.string().min(1, 'Document is required'),
@@ -44,9 +42,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
       seat: vacantSeats[0] || -1,
       name: initialData?.name || '',
       phone: initialData?.phone || '',
-      shift: 'morning',
       joinDate: todayISO(),
-      duration: '3M',
       fee: 'paid',
       paymentMode: initialData?.paymentMode || 'upi',
       documentStatus: '',
@@ -57,7 +53,6 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
 
   const watchSeat = useWatch({ control, name: 'seat' });
   const watchJoinDate = useWatch({ control, name: 'joinDate' });
-  const watchDuration = useWatch({ control, name: 'duration' });
   const watchPaymentMode = useWatch({ control, name: 'paymentMode' });
   const watchDocumentStatus = useWatch({ control, name: 'documentStatus' });
 
@@ -70,11 +65,12 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
 
   const expiry = useMemo(() => {
     try {
-      return calcExpiry(watchJoinDate, watchDuration);
+      // Default duration to 1M if field is removed
+      return calcExpiry(watchJoinDate, '1M');
     } catch {
       return '';
     }
-  }, [watchJoinDate, watchDuration]);
+  }, [watchJoinDate]);
 
   // Auto-mark fee as paid if picking UPI or Cash
   useEffect(() => {
@@ -93,9 +89,9 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
     onSubmit(data.seat, { 
       name: data.name.trim(), 
       phone: data.phone, 
-      shift: data.shift, 
+      shift: 'full', 
       joinDate: data.joinDate, 
-      duration: data.duration, 
+      duration: '1M', 
       expiry, 
       fee: data.fee,
       paymentMode: data.paymentMode,
@@ -109,9 +105,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
       seat: vacantSeats[0] || -1,
       name: '',
       phone: '',
-      shift: 'morning',
       joinDate: todayISO(),
-      duration: '3M',
       fee: 'paid',
       paymentMode: 'upi',
       documentStatus: '',
@@ -120,7 +114,8 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6" noValidate>
+    <div className="h-full overflow-y-auto custom-scrollbar px-1 pb-4">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6" noValidate>
       {/* Seat Selection */}
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-5">
         <div className="flex items-center justify-between border-b border-[var(--border-default)] pb-4">
@@ -165,7 +160,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           {...register('name')}
         />
 
-        {/* WhatsApp + Shift */}
+        {/* WhatsApp + Join Date */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
           <FloatingLabelInput 
             label="WhatsApp Number" 
@@ -175,53 +170,12 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
             error={errors.phone?.message}
             {...register('phone')}
           />
-
-          <FieldGroup label="Shift" required error={errors.shift?.message}>
-            <Controller
-              name="shift"
-              control={control}
-              render={({ field }) => (
-                <SegmentedControl
-                  options={[
-                    { value: 'morning', label: 'Morning' },
-                    { value: 'evening', label: 'Evening' },
-                    { value: 'full', label: 'Full' },
-                  ]}
-                  value={field.value}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </FieldGroup>
-        </div>
-
-        {/* Join Date + Duration */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
           <FloatingLabelInput 
             label="Date of Joining" 
             type="date"
             error={errors.joinDate?.message}
             {...register('joinDate')}
           />
-
-          <FieldGroup label="Membership Duration" required error={errors.duration?.message}>
-            <Controller
-              name="duration"
-              control={control}
-              render={({ field }) => (
-                <SegmentedControl
-                  options={[
-                    { value: '1M', label: '1M' },
-                    { value: '3M', label: '3M' },
-                    { value: '6M', label: '6M' },
-                    { value: '1Y', label: '1Y' },
-                  ]}
-                  value={field.value}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </FieldGroup>
         </div>
         
         {/* Document Upload */}
@@ -364,6 +318,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         </button>
       </div>
     </form>
+    </div>
   );
 }
 

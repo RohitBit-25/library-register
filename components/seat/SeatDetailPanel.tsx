@@ -14,16 +14,13 @@ import { FloatingLabelInput } from '@/components/ui/FloatingLabelInput';
 
 const renewSchema = z.object({
   renewDate: z.string().min(1, 'Required'),
-  renewDuration: z.enum(['1M', '3M', '6M', '1Y']),
 });
 type RenewFormValues = z.infer<typeof renewSchema>;
 
 const editSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   phone: z.string().min(10, 'Valid phone required'),
-  shift: z.enum(['morning', 'evening', 'full']),
   joinDate: z.string().min(1, 'Join date is required'),
-  duration: z.enum(['1M', '3M', '6M', '1Y']),
   fee: z.enum(['paid', 'due']),
 });
 type EditFormValues = z.infer<typeof editSchema>;
@@ -75,13 +72,11 @@ export default function SeatDetailPanel({
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Renew form
   const { register: renewRegister, handleSubmit: handleRenewSubmit, control: renewControl, reset: renewReset } = useForm<RenewFormValues>({
     resolver: zodResolver(renewSchema),
-    defaultValues: { renewDate: todayISO(), renewDuration: '3M' },
+    defaultValues: { renewDate: todayISO() },
   });
   const watchDate = useWatch({ control: renewControl, name: 'renewDate' });
-  const watchDuration = useWatch({ control: renewControl, name: 'renewDuration' });
 
   // Edit form
   const { register: editRegister, handleSubmit: handleEditSubmit, control: editControl, reset: editReset } = useForm<EditFormValues>({
@@ -89,35 +84,26 @@ export default function SeatDetailPanel({
     defaultValues: {
       name: member?.name || '',
       phone: member?.phone || '',
-      shift: (member?.shift as 'morning' | 'evening' | 'full') || 'morning',
       joinDate: member?.joinDate || todayISO(),
-      duration: (member?.duration as '1M' | '3M' | '6M' | '1Y') || '3M',
       fee: (member?.fee as 'paid' | 'due') || 'paid',
     },
   });
   const editJoinDate = useWatch({ control: editControl, name: 'joinDate' });
-  const editDuration = useWatch({ control: editControl, name: 'duration' });
 
   const editExpiry = useMemo(() => {
-    try { return calcExpiry(editJoinDate, editDuration); } catch { return ''; }
-  }, [editJoinDate, editDuration]);
+    try { return calcExpiry(editJoinDate, '1M'); } catch { return ''; }
+  }, [editJoinDate]);
 
   const renewExpiry = useMemo(() => {
-    try { return calcExpiry(watchDate, watchDuration); } catch { return ''; }
-  }, [watchDate, watchDuration]);
+    try { return calcExpiry(watchDate, '1M'); } catch { return ''; }
+  }, [watchDate]);
 
   if (!member) return null;
 
   const status = getSeatStatus(member);
   const days = !member.vacant ? daysUntilExpiry(member.expiry) : 0;
 
-  const shiftIcon = member.shift === 'evening' ? (
-    <Moon className="w-4 h-4" />
-  ) : member.shift === 'full' ? (
-    <Zap className="w-4 h-4" />
-  ) : (
-    <Sun className="w-4 h-4" />
-  );
+
 
   const handleCopyPhone = () => {
     if (member.phone) {
@@ -131,9 +117,7 @@ export default function SeatDetailPanel({
     editReset({
       name: member.name || '',
       phone: member.phone || '',
-      shift: (member.shift as 'morning' | 'evening' | 'full') || 'morning',
       joinDate: member.joinDate || todayISO(),
-      duration: (member.duration as '1M' | '3M' | '6M' | '1Y') || '3M',
       fee: (member.fee as 'paid' | 'due') || 'paid',
     });
     setEditMode(true);
@@ -141,13 +125,11 @@ export default function SeatDetailPanel({
 
   const handleSaveEdit = (data: EditFormValues) => {
     if (!onUpdate) return;
-    const expiry = calcExpiry(data.joinDate, data.duration);
+    const expiry = calcExpiry(data.joinDate, '1M');
     onUpdate(member.seat, {
       name: data.name.trim(),
       phone: data.phone.trim(),
-      shift: data.shift,
       joinDate: data.joinDate,
-      duration: data.duration,
       expiry,
       fee: data.fee,
     });
@@ -176,61 +158,7 @@ export default function SeatDetailPanel({
               <FloatingLabelInput label="Full Name" {...editRegister('name')} />
               <FloatingLabelInput label="WhatsApp Number" type="tel" inputMode="tel" {...editRegister('phone')} />
 
-              <div>
-                <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Shift</span>
-                <Controller
-                  name="shift"
-                  control={editControl}
-                  render={({ field }) => (
-                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
-                      {(['morning', 'evening', 'full'] as const).map(s => (
-                        <button
-                          key={s}
-                          type="button"
-                          onClick={() => field.onChange(s)}
-                          className={cn(
-                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer',
-                            field.value === s
-                              ? 'bg-[var(--saffron-500)] text-white shadow-md ring-1 ring-[var(--saffron-500)]/50 z-10'
-                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100',
-                          )}
-                        >
-                          {shiftLabel(s)}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                />
-              </div>
-
               <FloatingLabelInput label="Date of Joining" type="date" {...editRegister('joinDate')} />
-
-              <div>
-                <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Duration</span>
-                <Controller
-                  name="duration"
-                  control={editControl}
-                  render={({ field }) => (
-                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
-                      {(['1M', '3M', '6M', '1Y'] as Duration[]).map(d => (
-                        <button
-                          key={d}
-                          type="button"
-                          onClick={() => field.onChange(d)}
-                          className={cn(
-                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer',
-                            field.value === d
-                              ? 'bg-[var(--saffron-500)] text-white shadow-md ring-1 ring-[var(--saffron-500)]/50 z-10'
-                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100',
-                          )}
-                        >
-                          {d}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                />
-              </div>
 
               <div>
                 <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Fee Status</span>
@@ -302,10 +230,6 @@ export default function SeatDetailPanel({
                 </h4>
                 {!member.vacant && (
                   <div className="flex items-center gap-3 mt-2 text-sm font-semibold opacity-90">
-                    <span className="flex items-center gap-1 bg-white/20 rounded-md px-2 py-0.5 text-xs">
-                      {shiftIcon}
-                      {shiftLabel(member.shift)}
-                    </span>
                     {days !== Infinity && (
                       <span className="text-xs bg-white/20 rounded-md px-2 py-0.5">
                         {days > 0 ? `${days}d left` : `${Math.abs(days)}d overdue`}
@@ -340,7 +264,6 @@ export default function SeatDetailPanel({
                         ) : undefined}
                       />
                       <InfoRow icon={<Calendar className="w-4 h-4 text-sapphire-500" />} label="Joined" value={fmtDate(member.joinDate)} />
-                      <InfoRow icon={<Clock className="w-4 h-4 text-sapphire-500" />} label="Duration" value={durationLabel(member.duration as Duration)} />
                       <InfoRow icon={<Calendar className="w-4 h-4 text-sapphire-500" />} label="Expires" value={fmtDate(member.expiry)} />
                     </>
                   )}
@@ -379,7 +302,7 @@ export default function SeatDetailPanel({
                       </ActionBtn>
                     )}
                     <ActionBtn 
-                      onClick={() => { renewReset({ renewDate: todayISO(), renewDuration: '3M' }); setRenewMode(true); }} 
+                      onClick={() => { renewReset({ renewDate: todayISO() }); setRenewMode(true); }} 
                       icon={<RefreshCw className="w-4 h-4" />}
                       className="bg-sapphire-500 text-[var(--saffron-50)] shadow-sm hover:shadow-md hover:bg-sapphire-600 border-transparent"
                     >
@@ -415,7 +338,7 @@ export default function SeatDetailPanel({
           /* Renewal form */
           <m.form
             onSubmit={handleRenewSubmit((data) => {
-              onRenew(member.seat, data.renewDate, data.renewDuration);
+              onRenew(member.seat, data.renewDate, '1M');
               setRenewMode(false);
               onClose();
             })}
@@ -436,33 +359,6 @@ export default function SeatDetailPanel({
                 type="date"
                 {...renewRegister('renewDate')}
               />
-
-              <div>
-                <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Duration</span>
-                <Controller
-                  name="renewDuration"
-                  control={renewControl}
-                  render={({ field }) => (
-                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
-                      {(['1M', '3M', '6M', '1Y'] as Duration[]).map(d => (
-                        <button
-                          key={d}
-                          type="button"
-                          onClick={() => field.onChange(d)}
-                          className={cn(
-                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer relative overflow-hidden',
-                            field.value === d
-                              ? 'bg-sapphire-500 text-[var(--saffron-50)] shadow-md scale-100 ring-1 ring-sapphire-500/50 z-10'
-                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] scale-[0.98] hover:scale-100 z-0',
-                          )}
-                        >
-                          {d}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                />
-              </div>
 
               <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 shadow-sm text-center border-dashed">
                 <span className="text-xs font-bold text-[var(--emerald-500)] uppercase tracking-wider">New expiry date</span>
