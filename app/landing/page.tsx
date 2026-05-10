@@ -3,15 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { useMembers } from '@/hooks/useMembers';
 
 export default function LandingPage() {
   const router = useRouter();
   const { loginAsAdmin, loginAsUser, isAuthenticated, isAdmin } = useAuth();
-  const { members } = useMembers();
-  
   const [showAdmin, setShowAdmin] = useState(false);
-  const [showRules, setShowRules] = useState(false);
   const [pin, setPin] = useState('');
   const [pinError, setPinError] = useState(false);
   const [tapCount, setTapCount] = useState(0);
