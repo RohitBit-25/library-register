@@ -3,11 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { useMembers } from '@/hooks/useMembers';
 
 export default function LandingPage() {
   const router = useRouter();
   const { loginAsAdmin, loginAsUser, isAuthenticated, isAdmin } = useAuth();
+  const { members } = useMembers();
+  
   const [showAdmin, setShowAdmin] = useState(false);
+  const [showRules, setShowRules] = useState(false);
   const [pin, setPin] = useState('');
   const [pinError, setPinError] = useState(false);
   const [tapCount, setTapCount] = useState(0);
@@ -59,35 +63,43 @@ export default function LandingPage() {
 
   const amenities = [
     {
-      name: 'Fully Air-Conditioned',
+      name: 'AC',
+      desc: 'Optimal temperatures maintained year-round.',
       icon: <path d="M12 2v20M12 2l4 4M12 2L8 6M12 22l4-4M12 22l-4-4M2 12h20M2 12l4-4M2 12l4 4M22 12l-4-4M22 12l-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     },
     {
-      name: 'High Speed WIFI',
+      name: 'Wifi',
+      desc: 'Seamless connectivity for uninterrupted study.',
       icon: <><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><line x1="12" y1="20" x2="12.01" y2="20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></>
     },
     {
-      name: '24/7 CCTV',
+      name: '24/7 Security',
+      desc: 'Full CCTV coverage for absolute peace of mind.',
       icon: <><polygon points="23 7 16 12 23 17 23 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><rect x="1" y="5" width="15" height="14" rx="2" ry="2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></>
     },
     {
-      name: 'RO Water',
+      name: 'Purified Water',
+      desc: 'Chilled RO filtration system available.',
       icon: <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     },
     {
-      name: 'Bike Parking',
+      name: 'Secure Parking',
+      desc: 'Dedicated spaces for two-wheeler vehicles.',
       icon: <><circle cx="5.5" cy="17.5" r="3.5" stroke="currentColor" strokeWidth="1.5" /><circle cx="18.5" cy="17.5" r="3.5" stroke="currentColor" strokeWidth="1.5" /><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></>
     },
     {
-      name: 'Peaceful Environment',
+      name: 'Silent Zones',
+      desc: 'Acoustically treated environment for deep focus.',
       icon: <><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></>
     },
     {
-      name: 'Daily Newspaper',
+      name: 'Current Affairs',
+      desc: 'Daily national newspapers and magazines.',
       icon: <><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M18 14h-8M15 18h-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></>
     },
     {
-      name: 'Lunch Area',
+      name: 'Dining Lounge',
+      desc: 'Separate hygienic space for meals and breaks.',
       icon: <><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></>
     }
   ];
@@ -121,77 +133,7 @@ export default function LandingPage() {
           50%       { opacity: 0.055; }
         }
 
-        .lp-orb1 {
-          position: absolute;
-          top: -8%; right: -12%;
-          width: 62%; height: 62%;
-          border-radius: 50%;
-          background: radial-gradient(circle at 40% 40%, rgba(176,95,8,0.28) 0%, rgba(120,55,6,0.14) 40%, transparent 70%);
-          pointer-events: none;
-          animation: orb-pulse 12s ease-in-out infinite;
-        }
-        @keyframes orb-pulse {
-          0%, 100% { opacity: 0.28; }
-          50%       { opacity: 0.35; }
-        }
-        .lp-orb2 {
-          position: absolute;
-          bottom: -20%; left: -8%;
-          width: 58%; height: 58%;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(100,45,4,0.22) 0%, transparent 65%);
-          pointer-events: none;
-        }
-        .lp-orb3 {
-          position: absolute;
-          top: 48%; left: 38%;
-          width: 36%; height: 36%;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(160,88,8,0.09) 0%, transparent 70%);
-          pointer-events: none;
-        }
-        .lp-vign {
-          position: absolute; inset: 0;
-          background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 20%, rgba(4,2,1,0.85) 100%);
-          pointer-events: none;
-        }
-        .lp-vign2 {
-          position: absolute; inset: 0;
-          background: linear-gradient(to bottom, rgba(4,2,1,0.6) 0%, transparent 25%, transparent 70%, rgba(4,2,1,0.9) 100%);
-          pointer-events: none;
-        }
-
-        /* ── Parallax Background Image ── */
-        .lp-bg-image {
-          position: fixed;
-          top: -5%; left: -5%; right: -5%; bottom: -5%;
-          background: url('/royal-library-bg.png') center/cover no-repeat;
-          opacity: 0.15;
-          z-index: 0;
-          pointer-events: none;
-          animation: bg-pan 30s infinite alternate ease-in-out;
-        }
-        @keyframes bg-pan {
-          0% { transform: scale(1) translate(0, 0); }
-          100% { transform: scale(1.05) translate(1%, 1%); }
-        }
-
-        /* ── Floating Gold Dust ── */
-        .lp-dust-container { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
-        .lp-dust {
-          position: absolute; width: 2px; height: 2px;
-          background: rgba(185,118,14,0.6);
-          border-radius: 50%;
-          box-shadow: 0 0 4px rgba(185,118,14,0.8);
-          animation: float-dust 15s infinite linear;
-          opacity: 0;
-        }
-        @keyframes float-dust {
-          0% { transform: translateY(0) scale(0); opacity: 0; }
-          20% { opacity: 1; }
-          80% { opacity: 1; }
-          100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
-        }
+        /* Clean background, no heavy AI elements */
 
         /* ── Frame ── */
         .lp-frame {
@@ -249,12 +191,6 @@ export default function LandingPage() {
           position: absolute; inset: 8px;
           border: 0.5px solid rgba(185,118,14,0.3);
           transform: rotate(45deg);
-          transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .lp-logo:hover .lp-gem-inner {
-          transform: rotate(135deg) scale(1.15);
-          border-color: rgba(185,118,14,0.8);
-          box-shadow: inset 0 0 8px rgba(185,118,14,0.3);
         }
         .lp-gem-dot {
           position: absolute; inset: 14px;
@@ -310,15 +246,11 @@ export default function LandingPage() {
         .lp-title-hi {
           font-family: 'Cormorant Garamond', serif;
           font-size: clamp(54px, 12vw, 96px);
-          font-weight: 700;
+          font-weight: 400;
           line-height: 1.25;
           letter-spacing: 0.02em;
           padding: 8px 4px 12px;
-          background: linear-gradient(170deg, #fff7e6 0%, #f0d5a3 30%, #c9980e 60%, #8b610a 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          filter: drop-shadow(0 0 12px rgba(201,152,14,0.3));
+          color: #d1b482;
         }
         .lp-title-en {
           font-family: 'Cormorant Garamond', serif;
@@ -328,12 +260,6 @@ export default function LandingPage() {
           color: rgba(185,130,40,0.65);
           font-style: italic;
           margin-top: 8px;
-          text-shadow: 0 0 10px rgba(185,130,40,0.2);
-          animation: text-glow 4s infinite alternate;
-        }
-        @keyframes text-glow {
-          from { text-shadow: 0 0 10px rgba(185,130,40,0.1); }
-          to { text-shadow: 0 0 20px rgba(185,130,40,0.4); }
         }
 
         /* ── Ornament divider ── */
@@ -354,13 +280,11 @@ export default function LandingPage() {
           max-width: 440px;
           margin-bottom: 48px;
           font-weight: 300;
-          text-shadow: 0 2px 10px rgba(0,0,0,0.8);
         }
         .lp-tagline em { 
           color: rgba(220,180,95,0.95); 
           font-style: italic; 
           font-weight: 400; 
-          text-shadow: 0 0 15px rgba(185,118,14,0.3);
         }
 
         /* ── CTA cards ── */
@@ -374,34 +298,21 @@ export default function LandingPage() {
           margin-bottom: 40px;
         }
         .lp-card {
-          border: 0.5px solid rgba(185,118,14,0.3);
+          border: 0.5px solid rgba(185,118,14,0.2);
           padding: 26px 26px 22px;
           cursor: pointer;
           position: relative;
           overflow: hidden;
           text-align: left;
-          background: linear-gradient(145deg, rgba(16,12,8,0.7), rgba(8,6,4,0.9));
-          box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(185,118,14,0);
-          transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+          background: rgba(16,12,8,0.7);
+          backdrop-filter: blur(8px);
+          transition: all 0.3s ease;
           border-radius: 4px;
         }
-        .lp-card::before {
-          content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-          background: linear-gradient(to right, transparent, rgba(185,118,14,0.15), transparent);
-          transform: skewX(-20deg); transition: none;
-        }
         .lp-card:hover { 
-          border-color: rgba(185,118,14,0.7); 
-          background: linear-gradient(145deg, rgba(24,18,12,0.8), rgba(12,8,6,0.95));
-          box-shadow: 0 8px 30px rgba(185,118,14,0.15), inset 0 0 0 1px rgba(185,118,14,0.2);
-          transform: translateY(-2px);
-        }
-        .lp-card:hover::before {
-          animation: card-shine 1.5s ease-out;
-        }
-        @keyframes card-shine {
-          0% { left: -100%; }
-          100% { left: 200%; }
+          border-color: rgba(185,118,14,0.5); 
+          background: rgba(24,18,12,0.85);
+          transform: translateY(-1px);
         }
         .lp-card:active { transform: scale(0.98); }
         .lp-card-bar {
@@ -461,12 +372,10 @@ export default function LandingPage() {
           font-family: 'Cormorant Garamond', serif;
           font-size: 32px; font-weight: 600;
           color: #d18f26; line-height: 1;
-          text-shadow: 0 0 15px rgba(185,118,14,0.2);
-          transition: all 0.4s;
+          transition: all 0.3s ease;
         }
         .lp-stat:hover .lp-stat-n {
           color: #f0e2c8;
-          text-shadow: 0 0 25px rgba(185,118,14,0.6);
         }
         .lp-stat-l {
           font-size: 9px; letter-spacing: 0.22em;
@@ -491,65 +400,71 @@ export default function LandingPage() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 14px;
+          gap: 10px;
           text-align: center;
-          opacity: 0;
-          animation: slide-up-fade 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+          cursor: pointer;
+          position: relative;
         }
-        @keyframes slide-up-fade {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .lp-feature:nth-child(1) { animation-delay: 0.1s; }
-        .lp-feature:nth-child(2) { animation-delay: 0.2s; }
-        .lp-feature:nth-child(3) { animation-delay: 0.3s; }
-        .lp-feature:nth-child(4) { animation-delay: 0.4s; }
-        .lp-feature:nth-child(5) { animation-delay: 0.5s; }
-        .lp-feature:nth-child(6) { animation-delay: 0.6s; }
-        .lp-feature:nth-child(7) { animation-delay: 0.7s; }
-        .lp-feature:nth-child(8) { animation-delay: 0.8s; }
 
         .lp-feature-icon {
-          width: 48px;
-          height: 48px;
+          width: 44px;
+          height: 44px;
           border-radius: 50%;
-          border: 0.5px solid rgba(185,118,14,0.4);
-          background: linear-gradient(135deg, rgba(185,118,14,0.02), rgba(185,118,14,0.08));
-          color: #d18f26;
+          border: 0.5px solid rgba(185,118,14,0.3);
+          background: rgba(185,118,14,0.04);
+          color: #b8760e;
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          position: relative;
-        }
-        .lp-feature-icon::after {
-          content: ""; position: absolute; inset: -4px; border-radius: 50%;
-          border: 1px solid rgba(185,118,14,0); transition: all 0.4s;
+          transition: background 0.3s, border-color 0.3s;
         }
         .lp-feature:hover .lp-feature-icon {
-          background: rgba(185,118,14,0.15);
-          border-color: rgba(185,118,14,0.8);
-          color: #f0e2c8;
-          transform: translateY(-4px) scale(1.05);
-          box-shadow: 0 8px 20px rgba(185,118,14,0.2), inset 0 0 10px rgba(185,118,14,0.3);
-        }
-        .lp-feature:hover .lp-feature-icon::after {
-          inset: -6px; border-color: rgba(185,118,14,0.3);
+          background: rgba(185,118,14,0.1);
+          border-color: rgba(185,118,14,0.6);
         }
         .lp-feature-icon svg {
-          width: 22px;
-          height: 22px;
-          transition: transform 0.4s;
+          width: 20px;
+          height: 20px;
         }
-        .lp-feature:hover .lp-feature-icon svg {
-          transform: scale(1.1);
+        
+        .lp-feature-text {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          height: 26px; /* Space for either title or description */
         }
+        
         .lp-feature-name {
-          font-size: 9px;
-          letter-spacing: 0.18em;
+          font-size: 10px;
+          letter-spacing: 0.15em;
           text-transform: uppercase;
-          color: rgba(237,224,202,0.4);
-          line-height: 1.4;
+          color: rgba(237,224,202,0.6);
+          font-weight: 500;
+          transition: opacity 0.3s ease;
+          position: absolute;
+          top: 0;
+          width: max-content;
+        }
+        
+        .lp-feature-desc {
+          position: absolute;
+          top: 0;
+          width: 140px;
+          font-size: 10px;
+          color: #d18f26;
+          line-height: 1.3;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+        }
+        
+        .lp-feature:hover .lp-feature-name {
+          opacity: 0;
+        }
+        
+        .lp-feature:hover .lp-feature-desc {
+          opacity: 1;
         }
 
         /* ── Hidden admin overlay ── */
@@ -702,8 +617,7 @@ export default function LandingPage() {
 
       <div className="lp-root" onClick={handleUserInteraction}>
 
-        {/* ── Background ── */}
-        <div className="lp-bg-image" />
+        {/* ── Clean Background ── */}
         <svg className="lp-jaal" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.15 }}>
           <defs>
             <pattern id="jp" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
@@ -726,34 +640,6 @@ export default function LandingPage() {
           </defs>
           <rect width="100%" height="100%" fill="url(#jp)" />
         </svg>
-
-        <div className="lp-orb1" />
-        <div className="lp-orb2" />
-        <div className="lp-orb3" />
-        <div className="lp-vign" />
-        <div className="lp-vign2" />
-
-        {/* ── Floating Gold Dust ── */}
-        <div className="lp-dust-container" aria-hidden="true">
-          {Array.from({ length: 30 }).map((_, i) => {
-            const left = Math.random() * 100;
-            const top = Math.random() * 100;
-            const delay = Math.random() * 10;
-            const duration = 10 + Math.random() * 15;
-            return (
-              <div
-                key={i}
-                className="lp-dust"
-                style={{
-                  left: `${left}%`,
-                  top: `${top}%`,
-                  animationDelay: `${delay}s`,
-                  animationDuration: `${duration}s`
-                }}
-              />
-            );
-          })}
-        </div>
 
         {/* ── Frame ── */}
         <div className="lp-frame">
@@ -889,13 +775,16 @@ export default function LandingPage() {
             {/* Features Grid */}
             <div className="lp-features" aria-label="Library Amenities">
               {amenities.map((item, idx) => (
-                <div className="lp-feature" key={idx}>
+                <div className="lp-feature" key={idx} tabIndex={0} aria-label={`${item.name}. ${item.desc}`}>
                   <div className="lp-feature-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       {item.icon}
                     </svg>
                   </div>
-                  <span className="lp-feature-name">{item.name}</span>
+                  <div className="lp-feature-text" aria-hidden="true">
+                    <span className="lp-feature-name">{item.name}</span>
+                    <span className="lp-feature-desc">{item.desc}</span>
+                  </div>
                 </div>
               ))}
             </div>
