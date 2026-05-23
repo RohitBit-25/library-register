@@ -3,7 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
-  // Fix turbopack scanning Desktop due to multiple lockfiles
+  // Keep Next 16/Turbopack anchored to this app despite parent lockfiles.
+  turbopack: {
+    root: process.cwd(),
+  },
   serverExternalPackages: [],
 };
 

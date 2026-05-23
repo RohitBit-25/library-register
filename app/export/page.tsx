@@ -138,9 +138,9 @@ export default function ExportPage() {
     const dateStamp = new Date().toISOString().split('T')[0];
 
     if (format === 'csv') {
-      const headers = 'ID,Seat,Name,Phone,Status,Payment Mode,Transaction ID,Date,Message\n';
+      const headers = 'ID,Seat,Name,Phone,Status,Join Date,Duration,Shift,Payment Mode,Transaction ID,Date,Message\n';
       const rows = requests.map(r =>
-        `${r.id},${r.seat},"${r.userName}","${r.userPhone}",${r.status},${r.paymentMode},"${r.transactionId || ''}","${r.createdAt}","${(r.message || '').replace(/"/g, '""')}"`
+        `${r.id},${r.seat},"${r.userName}","${r.userPhone}",${r.status},${r.joinDate || ''},${r.duration || ''},${r.shift || ''},${r.paymentMode},"${r.transactionId || ''}","${r.createdAt}","${(r.message || '').replace(/"/g, '""')}"`
       ).join('\n');
       downloadFile(headers + rows, `gangaur-requests-${dateStamp}.csv`, 'text/csv;charset=utf-8');
     } else {

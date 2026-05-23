@@ -23,8 +23,7 @@ export default function MembersPage() {
   };
 
   const handleRenew = (seat: number) => {
-    // Navigate to seat grid with the seat selected for renewal
-    window.location.href = `/seat-grid?seat=${seat}`;
+    window.location.href = `/?seat=${seat}`;
   };
 
   const handleRemove = (seat: number) => {
@@ -75,7 +74,6 @@ export default function MembersPage() {
   };
 
   const handleEdit = (seat: number) => {
-    // Navigate to seat grid with the seat selected for inline editing
     window.location.href = `/?seat=${seat}`;
   };
 

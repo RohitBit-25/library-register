@@ -24,7 +24,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
           variants[variant],
           className
         )}
-        {...(variant === 'interactive' ? { whileHover: { y: -2 }, whileTap: { scale: 0.98 } } : {})}
+        {...(variant === 'interactive' ? { whileTap: { scale: 0.99 } } : {})}
         {...props}
       >
         {children}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
-import { Shield, Clock, Activity, FileText } from 'lucide-react';
+import { Shield, Clock, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface AuditLogEntry {

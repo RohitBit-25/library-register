@@ -4,11 +4,13 @@
 const CACHE_NAME = 'library-register-v1';
 const STATIC_ASSETS = [
   '/',
-  '/seat-grid',
+  '/browse',
   '/members',
-  '/add',
   '/attendance',
   '/analytics',
+  '/requests',
+  '/my-requests',
+  '/export',
   '/setup',
   '/manifest.json',
   '/icon-192.png',

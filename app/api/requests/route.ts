@@ -2,8 +2,21 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
 import { verifyAdmin } from '@/lib/auth-server';
+import { todayISO } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
+
+type RequestRecord = {
+  _id?: { toString(): string };
+  [key: string]: unknown;
+};
+
+function serializeRequest(request: RequestRecord) {
+  return {
+    ...request,
+    id: request._id?.toString() || request.id,
+  };
+}
 
 /**
  * GET: List all seat requests.
@@ -17,8 +30,8 @@ export async function GET() {
 
   try {
     await dbConnect();
-    const requests = await SeatRequest.find({}).sort({ createdAt: -1 });
-    return NextResponse.json(requests);
+    const requests = await SeatRequest.find({}).sort({ createdAt: -1 }).lean<RequestRecord[]>();
+    return NextResponse.json(requests.map(serializeRequest));
   } catch (error) {
     console.error('Request GET error:', error);
     return NextResponse.json({ error: 'Failed to fetch requests' }, { status: 500 });
@@ -35,14 +48,17 @@ export async function POST(request: Request) {
     const data = await request.json();
     
     const paymentMode = data.paymentMode === 'cash' ? 'cash' : 'upi';
+    const duration = ['1M', '3M', '6M', '1Y'].includes(data.duration) ? data.duration : '3M';
+    const shift = ['morning', 'evening', 'full'].includes(data.shift) ? data.shift : 'full';
+    const joinDate = data.joinDate || todayISO();
 
     // Minimal validation
-    if (!data.seat || !data.userName || !data.userPhone) {
+    if (!data.seat || !data.userName || !data.userPhone || !joinDate) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     // UPI requires a transaction ID
-    if (paymentMode === 'upi' && !data.transactionId) {
+    if (paymentMode === 'upi' && !String(data.transactionId || '').trim()) {
       return NextResponse.json({ error: 'Transaction ID is required for UPI payments' }, { status: 400 });
     }
 
@@ -64,13 +80,16 @@ export async function POST(request: Request) {
       userName: data.userName,
       userPhone: data.userPhone,
       message: data.message || '',
-      transactionId: data.transactionId || '',
+      joinDate,
+      duration,
+      shift,
+      transactionId: String(data.transactionId || '').trim(),
       paymentMode,
       documentUrl: data.documentUrl || '',
       status: 'pending'
     });
 
-    return NextResponse.json(newRequest, { status: 201 });
+    return NextResponse.json(serializeRequest(newRequest.toObject()), { status: 201 });
   } catch (error) {
     console.error('Request POST error:', error);
     return NextResponse.json({ error: 'Failed to submit request' }, { status: 500 });
@@ -105,7 +124,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Request not found' }, { status: 404 });
     }
 
-    return NextResponse.json(updated);
+    return NextResponse.json(serializeRequest(updated.toObject()));
   } catch (error) {
     console.error('Request PATCH error:', error);
     return NextResponse.json({ error: 'Failed to update request' }, { status: 500 });

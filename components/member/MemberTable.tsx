@@ -340,7 +340,7 @@ export default function MemberTable({
                     <div className="flex items-center gap-2 group">
                       {m.seat}
                       <button onClick={(e) => handleCopy(e, String(m.seat), 'seat')} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Copy className="w-3 h-3 text-text-tertiary hover:text-[var(--sapphire-500)] cursor-pointer" />
+                        <Copy className="w-3 h-3 text-[var(--text-tertiary)] hover:text-[var(--sapphire-500)] cursor-pointer" />
                       </button>
                     </div>
                   </td>
@@ -354,7 +354,7 @@ export default function MemberTable({
                       <div className="flex items-center gap-2 group">
                         {m.phone}
                         <button onClick={(e) => handleCopy(e, m.phone, 'phone number')} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Copy className="w-3 h-3 text-text-tertiary hover:text-[var(--sapphire-500)] cursor-pointer" />
+                          <Copy className="w-3 h-3 text-[var(--text-tertiary)] hover:text-[var(--sapphire-500)] cursor-pointer" />
                         </button>
                       </div>
                     ) : '—'}
@@ -512,7 +512,7 @@ export default function MemberTable({
                   </div>
                   {m.vacant ? (
                     <Link
-                      href="/add"
+                      href={`/?seat=${m.seat}`}
                       className="flex items-center gap-1 text-xs font-bold text-[#1a1a16] bg-[var(--sapphire-500)] px-3 py-1.5 rounded-lg shadow-sm"
                     >
                       <UserPlus className="w-4 h-4" />
@@ -524,7 +524,7 @@ export default function MemberTable({
                         e.stopPropagation();
                         setOpenActions(openActions === m.seat ? null : m.seat);
                       }}
-                      className="cursor-pointer p-2 rounded-lg bg-[var(--bg-overlay)] hover:bg-surface transition-colors"
+                      className="cursor-pointer p-2 rounded-lg bg-[var(--bg-overlay)] hover:bg-[var(--bg-surface)] transition-colors"
                       aria-label={`Actions for ${m.name}`}
                     >
                       <MoreVertical className="w-5 h-5 text-[var(--text-secondary)]" />

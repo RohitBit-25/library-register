@@ -4,13 +4,14 @@ import { useState, useMemo } from 'react';
 import { useSeatRequests } from '@/hooks/useSeatRequests';
 import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
-import { fmtDate, cn, calcExpiry, todayISO } from '@/lib/utils';
+import { fmtDate, cn, calcExpiry, todayISO, durationLabel, shiftLabel } from '@/lib/utils';
 import { type SeatRequest } from '@/lib/types';
 import {
   Inbox,
   Check,
   X,
   Clock,
+  CalendarDays,
   CheckCircle,
   XCircle,
   Phone,
@@ -56,14 +57,15 @@ export default function RequestsPage() {
     approveRequest(req.id);
 
     // Auto-allot the member to the seat with request data
-    const joinDate = todayISO();
-    const duration = '3M' as const;
+    const joinDate = req.joinDate || todayISO();
+    const duration = req.duration || '3M';
+    const shift = req.shift || 'full';
     const expiry = calcExpiry(joinDate, duration);
 
     const success = await add(req.seat, {
       name: req.userName,
       phone: req.userPhone,
-      shift: 'morning',
+      shift,
       joinDate,
       duration,
       expiry,
@@ -214,6 +216,14 @@ export default function RequestsPage() {
                           <Phone className="w-3 h-3" />
                           {req.userPhone}
                         </span>
+                        <span className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-1">
+                          <CalendarDays className="w-3 h-3" />
+                          {fmtDate(req.joinDate || todayISO())}
+                        </span>
+                        <span className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-1 capitalize">
+                          <Clock className="w-3 h-3" />
+                          {durationLabel(req.duration || '3M')} · {shiftLabel(req.shift || 'full')}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -231,7 +241,7 @@ export default function RequestsPage() {
                         <Banknote className="w-3.5 h-3.5 text-[var(--emerald-400)]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="text-[0.64rem] font-bold text-[var(--emerald-400)] block">💵 Cash Payment</span>
+                        <span className="text-[0.64rem] font-bold text-[var(--emerald-400)] block">Cash Payment</span>
                         <span className="text-[10px] text-[var(--text-tertiary)]">Verify cash received at counter</span>
                       </div>
                     </>
@@ -241,7 +251,7 @@ export default function RequestsPage() {
                         <Smartphone className="w-3.5 h-3.5 text-[var(--saffron-400)]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="text-[0.64rem] font-bold text-[var(--emerald-400)] block">💳 UPI Payment</span>
+                        <span className="text-[0.64rem] font-bold text-[var(--emerald-400)] block">UPI Payment</span>
                         {req.transactionId && (
                           <span className="text-[11px] font-mono text-[var(--text-secondary)] break-all">Ref: {req.transactionId}</span>
                         )}

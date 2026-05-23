@@ -46,9 +46,9 @@ export default function SetupPage() {
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             {[
               { icon: <QrCode className="w-5 h-5" />, label: 'Member Scans QR', color: 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]' },
-              { icon: <FileText className="w-5 h-5" />, label: 'Fills Google Form', color: 'bg-green-accent/10 text-green-accent' },
-              { icon: <Zap className="w-5 h-5" />, label: 'Script Runs Auto', color: 'bg-amber-accent/10 text-amber-accent' },
-              { icon: <Mail className="w-5 h-5" />, label: 'You Get Email', color: 'bg-red-accent/10 text-red-accent' },
+              { icon: <FileText className="w-5 h-5" />, label: 'Fills Google Form', color: 'bg-[var(--emerald-500)]/10 text-[var(--emerald-400)]' },
+              { icon: <Zap className="w-5 h-5" />, label: 'Script Runs Auto', color: 'bg-[var(--amber-500)]/10 text-[var(--amber-400)]' },
+              { icon: <Mail className="w-5 h-5" />, label: 'You Get Email', color: 'bg-[var(--ruby-500)]/10 text-[var(--ruby-400)]' },
             ].map((step, i) => (
               <div key={i} className="flex items-center gap-3 sm:gap-4">
                 <div className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl ${step.color} border border-current/10`}>

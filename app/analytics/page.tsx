@@ -169,7 +169,7 @@ export default function DashboardPage() {
                       <Button
                         variant="secondary"
                         size="sm"
-                        onClick={() => router.push(`/seat-grid?seat=${m.seat}`)}
+                        onClick={() => router.push(`/?seat=${m.seat}`)}
                       >
                         <RefreshCw className="w-3.5 h-3.5 mr-1" />
                         Renew

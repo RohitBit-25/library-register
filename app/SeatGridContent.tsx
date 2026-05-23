@@ -64,6 +64,20 @@ export default function SeatGridContent() {
     ? members.find(m => m.seat === selectedSeat) || null
     : null;
 
+  const initialRequestData = useMemo(() => {
+    if (selectedSeat === null) return undefined;
+    const seatParam = Number(searchParams.get('seat'));
+    if (seatParam !== selectedSeat) return undefined;
+
+    const name = searchParams.get('name') || '';
+    const phone = searchParams.get('phone') || '';
+    const paymentModeParam = searchParams.get('paymentMode');
+    const paymentMode: 'cash' | 'upi' = paymentModeParam === 'cash' ? 'cash' : 'upi';
+
+    if (!name && !phone) return undefined;
+    return { name, phone, paymentMode };
+  }, [searchParams, selectedSeat]);
+
   const closeModal = () => {
     setSelectedSeat(null);
     window.history.replaceState(null, '', window.location.pathname);
@@ -121,25 +135,25 @@ export default function SeatGridContent() {
               className="flex items-center gap-2 text-[var(--saffron-400)] mb-2"
             >
               <LayoutDashboard size={14} className="drop-shadow-[0_0_8px_var(--saffron-500)]" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] bg-gradient-to-r from-[var(--saffron-300)] to-[var(--saffron-600)] bg-clip-text text-transparent">
-                Management Quarters
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] bg-gradient-to-r from-[var(--saffron-300)] to-[var(--saffron-600)] bg-clip-text text-transparent">
+                Live Seat Map
               </span>
             </motion.div>
             <motion.h1 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-b from-white via-[#F5E8D4] to-[#C4A882] bg-clip-text text-transparent drop-shadow-sm"
+              className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-b from-white via-[#F5E8D4] to-[#C4A882] bg-clip-text text-transparent drop-shadow-sm"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              The Reading Hall
+              Reading Hall Seats
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-sm md:text-base text-[var(--text-secondary)] font-normal max-w-md leading-relaxed"
             >
-              Real-time spatial overview. Select a coordinate to orchestrate membership or review active occupancies.
+              Track occupancy, payments, renewals, and member details from one fast floor plan.
             </motion.p>
           </div>
 
@@ -170,7 +184,7 @@ export default function SeatGridContent() {
         </header>
 
         {/* --- SEATING CANVAS --- */}
-        <section className="relative rounded-[2.5rem] glass-elite-panel glow-saffron-chill p-6 md:p-12 mb-8 overflow-hidden">
+        <section className="relative rounded-3xl glass-elite-panel glow-saffron-chill p-4 md:p-8 mb-8 overflow-hidden">
           {/* Elite Ambient Glows */}
           <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-[var(--saffron-500)]/10 blur-[130px] rounded-full pointer-events-none mix-blend-screen" />
           <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[var(--sapphire-500)]/5 blur-[120px] rounded-full pointer-events-none mix-blend-screen" />
@@ -199,7 +213,7 @@ export default function SeatGridContent() {
           </div>
 
           {/* Legend Overlay */}
-          <div className="mt-12 flex items-center justify-center gap-8 text-[11px] font-medium uppercase tracking-[0.2em] text-[#C4A882]/70 relative z-10">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-5 text-[11px] font-medium uppercase tracking-[0.16em] text-[#C4A882]/70 relative z-10">
             <div className="flex items-center gap-2.5">
               <span className="w-1.5 h-1.5 rounded-full bg-white/20 ring-4 ring-white/5" /> 
               <span>Vacant</span>
@@ -226,6 +240,8 @@ export default function SeatGridContent() {
               exit={{ scale: 0.95, opacity: 0, y: 10 }}
               transition={{ type: "spring", stiffness: 350, damping: 30 }}
               className="relative flex flex-col w-full max-w-md max-h-[90vh] overflow-hidden bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
+              role="dialog"
+              aria-modal="true"
               onClick={(e) => e.stopPropagation()}
             >
               {!isAdmin ? (
@@ -237,6 +253,7 @@ export default function SeatGridContent() {
                     vacantSeats={vacantSeats}
                     onSubmit={handleAddSubmit}
                     isMobile={isMobile}
+                    initialData={initialRequestData}
                   />
                 ) : (
                   <SeatDetailPanel
@@ -259,6 +276,7 @@ export default function SeatGridContent() {
                   vacantSeats={vacantSeats}
                   onSubmit={handleAddSubmit}
                   isMobile={isMobile}
+                  initialData={initialRequestData}
                 />
               ) : (
                 <SeatDetailPanel
@@ -284,7 +302,7 @@ export default function SeatGridContent() {
 // Sub-component for clean stats
 function StatChip({ label, value, color, icon }: { label: string, value: number, color: string, icon?: React.ReactNode }) {
   return (
-    <div className={cn("flex items-center gap-3 px-4 py-2.5 rounded-2xl border whitespace-nowrap font-medium transition-all duration-300 hover:scale-[1.02]", color)}>
+    <div className={cn("flex items-center gap-3 px-4 py-2.5 rounded-xl border whitespace-nowrap font-medium transition-colors duration-200", color)}>
       {icon && <div className="opacity-90">{icon}</div>}
       <div className="flex flex-col">
         <span className="text-[9px] uppercase tracking-[0.15em] opacity-70 leading-none mb-1">{label}</span>

@@ -73,7 +73,7 @@ export default function ExpiryPage() {
   const totalMonth = occupiedMembers.filter(m => m.daysLeft > 7 && m.daysLeft <= 30).length;
 
   const handleRenew = useCallback((seat: number) => {
-    router.push(`/seat-grid?seat=${seat}`);
+    router.push(`/?seat=${seat}`);
   }, [router]);
 
   const handleWhatsApp = useCallback((m: ExpiryMember) => {

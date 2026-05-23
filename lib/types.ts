@@ -47,7 +47,10 @@ export interface SeatRequest {
   userName: string;
   userPhone: string;
   message: string;
-  transactionId: string;
+  joinDate?: string;
+  duration?: Duration;
+  shift?: Shift;
+  transactionId?: string;
   paymentMode: 'upi' | 'cash';
   documentUrl?: string;
   status: 'pending' | 'approved' | 'rejected';

@@ -2,10 +2,10 @@
 
 import { useState, useMemo } from 'react';
 import { type Member, type Duration, type SeatStatus } from '@/lib/types';
-import { getSeatStatus, fmtDate, durationLabel, shiftLabel, calcExpiry, todayISO, cn, daysUntilExpiry } from '@/lib/utils';
+import { getSeatStatus, fmtDate, durationLabel, calcExpiry, todayISO, cn, daysUntilExpiry } from '@/lib/utils';
 import BottomSheet from '@/components/ui/BottomSheet';
 import Modal from '@/components/ui/Modal';
-import { Phone, Calendar, Clock, Sun, Moon, Zap, X, RefreshCw, Trash2, CreditCard, MessageCircle, Copy, Pencil, Save, XCircle } from 'lucide-react';
+import { Phone, Calendar, Clock, X, RefreshCw, Trash2, CreditCard, MessageCircle, Copy, Pencil, Save, XCircle } from 'lucide-react';
 import { LazyMotion, domAnimation, m } from 'framer-motion';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { z } from 'zod';

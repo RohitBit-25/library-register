@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ReactNode, memo, useState } from 'react';
+import { DoorOpen, Snowflake, Wind } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -94,7 +95,7 @@ const Desk = ({
   </div>
 );
 
-/** Layered plant — glowing orb instead of blurry blob */
+/** Layered plant marker */
 const Plant = ({ col, row }: { col: number; row: number }) => (
   <div
     className="absolute"
@@ -166,7 +167,7 @@ function WallLabel({ detail }: { detail: WallDetail }) {
         className="absolute flex items-center justify-center gap-1.5"
         style={isVertical ? { transform: wall === 'right' ? 'rotate(90deg)' : 'rotate(-90deg)', width: size } : {}}
       >
-        <span className="text-[10px]">{isWindow ? '🪟' : '❄️'}</span>
+        {isWindow ? <Wind className="w-3 h-3" /> : <Snowflake className="w-3 h-3" />}
         <span className={`text-[9px] font-bold tracking-widest uppercase whitespace-nowrap drop-shadow-md ${isWindow ? 'text-blue-100' : 'text-rose-100'}`}>
           {label}
         </span>
@@ -206,7 +207,7 @@ function EntryMarker() {
         <div className="absolute inset-0 bg-gradient-to-b from-amber-500/8 to-transparent pointer-events-none" />
         {/* Badge */}
         <div className="relative flex items-center gap-2 bg-[#0f172a] px-4 py-1.5 rounded-full border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-          <span className="text-sm">🚪</span>
+          <DoorOpen className="w-4 h-4 text-amber-300" />
           <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
           <span className="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] drop-shadow-sm">Entrance</span>
         </div>
@@ -340,16 +341,16 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
 
         {/* ── Section labels — spatial immersion ── */}
         <div className="absolute pointer-events-none z-10" style={{ left: PAD + 0 * CELL + 4, top: PAD - 20 }}>
-          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-blue-400/50">Cluster A</span>
+          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-blue-400/50">Row A</span>
         </div>
         <div className="absolute pointer-events-none z-10" style={{ left: PAD + 5 * CELL + 4, top: PAD - 20 }}>
-          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-blue-400/50">Cluster B</span>
+          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-blue-400/50">Row B</span>
         </div>
         <div className="absolute pointer-events-none z-10" style={{ left: PAD + 8 * CELL + 4, top: PAD - 20 }}>
-          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-emerald-400/50">AI Lab</span>
+          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-emerald-400/50">Row C</span>
         </div>
         <div className="absolute pointer-events-none z-10" style={{ left: PAD + 12 * CELL + 4, top: PAD - 20 }}>
-          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-violet-400/50">Design Bay</span>
+          <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-violet-400/50">Row D</span>
         </div>
 
         {/* ── Floor content ── */}

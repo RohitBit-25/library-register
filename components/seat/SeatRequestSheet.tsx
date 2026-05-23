@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { type Member } from '@/lib/types';
+import { type Duration, type Member, type Shift } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   X, Send, User, Phone, MessageSquare, Armchair,
   CheckCircle2, Banknote, Smartphone, FileText, Camera, Upload,
-  Trash2, Image as ImageIcon, CalendarDays, Sparkles,
+  Trash2, Image as ImageIcon, CalendarDays, Clock, Sparkles,
 } from 'lucide-react';
 
 interface SeatRequestSheetProps {
@@ -20,6 +20,9 @@ interface SeatRequestSheetProps {
     name: string,
     phone: string,
     message: string,
+    joinDate: string,
+    duration: Duration,
+    shift: Shift,
     transactionId: string,
     paymentMode: 'upi' | 'cash',
     documentUrl: string,
@@ -41,7 +44,10 @@ export default function SeatRequestSheet({
     const d = new Date();
     return d.toISOString().split('T')[0]; // default to today
   });
+  const [duration, setDuration] = useState<Duration>('3M');
+  const [shift, setShift] = useState<Shift>('full');
   const [paymentMode, setPaymentMode] = useState<PaymentMode>('cash');
+  const [transactionId, setTransactionId] = useState('');
   const [documentUrl, setDocumentUrl] = useState('');
   const [documentName, setDocumentName] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -113,16 +119,18 @@ export default function SeatRequestSheet({
 
     try {
       const cleanPhone = phone.replace(/\D/g, '');
-      const messageWithDate = `${message.trim()}${message.trim() ? ' | ' : ''}Joining: ${joinDate}`;
-      const res = await onSubmit(
-        member.seat,
-        name.trim(),
-        cleanPhone,
-        messageWithDate,
-        '', // no transaction ID
-        paymentMode,
-        documentUrl,
-      );
+    const res = await onSubmit(
+      member.seat,
+      name.trim(),
+      cleanPhone,
+      message.trim(),
+      joinDate,
+      duration,
+      shift,
+      transactionId.trim(),
+      paymentMode,
+      documentUrl,
+    );
 
       if (res.success) {
         setSubmitted(true);
@@ -132,7 +140,10 @@ export default function SeatRequestSheet({
           setPhone('');
           setMessage('');
           setJoinDate(new Date().toISOString().split('T')[0]);
+          setDuration('3M');
+          setShift('full');
           setPaymentMode('cash');
+          setTransactionId('');
           setDocumentUrl('');
           setDocumentName('');
           onClose();
@@ -154,7 +165,21 @@ export default function SeatRequestSheet({
   const phoneValid = phone.replace(/\D/g, '').length === 10;
   const nameValid = name.trim().length >= 2;
   const dateValid = joinDate.length > 0;
-  const isValid = nameValid && phoneValid && dateValid;
+  const paymentValid = paymentMode === 'cash' || transactionId.trim().length >= 4;
+  const isValid = nameValid && phoneValid && dateValid && paymentValid;
+
+  const durationOptions: { value: Duration; label: string }[] = [
+    { value: '1M', label: '1 Month' },
+    { value: '3M', label: '3 Months' },
+    { value: '6M', label: '6 Months' },
+    { value: '1Y', label: '1 Year' },
+  ];
+
+  const shiftOptions: { value: Shift; label: string }[] = [
+    { value: 'morning', label: 'Morning' },
+    { value: 'evening', label: 'Evening' },
+    { value: 'full', label: 'Full Day' },
+  ];
 
   // Shared input classes
   const inputCls =
@@ -398,6 +423,78 @@ export default function SeatRequestSheet({
                       />
                     </div>
 
+                    {/* ─── Duration ─────────────────────────── */}
+                    <div>
+                      <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                        <CalendarDays className="w-3.5 h-3.5" />
+                        Membership Duration <span className="text-[var(--ruby-400)]">*</span>
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {durationOptions.map(option => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => setDuration(option.value)}
+                            className={cn(
+                              'cursor-pointer rounded-xl border px-3 py-2.5 text-xs font-bold transition-colors',
+                              duration === option.value
+                                ? 'border-[var(--saffron-500)] bg-[var(--saffron-500)] text-[#1a1a16]'
+                                : 'border-[var(--border-default)] bg-[var(--bg-base)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                            )}
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* ─── Preferred Shift ───────────────────── */}
+                    <div>
+                      <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5" />
+                        Preferred Shift <span className="text-[var(--ruby-400)]">*</span>
+                      </label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {shiftOptions.map(option => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => setShift(option.value)}
+                            className={cn(
+                              'cursor-pointer rounded-xl border px-2 py-2.5 text-xs font-bold transition-colors',
+                              shift === option.value
+                                ? 'border-[var(--sapphire-500)] bg-[var(--sapphire-500)] text-white'
+                                : 'border-[var(--border-default)] bg-[var(--bg-base)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                            )}
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* ─── UPI Reference ─────────────────────── */}
+                    {paymentMode === 'upi' && (
+                      <div>
+                        <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                          <Smartphone className="w-3.5 h-3.5" />
+                          UPI Reference <span className="text-[var(--ruby-400)]">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={transactionId}
+                          onChange={e => setTransactionId(e.target.value)}
+                          placeholder="Enter transaction/reference ID"
+                          className={cn(inputCls, 'font-mono uppercase')}
+                        />
+                        {!paymentValid && (
+                          <p className="mt-2 text-[11px] font-semibold text-[var(--ruby-400)]">
+                            Add the payment reference so admin can verify it.
+                          </p>
+                        )}
+                      </div>
+                    )}
+
                     {/* ─── ID Document Upload ───────────────── */}
                     <div>
                       <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
@@ -470,7 +567,7 @@ export default function SeatRequestSheet({
                       <textarea
                         value={message}
                         onChange={e => setMessage(e.target.value)}
-                        placeholder="Shift preference, duration (e.g. Morning, 3 Months)"
+                        placeholder="Any note for the librarian"
                         rows={2}
                         className={cn(inputCls, 'resize-none')}
                       />

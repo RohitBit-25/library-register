@@ -4,6 +4,18 @@ import SeatRequest from '@/models/SeatRequest';
 
 export const dynamic = 'force-dynamic';
 
+type RequestRecord = {
+  _id?: { toString(): string };
+  [key: string]: unknown;
+};
+
+function serializeRequest(request: RequestRecord) {
+  return {
+    ...request,
+    id: request._id?.toString() || request.id,
+  };
+}
+
 /**
  * GET /api/requests/my?phone=XXXXXXXXXX
  * Public endpoint — lets users look up their own requests by phone number.
@@ -20,8 +32,8 @@ export async function GET(request: NextRequest) {
 
   try {
     await dbConnect();
-    const requests = await SeatRequest.find({ userPhone: phone }).sort({ createdAt: -1 });
-    return NextResponse.json(requests);
+    const requests = await SeatRequest.find({ userPhone: phone }).sort({ createdAt: -1 }).lean<RequestRecord[]>();
+    return NextResponse.json(requests.map(serializeRequest));
   } catch (error) {
     console.error('My requests GET error:', error);
     return NextResponse.json(

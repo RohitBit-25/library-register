@@ -65,11 +65,11 @@ export default function KioskPage() {
       {/* Background Decor */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-[var(--sapphire-500)]/5 blur-3xl"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-amber-accent/5 blur-3xl"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-[var(--amber-500)]/5 blur-3xl"></div>
       </div>
 
       <div className="absolute top-6 left-6 z-50">
-        <Link href="/" className="flex items-center gap-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors bg-surface/80/80 backdrop-blur-md px-4 py-2 rounded-full border border-[var(--border-default)] font-medium cursor-pointer shadow-sm hover:shadow-md">
+        <Link href="/" className="flex items-center gap-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors bg-[var(--bg-surface)]/80 backdrop-blur-md px-4 py-2 rounded-full border border-[var(--border-default)] font-medium cursor-pointer shadow-sm hover:shadow-md">
           <ArrowLeft className="w-4 h-4" />
           Exit Kiosk
         </Link>

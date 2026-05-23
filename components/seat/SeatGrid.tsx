@@ -112,8 +112,8 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
     <div className="p-2.5 rounded-2xl bg-[var(--saffron-500)]/10 ring-1 ring-[var(--saffron-500)]/20 shadow-[inset_0_0_20px_rgba(232,133,58,0.1),0_0_15px_rgba(232,133,58,0.1)]">
       <Grid3X3 className="w-4 h-4 text-[var(--saffron-500)] drop-shadow-[0_0_5px_rgba(232,133,58,0.8)]" />
     </div>
-    <h3 className="text-lg font-black text-[var(--text-primary)] tracking-wider">
-      {shiftFilter === 'all' ? 'Topography' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Topography`}
+    <h3 className="text-lg font-black text-[var(--text-primary)] tracking-wide">
+      {shiftFilter === 'all' ? 'Floor Plan' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift`}
     </h3>
     <span className="text-[10px] font-mono tracking-[0.3em] font-black text-[var(--saffron-400)] ml-auto bg-[var(--saffron-500)]/5 px-4 py-1.5 rounded-full border border-[var(--saffron-500)]/20 shadow-[0_0_15px_rgba(232,133,58,0.15)] glow-saffron-chill">
       {(shiftFilter === 'all' ? members : filtered).length} SEATS

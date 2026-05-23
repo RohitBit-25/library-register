@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useSeatRequests } from '@/hooks/useSeatRequests';
 import { useRouter } from 'next/navigation';
 import { type SeatRequest } from '@/lib/types';
-import { cn, fmtDate } from '@/lib/utils';
+import { cn, fmtDate, durationLabel, shiftLabel, todayISO } from '@/lib/utils';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import {
@@ -18,6 +18,7 @@ import {
   Armchair,
   Receipt,
   MessageSquare,
+  CalendarDays,
   Loader2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -201,6 +202,15 @@ export default function MyRequestsPage() {
                         </div>
 
                         {/* Transaction ID */}
+                        <div className="px-3 py-2 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)] mb-2">
+                          <span className="text-[11px] text-[var(--text-secondary)] flex items-center gap-1.5">
+                            <CalendarDays className="w-3 h-3 text-[var(--text-tertiary)]" />
+                            Joining {fmtDate(req.joinDate || todayISO())}
+                            <Clock className="w-3 h-3 text-[var(--text-tertiary)] ml-2" />
+                            {durationLabel(req.duration || '3M')} · {shiftLabel(req.shift || 'full')}
+                          </span>
+                        </div>
+
                         {req.transactionId && (
                           <div className="px-3 py-2 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)] mb-2">
                             <span className="text-[11px] text-[var(--text-secondary)] flex items-center gap-1.5">

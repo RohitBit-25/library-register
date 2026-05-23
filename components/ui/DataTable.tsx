@@ -128,6 +128,8 @@ export function DataTable<TData, TValue>({
   
   const { expandedRowIds, toggleRow } = useRowExpansion(expandedState, onExpandedChange);
 
+  // TanStack Table intentionally owns mutable table APIs; React Compiler should skip this hook.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,

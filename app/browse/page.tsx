@@ -5,7 +5,7 @@ import { useMembers } from '@/hooks/useMembers';
 import { useAuth } from '@/hooks/useAuth';
 import { useSeatRequests } from '@/hooks/useSeatRequests';
 import { useToast } from '@/hooks/useToast';
-import { type Member, type Shift } from '@/lib/types';
+import { type Member, type Duration, type Shift } from '@/lib/types';
 import { getSeatStatus, cn, firstName } from '@/lib/utils';
 import { SeatMapContainer, SeatMapWrapper, type FaceDir } from '@/components/seat/SeatMap';
 import SeatRequestSheet from '@/components/seat/SeatRequestSheet';
@@ -52,7 +52,7 @@ export default function BrowsePage() {
   }, [members, requests, addToast]);
 
   const handleSubmitRequest = async (
-    seat: number, name: string, phone: string, message: string,
+    seat: number, name: string, phone: string, message: string, joinDate: string, duration: Duration, shift: Shift,
     transactionId: string, paymentMode: 'upi' | 'cash', documentUrl: string
   ) => {
     const result = await addRequest({
@@ -60,6 +60,9 @@ export default function BrowsePage() {
       userName: name,
       userPhone: phone,
       message,
+      joinDate,
+      duration,
+      shift,
       transactionId,
       paymentMode,
       documentUrl,
@@ -360,7 +363,7 @@ function BrowseSeatTile({
         )}>
           {isVacant ? (
             <span className="text-[8px] tracking-widest uppercase font-bold">
-              {hasRequest ? '⏳' : '● TAP'}
+              {hasRequest ? 'Pending' : 'Tap'}
             </span>
           ) : shiftIcon}
         </div>

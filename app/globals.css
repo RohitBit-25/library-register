@@ -33,6 +33,7 @@
 
     --color-emerald-400: var(--emerald-400);
     --color-emerald-500: var(--emerald-500);
+    --color-emerald-600: var(--emerald-600);
 
     --color-ruby-400: var(--ruby-400);
     --color-ruby-500: var(--ruby-500);
@@ -42,6 +43,9 @@
 
     --color-sapphire-400: var(--sapphire-400);
     --color-sapphire-500: var(--sapphire-500);
+    --color-sapphire-600: var(--sapphire-600);
+
+    --color-rose-500: var(--rose-500);
 
     --color-indigo-400: var(--indigo-400);
     --color-indigo-500: var(--indigo-500);
@@ -101,9 +105,11 @@
     /* === EMERALD === */
     --emerald-400: #34D97B;
     --emerald-500: #22C36A;
+    --emerald-600: #16A356;
     --emerald-glow: rgba(34, 195, 106, 0.20);
 
     /* === RUBY === */
+    --ruby-100: #FCE1E1;
     --ruby-400: #F26F6F;
     --ruby-500: #E84242;
     --ruby-glow: rgba(232, 66, 66, 0.20);
@@ -116,7 +122,11 @@
     /* === SAPPHIRE === */
     --sapphire-400: #60B4FF;
     --sapphire-500: #3D9EFF;
+    --sapphire-600: #1A7FE8;
     --sapphire-glow: rgba(61, 158, 255, 0.20);
+
+    /* === ROSE === */
+    --rose-500: #F43F5E;
 
     /* === INDIGO === */
     --indigo-400: #9B87FF;
@@ -326,6 +336,22 @@
     scrollbar-width: none;
   }
 
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg-muted) transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--bg-muted);
+    border-radius: var(--radius-full);
+  }
+
   /* Focus Visibility */
   :focus-visible {
     outline: 2px solid var(--saffron-500);
@@ -443,6 +469,15 @@
   @keyframes shimmer {
     0%   { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+  }
+
+  @keyframes pulse-subtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.58; }
+  }
+
+  .animate-pulse-subtle {
+    animation: pulse-subtle 1.8s var(--ease-smooth) infinite;
   }
 
   /* Reduced Motion */

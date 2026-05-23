@@ -5,6 +5,9 @@ export interface ISeatRequest extends Document {
   userName: string;
   userPhone: string;
   message: string;
+  joinDate: string;
+  duration: '1M' | '3M' | '6M' | '1Y';
+  shift: 'morning' | 'evening' | 'full';
   transactionId: string;
   paymentMode: 'upi' | 'cash';
   documentUrl: string;
@@ -17,6 +20,9 @@ const SeatRequestSchema = new Schema<ISeatRequest>({
   userName: { type: String, required: true },
   userPhone: { type: String, required: true },
   message: { type: String, default: '' },
+  joinDate: { type: String, default: '' },
+  duration: { type: String, enum: ['1M', '3M', '6M', '1Y'], default: '3M' },
+  shift: { type: String, enum: ['morning', 'evening', 'full'], default: 'full' },
   transactionId: { type: String, default: '' },
   paymentMode: { type: String, enum: ['upi', 'cash'], default: 'upi' },
   documentUrl: { type: String, default: '' },
