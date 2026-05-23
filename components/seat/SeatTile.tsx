@@ -5,6 +5,8 @@ import { type Member, type SeatStatus } from '@/lib/types';
 import { getSeatStatus, firstName, daysUntilExpiry, fmtDateShort, cn } from '@/lib/utils';
 import { Sun, Moon, Plus, Calendar as CalendarIcon, Clock } from 'lucide-react';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
+import { Avatar } from '@avatune/react';
+import micahTheme from '@avatune/micah-theme/react';
 
 import { type FaceDir } from './SeatMap';
 
@@ -128,12 +130,17 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
           {member.vacant ? (
             <Plus className={cn('opacity-30 z-10 mt-0.5 transition-opacity group-hover:opacity-100 group-hover:text-white', compact ? 'w-4 h-4' : 'w-5 h-5')} />
           ) : (
-            <span className={cn(
-              'font-black w-full text-center z-10 tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] overflow-hidden text-ellipsis whitespace-nowrap px-0.5',
-              compact ? 'text-[10px] leading-tight pb-0.5' : 'text-xs leading-normal pb-0.5',
-            )}>
-              {firstName(member.name)}
-            </span>
+            <div className="flex flex-col items-center justify-center z-10 w-full overflow-hidden">
+              <div className={cn("opacity-90 transition-transform group-hover:scale-110 group-hover:opacity-100", compact ? "mb-0.5" : "mb-1")}>
+                <Avatar theme={micahTheme} seed={member.name + member.seat} size={compact ? 32 : 44} />
+              </div>
+              <span className={cn(
+                'font-black w-full text-center tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] overflow-hidden text-ellipsis whitespace-nowrap px-0.5',
+                compact ? 'text-[9px] leading-tight pb-0.5' : 'text-[11px] leading-normal pb-0.5',
+              )}>
+                {firstName(member.name)}
+              </span>
+            </div>
           )}
 
           <div className={cn('flex items-center justify-center w-full gap-0.5 z-10 font-bold opacity-80', compact ? 'text-[8.5px] leading-none mb-0.5' : 'text-[10px] leading-none mb-0.5')}>
