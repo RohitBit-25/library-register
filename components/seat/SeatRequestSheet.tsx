@@ -298,9 +298,11 @@ export default function SeatRequestSheet({
                       <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 block">
                         Payment Mode
                       </label>
-                      <div className="grid grid-cols-2 gap-2 p-1 bg-[var(--bg-base)] rounded-2xl border border-[var(--border-default)]">
+                      <div role="radiogroup" aria-label="Payment Mode" className="grid grid-cols-2 gap-2 p-1 bg-[var(--bg-base)] rounded-2xl border border-[var(--border-default)]">
                         <button
                           type="button"
+                          role="radio"
+                          aria-checked={paymentMode === 'cash'}
                           onClick={() => setPaymentMode('cash')}
                           className={cn(
                             'cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all duration-300',
@@ -314,6 +316,8 @@ export default function SeatRequestSheet({
                         </button>
                         <button
                           type="button"
+                          role="radio"
+                          aria-checked={paymentMode === 'upi'}
                           onClick={() => setPaymentMode('upi')}
                           className={cn(
                             'cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all duration-300',
@@ -429,11 +433,13 @@ export default function SeatRequestSheet({
                         <CalendarDays className="w-3.5 h-3.5" />
                         Membership Duration <span className="text-[var(--ruby-400)]">*</span>
                       </label>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div role="radiogroup" aria-label="Membership Duration" className="grid grid-cols-2 gap-2">
                         {durationOptions.map(option => (
                           <button
                             key={option.value}
                             type="button"
+                            role="radio"
+                            aria-checked={duration === option.value}
                             onClick={() => setDuration(option.value)}
                             className={cn(
                               'cursor-pointer rounded-xl border px-3 py-2.5 text-xs font-bold transition-colors',
@@ -454,11 +460,13 @@ export default function SeatRequestSheet({
                         <Clock className="w-3.5 h-3.5" />
                         Preferred Shift <span className="text-[var(--ruby-400)]">*</span>
                       </label>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div role="radiogroup" aria-label="Preferred Shift" className="grid grid-cols-3 gap-2">
                         {shiftOptions.map(option => (
                           <button
                             key={option.value}
                             type="button"
+                            role="radio"
+                            aria-checked={shift === option.value}
                             onClick={() => setShift(option.value)}
                             className={cn(
                               'cursor-pointer rounded-xl border px-2 py-2.5 text-xs font-bold transition-colors',

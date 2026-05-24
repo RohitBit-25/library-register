@@ -5,8 +5,6 @@ import { type Member, type SeatStatus } from '@/lib/types';
 import { getSeatStatus, firstName, daysUntilExpiry, fmtDateShort, cn } from '@/lib/utils';
 import { Sun, Moon, Plus, Calendar as CalendarIcon, Clock } from 'lucide-react';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
-import { Avatar } from '@avatune/react';
-import micahTheme from '@avatune/micah-theme/react';
 
 import { type FaceDir } from './SeatMap';
 
@@ -49,7 +47,16 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
 
   const ringRadius = compact ? 25 : 34; 
   const circumference = 2 * Math.PI * ringRadius;
-  const progressPercent = Math.max(0, Math.min(100, (days / 30) * 100));
+  
+  let totalDays = 30;
+  if (!member.vacant && member.duration) {
+    if (member.duration === '1M') totalDays = 30;
+    else if (member.duration === '3M') totalDays = 90;
+    else if (member.duration === '6M') totalDays = 180;
+    else if (member.duration === '1Y') totalDays = 365;
+  }
+  
+  const progressPercent = Math.max(0, Math.min(100, (days / totalDays) * 100));
   const dashoffset = circumference - (progressPercent / 100) * circumference;
   
   let ringStroke = 'stroke-[#10b981]'; 
@@ -131,8 +138,18 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
             <Plus className={cn('opacity-30 z-10 mt-0.5 transition-opacity group-hover:opacity-100 group-hover:text-white', compact ? 'w-4 h-4' : 'w-5 h-5')} />
           ) : (
             <div className="flex flex-col items-center justify-center z-10 w-full overflow-hidden">
-              <div className={cn("opacity-90 transition-transform group-hover:scale-110 group-hover:opacity-100", compact ? "mb-0.5" : "mb-1")}>
-                <Avatar theme={micahTheme} seed={member.name + member.seat} size={compact ? 32 : 44} />
+              <div 
+                className={cn("opacity-90 transition-transform group-hover:scale-110 group-hover:opacity-100", compact ? "mb-0.5" : "mb-1")}
+                style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+              >
+                <img 
+                  src={`https://api.dicebear.com/9.x/micah/svg?seed=${encodeURIComponent(member.name + member.seat)}&backgroundColor=transparent`}
+                  alt={`${member.name} avatar`}
+                  width={compact ? 32 : 44}
+                  height={compact ? 32 : 44}
+                  loading="lazy"
+                  className="pointer-events-none"
+                />
               </div>
               <span className={cn(
                 'font-black w-full text-center tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] overflow-hidden text-ellipsis whitespace-nowrap px-0.5',

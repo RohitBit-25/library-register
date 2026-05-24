@@ -121,29 +121,21 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
   </div>
 
           <SeatMapContainer>
-            <AnimatePresence>
-              {(shiftFilter === 'all' ? members : filtered).map(member => (
-                <SeatMapWrapper key={member.seat} seatNum={member.seat}>
-                  {(face: FaceDir) => (
-                    <m.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                      className="w-full h-full"
-                    >
-                      <SeatTile
-                        member={member}
-                        onClick={handleSeatClick}
-                        compact={true}
-                        face={face}
-                        selected={selectedSeat === member.seat}
-                      />
-                    </m.div>
-                  )}
-                </SeatMapWrapper>
-              ))}
-            </AnimatePresence>
+            {(shiftFilter === 'all' ? members : filtered).map(member => (
+              <SeatMapWrapper key={member.seat} seatNum={member.seat}>
+                {(face: FaceDir) => (
+                  <div className="w-full h-full animate-in fade-in zoom-in duration-300">
+                    <SeatTile
+                      member={member}
+                      onClick={handleSeatClick}
+                      compact={true}
+                      face={face}
+                      selected={selectedSeat === member.seat}
+                    />
+                  </div>
+                )}
+              </SeatMapWrapper>
+            ))}
           </SeatMapContainer>
         </div>
       </div>

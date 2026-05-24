@@ -74,7 +74,7 @@ export default function SeatDetailPanel({
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const { register: renewRegister, handleSubmit: handleRenewSubmit, control: renewControl, reset: renewReset } = useForm<RenewFormValues>({
+  const { register: renewRegister, handleSubmit: handleRenewSubmit, control: renewControl, reset: renewReset, formState: { errors: renewErrors } } = useForm<RenewFormValues>({
     resolver: zodResolver(renewSchema),
     defaultValues: { renewDate: todayISO(), renewDuration: '3M' },
   });
@@ -82,7 +82,7 @@ export default function SeatDetailPanel({
   const watchDuration = useWatch({ control: renewControl, name: 'renewDuration' });
 
   // Edit form
-  const { register: editRegister, handleSubmit: handleEditSubmit, control: editControl, reset: editReset } = useForm<EditFormValues>({
+  const { register: editRegister, handleSubmit: handleEditSubmit, control: editControl, reset: editReset, formState: { errors: editErrors } } = useForm<EditFormValues>({
     resolver: zodResolver(editSchema),
     defaultValues: {
       name: member?.name || '',
@@ -162,10 +162,18 @@ export default function SeatDetailPanel({
             </div>
 
             <div className="space-y-4 pt-2">
-              <FloatingLabelInput label="Full Name" {...editRegister('name')} />
-              <FloatingLabelInput label="WhatsApp Number" type="tel" inputMode="tel" {...editRegister('phone')} />
-
-              <FloatingLabelInput label="Date of Joining" type="date" {...editRegister('joinDate')} />
+              <div>
+                <FloatingLabelInput label="Full Name" {...editRegister('name')} />
+                {editErrors.name && <span className="text-[10px] text-[var(--ruby-400)] block mt-1 ml-1">{editErrors.name.message}</span>}
+              </div>
+              <div>
+                <FloatingLabelInput label="WhatsApp Number" type="tel" inputMode="tel" {...editRegister('phone')} />
+                {editErrors.phone && <span className="text-[10px] text-[var(--ruby-400)] block mt-1 ml-1">{editErrors.phone.message}</span>}
+              </div>
+              <div>
+                <FloatingLabelInput label="Date of Joining" type="date" {...editRegister('joinDate')} />
+                {editErrors.joinDate && <span className="text-[10px] text-[var(--ruby-400)] block mt-1 ml-1">{editErrors.joinDate.message}</span>}
+              </div>
 
               <div>
                 <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Duration</span>
@@ -173,11 +181,13 @@ export default function SeatDetailPanel({
                   name="duration"
                   control={editControl}
                   render={({ field }) => (
-                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
+                    <div role="radiogroup" aria-label="Duration" className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
                       {(['1M', '3M', '6M', '1Y'] as Duration[]).map(d => (
                         <button
                           key={d}
                           type="button"
+                          role="radio"
+                          aria-checked={field.value === d}
                           onClick={() => field.onChange(d)}
                           className={cn(
                             'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer',
@@ -200,11 +210,13 @@ export default function SeatDetailPanel({
                   name="fee"
                   control={editControl}
                   render={({ field }) => (
-                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
+                    <div role="radiogroup" aria-label="Fee Status" className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
                       {(['paid', 'due'] as const).map(f => (
                         <button
                           key={f}
                           type="button"
+                          role="radio"
+                          aria-checked={field.value === f}
                           onClick={() => field.onChange(f)}
                           className={cn(
                             'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer capitalize',
@@ -389,11 +401,14 @@ export default function SeatDetailPanel({
             </div>
 
             <div className="space-y-4 pt-2">
-              <FloatingLabelInput
-                label="New join date"
-                type="date"
-                {...renewRegister('renewDate')}
-              />
+              <div>
+                <FloatingLabelInput
+                  label="New join date"
+                  type="date"
+                  {...renewRegister('renewDate')}
+                />
+                {renewErrors.renewDate && <span className="text-[10px] text-[var(--ruby-400)] block mt-1 ml-1">{renewErrors.renewDate.message}</span>}
+              </div>
 
               <div>
                 <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Duration</span>
@@ -401,11 +416,13 @@ export default function SeatDetailPanel({
                   name="renewDuration"
                   control={renewControl}
                   render={({ field }) => (
-                    <div className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
+                    <div role="radiogroup" aria-label="Renewal Duration" className="flex gap-1.5 mt-1.5 bg-[var(--bg-base)] p-1.5 rounded-xl border border-[var(--border-default)] shadow-inner shadow-black/5">
                       {(['1M', '3M', '6M', '1Y'] as Duration[]).map(d => (
                         <button
                           key={d}
                           type="button"
+                          role="radio"
+                          aria-checked={field.value === d}
                           onClick={() => field.onChange(d)}
                           className={cn(
                             'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer relative overflow-hidden',
