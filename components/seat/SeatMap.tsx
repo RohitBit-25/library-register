@@ -14,7 +14,6 @@ export interface SeatPosition {
 }
 
 import { LAYOUT_CONFIG, getSeatPositionConfig, type WallDetail } from '@/lib/layoutConfig';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -271,109 +270,78 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
 
 export function SeatMapContainer({ children }: { children: ReactNode }) {
   return (
-    <div className="w-full relative group rounded-[2rem] overflow-hidden" style={{ minHeight: '600px' }}>
-      <TransformWrapper
-        initialScale={0.8}
-        minScale={0.4}
-        maxScale={2}
-        centerOnInit={true}
-        wheel={{ step: 0.1 }}
-        pinch={{ step: 5 }}
-      >
-        {({ zoomIn, zoomOut, resetTransform }) => (
-          <>
-            {/* ── Zoom Controls — glassmorphism card ── */}
-            <div className="absolute left-4 top-4 z-50 flex flex-col gap-2 rounded-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35)] backdrop-blur-2xl bg-[#0a0f17]/80 p-2 pointer-events-auto">
-              <button
-                onClick={() => zoomIn()}
-                className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 active:scale-95 text-white font-bold transition-all focus:outline-none"
-                aria-label="Zoom in"
-              >
-                +
-              </button>
-              <div className="w-full h-px bg-white/10" />
-              <button
-                onClick={() => zoomOut()}
-                className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 active:scale-95 text-white font-bold transition-all focus:outline-none"
-                aria-label="Zoom out"
-              >
-                −
-              </button>
-            </div>
+    <div className="w-full relative group rounded-[2rem] overflow-auto custom-scrollbar" style={{ minHeight: '600px' }}>
+      <div className="min-w-max p-8 sm:p-12 md:p-16 mx-auto w-max">
+        {/* ── Main Canvas ── */}
+        <div
+          className="relative rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.55)] transition-transform duration-300 ease-out shrink-0"
+          style={{
+            width: CANVAS_W,
+            height: CANVAS_H,
+          }}
+        >
+          {/* Background and Border layer with hidden overflow */}
+          <div 
+            className="absolute inset-0 rounded-[2rem] overflow-hidden pointer-events-none"
+            style={{
+              background: `
+                radial-gradient(circle at top left,  rgba(255,255,255,0.025), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(16,185,129,0.04), transparent 35%),
+                linear-gradient(145deg, #111827, #0b1220 40%, #0a0f17)
+              `,
+              border: '6px solid #1f2937',
+            }}
+          >
+            {/* ── Ambient lighting layers ── */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.09),transparent_42%)] pointer-events-none z-0" />
+            <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-black/35 to-transparent pointer-events-none z-0" />
 
-            <TransformComponent wrapperStyle={{ width: '100%', height: '100%', minHeight: '600px', cursor: 'grab' }} contentStyle={{ cursor: 'inherit' }}>
-              {/* ── Main Canvas ── */}
-              <div
-                className="relative mx-auto rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.55)] transition-transform duration-300 ease-out overflow-hidden"
-                style={{
-                  width: CANVAS_W,
-                  height: CANVAS_H,
-                  // Cinematic layered floor
-                  background: `
-                    radial-gradient(circle at top left,  rgba(255,255,255,0.025), transparent 30%),
-                    radial-gradient(circle at bottom right, rgba(16,185,129,0.04), transparent 35%),
-                    linear-gradient(145deg, #111827, #0b1220 40%, #0a0f17)
-                  `,
-                  // Structural outer wall rail
-                  border: '6px solid #1f2937',
-                }}
-              >
-                {/* ── Ambient lighting layers ── */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.09),transparent_42%)] pointer-events-none z-0" />
-                <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-black/35 to-transparent pointer-events-none z-0" />
+            {/* ── Grid ── */}
+            <GridDots />
 
-                {/* ── Grid ── */}
-                <GridDots />
+            {/* ── Volumetric glows ── */}
+            <div className="absolute top-0 left-1/4 w-[50%] h-[30%] bg-blue-500/8 blur-[130px] pointer-events-none rounded-full z-0" />
+            <div className="absolute bottom-0 right-1/4 w-[40%] h-[40%] bg-emerald-500/5 blur-[130px] pointer-events-none rounded-full z-0" />
 
-                {/* ── Volumetric glows ── */}
-                <div className="absolute top-0 left-1/4 w-[50%] h-[30%] bg-blue-500/8 blur-[130px] pointer-events-none rounded-full z-0" />
-                <div className="absolute bottom-0 right-1/4 w-[40%] h-[40%] bg-emerald-500/5 blur-[130px] pointer-events-none rounded-full z-0" />
+            <div className="absolute inset-[12px] rounded-3xl border border-white/[0.04] pointer-events-none z-10 shadow-[inset_0_0_100px_rgba(0,0,0,0.45)]" />
 
-                <div className="absolute inset-[12px] rounded-3xl border border-white/[0.04] pointer-events-none z-10 shadow-[inset_0_0_100px_rgba(0,0,0,0.45)]" />
+            {/* ── Noise texture overlay ── */}
+            <div
+              className="absolute inset-0 pointer-events-none z-0 opacity-[0.025]"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+                backgroundRepeat: 'repeat',
+                backgroundSize: '128px 128px',
+              }}
+            />
 
-                {/* ── Noise texture overlay ── */}
-                <div
-                  className="absolute inset-0 pointer-events-none z-0 opacity-[0.025]"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-                    backgroundRepeat: 'repeat',
-                    backgroundSize: '128px 128px',
-                  }}
-                />
+            {/* ── Floor content (clipped by border-radius) ── */}
+            <FloorDecorations />
+          </div>
 
-                {/* ── Section labels ── */}
-                <div className="absolute pointer-events-none z-10" style={{ left: PAD + 0 * CELL + 4, top: PAD - 20 }}>
-                  <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-blue-400/50">Row A</span>
-                </div>
-                <div className="absolute pointer-events-none z-10" style={{ left: PAD + 5 * CELL + 4, top: PAD - 20 }}>
-                  <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-blue-400/50">Row B</span>
-                </div>
-                <div className="absolute pointer-events-none z-10" style={{ left: PAD + 8 * CELL + 4, top: PAD - 20 }}>
-                  <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-emerald-400/50">Row C</span>
-                </div>
-                <div className="absolute pointer-events-none z-10" style={{ left: PAD + 12 * CELL + 4, top: PAD - 20 }}>
-                  <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-violet-400/50">Row D</span>
-                </div>
+          {/* ── Unclipped Elements ── */}
+          {/* Section labels */}
+          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 0 * CELL + 4, top: PAD - 20 }}>
+            <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-blue-400/50">Row A</span>
+          </div>
+          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 5 * CELL + 4, top: PAD - 20 }}>
+            <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-blue-400/50">Row B</span>
+          </div>
+          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 8 * CELL + 4, top: PAD - 20 }}>
+            <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-emerald-400/50">Row C</span>
+          </div>
+          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 12 * CELL + 4, top: PAD - 20 }}>
+            <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-violet-400/50">Row D</span>
+          </div>
 
-                {/* ── Floor content ── */}
-                <FloorDecorations />
-                <EntryMarker />
-                {WALL_DETAILS.map((d, i) => <WallLabel key={i} detail={d} />)}
+          <EntryMarker />
+          {WALL_DETAILS.map((d, i) => <WallLabel key={i} detail={d} />)}
 
-                {/* ── Seats ── */}
-                <div className="absolute inset-0 z-20">
-                  {children}
-                </div>
-              </div>
-            </TransformComponent>
-          </>
-        )}
-      </TransformWrapper>
-
-      {/* ── Mobile pan hint ── */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-xl text-amber-400 text-[11px] uppercase font-bold tracking-[0.2em] px-6 py-3 rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-500 md:hidden border border-amber-500/20 z-50 shadow-[0_10px_40px_rgba(0,0,0,0.6)] flex items-center gap-3 translate-y-4 group-hover:translate-y-0">
-        <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
-        Pinch to zoom, drag to pan
+          {/* ── Seats ── */}
+          <div className="absolute inset-0 z-20">
+            {children}
+          </div>
+        </div>
       </div>
     </div>
   );
