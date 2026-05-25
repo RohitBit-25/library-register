@@ -75,20 +75,44 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
           </div>
 
           {/* Quick stats — pill badges */}
-          <div className="flex flex-wrap items-center gap-2">
-            <StatPill label="Occupied" value={stats.occupied} accent="bg-[var(--emerald-500)]/10 text-[var(--emerald-500)] border-[var(--emerald-500)]/30" />
-            <StatPill label="Vacant" value={stats.vacant} accent="bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-default)] border-dashed" />
+          <m.div 
+            className="flex flex-wrap items-center gap-2"
+            variants={{
+              hidden: {},
+              show: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
+            }}
+            initial="hidden"
+            animate="show"
+          >
+            <m.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
+              <StatPill label="Occupied" value={stats.occupied} accent="bg-[var(--emerald-500)]/10 text-[var(--emerald-500)] border-[var(--emerald-500)]/30" />
+            </m.div>
+            <m.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
+              <StatPill label="Vacant" value={stats.vacant} accent="bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-default)] border-dashed" />
+            </m.div>
             {stats.due > 0 && (
-              <StatPill label="Due" value={stats.due} accent="bg-[var(--saffron-500)]/10 text-[var(--saffron-500)] border-[var(--saffron-500)]/30" />
+              <m.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
+                <StatPill label="Due" value={stats.due} accent="bg-[var(--saffron-500)]/10 text-[var(--saffron-500)] border-[var(--saffron-500)]/30" />
+              </m.div>
             )}
             {(stats.expiring + stats.expired) > 0 && (
-              <StatPill label="Expiry" value={stats.expiring + stats.expired} accent="bg-[var(--ruby-500)]/10 text-[var(--ruby-500)] border-[var(--ruby-500)]/30" />
+              <m.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
+                <StatPill label="Expiry" value={stats.expiring + stats.expired} accent="bg-[var(--ruby-500)]/10 text-[var(--ruby-500)] border-[var(--ruby-500)]/30" />
+              </m.div>
             )}
-          </div>
+          </m.div>
         </div>
 
         {/* Legend — enhanced */}
-        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-5 md:gap-7 mb-7 text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-[0.2em]">
+        <m.div 
+          className="flex flex-wrap items-center justify-center sm:justify-start gap-5 md:gap-7 mb-7 text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-[0.2em]"
+          variants={{
+            hidden: {},
+            show: { transition: { staggerChildren: 0.05, delayChildren: 0.4 } }
+          }}
+          initial="hidden"
+          animate="show"
+        >
   {[
     { cls: 'bg-[#10b981] shadow-[0_0_10px_rgba(16,185,129,0.5)]', label: 'Active' },
     { cls: 'bg-[#fbbf24] shadow-[0_0_10px_rgba(251,191,36,0.5)]', label: 'Expiring' },
@@ -96,12 +120,16 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
     { cls: 'bg-[#f5c842] shadow-[0_0_10px_rgba(245,200,66,0.5)]', label: 'Fee Due' },
     { cls: 'bg-transparent ring-1 ring-[var(--border-default)] border-dashed opacity-60', label: 'Vacant' },
   ].map(l => (
-    <span key={l.label} className="flex items-center gap-2 group">
+    <m.span 
+      key={l.label} 
+      className="flex items-center gap-2 group"
+      variants={{ hidden: { opacity: 0, scale: 0.8 }, show: { opacity: 1, scale: 1 } }}
+    >
       <span className={cn('w-2 h-2 rounded-full transition-transform group-hover:scale-150', l.cls)} />
       <span className="group-hover:text-[var(--text-primary)] transition-colors">{l.label}</span>
-    </span>
+    </m.span>
   ))}
-</div>
+</m.div>
 
         {/* Grid */}
         <div className="rounded-[3rem] glass-elite overflow-hidden mb-8 relative">

@@ -99,6 +99,19 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
             )} />
           )}
 
+          {/* Hover Shimmer */}
+          <m.div
+            className="absolute inset-0 w-full h-full pointer-events-none rounded-[0.65rem] overflow-hidden mix-blend-overlay z-20"
+            initial={{ opacity: 0 }}
+            whileHover={{ opacity: 1 }}
+          >
+            <m.div
+              className="absolute top-0 bottom-0 w-[150%] bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
+              animate={{ left: ['-100%', '100%'] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
+            />
+          </m.div>
+
           {!member.vacant && (
             <svg className="absolute inset-0 w-full h-full -rotate-90 opacity-40 mix-blend-screen">
               <circle
@@ -119,8 +132,14 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
                   strokeWidth="1.5"
                   strokeDasharray={circumference}
                   initial={{ strokeDashoffset: circumference }}
-                  animate={{ strokeDashoffset: dashoffset }}
-                  transition={{ duration: 1.5, type: "spring", bounce: 0 }}
+                  animate={{ 
+                    strokeDashoffset: dashoffset, 
+                    ...( (status === 'expiring' || status === 'due') ? { opacity: [1, 0.3, 1] } : {} )
+                  }}
+                  transition={{ 
+                    strokeDashoffset: { duration: 1.5, type: "spring", bounce: 0 },
+                    opacity: { repeat: Infinity, duration: 2, ease: "easeInOut" }
+                  }}
                   style={{ filter: `drop-shadow(0 0 4px ${status === 'active' ? '#10b981' : '#fbbf24'})` }}
                 />
               )}
@@ -181,11 +200,11 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
         <AnimatePresence>
           {isHovered && !member.vacant && (
             <m.div
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              initial={{ opacity: 0, y: 15, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 5, scale: 0.95 }}
-              transition={{ duration: 0.15 }}
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-48 p-3 rounded-xl bg-[#080808]/80 backdrop-blur-2xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] z-50 pointer-events-none"
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-48 p-3 rounded-xl bg-[#080808]/80 backdrop-blur-2xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] z-50 pointer-events-none"
             >
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-start justify-between">

@@ -42,11 +42,11 @@ interface SeatDetailPanelProps {
 
 // ── Status gradient banner config ──────────────────
 const statusGradient: Record<SeatStatus, string> = {
-  active: 'bg-emerald-500 text-[var(--saffron-50)] shadow-lg shadow-emerald-500/20',
-  expiring: 'bg-amber-500 text-[var(--saffron-50)] shadow-lg shadow-amber-500/20',
-  expired: 'bg-ruby-500 text-[var(--saffron-50)] shadow-lg shadow-ruby-500/20',
-  due: 'bg-saffron-500 text-[var(--saffron-50)] shadow-lg shadow-saffron-500/20',
-  vacant: 'bg-[var(--bg-surface)] border-2 border-dashed border-[var(--border-default)] text-[var(--text-primary)] opacity-90',
+  active: 'bg-emerald-500 text-[var(--saffron-50)] shadow-[0_10px_30px_rgba(16,185,129,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]',
+  expiring: 'bg-amber-500 text-[var(--saffron-50)] shadow-[0_10px_30px_rgba(245,158,11,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]',
+  expired: 'bg-ruby-500 text-[var(--saffron-50)] shadow-[0_10px_30px_rgba(239,68,68,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]',
+  due: 'bg-saffron-500 text-[var(--saffron-50)] shadow-[0_10px_30px_rgba(245,200,66,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)]',
+  vacant: 'bg-[var(--bg-surface)] border-2 border-dashed border-[var(--border-default)] text-[var(--text-primary)] opacity-90 shadow-[0_10px_30px_rgba(0,0,0,0.1)]',
 };
 
 const statusLabel: Record<SeatStatus, string> = {
@@ -536,15 +536,17 @@ function InfoRow({ icon, label, value, action }: { icon: React.ReactNode; label:
 
 function ActionBtn({ onClick, icon, className, children }: { onClick: () => void; icon: React.ReactNode; className: string; children: React.ReactNode }) {
   return (
-    <button
+    <m.button
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.95 }}
       onClick={onClick}
       className={cn(
-        'flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer active:scale-95',
+        'flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-colors cursor-pointer',
         className,
       )}
     >
       {icon}
       {children}
-    </button>
+    </m.button>
   );
 }

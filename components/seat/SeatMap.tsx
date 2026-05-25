@@ -46,27 +46,42 @@ const Desk = ({
   leftCol, topRow, widthCols, heightRows,
 }: {
   leftCol: number; topRow: number; widthCols: number; heightRows: number;
-}) => (
-  <div
-    className="absolute rounded-2xl border border-white/10"
-    style={{
-      left: PAD + (leftCol - 1) * CELL + CELL * 0.8,
-      top: PAD + (topRow - 1) * CELL + CELL * 0.2,
-      width: widthCols * CELL - CELL * 0.6,
-      height: heightRows * CELL - CELL * 0.4,
-      background: 'linear-gradient(145deg, #1e293b, #111827 50%, #0f172a)',
-      boxShadow: '0 20px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05)',
-    }}
-  >
-    {/* Inner bevel highlight */}
-    <div className="absolute inset-[1px] rounded-2xl border border-white/[0.04] pointer-events-none" />
-  </div>
-);
+}) => {
+  const w = widthCols * CELL - CELL * 0.6;
+  const h = heightRows * CELL - CELL * 0.4;
+  return (
+    <div
+      className="absolute z-0 group"
+      style={{
+        left: PAD + (leftCol - 1) * CELL + CELL * 0.8,
+        top: PAD + (topRow - 1) * CELL + CELL * 0.2,
+        width: w,
+        height: h,
+      }}
+    >
+      {/* 3D Drop Shadow */}
+      <div className="absolute inset-0 rounded-2xl bg-black/60 blur-[6px] translate-y-3 translate-x-1" />
+      {/* Table Side/Thickness */}
+      <div className="absolute inset-0 rounded-2xl bg-slate-900 translate-y-1.5 border border-white/5" />
+      {/* Table Top */}
+      <div 
+        className="absolute inset-0 rounded-2xl border border-white/10 overflow-hidden"
+        style={{
+          background: 'linear-gradient(145deg, #1e293b, #111827 50%, #0f172a)',
+        }}
+      >
+        {/* Subtle wood-like grain or reflection */}
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.02)_50%,transparent_100%)] pointer-events-none" />
+        <div className="absolute inset-[1px] rounded-2xl border border-white/[0.06] pointer-events-none" />
+      </div>
+    </div>
+  );
+};
 
-/** Layered plant marker */
+/** Layered 3D plant marker */
 const Plant = ({ col, row }: { col: number; row: number }) => (
   <div
-    className="absolute"
+    className="absolute group hover:scale-105 transition-transform"
     style={{
       left: PAD + (col - 1) * CELL + CELL * 0.2,
       top: PAD + (row - 1) * CELL + CELL * 0.2,
@@ -74,14 +89,25 @@ const Plant = ({ col, row }: { col: number; row: number }) => (
       height: CELL * 0.6,
     }}
   >
-    {/* Outer glow */}
-    <div className="absolute inset-0 rounded-full bg-emerald-500/20 blur-md" />
-    {/* Solid core */}
-    <div className="absolute inset-[8px] rounded-full bg-gradient-to-br from-emerald-400/80 to-emerald-600/60 shadow-[0_0_12px_rgba(52,211,153,0.4)]" />
+    {/* Pot shadow */}
+    <div className="absolute top-[20%] left-[20%] w-[60%] h-[60%] rounded-full bg-black/60 blur-[4px] translate-y-3 translate-x-1" />
+    {/* Pot base */}
+    <div className="absolute top-[25%] left-[25%] w-[50%] h-[50%] rounded-full bg-gradient-to-br from-slate-700 to-slate-900 border border-white/10 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.5)]" />
+    {/* Plant leaves */}
+    <div className="absolute inset-0 rotate-0">
+      <div className="absolute top-[15%] left-[45%] w-[10%] h-[40%] bg-gradient-to-t from-emerald-700 to-emerald-400 rounded-full origin-bottom rotate-[-30deg] shadow-lg" />
+      <div className="absolute top-[15%] left-[45%] w-[10%] h-[40%] bg-gradient-to-t from-emerald-700 to-emerald-400 rounded-full origin-bottom rotate-[30deg] shadow-lg" />
+      <div className="absolute top-[25%] left-[45%] w-[10%] h-[35%] bg-gradient-to-t from-emerald-600 to-emerald-300 rounded-full origin-bottom rotate-[90deg] shadow-lg" />
+      <div className="absolute top-[25%] left-[45%] w-[10%] h-[35%] bg-gradient-to-t from-emerald-600 to-emerald-300 rounded-full origin-bottom rotate-[-90deg] shadow-lg" />
+      <div className="absolute top-[35%] left-[45%] w-[12%] h-[30%] bg-gradient-to-t from-emerald-500 to-emerald-200 rounded-full origin-bottom rotate-[180deg] shadow-lg" />
+      <div className="absolute top-[10%] left-[45%] w-[12%] h-[45%] bg-gradient-to-t from-emerald-600 to-emerald-300 rounded-full origin-bottom shadow-lg" />
+    </div>
+    {/* Ambient glow */}
+    <div className="absolute inset-0 rounded-full bg-emerald-500/10 blur-xl pointer-events-none" />
   </div>
 );
 
-/** Subtle grid lines + dot overlay for architectural planning feel */
+/** Holographic grid lines + dot overlay for architectural planning feel */
 const GridDots = memo(function GridDots() {
   return (
     <>
@@ -90,18 +116,30 @@ const GridDots = memo(function GridDots() {
         className="absolute inset-0 pointer-events-none z-0 opacity-100"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)
+            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)
           `,
           backgroundSize: `${CELL}px ${CELL}px`,
           backgroundPosition: `${PAD}px ${PAD}px`,
         }}
       />
+      {/* Animated scanline */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="w-full h-24 bg-gradient-to-b from-transparent via-blue-500/10 to-transparent" style={{ animation: 'scan 8s linear infinite' }} />
+      </div>
+      <style>{`
+        @keyframes scan {
+          0% { transform: translateY(-100%); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translateY(${CANVAS_H}px); opacity: 0; }
+        }
+      `}</style>
       {/* Dot intersections */}
-      <svg className="absolute inset-0 pointer-events-none z-0 opacity-30" width={CANVAS_W} height={CANVAS_H}>
+      <svg className="absolute inset-0 pointer-events-none z-0 opacity-40" width={CANVAS_W} height={CANVAS_H}>
         <defs>
           <pattern id="grid-dots" x={PAD} y={PAD} width={CELL} height={CELL} patternUnits="userSpaceOnUse">
-            <circle cx="0" cy="0" r="1.2" fill="#94a3b8" />
+            <circle cx="0" cy="0" r="1.5" fill="#60a5fa" className="opacity-50" />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#grid-dots)" />
@@ -161,17 +199,24 @@ function EntryMarker() {
       className="absolute top-0 -translate-x-1/2 z-20"
       style={{ left: PAD + 6 * CELL, width: 4 * CELL }}
     >
+      {/* Intense Volumetric Light cast onto the floor */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200%] h-32 bg-[conic-gradient(from_180deg_at_50%_0%,rgba(245,158,11,0)_0deg,rgba(245,158,11,0.1)_180deg,rgba(245,158,11,0)_360deg)] pointer-events-none blur-xl origin-top animate-pulse" style={{ animationDuration: '3s' }} />
+      
       {/* Structural archway */}
-      <div className="w-full h-16 bg-[#111827] border-x-2 border-b-2 border-white/10 rounded-b-[2rem] shadow-2xl flex items-end justify-center pb-2.5 backdrop-blur-md overflow-hidden">
+      <div className="w-full h-16 bg-[#111827] border-x-2 border-b-2 border-white/10 rounded-b-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.8)] flex items-end justify-center pb-2.5 backdrop-blur-md overflow-hidden relative">
         {/* Doorway glow strip */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400/80 to-transparent" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-8 bg-amber-500/20 blur-xl rounded-full" />
+        
         {/* Soft amber wash */}
-        <div className="absolute inset-0 bg-gradient-to-b from-amber-500/8 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-amber-500/10 to-transparent pointer-events-none" />
+        
         {/* Badge */}
-        <div className="relative flex items-center gap-2 bg-[#0f172a] px-4 py-1.5 rounded-full border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-          <DoorOpen className="w-4 h-4 text-amber-300" />
-          <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
-          <span className="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] drop-shadow-sm">Entrance</span>
+        <div className="relative flex items-center gap-2 bg-[#0a0f17] px-4 py-1.5 rounded-full border border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.3)] backdrop-blur-xl">
+          <DoorOpen className="w-4 h-4 text-amber-300 drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
+          <div className="w-2 h-2 bg-amber-400 rounded-full animate-ping absolute left-4 opacity-50" style={{ animationDuration: '2s' }} />
+          <div className="w-2 h-2 bg-amber-400 rounded-full shadow-[0_0_10px_rgba(245,158,11,1)]" />
+          <span className="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] drop-shadow-sm ml-1">Entrance</span>
         </div>
       </div>
     </div>
