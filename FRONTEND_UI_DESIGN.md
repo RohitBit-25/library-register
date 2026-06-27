@@ -1,6 +1,6 @@
 # Frontend UI Design Specification
 
-This document outlines the visual structure, layout, typography, and interactive components of all the primary pages within the Library Management System. The application follows a "glassmorphic" dark-mode first design approach with a premium, app-like native feel, heavily inspired by modern Apple HIG and iOS interfaces.
+This document outlines the visual structure, layout, typography, and interactive components of all the primary pages within the Library Management System. The application follows a clean, professional "light-mode" design approach with a firm, app-like native feel, heavily inspired by modern dashboards.
 
 ---
 
@@ -8,9 +8,9 @@ This document outlines the visual structure, layout, typography, and interactive
 **Path:** `/` (when unauthenticated)
 
 ### Design Elements
-- **Layout:** Centered alignment. It uses a high-contrast blurred background to direct focus to the central action cards.
+- **Layout:** Centered alignment. It uses a crisp white background to direct focus to the central action cards.
 - **Hero Section:** Large typography displaying the branded "Gangaur Library" identity with a subtle blue to indigo gradient text effect.
-- **Visitor Action:** A prominent, glowing "Browse Seats" call-to-action button for visitors to view availability without logging in.
+- **Visitor Action:** A prominent "Browse Seats" call-to-action button for visitors to view availability without logging in.
 - **Admin Authentication:**
   - Standard floating-label input for the 6-digit Admin PIN.
   - Features real-time validation and a red "wiggle" animation via Framer Motion upon an invalid login attempt.
@@ -43,7 +43,7 @@ This document outlines the visual structure, layout, typography, and interactive
 ### Design Elements
 - **Layout:** Dashboard split. A sprawling 2D seat grid takes up the primary canvas. Uncluttered and distraction-free.
 - **Header:** Sticky top header featuring a Global Search bar that can instantly locate members using names, phone numbers, or seat numbers.
-- **Global Search:** Utilizes a backdrop blur, displaying a dropdown of matched members featuring avatar icons and current subscription statuses.
+- **Global Search:** Displays a dropdown of matched members featuring avatar icons and current subscription statuses on a solid surface.
 - **Seat States and Indicators:**
   - **Vacant (Blue):** Shows seat number.
   - **Active (Green):** User icon along with a badge indicating the shift (Morning, Evening, Full).
@@ -61,7 +61,7 @@ This document outlines the visual structure, layout, typography, and interactive
 ### Design Elements
 - **Layout:** Classic mobile-style inbox list tailored for rapid triaging.
 - **Navigation Tabs:** Horizontal scrollable pills across the top (Pending, Approved, Rejected, All) mimicking high-end native iOS lists.
-- **Notification Badges:** Glowing numerical indicators drawing the admin's eye to incoming, unchecked requests.
+- **Notification Badges:** Numerical indicators drawing the admin's eye to incoming, unchecked requests.
 - **Request Cards:**
   - **Pending State:** Accented in blue gradients. Distinct visual typography isolates the user’s name, phone, chosen seat, and timestamp.
   - **Transaction Highlight:** The User's Transaction/UTR ID is boxed inside an emerald-green heavily bordered container to clearly distinguish the verification code from the rest of the text.
@@ -92,7 +92,7 @@ This document outlines the visual structure, layout, typography, and interactive
 ---
 
 ### UX / UI Core Systems Deployed:
-* **Tailwind CSS + Custom Variables**: `globals.css` manages strict token variables (e.g., `--bg-surface`, `--text-primary`) ensuring perfect dark/light mode parity.
+* **Tailwind CSS + Custom Variables**: `globals.css` manages strict token variables ensuring a crisp light mode UI.
 * **Framer Motion**: Enables `<AnimatePresence />` to handle smooth page transitions, list reordering, and modal popping.
 * **Lucide Iconography**: High-quality, consistent stroke-weight icons across all screens.
 * **Floating Labels**: Minimalist form inputs that reduce clutter while retaining field context after text is entered.

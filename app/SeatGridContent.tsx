@@ -132,10 +132,10 @@ export default function SeatGridContent() {
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2 text-[var(--saffron-400)] mb-2"
+              className="flex items-center gap-2 text-[var(--saffron-600)] mb-2"
             >
-              <LayoutDashboard size={14} className="drop-shadow-[0_0_8px_var(--saffron-500)]" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] bg-gradient-to-r from-[var(--saffron-300)] to-[var(--saffron-600)] bg-clip-text text-transparent">
+              <LayoutDashboard size={14} />
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--saffron-600)]">
                 Live Seat Map
               </span>
             </motion.div>
@@ -143,7 +143,7 @@ export default function SeatGridContent() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-b from-white via-[#F5E8D4] to-[#C4A882] bg-clip-text text-transparent drop-shadow-sm"
+              className="text-3xl md:text-4xl font-bold tracking-tight text-[var(--text-primary)]"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Reading Hall Seats
@@ -167,30 +167,24 @@ export default function SeatGridContent() {
               label="Occupied" 
               value={stats.occupied} 
               icon={<Users size={14} />}
-              color="bg-[var(--saffron-500)] text-[var(--bg-base)] shadow-[0_0_20px_rgba(208,106,32,0.2)] border-transparent" 
+              color="bg-[var(--saffron-50)] text-[var(--saffron-700)] border-[var(--saffron-200)]" 
             />
             <StatChip 
               label="Available" 
               value={stats.vacant} 
               icon={<UserPlus size={14} />}
-              color="bg-[var(--emerald-500)]/10 text-[var(--emerald-400)] border-[var(--emerald-400)]/20 shadow-[0_0_15px_rgba(34,195,106,0.05)] backdrop-blur-md" 
+              color="bg-[var(--emerald-50)] text-[var(--emerald-700)] border-[var(--emerald-200)]" 
             />
             <div className="h-10 w-px bg-gradient-to-b from-transparent via-[var(--border-strong)] to-transparent mx-2" />
             <div className="relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--saffron-500)] to-[#C8900E] rounded-full blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
               <GlobalSearch onSelect={seat => setSelectedSeat(seat)} className="relative w-[260px]" />
             </div>
           </motion.div>
         </header>
 
         {/* --- SEATING CANVAS --- */}
-        <section className="relative rounded-3xl glass-elite-panel glow-saffron-chill p-4 md:p-8 mb-8 overflow-hidden">
-          {/* Elite Ambient Glows */}
-          <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-[var(--saffron-500)]/10 blur-[130px] rounded-full pointer-events-none mix-blend-screen" />
-          <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[var(--sapphire-500)]/5 blur-[120px] rounded-full pointer-events-none mix-blend-screen" />
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22 opacity=%220.025%22/%3E%3C/svg%3E')] pointer-events-none mix-blend-overlay"></div>
-          
-          <div className="relative z-10">
+        <section className="relative rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm p-4 md:p-8 mb-8 overflow-hidden">
+
             {isLoading ? (
               <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-5">
                 {Array.from({ length: 40 }).map((_, i) => (
@@ -210,21 +204,19 @@ export default function SeatGridContent() {
                 />
               </motion.div>
             )}
-          </div>
-
           {/* Legend Overlay */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-5 text-[11px] font-medium uppercase tracking-[0.16em] text-[#C4A882]/70 relative z-10">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-5 text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--text-secondary)] relative z-10">
             <div className="flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-white/20 ring-4 ring-white/5" /> 
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--border-strong)] ring-4 ring-[var(--bg-muted)]" /> 
               <span>Vacant</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--saffron-400)] shadow-[0_0_12px_var(--saffron-500)] ring-4 ring-[var(--saffron-500)]/20" /> 
-              <span className="text-[var(--saffron-100)]">Occupied</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--saffron-500)] ring-4 ring-[var(--saffron-100)]" /> 
+              <span className="text-[var(--saffron-700)]">Occupied</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--ruby-500)] shadow-[0_0_12px_var(--ruby-500)] ring-4 ring-[var(--ruby-500)]/20" /> 
-              <span className="text-[var(--ruby-100)]">Action Req</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--ruby-500)] ring-4 ring-[var(--ruby-100)]" /> 
+              <span className="text-[var(--ruby-700)]">Action Req</span>
             </div>
           </div>
         </section>

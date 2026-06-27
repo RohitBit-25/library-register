@@ -68,13 +68,13 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
       <TopBar />
       <main 
         className={cn(
-          "min-h-screen transition-all flex flex-col pb-28 lg:pb-8",
+          "min-h-screen transition-all flex flex-col bg-[var(--bg-void)]",
           isAdmin 
-            ? "pt-24 lg:ml-[252px] lg:pr-4 lg:pt-4" // Admin mobile needs pt-24 for TopBar, desktop uses Sidebar so pt-4
-            : "pt-24 lg:pt-24" // Users always have TopBar, so pt-24 everywhere
+            ? "pt-14 pb-16 lg:pb-0 lg:pt-0 lg:ml-[240px]" 
+            : "pt-14 pb-16 lg:pb-0 lg:pt-14" 
         )}
       >
-        <div className="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
           {children}
         </div>
       </main>

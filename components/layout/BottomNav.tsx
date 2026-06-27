@@ -39,8 +39,7 @@ export default function BottomNav() {
   return (
     <>
       {/* Tab bar */}
-      <nav className="lg:hidden fixed bottom-6 left-6 right-6 z-[var(--z-sticky)] h-16 rounded-[var(--radius-3xl)] flex items-center justify-around bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] shadow-[var(--shadow-floating)] pb-safe-bottom">
-        <div className="absolute inset-0 z-0 bg-gradient-to-t from-[var(--bg-overlay)] to-transparent rounded-[var(--radius-3xl)] pointer-events-none" />
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[var(--z-sticky)] h-16 flex items-center justify-around bg-[var(--bg-surface)] border-t border-[var(--border-default)] pb-safe-bottom">
         {tabs.map(tab => {
           const isActive = pathname === tab.href;
           const Icon = tab.icon;
@@ -51,7 +50,7 @@ export default function BottomNav() {
               className={cn(
                 'relative z-10 flex flex-col items-center justify-center gap-[var(--space-1)] min-w-[64px] py-[var(--space-1)] cursor-pointer transition-all',
                 isActive
-                  ? 'text-[var(--saffron-500)] scale-110 drop-shadow-[0_0_8px_rgba(232,133,58,0.4)]'
+                  ? 'text-[var(--saffron-500)] scale-110'
                   : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]',
               )}
             >

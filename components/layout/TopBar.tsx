@@ -14,8 +14,8 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
   // Admin shows sidebar on desktop (TopBar hidden)
   // User shows TopBar on all screens
   const headerClass = isAdmin 
-    ? "lg:hidden fixed top-4 left-4 right-4 z-30 flex items-center justify-between h-14 px-4 rounded-2xl glass noise-pattern shadow-floating overflow-hidden" 
-    : "fixed top-4 left-4 right-4 z-30 flex items-center justify-between h-14 px-4 rounded-2xl glass noise-pattern shadow-floating overflow-hidden";
+    ? "lg:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-14 px-4 bg-[var(--bg-surface)] border-b border-[var(--border-default)] overflow-hidden" 
+    : "fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-14 px-4 bg-[var(--bg-surface)] border-b border-[var(--border-default)] overflow-hidden";
 
   return (
     <header className={headerClass}>

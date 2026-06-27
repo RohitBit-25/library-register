@@ -114,11 +114,11 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
           animate="show"
         >
   {[
-    { cls: 'bg-[#10b981] shadow-[0_0_10px_rgba(16,185,129,0.5)]', label: 'Active' },
-    { cls: 'bg-[#fbbf24] shadow-[0_0_10px_rgba(251,191,36,0.5)]', label: 'Expiring' },
-    { cls: 'bg-[#ef4444] shadow-[0_0_10px_rgba(239,68,68,0.5)]', label: 'Expired' },
-    { cls: 'bg-[#f5c842] shadow-[0_0_10px_rgba(245,200,66,0.5)]', label: 'Fee Due' },
-    { cls: 'bg-transparent ring-1 ring-[var(--border-default)] border-dashed opacity-60', label: 'Vacant' },
+    { cls: 'bg-[var(--emerald-500)]', label: 'Active' },
+    { cls: 'bg-[var(--saffron-500)]', label: 'Expiring' },
+    { cls: 'bg-[var(--ruby-500)]', label: 'Expired' },
+    { cls: 'bg-[var(--marigold-500)]', label: 'Fee Due' },
+    { cls: 'bg-transparent border border-[var(--border-default)] border-dashed opacity-60', label: 'Vacant' },
   ].map(l => (
     <m.span 
       key={l.label} 
@@ -132,18 +132,16 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
 </m.div>
 
         {/* Grid */}
-        <div className="rounded-[3rem] glass-elite overflow-hidden mb-8 relative">
-  {/* Add a subtle highlight to the top edge */}
-  <div className="absolute top-0 left-0 right-0 h-px bg-[var(--gradient-glass)]"></div>
-  
-  <div className="flex items-center gap-4 px-8 pt-7 pb-5 border-b border-[var(--border-default)] bg-[var(--bg-elevated)]/30 backdrop-blur-md">
-    <div className="p-2.5 rounded-2xl bg-[var(--saffron-500)]/10 ring-1 ring-[var(--saffron-500)]/20 shadow-[inset_0_0_20px_rgba(232,133,58,0.1),0_0_15px_rgba(232,133,58,0.1)]">
-      <Grid3X3 className="w-4 h-4 text-[var(--saffron-500)] drop-shadow-[0_0_5px_rgba(232,133,58,0.8)]" />
+        <div className="rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] overflow-hidden mb-8 relative shadow-sm">
+          
+  <div className="flex items-center gap-4 px-6 pt-5 pb-4 border-b border-[var(--border-default)]">
+    <div className="p-2 rounded-lg bg-[var(--saffron-50)] border border-[var(--saffron-200)]">
+      <Grid3X3 className="w-4 h-4 text-[var(--saffron-600)]" />
     </div>
-    <h3 className="text-lg font-black text-[var(--text-primary)] tracking-wide">
+    <h3 className="text-lg font-bold text-[var(--text-primary)]">
       {shiftFilter === 'all' ? 'Floor Plan' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift`}
     </h3>
-    <span className="text-[10px] font-mono tracking-[0.3em] font-black text-[var(--saffron-400)] ml-auto bg-[var(--saffron-500)]/5 px-4 py-1.5 rounded-full border border-[var(--saffron-500)]/20 shadow-[0_0_15px_rgba(232,133,58,0.15)] glow-saffron-chill">
+    <span className="text-[10px] font-mono tracking-[0.2em] font-bold text-[var(--saffron-700)] ml-auto bg-[var(--saffron-50)] px-3 py-1 rounded-md border border-[var(--saffron-200)]">
       {(shiftFilter === 'all' ? members : filtered).length} SEATS
     </span>
   </div>

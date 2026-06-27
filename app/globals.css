@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
   /* === TAILWIND V4 INTEGRATION === */
-  /* Maps custom CSS variables to Tailwind utility classes */
   @theme inline {
     --font-devanagari: var(--font-outfit), sans-serif;
     --font-display: var(--font-outfit), sans-serif;
@@ -66,26 +65,26 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════
-     LIGHT MODE (Default) — Warm Heritage White
+     LIGHT MODE — Clean, Professional, High Contrast
      ═══════════════════════════════════════════════════════════════ */
   :root {
     /* === BACKGROUND LAYERS === */
-    --bg-void:       #09090B; /* zinc-950 */
-    --bg-base:       #18181B; /* zinc-900 */
-    --bg-surface:    #27272A; /* zinc-800 */
-    --bg-elevated:   #3F3F46; /* zinc-700 */
-    --bg-overlay:    #52525B; /* zinc-600 */
-    --bg-muted:      #71717A; /* zinc-500 */
-    --bg-glass:      rgba(39, 39, 42, 0.72);
-    --bg-glass-light: rgba(63, 63, 70, 0.55);
+    --bg-void:       #F1F5F9; /* slate-100 */
+    --bg-base:       #F8FAFC; /* slate-50 */
+    --bg-surface:    #FFFFFF; /* white */
+    --bg-elevated:   #FFFFFF; /* white */
+    --bg-overlay:    #E2E8F0; /* slate-200 */
+    --bg-muted:      #F1F5F9; /* slate-100 */
+    --bg-glass:      rgba(255, 255, 255, 0.9);
+    --bg-glass-light: rgba(255, 255, 255, 0.95);
 
     /* === BORDERS & DIVIDERS === */
-    --border-subtle:  rgba(255, 255, 255, 0.10);
-    --border-default: rgba(255, 255, 255, 0.15);
-    --border-strong:  rgba(255, 255, 255, 0.25);
-    --border-glow:    rgba(232, 133, 58, 0.70);
+    --border-subtle:  #F1F5F9;
+    --border-default: #E2E8F0;
+    --border-strong:  #CBD5E1;
+    --border-glow:    #38BDF8;
 
-    /* === SAFFRON === */
+    /* === SAFFRON (kept for branding but tuned if needed) === */
     --saffron-50:  #FFF8F0;
     --saffron-100: #FEECDA;
     --saffron-200: #FCD5A8;
@@ -106,67 +105,58 @@
     --emerald-400: #34D97B;
     --emerald-500: #22C36A;
     --emerald-600: #16A356;
-    --emerald-glow: rgba(34, 195, 106, 0.20);
+    --emerald-glow: rgba(34, 195, 106, 0.1);
 
     /* === RUBY === */
     --ruby-100: #FCE1E1;
     --ruby-400: #F26F6F;
     --ruby-500: #E84242;
-    --ruby-glow: rgba(232, 66, 66, 0.20);
+    --ruby-glow: rgba(232, 66, 66, 0.1);
 
     /* === AMBER === */
     --amber-400: #FBBD2C;
     --amber-500: #E8A20A;
-    --amber-glow: rgba(232, 162, 10, 0.20);
+    --amber-glow: rgba(232, 162, 10, 0.1);
 
     /* === SAPPHIRE === */
     --sapphire-400: #60B4FF;
     --sapphire-500: #3D9EFF;
     --sapphire-600: #1A7FE8;
-    --sapphire-glow: rgba(61, 158, 255, 0.20);
+    --sapphire-glow: rgba(61, 158, 255, 0.1);
 
     /* === ROSE === */
     --rose-500: #F43F5E;
 
     /* === INDIGO === */
-    --indigo-400: #9B87FF;
-    --indigo-500: #7B5FF5;
-    --indigo-glow: rgba(123, 95, 245, 0.20);
+    --indigo-400: #818CF8;
+    --indigo-500: #6366F1;
+    --indigo-glow: rgba(99, 102, 241, 0.1);
 
     /* === TEXT === */
-    --text-primary:   #FFFFFF;
-    --text-secondary: #D4D4D8;
-    --text-tertiary:  #A1A1AA;
-    --text-disabled:  #71717A;
-    --text-inverse:   #09090B;
-    --text-accent:    #F59A3C;
-    --text-link:      #FCD5A8;
+    --text-primary:   #0F172A; /* slate-900 */
+    --text-secondary: #475569; /* slate-600 */
+    --text-tertiary:  #64748B; /* slate-500 */
+    --text-disabled:  #94A3B8; /* slate-400 */
+    --text-inverse:   #FFFFFF;
+    --text-accent:    #E8853A;
+    --text-link:      #E8853A;
 
     /* === GRADIENTS === */
     --gradient-primary: linear-gradient(135deg, #E8853A 0%, #F5C842 100%);
     --gradient-glow:    linear-gradient(135deg, #E8853A 0%, #D06A20 100%);
-    --gradient-surface: linear-gradient(160deg, #241808 0%, #1C1209 50%, #120C07 100%);
-    --gradient-glass:   linear-gradient(135deg, rgba(232,133,58,0.08) 0%, rgba(245,200,66,0.04) 100%);
-    --gradient-hero:    radial-gradient(ellipse at 30% 20%, rgba(232,133,58,0.15) 0%, transparent 60%),
-                        radial-gradient(ellipse at 70% 80%, rgba(61,158,255,0.08) 0%, transparent 50%);
+    --gradient-surface: linear-gradient(160deg, #FFFFFF 0%, #F8FAFC 100%);
+    --gradient-glass:   linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(248,250,252,1) 100%);
+    --gradient-hero:    transparent;
     
-    --gradient-header-title: linear-gradient(to bottom, #FFFFFF, #F5E8D4, #C4A882);
-    --gradient-header-tag:   linear-gradient(to right, var(--saffron-300), var(--saffron-600));
+    --gradient-header-title: linear-gradient(to bottom, #0F172A, #334155);
+    --gradient-header-tag:   linear-gradient(to right, var(--saffron-500), var(--saffron-600));
     
-    --gradient-jaali: repeating-linear-gradient(
-      45deg,
-      rgba(232,133,58,0.06) 0px,
-      rgba(232,133,58,0.06) 1px,
-      transparent 1px,
-      transparent 8px
-    );
+    --gradient-jaali: transparent;
 
     --gradient-emerald: linear-gradient(135deg, #22C36A, #16A356);
     --gradient-ruby:    linear-gradient(135deg, #E84242, #C02020);
     --gradient-amber:   linear-gradient(135deg, #E8A20A, #C8820A);
     --gradient-sapphire:linear-gradient(135deg, #3D9EFF, #1A7FE8);
-
-    /* Fonts are now defined directly in @theme to prevent circular references */
 
     /* === SPACING SCALE === */
     --space-0:   0px;
@@ -195,18 +185,18 @@
     --radius-full: 9999px;
 
     /* === SHADOW SYSTEM === */
-    --shadow-xs:  0 1px 3px rgba(13, 9, 5, 0.40);
-    --shadow-sm:  0 2px 8px rgba(13, 9, 5, 0.50), 0 1px 2px rgba(13, 9, 5, 0.30);
-    --shadow-md:  0 4px 20px rgba(13, 9, 5, 0.60), 0 2px 6px rgba(13, 9, 5, 0.40);
-    --shadow-lg:  0 8px 40px rgba(13, 9, 5, 0.70), 0 4px 12px rgba(13, 9, 5, 0.50);
-    --shadow-xl:  0 20px 60px rgba(13, 9, 5, 0.80), 0 8px 24px rgba(13, 9, 5, 0.60);
-    --shadow-floating: 0 8px 32px rgba(13, 9, 5, 0.50), 0 2px 8px rgba(13, 9, 5, 0.30);
+    --shadow-xs:  0 1px 2px 0 rgba(15, 23, 42, 0.05);
+    --shadow-sm:  0 1px 3px 0 rgba(15, 23, 42, 0.1), 0 1px 2px -1px rgba(15, 23, 42, 0.1);
+    --shadow-md:  0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -2px rgba(15, 23, 42, 0.1);
+    --shadow-lg:  0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.1);
+    --shadow-xl:  0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+    --shadow-floating: 0 10px 40px -10px rgba(15, 23, 42, 0.15);
 
-    --shadow-glow-saffron: 0 0 24px rgba(232, 133, 58, 0.35), 0 0 8px rgba(232, 133, 58, 0.20);
-    --shadow-glow-emerald: 0 0 24px rgba(34, 195, 106, 0.30), 0 0 8px rgba(34, 195, 106, 0.15);
-    --shadow-glow-ruby:    0 0 24px rgba(232, 66, 66, 0.30),  0 0 8px rgba(232, 66, 66, 0.15);
-    --shadow-glow-sapphire:0 0 24px rgba(61, 158, 255, 0.30), 0 0 8px rgba(61, 158, 255, 0.15);
-    --shadow-glow-amber:   0 0 24px rgba(232, 162, 10, 0.30), 0 0 8px rgba(232, 162, 10, 0.15);
+    --shadow-glow-saffron: none;
+    --shadow-glow-emerald: none;
+    --shadow-glow-ruby:    none;
+    --shadow-glow-sapphire:none;
+    --shadow-glow-amber:   none;
 
     /* === TYPE SCALE === */
     --text-xs:   0.64rem;
@@ -275,45 +265,25 @@
     line-height: var(--leading-normal);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-image:
-      radial-gradient(ellipse 80% 50% at 15% 10%, rgba(232,133,58,0.10) 0%, transparent 70%),
-      radial-gradient(ellipse 60% 40% at 85% 90%, rgba(61,158,255,0.06) 0%, transparent 60%),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     transition: background-color 350ms var(--ease-smooth), color 350ms var(--ease-smooth);
   }
 
-
   /* ═══════════════════════════════════════════════════════════════
-     UTILITY CLASSES (Glass, Noise, Floating Shadow)
+     UTILITY CLASSES
      ═══════════════════════════════════════════════════════════════ */
 
   .glass {
-    background: var(--bg-glass);
-    backdrop-filter: blur(20px) saturate(1.4);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    background: var(--bg-surface);
     border: 1px solid var(--border-default);
-    transition: background 350ms var(--ease-smooth), border-color 350ms var(--ease-smooth);
   }
-
 
   .noise-pattern::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    border-radius: inherit;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.5;
-  }
-  html.dark .noise-pattern::after {
-    opacity: 1;
+    display: none;
   }
 
   .shadow-floating {
     box-shadow: var(--shadow-floating);
   }
-
 
   /* ─── Scrollbar ──────────────────────────────────────────────── */
   ::-webkit-scrollbar {
@@ -324,7 +294,7 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--bg-muted);
+    background: var(--bg-overlay);
     border-radius: 3px;
   }
 
@@ -338,7 +308,7 @@
 
   .custom-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: var(--bg-muted) transparent;
+    scrollbar-color: var(--bg-overlay) transparent;
   }
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
@@ -348,26 +318,21 @@
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--bg-muted);
+    background: var(--bg-overlay);
     border-radius: var(--radius-full);
   }
 
   /* Focus Visibility */
   :focus-visible {
     outline: 2px solid var(--saffron-500);
-    outline-offset: 3px;
+    outline-offset: 2px;
     border-radius: var(--radius-xs);
-    box-shadow: 0 0 0 4px rgba(232, 133, 58, 0.20);
   }
   :focus:not(:focus-visible) { outline: none; }
 
   /* Heritage Layer / Decorative Patterns */
   .jaali-pattern {
-    background-image:
-      repeating-linear-gradient(0deg,   transparent, transparent 7px, rgba(232,133,58,0.08) 7px, rgba(232,133,58,0.08) 8px),
-      repeating-linear-gradient(90deg,  transparent, transparent 7px, rgba(232,133,58,0.08) 7px, rgba(232,133,58,0.08) 8px),
-      repeating-linear-gradient(45deg,  transparent, transparent 4px, rgba(232,133,58,0.04) 4px, rgba(232,133,58,0.04) 5px),
-      repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(232,133,58,0.04) 4px, rgba(232,133,58,0.04) 5px);
+    display: none;
   }
 
   .divider-diamond {
@@ -378,11 +343,11 @@
   .divider-diamond::after {
     content: ''; flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border-default), transparent);
+    background: var(--border-default);
   }
   .divider-fade {
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border-default), transparent);
+    background: var(--border-default);
   }
   .divider-double {
     height: 3px;
@@ -392,12 +357,10 @@
 
   /* Base Card CSS Specifications */
   .card-base {
-    background: var(--bg-glass);
-    backdrop-filter: blur(20px) saturate(1.4);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    background: var(--bg-surface);
     border: 1px solid var(--border-default);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md), inset 0 1px 0 rgba(245,200,66,0.06);
+    box-shadow: var(--shadow-sm);
     position: relative;
     overflow: hidden;
     transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease, background 350ms var(--ease-smooth);
@@ -405,52 +368,19 @@
     transform: translateZ(0);
   }
 
-  /* === ELITE CHILL GLASS === */
-  .glass-elite {
-    background: var(--bg-glass);
-    backdrop-filter: blur(24px) saturate(1.2);
-    -webkit-backdrop-filter: blur(24px) saturate(1.2);
-    border: 1px solid var(--border-subtle);
+  .glass-elite, .glass-elite-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
     box-shadow: var(--shadow-md);
   }
 
-  html.dark .glass-elite {
-    background: rgba(18, 12, 7, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-  }
-
-  .glass-elite-panel {
-    background: linear-gradient(145deg, var(--bg-surface) 0%, var(--bg-void) 100%);
-    backdrop-filter: blur(36px) saturate(1.3);
-    -webkit-backdrop-filter: blur(36px) saturate(1.3);
-    border: 1px solid var(--border-subtle);
-    box-shadow: var(--shadow-lg);
-  }
-
-  html.dark .glass-elite-panel {
-    background: linear-gradient(145deg, rgba(28, 18, 9, 0.45) 0%, rgba(13, 9, 5, 0.75) 100%);
-    border: 1px solid rgba(212, 142, 58, 0.06); 
-    box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
-  }
-
   .glow-saffron-chill {
-    box-shadow: 0 0 60px -15px rgba(232, 133, 58, 0.15);
-  }
-
-  .card-base::before {
-    content: '';
-    position: absolute;
-    top: 0; right: 0;
-    width: 80px; height: 80px;
-    background: var(--gradient-jaali);
-    opacity: 0.6;
-    pointer-events: none;
+    box-shadow: var(--shadow-md);
   }
 
   .card-base:hover {
     border-color: var(--border-strong);
-    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(245,200,66,0.10);
+    box-shadow: var(--shadow-md);
     transform: translateY(-2px);
   }
 
@@ -510,8 +440,8 @@
   }
 
   .input-field {
-    background: var(--bg-muted);
-    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
     padding: 20px 16px 8px;
     font-family: var(--font-body);
@@ -540,13 +470,13 @@
 
   .input-field:focus {
     border-color: var(--saffron-500);
-    box-shadow: 0 0 0 2px rgba(232, 133, 58, 0.25), var(--shadow-sm);
-    background: var(--bg-elevated);
+    box-shadow: 0 0 0 2px rgba(232, 133, 58, 0.1);
+    background: var(--bg-surface);
   }
 
   .input-field.is-error {
     border-color: var(--ruby-500);
-    box-shadow: 0 0 0 2px rgba(232, 66, 66, 0.2);
+    box-shadow: 0 0 0 2px rgba(232, 66, 66, 0.1);
   }
 
   .input-helper {

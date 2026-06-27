@@ -71,7 +71,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
   };
 
   return (
-    <aside className="hidden lg:flex flex-col w-[220px] h-[calc(100vh-2rem)] fixed left-4 top-4 rounded-3xl glass noise-pattern shadow-floating z-30 overflow-hidden">
+    <aside className="hidden lg:flex flex-col w-[240px] h-screen fixed left-0 top-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)] z-30 overflow-hidden">
       <div className="flex items-center gap-3 px-6 h-16 shrink-0 relative z-10">
         {/* Subtle gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--saffron-500)]/5 via-transparent to-transparent pointer-events-none" />
