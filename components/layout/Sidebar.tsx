@@ -108,10 +108,10 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer relative',
+                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer relative active:scale-[0.98]',
                 isActive
-                  ? 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)] font-bold'
-                  : 'text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-[var(--text-primary)]',
+                  ? 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)] font-bold shadow-sm'
+                  : 'text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-[var(--text-primary)] hover:shadow-sm',
               )}
             >
               <span className={cn(
@@ -139,7 +139,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
         <Tooltip content="Sign out of the system" side="right">
           <button
             onClick={handleLogout}
-            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--ruby-500)] hover:bg-[var(--ruby-500)]/10 transition-colors border border-[var(--border-default)]"
+            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--ruby-500)] hover:bg-[var(--ruby-500)]/10 active:scale-[0.98] transition-all border border-[var(--border-default)] hover:border-[var(--ruby-500)]/20 shadow-sm"
           >
             <LogOut className="w-4 h-4" />
             Logout

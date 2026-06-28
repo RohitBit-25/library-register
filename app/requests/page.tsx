@@ -124,16 +124,16 @@ export default function RequestsPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1 bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] rounded-[var(--radius-xl)] p-1 shadow-[var(--shadow-sm)] mb-5 overflow-x-auto">
+      <div className="flex items-center gap-1 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-[var(--radius-xl)] p-1 shadow-[var(--shadow-sm)] mb-5 overflow-x-auto">
         {tabs.map(tab => (
           <button
             key={tab.key}
             onClick={() => setFilter(tab.key)}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-lg)] text-[0.64rem] font-bold transition-all duration-200 cursor-pointer whitespace-nowrap',
+              'flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-lg)] text-[0.64rem] font-bold transition-all duration-200 cursor-pointer whitespace-nowrap hover:-translate-y-[1px] hover:shadow-[var(--shadow-sm)] active:scale-95',
               filter === tab.key
                 ? 'bg-[var(--indigo-500)] text-[var(--text-inverse)] shadow-[var(--shadow-sm)]'
-                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]',
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] hover:border-[var(--border-strong)]',
             )}
           >
             {tab.icon}

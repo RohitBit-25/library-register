@@ -48,7 +48,7 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
            <Tooltip content="Sign out">
              <button
                onClick={logout}
-               className="hidden lg:flex cursor-pointer rounded-xl p-2 text-[var(--text-secondary)] hover:bg-[var(--rose-500)] hover:text-[var(--saffron-50)] transition-all group ml-1"
+               className="hidden lg:flex cursor-pointer rounded-xl p-2 text-[var(--text-secondary)] hover:bg-[var(--rose-500)] hover:text-[var(--saffron-50)] active:scale-95 transition-all group ml-1"
                aria-label="Sign out"
              >
                <LogOut className="w-5 h-5" />

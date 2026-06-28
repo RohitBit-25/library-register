@@ -265,8 +265,8 @@ export default function MemberTable({
             className={cn(
                'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border shadow-sm',
               filter === f.value
-                ? 'bg-[var(--sapphire-500)] text-[#1a1a16] border-[var(--sapphire-500)]'
-                : 'bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--text-tertiary)]',
+                ? 'bg-[var(--sapphire-500)] text-[#1a1a16] border-[var(--sapphire-500)] shadow-[var(--shadow-md)] -translate-y-[1px]'
+                : 'bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-sm)] hover:-translate-y-[1px]',
             )}
           >
             {f.label}
@@ -275,7 +275,7 @@ export default function MemberTable({
       </div>
 
       {/* Desktop table */}
-      <div className="hidden md:block overflow-x-auto overflow-y-auto max-h-[calc(100vh-220px)] rounded-2xl shadow-sm bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] relative custom-scrollbar">
+      <div className="hidden md:block overflow-x-auto overflow-y-auto max-h-[calc(100vh-220px)] rounded-[var(--radius-xl)] shadow-[var(--shadow-sm)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] relative custom-scrollbar">
         <table className="w-full text-sm">
           <thead className="sticky top-0 z-10 backdrop-blur-xl bg-[var(--bg-surface)]/90 border-b border-[var(--border-default)]">
             <tr>
@@ -400,7 +400,7 @@ export default function MemberTable({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -5 }}
               transition={{ duration: 0.15 }}
-              className="absolute z-50 w-48 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)]/95 backdrop-blur-xl shadow-[var(--shadow-xl)] p-1"
+              className="absolute z-50 w-48 rounded-[var(--radius-xl)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-xl)] p-1"
             >
               {members.filter(m => m.seat === openActions).map(m => (
                 <div key={m.seat}>
@@ -473,8 +473,8 @@ export default function MemberTable({
                 className={cn(
                   'rounded-2xl border transition-colors shadow-sm',
                   selected.has(m.seat) 
-                    ? 'border-[var(--sapphire-500)]/50 bg-[var(--sapphire-500)]/5'
-                    : 'border-[var(--border-default)] bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)]',
+                    ? 'border-[var(--sapphire-500)]/50 bg-[var(--sapphire-500)]/5 shadow-[var(--shadow-sm)]'
+                    : 'border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-sm)] hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-md)] hover:-translate-y-[1px]',
                 )}
               >
                 <div className="p-4 flex items-start justify-between">
@@ -544,14 +544,14 @@ export default function MemberTable({
                       <div className="p-3 grid grid-cols-2 gap-2">
                         <button
                           onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
-                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] border border-[var(--border-default)] shadow-sm"
+                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-all"
                         >
                           <Check className="w-4 h-4 text-[var(--sapphire-500)]" />
                           <span className="text-[11px] mt-0.5">{m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}</span>
                         </button>
                         <button
                           onClick={() => { onRenew(m.seat); setOpenActions(null); }}
-                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] border border-[var(--border-default)] shadow-sm"
+                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-all"
                         >
                           <RefreshCw className="w-4 h-4 text-[var(--sapphire-500)]" />
                           <span className="text-[11px] mt-0.5">Renew</span>
@@ -589,7 +589,7 @@ export default function MemberTable({
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center py-[var(--space-10)] px-[var(--space-4)] bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] rounded-[var(--radius-xl)] shadow-[var(--shadow-sm)] mt-[var(--space-4)]"
+          className="text-center py-[var(--space-10)] px-[var(--space-4)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-[var(--radius-xl)] shadow-[var(--shadow-sm)] mt-[var(--space-4)]"
         >
           <div className="w-14 h-14 bg-[var(--bg-overlay)] rounded-[var(--radius-2xl)] flex items-center justify-center mx-auto mb-[var(--space-3)] border border-[var(--border-subtle)]">
             <Search className="w-7 h-7 text-[var(--text-tertiary)]" />

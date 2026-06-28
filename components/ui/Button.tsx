@@ -14,13 +14,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     
     const variants = {
       primary: `
-        bg-[var(--gradient-glow)] text-[var(--text-inverse)] 
+        bg-[var(--saffron-500)] text-[var(--text-inverse)] 
         font-[var(--font-body)] font-[var(--weight-semibold)] tracking-[var(--tracking-wide)]
-        rounded-[var(--radius-sm)] border-none shadow-[var(--shadow-glow-saffron)]
-        hover:shadow-[var(--shadow-md)]
-        transition-shadow duration-200
-        before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/15 before:to-transparent
-        before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-500
+        rounded-[var(--radius-sm)] border border-[var(--saffron-600)] shadow-[var(--shadow-sm)]
+        hover:bg-[var(--saffron-600)] hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5
+        transition-all duration-200
       `,
       secondary: `
         bg-transparent text-[var(--saffron-400)] 
@@ -37,14 +35,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       `,
       ghost: `
         bg-transparent text-[var(--text-secondary)] border-none rounded-[var(--radius-sm)]
-        hover:bg-[rgba(245,200,66,0.06)] hover:text-[var(--text-primary)]
+        hover:bg-[var(--bg-overlay)] hover:text-[var(--text-primary)]
         transition-colors duration-200
       `,
       icon: `
-        bg-[var(--bg-elevated)] border border-[var(--border-subtle)] 
+        bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-[var(--shadow-xs)]
         text-[var(--text-secondary)] rounded-full
-        hover:bg-[var(--bg-overlay)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)]
-        transition-all duration-[180ms] flex items-center justify-center
+        hover:bg-[var(--bg-surface)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)] hover:shadow-[var(--shadow-sm)] hover:-translate-y-0.5
+        transition-all duration-200 flex items-center justify-center
       `
     };
 
@@ -64,7 +62,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <motion.button
         ref={ref}
         className={cn(baseClasses, variants[variant], appliedSize, className)}
-        whileTap={{ scale: 0.98 }}
+        whileTap={{ scale: 0.96 }}
         transition={{ type: "spring", stiffness: 400, damping: 15, mass: 0.8 }}
         {...props}
       >

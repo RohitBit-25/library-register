@@ -2,10 +2,10 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { type Member, type Shift } from '@/lib/types';
-import { getSeatStatus, cn } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import SeatTile from './SeatTile';
 import { SeatMapContainer, SeatMapWrapper, type FaceDir } from './SeatMap';
-import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
+import { LazyMotion, domAnimation } from 'framer-motion';
 import { Sun, Moon, Layers, Grid3X3 } from 'lucide-react';
 
 interface SeatGridProps {
@@ -17,7 +17,6 @@ interface SeatGridProps {
 export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGridProps) {
   const [shiftFilter, setShiftFilter] = useState<Shift | 'all'>('all');
 
-  // Stable callback for tile clicks
   const handleSeatClick = useCallback((seat: number) => {
     onSeatClick(seat);
   }, [onSeatClick]);
@@ -30,20 +29,6 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
     });
   }, [members, shiftFilter]);
 
-  // Quick stats
-  const stats = useMemo(() => {
-    let occupied = 0, vacant = 0, due = 0, expiring = 0, expired = 0;
-    for (const m of members) {
-      if (m.vacant) { vacant++; continue; }
-      occupied++;
-      const status = getSeatStatus(m);
-      if (status === 'due') due++;
-      if (status === 'expiring') expiring++;
-      if (status === 'expired') expired++;
-    }
-    return { occupied, vacant, due, expiring, expired };
-  }, [members]);
-
   const shifts: { value: Shift | 'all'; label: string; icon: React.ReactNode }[] = [
     { value: 'all', label: 'All', icon: <Layers className="w-3.5 h-3.5" /> },
     { value: 'morning', label: 'Morning', icon: <Sun className="w-3.5 h-3.5" /> },
@@ -52,99 +37,42 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
 
   return (
     <LazyMotion features={domAnimation}>
-      <div>
-        {/* Controls bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-          {/* Shift toggle — pill style */}
-          <div className="flex items-center gap-1 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-1 shadow-sm">
-            {shifts.map(s => (
-              <button
-                key={s.value}
-                onClick={() => setShiftFilter(s.value)}
-                className={cn(
-                  'flex items-center gap-1.5 min-h-[44px] sm:min-h-[36px] px-3.5 py-2 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]',
-                  shiftFilter === s.value
-                    ? 'bg-[var(--saffron-500)] text-[#1a1a16] shadow-sm'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-overlay)]',
-                )}
-              >
-                {s.icon}
-                {s.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Quick stats — pill badges */}
-          <m.div 
-            className="flex flex-wrap items-center gap-2"
-            variants={{
-              hidden: {},
-              show: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
-            }}
-            initial="hidden"
-            animate="show"
-          >
-            <m.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
-              <StatPill label="Occupied" value={stats.occupied} accent="bg-[var(--emerald-500)]/10 text-[var(--emerald-500)] border-[var(--emerald-500)]/30" />
-            </m.div>
-            <m.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
-              <StatPill label="Vacant" value={stats.vacant} accent="bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border-default)] border-dashed" />
-            </m.div>
-            {stats.due > 0 && (
-              <m.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
-                <StatPill label="Due" value={stats.due} accent="bg-[var(--saffron-500)]/10 text-[var(--saffron-500)] border-[var(--saffron-500)]/30" />
-              </m.div>
-            )}
-            {(stats.expiring + stats.expired) > 0 && (
-              <m.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
-                <StatPill label="Expiry" value={stats.expiring + stats.expired} accent="bg-[var(--ruby-500)]/10 text-[var(--ruby-500)] border-[var(--ruby-500)]/30" />
-              </m.div>
-            )}
-          </m.div>
-        </div>
-
-        {/* Legend — enhanced */}
-        <m.div 
-          className="flex flex-wrap items-center justify-center sm:justify-start gap-5 md:gap-7 mb-7 text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-[0.2em]"
-          variants={{
-            hidden: {},
-            show: { transition: { staggerChildren: 0.05, delayChildren: 0.4 } }
-          }}
-          initial="hidden"
-          animate="show"
-        >
-  {[
-    { cls: 'bg-[var(--emerald-500)]', label: 'Active' },
-    { cls: 'bg-[var(--saffron-500)]', label: 'Expiring' },
-    { cls: 'bg-[var(--ruby-500)]', label: 'Expired' },
-    { cls: 'bg-[var(--marigold-500)]', label: 'Fee Due' },
-    { cls: 'bg-transparent border border-[var(--border-default)] border-dashed opacity-60', label: 'Vacant' },
-  ].map(l => (
-    <m.span 
-      key={l.label} 
-      className="flex items-center gap-2 group"
-      variants={{ hidden: { opacity: 0, scale: 0.8 }, show: { opacity: 1, scale: 1 } }}
-    >
-      <span className={cn('w-2 h-2 rounded-full transition-transform group-hover:scale-150', l.cls)} />
-      <span className="group-hover:text-[var(--text-primary)] transition-colors">{l.label}</span>
-    </m.span>
-  ))}
-</m.div>
-
-        {/* Grid */}
-        <div className="rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] overflow-hidden mb-8 relative shadow-sm">
+      <div className="w-full">
+        {/* Grid Container */}
+        <div className="rounded-xl bg-[var(--bg-surface)] overflow-hidden relative shadow-sm">
           
-  <div className="flex items-center gap-4 px-6 pt-5 pb-4 border-b border-[var(--border-default)]">
-    <div className="p-2 rounded-lg bg-[var(--saffron-50)] border border-[var(--saffron-200)]">
-      <Grid3X3 className="w-4 h-4 text-[var(--saffron-600)]" />
-    </div>
-    <h3 className="text-lg font-bold text-[var(--text-primary)]">
-      {shiftFilter === 'all' ? 'Floor Plan' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift`}
-    </h3>
-    <span className="text-[10px] font-mono tracking-[0.2em] font-bold text-[var(--saffron-700)] ml-auto bg-[var(--saffron-50)] px-3 py-1 rounded-md border border-[var(--saffron-200)]">
-      {(shiftFilter === 'all' ? members : filtered).length} SEATS
-    </span>
-  </div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-[var(--border-default)] bg-[var(--bg-muted)]/30">
+            <div className="flex items-center gap-4">
+              <div className="p-2 rounded-lg bg-[var(--saffron-50)] border border-[var(--saffron-200)]">
+                <Grid3X3 className="w-4 h-4 text-[var(--saffron-600)]" />
+              </div>
+              <h3 className="text-lg font-bold text-[var(--text-primary)]">
+                {shiftFilter === 'all' ? 'Floor Plan' : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift`}
+              </h3>
+              <span className="text-[10px] font-mono tracking-[0.2em] font-bold text-[var(--saffron-700)] bg-[var(--saffron-50)] px-3 py-1 rounded-md border border-[var(--saffron-200)]">
+                {(shiftFilter === 'all' ? members : filtered).length} SEATS
+              </span>
+            </div>
+
+            {/* Shift Filters */}
+            <div className="flex items-center gap-1 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-1 shadow-sm shrink-0">
+              {shifts.map(s => (
+                <button
+                  key={s.value}
+                  onClick={() => setShiftFilter(s.value)}
+                  className={cn(
+                    'flex items-center gap-1.5 min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]',
+                    shiftFilter === s.value
+                      ? 'bg-[var(--saffron-500)] text-[#1a1a16] shadow-sm'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-muted)]',
+                  )}
+                >
+                  {s.icon}
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <SeatMapContainer>
             {(shiftFilter === 'all' ? members : filtered).map(member => (
@@ -166,19 +94,5 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
         </div>
       </div>
     </LazyMotion>
-  );
-}
-
-// ─── StatPill ────────────────────────────────────
-
-function StatPill({ label, value, accent }: { label: string; value: number; accent: string }) {
-  return (
-    <span className={cn(
-      'inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-[10px] font-bold uppercase tracking-[0.2em] shadow-[0_2px_10px_rgba(0,0,0,0.2)] backdrop-blur-sm',
-      accent
-    )}>
-      <span className="text-[13px] font-black tracking-normal opacity-90">{value}</span>
-      {label}
-    </span>
   );
 }

@@ -19,10 +19,10 @@ const icons = {
 };
 
 const styles = {
-  success: 'border-[var(--emerald-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-glow-emerald)] text-[var(--emerald-400)]',
-  warning: 'border-[var(--amber-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-glow-amber)] text-[var(--amber-400)]',
-  error: 'border-[var(--ruby-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-glow-ruby)] text-[var(--ruby-400)]',
-  info: 'border-[var(--sapphire-400)] bg-[var(--bg-elevated)] shadow-[var(--shadow-glow-sapphire)] text-[var(--sapphire-400)]'
+  success: 'border-[var(--emerald-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--emerald-400)]',
+  warning: 'border-[var(--amber-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--amber-400)]',
+  error: 'border-[var(--ruby-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--ruby-400)]',
+  info: 'border-[var(--sapphire-400)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--sapphire-400)]'
 };
 
 export default function ToastContainer({ toasts, onRemove }: ToastContainerProps) {
@@ -47,7 +47,7 @@ export default function ToastContainer({ toasts, onRemove }: ToastContainerProps
                 'flex items-start gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)]',
                 'rounded-[var(--radius-lg)] border-l-[3px] border-y-[1px] border-r-[1px]',
                 'border-y-[var(--border-subtle)] border-r-[var(--border-subtle)]',
-                'backdrop-blur-md pointer-events-auto overflow-hidden',
+                'pointer-events-auto overflow-hidden',
                 styleClass
               )}
               role="alert"

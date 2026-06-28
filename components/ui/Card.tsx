@@ -11,9 +11,9 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant = 'base', children, ...props }, ref) => {
     
     const variants = {
-      base: "bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-[var(--shadow-sm)]",
-      interactive: "bg-[var(--bg-elevated)] border border-[var(--border-subtle)] hover:border-[var(--saffron-500)] hover:shadow-[var(--shadow-glow-saffron)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] transition-all duration-300 cursor-pointer",
-      glow: "bg-[var(--bg-elevated)] border border-[var(--border-glow)] shadow-[var(--shadow-glow-saffron)] relative before:absolute before:inset-0 before:rounded-[var(--radius-lg)] before:bg-gradient-to-br before:from-[var(--saffron-500)]/10 before:to-transparent before:pointer-events-none"
+      base: "bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-[var(--shadow-sm)] hover:-translate-y-[2px] hover:shadow-[var(--shadow-md)] hover:border-[var(--border-strong)] transition-all duration-300",
+      interactive: "bg-[var(--bg-elevated)] border border-[var(--border-subtle)] hover:border-[var(--saffron-500)] hover:shadow-[var(--shadow-md)] hover:-translate-y-[2px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] transition-all duration-300 cursor-pointer",
+      glow: "bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-[var(--shadow-sm)] hover:-translate-y-[2px] hover:shadow-[var(--shadow-md)] hover:border-[var(--saffron-500)] transition-all duration-300"
     };
 
     return (
@@ -24,7 +24,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
           variants[variant],
           className
         )}
-        {...(variant === 'interactive' ? { whileTap: { scale: 0.99 } } : {})}
+        {...(variant === 'interactive' ? { whileTap: { scale: 0.98 } } : {})}
         {...props}
       >
         {children}
