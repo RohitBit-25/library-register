@@ -141,9 +141,11 @@ export default function ScriptBlock() {
         </div>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--saffron-50)] hover:bg-white/10 transition-all border border-transparent hover:border-white/10"
+          className="flex cursor-pointer items-center gap-2 rounded-lg border border-transparent px-3.5 py-1.5 text-xs font-bold text-[var(--text-secondary)] transition-all hover:border-[var(--border-default)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]"
         >
-          {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+          {copied
+            ? <Check className="h-3.5 w-3.5 text-[var(--emerald-600)]" aria-hidden="true" />
+            : <Copy className="h-3.5 w-3.5" aria-hidden="true" />}
           {copied ? 'Copied!' : 'Copy Code'}
         </button>
       </div>
@@ -156,10 +158,12 @@ export default function ScriptBlock() {
       </div>
 
       {/* Info footer */}
-      <div className="bg-blue-900/30 border-t border-blue-900/40 p-4 flex items-start gap-3">
-        <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-        <p className="text-sm text-blue-200/90">
-          <strong className="text-blue-100">Important:</strong> Change the <code className="px-1.5 py-0.5 bg-blue-900/50 rounded text-blue-300 font-mono text-xs">ADMIN_EMAIL</code> at the top of the script to your own email address.
+      <div className="flex items-start gap-3 border-t border-[var(--sapphire-200)] bg-[var(--sapphire-50)] p-4">
+        <Info className="mt-0.5 h-5 w-5 shrink-0 text-[var(--sapphire-600)]" aria-hidden="true" />
+        <p className="text-sm text-[var(--text-secondary)]">
+          <strong className="text-[var(--sapphire-600)]">Important:</strong> Change the{' '}
+          <code className="rounded bg-[var(--bg-surface)] px-1.5 py-0.5 font-mono text-xs text-[var(--text-primary)]">ADMIN_EMAIL</code>{' '}
+          at the top of the script to your own email address.
         </p>
       </div>
     </motion.div>

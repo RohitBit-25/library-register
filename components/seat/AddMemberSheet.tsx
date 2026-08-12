@@ -71,9 +71,10 @@ export default function AddMemberSheet({
         </h3>
         <button
           onClick={onClose}
+          aria-label="Close registration panel"
           className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] transition-all hover:rotate-90 duration-200"
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5" aria-hidden="true" />
         </button>
       </div>
       

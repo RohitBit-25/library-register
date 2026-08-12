@@ -28,7 +28,16 @@ const styles = {
 
 export default function ToastContainer({ toasts, onRemove }: ToastContainerProps) {
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-[var(--space-3)] max-w-[380px] pointer-events-none">
+    // The container carries the live region. Putting role="alert" only on each
+    // toast meant assistive tech often missed them: the element is inserted
+    // after page load, so there is no region already being watched.
+    <div
+      role="region"
+      aria-label="Notifications"
+      aria-live="polite"
+      aria-atomic="false"
+      className="fixed bottom-6 right-6 z-50 flex flex-col gap-[var(--space-3)] max-w-[380px] pointer-events-none"
+    >
       <AnimatePresence>
         {toasts.map(t => {
           // Default to info if undefined type

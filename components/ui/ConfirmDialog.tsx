@@ -86,17 +86,18 @@ export default function ConfirmDialog({
                     onConfirm();
                     onClose();
                   }}
-                  className={`cursor-pointer px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm ${variant === 'danger' ? 'text-[var(--saffron-50)] bg-[var(--ruby-500)] hover:brightness-110' : 'text-[var(--text-inverse)] bg-[var(--sapphire-500)] hover:brightness-110'}`}
+                  className={`cursor-pointer px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm text-[var(--text-inverse)] ${variant === 'danger' ? 'bg-[var(--ruby-600)] hover:bg-[var(--ruby-700)]' : 'bg-[var(--sapphire-600)] hover:bg-[var(--sapphire-500)]'}`}
                 >
                   {confirmText}
                 </button>
               </div>
-              
+
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+                aria-label="Close dialog"
+                className="absolute top-4 right-4 cursor-pointer text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-primary)]"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </motion.div>
           </div>

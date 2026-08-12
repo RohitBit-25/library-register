@@ -213,7 +213,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
               />
               {watchDocumentStatus ? (
                 <div className="flex flex-col items-center gap-2">
-                  <CheckCircle2 className="w-10 h-10 text-green-500 shrink-0 drop-shadow-sm" />
+                  <CheckCircle2 className="w-10 h-10 text-[var(--emerald-600)] shrink-0 drop-shadow-sm" />
                   <span className="text-sm font-bold text-[var(--text-primary)]">{watchDocumentStatus}</span>
                   <span className="text-xs font-semibold text-[var(--text-secondary)] group-hover:text-[var(--saffron-600)] transition-colors">Click to replace file</span>
                 </div>
@@ -275,7 +275,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
 
       {/* Terms & Conditions */}
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-4">
-        <h3 className="text-[13px] font-black text-red-500 uppercase tracking-wide border-b border-[var(--border-default)] pb-4 mb-5 flex items-center gap-2">
+        <h3 className="text-[13px] font-black text-[var(--ruby-600)] uppercase tracking-wide border-b border-[var(--border-default)] pb-4 mb-5 flex items-center gap-2">
           Declaration & Terms and Condition 
           <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block animate-pulse"></span>
         </h3>
@@ -288,7 +288,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           />
           <span className={cn(
             "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-600)] transition-colors pt-0.5",
-            errors.termsAccepted?.rules ? "text-red-500 font-bold" : "text-[var(--text-primary)]"
+            errors.termsAccepted?.rules ? "text-[var(--ruby-600)] font-bold" : "text-[var(--text-primary)]"
           )}>
             I agree to follow all rules and regulations of the library.
           </span>
@@ -302,7 +302,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           />
           <span className={cn(
             "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-600)] transition-colors pt-0.5",
-            errors.termsAccepted?.damage ? "text-red-500 font-bold" : "text-[var(--text-primary)]"
+            errors.termsAccepted?.damage ? "text-[var(--ruby-600)] font-bold" : "text-[var(--text-primary)]"
           )}>
             I will be held responsible for any damage caused by me and agree to pay for the same.
           </span>
@@ -316,7 +316,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           />
           <span className={cn(
             "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-600)] transition-colors pt-0.5",
-            errors.termsAccepted?.nonRefundable ? "text-red-500 font-bold" : "text-[var(--text-primary)]"
+            errors.termsAccepted?.nonRefundable ? "text-[var(--ruby-600)] font-bold" : "text-[var(--text-primary)]"
           )}>
             Membership is Non-refundable and Non-transferable.
           </span>
@@ -335,7 +335,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <button
           type="button"
           onClick={clearForm}
-          className="rounded-xl border border-[var(--border-default)] px-6 text-[13px] font-black uppercase text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-red-500 transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98]"
+          className="rounded-xl border border-[var(--border-default)] px-6 text-[13px] font-black uppercase text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-[var(--ruby-600)] transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98]"
         >
           Clear
         </button>
@@ -362,11 +362,11 @@ function FieldGroup({
     <div className="flex flex-col">
       <label className="block text-xs font-black uppercase tracking-wider text-[var(--text-secondary)] mb-2 ml-1">
         {label}
-        {required && <span className="text-red-500 ml-1.5 text-sm leading-none">*</span>}
+        {required && <span className="text-[var(--ruby-600)] ml-1.5 text-sm leading-none">*</span>}
       </label>
       {children}
       {error && (
-        <p className="mt-2 ml-1 text-[11px] font-bold text-red-500 flex items-center gap-1.5 tracking-wide">
+        <p className="mt-2 ml-1 text-[11px] font-bold text-[var(--ruby-600)] flex items-center gap-1.5 tracking-wide">
           <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block shadow-sm"></span>
           {error}
         </p>

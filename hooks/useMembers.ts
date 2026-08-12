@@ -3,7 +3,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { type Member } from '@/lib/types';
-import { getDefaultMembers } from '@/lib/defaultData';
 import { calcExpiry } from '@/lib/utils';
 
 // ─── Resilient fetcher with error handling ─────────────────────────
@@ -53,7 +52,9 @@ export function useMembers() {
     '/api/members',
     fetcher,
     {
-      fallbackData: getDefaultMembers(),
+      // No fallbackData. Seeding this with 95 vacant seats made every load
+      // flash "all seats free" before the real data arrived — callers should
+      // render <Skeleton> while `isLoading` instead.
       revalidateOnFocus: true,
       errorRetryCount: 3,
       errorRetryInterval: 1000,

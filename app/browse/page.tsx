@@ -9,12 +9,13 @@ import { type Member, type Duration, type Shift } from '@/lib/types';
 import { getSeatStatus, cn, firstName } from '@/lib/utils';
 import { SeatMapContainer, SeatMapWrapper, type FaceDir } from '@/components/seat/SeatMap';
 import SeatRequestSheet from '@/components/seat/SeatRequestSheet';
+import { SeatSkeleton } from '@/components/ui/Skeleton';
 import { Grid3X3, Sun, Moon, Layers, LogOut, Inbox } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function BrowsePage() {
-  const { members } = useMembers();
+  const { members, isLoading } = useMembers();
   const { logout } = useAuth();
   const { addRequest, requests } = useSeatRequests();
   const { addToast } = useToast();
@@ -232,6 +233,18 @@ export default function BrowsePage() {
 
           {/* Map Area */}
           <div className="p-4 sm:p-6 md:p-8 bg-[var(--bg-void)]/40 min-h-[500px] flex justify-center">
+            {isLoading ? (
+              // useMembers no longer ships 95 fake vacant seats as fallbackData,
+              // so render placeholders instead of an empty floorplan.
+              <div
+                className="grid w-full max-w-[800px] grid-cols-6 gap-2 sm:grid-cols-8 md:grid-cols-10"
+                role="status"
+                aria-label="Loading seat map"
+              >
+                {Array.from({ length: 40 }, (_, i) => <SeatSkeleton key={i} />)}
+                <span className="sr-only">Loading seat map…</span>
+              </div>
+            ) : (
               <motion.div
                 className="w-full max-w-[800px]"
               >
@@ -260,6 +273,7 @@ export default function BrowsePage() {
                   </AnimatePresence>
                 </SeatMapContainer>
               </motion.div>
+            )}
           </div>
         </motion.div>
       </main>

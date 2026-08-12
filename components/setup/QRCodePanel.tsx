@@ -94,7 +94,7 @@ export default function QRCodePanel() {
                 onClick={handleCopyLink}
                 className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl font-bold text-sm text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors cursor-pointer"
               >
-                {copied ? <Check className="w-4 h-4 text-active-border" /> : <Copy className="w-4 h-4" />}
+                {copied ? <Check className="w-4 h-4 text-[var(--emerald-600)]" /> : <Copy className="w-4 h-4" />}
                 {copied ? 'Copied!' : 'Copy Link'}
               </button>
                

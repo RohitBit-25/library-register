@@ -111,8 +111,8 @@ function WallLabel({ detail }: { detail: WallDetail }) {
   return (
     <div
       className={`rounded-md border flex items-center justify-center z-10 overflow-hidden bg-[var(--bg-surface)] ${isWindow
-        ? 'border-blue-200 text-blue-600'
-        : 'border-rose-200 text-rose-600'
+        ? 'border-[var(--sapphire-200)] text-[var(--sapphire-600)]'
+        : 'border-[var(--ruby-200)] text-[var(--ruby-600)]'
         }`}
       style={style}
     >
