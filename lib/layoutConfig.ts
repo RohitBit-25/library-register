@@ -1,4 +1,4 @@
-import { type FaceDir, type SeatPosition } from '@/components/seat/SeatMap';
+import { type SeatPosition } from '@/components/seat/SeatMap';
 
 export interface WallDetail {
   label: string;

@@ -55,13 +55,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAdmin = data?.isAdmin === true;
 
   // The "user" role carries no privilege, so localStorage is fine for it.
-  const [userOptedIn, setUserOptedIn] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    setUserOptedIn(getStoredRole() === 'user');
-    setHydrated(true);
-  }, []);
+  // Read via useSyncExternalStore rather than an effect+setState, which would
+  // cascade an extra render on every mount.
+  const storedRole = useSyncExternalStore(
+    subscribeToRole,
+    getStoredRole,
+    getRoleServerSnapshot
+  );
+  const userOptedIn = storedRole === 'user';
 
   const loginAsAdmin = useCallback(async (pin: string) => {
     const result = await loginAsAdminService(pin);
@@ -71,12 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginAsUser = useCallback(() => {
     setStoredRole('user');
-    setUserOptedIn(true);
   }, []);
 
   const logout = useCallback(() => {
     setStoredRole(null);
-    setUserOptedIn(false);
     fetch('/api/auth/logout', { method: 'POST' })
       .catch(() => {})
       .finally(() => { mutate({ isAdmin: false }, { revalidate: true }); });
@@ -89,11 +88,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAdmin,
     isUser: role === 'user',
     isAuthenticated: role !== null,
-    isLoading: isLoading || !hydrated,
+    isLoading,
     loginAsAdmin,
     loginAsUser,
     logout,
-  }), [role, isAdmin, isLoading, hydrated, loginAsAdmin, loginAsUser, logout]);
+  }), [role, isAdmin, isLoading, loginAsAdmin, loginAsUser, logout]);
 
   return (
     <AuthContext.Provider value={value}>
