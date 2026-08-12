@@ -12,7 +12,7 @@ const AttendanceSchema = new Schema<IAttendance>({
   timestamps: true
 });
 
-// Index by date for high-performance monthly/weekly attendance lookups
-AttendanceSchema.index({ date: 1 });
+// No explicit { date: 1 } index here — `unique: true` above already creates
+// one, and declaring both made Mongoose build a duplicate.
 
 export default mongoose.models.Attendance || mongoose.model<IAttendance>('Attendance', AttendanceSchema);

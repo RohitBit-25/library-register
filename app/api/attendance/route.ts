@@ -3,22 +3,19 @@ import dbConnect from '@/lib/mongodb';
 import Attendance from '@/models/Attendance';
 import AuditLog from '@/models/AuditLog';
 import { verifyAdmin } from '@/lib/auth-server';
+import { attendanceSchema, formatZodError } from '@/lib/schemas';
 
 export const dynamic = 'force-dynamic';
 
-/**
- * GET: Fetch attendance history.
- * Admin only.
- */
+/** GET: attendance history (last 365 days). Admin only. */
 export async function GET() {
-  const isAdmin = await verifyAdmin();
-  if (!isAdmin) {
+  if (!await verifyAdmin()) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     await dbConnect();
-    const history = await Attendance.find({}).sort({ date: -1 }).limit(365);
+    const history = await Attendance.find({}).sort({ date: -1 }).limit(365).lean();
     return NextResponse.json(history);
   } catch (error) {
     console.error('Attendance GET error:', error);
@@ -27,53 +24,50 @@ export async function GET() {
 }
 
 /**
- * POST: Mark attendance for a specific date.
- * Payload: { date: string, seat: number, present: boolean }
- * Admin only.
+ * POST: mark attendance. Admin only.
+ *   { date, seat, present }            — toggle one seat
+ *   { date, seats[], allPresent:true } — set the whole day
  */
 export async function POST(request: Request) {
-  const isAdmin = await verifyAdmin();
-  if (!isAdmin) {
+  if (!await verifyAdmin()) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    await dbConnect();
-    const body = await request.json();
-    const { date, seat, present, allPresent, seats: bulkSeats } = body;
+    const parsed = attendanceSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: formatZodError(parsed.error) }, { status: 400 });
+    }
+    const body = parsed.data;
 
-    if (allPresent) {
-      const seats = bulkSeats || [];
-      await Attendance.findOneAndUpdate(
-        { date },
-        { date, seats },
-        { upsert: true, new: true }
+    await dbConnect();
+
+    if ('allPresent' in body && body.allPresent === true) {
+      const seats = Array.from(new Set(body.seats));
+      await Attendance.updateOne(
+        { date: body.date },
+        { $set: { seats } },
+        { upsert: true }
       );
-      
+
       await AuditLog.create({
         action: 'Marked Bulk Attendance',
-        details: `Marked all ${seats.length} members as present for ${date}`,
+        details: `Marked all ${seats.length} members as present for ${body.date}`,
       });
-      
-      return NextResponse.json({ success: true });
+
+      return NextResponse.json({ success: true, seats });
     }
 
-    const doc = await Attendance.findOne({ date });
-    let seats = doc ? doc.seats : [];
+    const { date, seat, present } = body as { date: string; seat: number; present: boolean };
 
-    if (present) {
-      if (!seats.includes(seat)) {
-        seats.push(seat);
-      }
-    } else {
-      seats = seats.filter((s: number) => s !== seat);
-    }
-
-    await Attendance.findOneAndUpdate(
+    // One atomic operator, no read-modify-write. The previous version did
+    // findOne → mutate array → replace, so two staff marking attendance at the
+    // same moment each wrote their own copy and one seat was silently lost.
+    const updated = await Attendance.findOneAndUpdate(
       { date },
-      { date, seats },
+      present ? { $addToSet: { seats: seat } } : { $pull: { seats: seat } },
       { upsert: true, new: true }
-    );
+    ).lean<{ seats: number[] } | null>();
 
     await AuditLog.create({
       action: present ? 'Marked Present' : 'Marked Absent',
@@ -81,7 +75,7 @@ export async function POST(request: Request) {
       seat,
     });
 
-    return NextResponse.json({ success: true, seats });
+    return NextResponse.json({ success: true, seats: updated?.seats ?? [] });
   } catch (error) {
     console.error('Attendance POST error:', error);
     return NextResponse.json({ error: 'Failed to update attendance' }, { status: 500 });

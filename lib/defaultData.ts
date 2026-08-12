@@ -1,4 +1,4 @@
-import { type Member } from './types';
+import type { Member } from './types.ts';
 
 function makeVacant(seat: number): Member {
   return {

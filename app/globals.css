@@ -2,8 +2,9 @@
 
   /* === TAILWIND V4 INTEGRATION === */
   @theme inline {
-    --font-devanagari: var(--font-outfit), sans-serif;
+    --font-devanagari: var(--font-devanagari-hindi), serif;
     --font-display: var(--font-outfit), sans-serif;
+    --font-serif-display: var(--font-serif), Georgia, serif;
     --font-body: var(--font-outfit), -apple-system, sans-serif;
     --font-mono: var(--font-dm-mono), 'Cascadia Code', monospace;
 

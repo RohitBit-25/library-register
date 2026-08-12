@@ -1,17 +1,17 @@
-// Library Register — Service Worker v1
-// Caches app shell + static assets for offline support
+// Library Register — Service Worker v2
+// Caches app shell + static assets for offline support.
+// v2: stopped caching /api/* — see the fetch handler.
 
-const CACHE_NAME = 'library-register-v1';
+// Bumping this name is what purges the v1 caches (which contain member PII)
+// from every device via the activate handler below.
+const CACHE_NAME = 'library-register-v2';
+// Public shells only. Admin routes are excluded: middleware redirects them for
+// anonymous visitors, and a redirect response would make cache.addAll reject,
+// failing the whole install.
 const STATIC_ASSETS = [
-  '/',
+  '/landing',
   '/browse',
-  '/members',
-  '/attendance',
-  '/analytics',
-  '/requests',
   '/my-requests',
-  '/export',
-  '/setup',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
@@ -46,9 +46,16 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (event.request.method !== 'GET') return;
 
-  // Skip API/external requests
   const url = new URL(event.request.url);
+
+  // Skip external requests
   if (url.origin !== self.location.origin) return;
+
+  // NEVER cache API responses. v1 cached every 200 GET, which meant an admin's
+  // full member list (names, phones) persisted in CacheStorage after logout and
+  // was served to the next person on that device while offline — and a cached
+  // {"isAdmin":true} from /api/auth/check could revive a stale admin session.
+  if (url.pathname.startsWith('/api/')) return;
 
   event.respondWith(
     fetch(event.request)
@@ -66,9 +73,11 @@ self.addEventListener('fetch', (event) => {
         // Network failed — try cache
         return caches.match(event.request).then((cachedResponse) => {
           if (cachedResponse) return cachedResponse;
-          // For navigation requests, return cached home page
+          // For navigation requests, fall back to the public landing shell.
           if (event.request.mode === 'navigate') {
-            return caches.match('/');
+            return caches.match('/landing').then(
+              (shell) => shell || new Response('Offline', { status: 503 })
+            );
           }
           return new Response('Offline', { status: 503 });
         });

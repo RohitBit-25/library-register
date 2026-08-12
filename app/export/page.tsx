@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/useToast';
 
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { toCsv } from '@/lib/csv';
 import { motion, Variants } from 'framer-motion';
 import {
   Download,
@@ -86,11 +87,14 @@ export default function ExportPage() {
     const dateStamp = new Date().toISOString().split('T')[0];
 
     if (format === 'csv') {
-      const headers = 'Seat,Name,Phone,Shift,Join Date,Duration,Expiry,Fee Status,Payment Mode\n';
-      const rows = occupiedMembers.map(m =>
-        `${m.seat},"${m.name}","${m.phone}",${m.shift},${m.joinDate},${m.duration},${m.expiry},${m.fee},${m.paymentMode || 'N/A'}`
-      ).join('\n');
-      downloadFile(headers + rows, `gangaur-members-${dateStamp}.csv`, 'text/csv;charset=utf-8');
+      const csv = toCsv(
+        ['Seat', 'Name', 'Phone', 'Shift', 'Join Date', 'Duration', 'Expiry', 'Fee Status', 'Payment Mode'],
+        occupiedMembers.map(m => [
+          m.seat, m.name, m.phone, m.shift, m.joinDate,
+          m.duration, m.expiry, m.fee, m.paymentMode || 'N/A',
+        ])
+      );
+      downloadFile(csv, `gangaur-members-${dateStamp}.csv`, 'text/csv;charset=utf-8');
     } else {
       const data = occupiedMembers.map(m => ({
         seat: m.seat,
@@ -115,12 +119,12 @@ export default function ExportPage() {
     const dateStamp = new Date().toISOString().split('T')[0];
 
     if (format === 'csv') {
-      const headers = 'Date,Day,Present Count,Attendance Rate %\n';
-      const rows = thirtyDayData.map(d => {
-        const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.dayOfWeek];
-        return `${d.date},${dayName},${d.count},${d.rate}`;
-      }).join('\n');
-      downloadFile(headers + rows, `gangaur-attendance-${dateStamp}.csv`, 'text/csv;charset=utf-8');
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const csv = toCsv(
+        ['Date', 'Day', 'Present Count', 'Attendance Rate %'],
+        thirtyDayData.map(d => [d.date, dayNames[d.dayOfWeek], d.count, d.rate])
+      );
+      downloadFile(csv, `gangaur-attendance-${dateStamp}.csv`, 'text/csv;charset=utf-8');
     } else {
       downloadFile(JSON.stringify(thirtyDayData, null, 2), `gangaur-attendance-${dateStamp}.json`, 'application/json');
     }
@@ -138,11 +142,15 @@ export default function ExportPage() {
     const dateStamp = new Date().toISOString().split('T')[0];
 
     if (format === 'csv') {
-      const headers = 'ID,Seat,Name,Phone,Status,Join Date,Duration,Shift,Payment Mode,Transaction ID,Date,Message\n';
-      const rows = requests.map(r =>
-        `${r.id},${r.seat},"${r.userName}","${r.userPhone}",${r.status},${r.joinDate || ''},${r.duration || ''},${r.shift || ''},${r.paymentMode},"${r.transactionId || ''}","${r.createdAt}","${(r.message || '').replace(/"/g, '""')}"`
-      ).join('\n');
-      downloadFile(headers + rows, `gangaur-requests-${dateStamp}.csv`, 'text/csv;charset=utf-8');
+      const csv = toCsv(
+        ['ID', 'Seat', 'Name', 'Phone', 'Status', 'Join Date', 'Duration', 'Shift', 'Payment Mode', 'Transaction ID', 'Date', 'Message'],
+        requests.map(r => [
+          r.id, r.seat, r.userName, r.userPhone, r.status,
+          r.joinDate || '', r.duration || '', r.shift || '', r.paymentMode,
+          r.transactionId || '', r.createdAt, r.message || '',
+        ])
+      );
+      downloadFile(csv, `gangaur-requests-${dateStamp}.csv`, 'text/csv;charset=utf-8');
     } else {
       downloadFile(JSON.stringify(requests, null, 2), `gangaur-requests-${dateStamp}.json`, 'application/json');
     }

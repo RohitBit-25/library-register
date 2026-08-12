@@ -8,9 +8,14 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
-    // 1. Verify cron secret to prevent public triggering
-    const authHeader = request.headers.get('authorization');
-    if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    // 1. Verify cron secret. Fail closed: the previous guard was skipped
+    //    entirely when CRON_SECRET was unset, leaving this endpoint public.
+    const cronSecret = process.env.CRON_SECRET;
+    if (!cronSecret) {
+      console.error('CRON_SECRET is not set — refusing to run the reminder job.');
+      return NextResponse.json({ error: 'Not configured' }, { status: 503 });
+    }
+    if (request.headers.get('authorization') !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -24,10 +29,12 @@ export async function GET(request: Request) {
     // Format YYYY-MM-DD
     const targetDateStr = targetDate.toISOString().split('T')[0];
 
-    // Find non-vacant members whose expiry is EXACTLY targetDateStr
+    // Find non-vacant members whose expiry is EXACTLY targetDateStr.
+    // Plain equality, not $regex: expiry is stored as a bare YYYY-MM-DD string,
+    // and $regex cannot use the { vacant, expiry } index.
     const membersToRemind = await Member.find({
       vacant: { $ne: true },
-      expiry: { $regex: `^${targetDateStr}` }
+      expiry: targetDateStr,
     }).lean();
 
     if (membersToRemind.length === 0) {

@@ -25,7 +25,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   const { members } = useMembers();
   const stats = useStats(members);
   const { toasts, addToast, removeToast, ToastContext } = useToastProvider();
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin, isLoading } = useAuth();
   const { pendingCount } = useSeatRequests();
   const pathname = usePathname();
   const router = useRouter();
@@ -33,20 +33,21 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   // Landing page: no shell chrome
   const isStandalone = STANDALONE_ROUTES.includes(pathname);
 
-  // Redirect logic
+  // Redirect logic. `isLoading` guard matters now that admin status is resolved
+  // by a server round-trip — without it every admin got bounced to /landing on
+  // first paint, before the session check came back.
   useEffect(() => {
-    // Not authenticated & not on landing → go to landing
-    if (!isAuthenticated && !isStandalone) {
+    if (isLoading || isStandalone) return;
+
+    if (!isAuthenticated) {
       router.replace('/landing');
       return;
     }
 
-    // User trying to access admin routes → redirect to browse
-    if (isAuthenticated && !isAdmin && !USER_ROUTES.includes(pathname) && !isStandalone) {
+    if (!isAdmin && !USER_ROUTES.includes(pathname)) {
       router.replace('/browse');
-      return;
     }
-  }, [isAuthenticated, isAdmin, pathname, router, isStandalone]);
+  }, [isAuthenticated, isAdmin, isLoading, pathname, router, isStandalone]);
 
   if (isStandalone) {
     return (
@@ -57,9 +58,17 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Not authenticated yet - show nothing while redirect happens
-  if (!isAuthenticated) {
-    return null;
+  if (isLoading || !isAuthenticated) {
+    return (
+      <div
+        className="flex min-h-screen items-center justify-center bg-[var(--bg-void)]"
+        role="status"
+        aria-live="polite"
+      >
+        <span className="sr-only">Checking your session…</span>
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--border-default)] border-t-[var(--saffron-600)]" />
+      </div>
+    );
   }
 
   return (

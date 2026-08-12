@@ -1,68 +1,89 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
+import Member from '@/models/Member';
 import { verifyAdmin } from '@/lib/auth-server';
 import { todayISO } from '@/lib/utils';
+import { seatRequestCreateSchema, seatRequestUpdateSchema, formatZodError } from '@/lib/schemas';
 
 export const dynamic = 'force-dynamic';
 
-type RequestRecord = {
-  _id?: { toString(): string };
-  [key: string]: unknown;
-};
+/** 2MB binary ≈ 2.8MB base64; allow headroom for the rest of the JSON body. */
+const MAX_BODY_BYTES = 3_200_000;
+
+type RequestRecord = { _id?: { toString(): string }; [key: string]: unknown };
 
 function serializeRequest(request: RequestRecord) {
-  return {
-    ...request,
-    id: request._id?.toString() || request.id,
-  };
+  return { ...request, id: request._id?.toString() || request.id };
 }
 
 /**
- * GET: List all seat requests.
- * Admin only.
+ * Read the body with a hard size cap. The 2MB limit previously existed only in
+ * the browser (SeatRequestSheet), so this public endpoint accepted arbitrarily
+ * large base64 blobs — enough to fill the database or blow Mongo's 16MB
+ * document ceiling.
  */
+async function readJsonCapped(request: Request): Promise<unknown> {
+  const declared = request.headers.get('content-length');
+  if (declared && Number(declared) > MAX_BODY_BYTES) {
+    throw new Error('PAYLOAD_TOO_LARGE');
+  }
+  const text = await request.text();
+  if (text.length > MAX_BODY_BYTES) {
+    throw new Error('PAYLOAD_TOO_LARGE');
+  }
+  return JSON.parse(text);
+}
+
+/** GET: list all seat requests. Admin only. */
 export async function GET() {
-  const isAdmin = await verifyAdmin();
-  if (!isAdmin) {
+  if (!await verifyAdmin()) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     await dbConnect();
     const requests = await SeatRequest.find({}).sort({ createdAt: -1 }).lean<RequestRecord[]>();
-    return NextResponse.json(requests.map(serializeRequest));
+    return NextResponse.json(requests.map(serializeRequest), {
+      headers: { 'Cache-Control': 'no-store' },
+    });
   } catch (error) {
     console.error('Request GET error:', error);
     return NextResponse.json({ error: 'Failed to fetch requests' }, { status: 500 });
   }
 }
 
-/**
- * POST: Submit a new request.
- * Public for visitors.
- */
+/** POST: submit a new request. Public — treat every field as hostile. */
 export async function POST(request: Request) {
+  let raw: unknown;
+  try {
+    raw = await readJsonCapped(request);
+  } catch (err) {
+    if ((err as Error).message === 'PAYLOAD_TOO_LARGE') {
+      return NextResponse.json(
+        { error: 'Request too large. Documents must be under 2MB.' },
+        { status: 413 }
+      );
+    }
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
+
+  const parsed = seatRequestCreateSchema.safeParse(raw);
+  if (!parsed.success) {
+    return NextResponse.json({ error: formatZodError(parsed.error) }, { status: 400 });
+  }
+  const data = parsed.data;
+
   try {
     await dbConnect();
-    const data = await request.json();
-    
-    const paymentMode = data.paymentMode === 'cash' ? 'cash' : 'upi';
-    const duration = ['1M', '3M', '6M', '1Y'].includes(data.duration) ? data.duration : '3M';
-    const shift = ['morning', 'evening', 'full'].includes(data.shift) ? data.shift : 'full';
-    const joinDate = data.joinDate || todayISO();
 
-    // Minimal validation
-    if (!data.seat || !data.userName || !data.userPhone || !joinDate) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    // Don't accept requests for a seat that is already taken — otherwise the
+    // admin queue fills with requests that can never be approved.
+    const seatDoc = await Member.findOne({ seat: data.seat }).select('vacant').lean<{ vacant: boolean } | null>();
+    if (seatDoc && !seatDoc.vacant) {
+      return NextResponse.json({ error: 'That seat is no longer available' }, { status: 409 });
     }
 
-    // UPI requires a transaction ID
-    if (paymentMode === 'upi' && !String(data.transactionId || '').trim()) {
-      return NextResponse.json({ error: 'Transaction ID is required for UPI payments' }, { status: 400 });
-    }
-
-    // Duplicate prevention: check if a pending request already exists for this seat + phone
     const existing = await SeatRequest.findOne({
       seat: data.seat,
       userPhone: data.userPhone,
@@ -76,17 +97,9 @@ export async function POST(request: Request) {
     }
 
     const newRequest = await SeatRequest.create({
-      seat: data.seat,
-      userName: data.userName,
-      userPhone: data.userPhone,
-      message: data.message || '',
-      joinDate,
-      duration,
-      shift,
-      transactionId: String(data.transactionId || '').trim(),
-      paymentMode,
-      documentUrl: data.documentUrl || '',
-      status: 'pending'
+      ...data,
+      joinDate: data.joinDate || todayISO(),
+      status: 'pending',
     });
 
     return NextResponse.json(serializeRequest(newRequest.toObject()), { status: 201 });
@@ -96,29 +109,21 @@ export async function POST(request: Request) {
   }
 }
 
-/**
- * PATCH: Update request status (e.g., Approve/Reject).
- * Admin only.
- */
+/** PATCH: approve/reject. Admin only. */
 export async function PATCH(request: Request) {
-  const isAdmin = await verifyAdmin();
-  if (!isAdmin) {
+  if (!await verifyAdmin()) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    await dbConnect();
-    const { id, status } = await request.json();
-
-    if (!id || !['pending', 'approved', 'rejected'].includes(status)) {
-      return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
+    const parsed = seatRequestUpdateSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: formatZodError(parsed.error) }, { status: 400 });
     }
+    const { id, status } = parsed.data;
 
-    const updated = await SeatRequest.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
+    await dbConnect();
+    const updated = await SeatRequest.findByIdAndUpdate(id, { status }, { new: true });
 
     if (!updated) {
       return NextResponse.json({ error: 'Request not found' }, { status: 404 });
@@ -131,20 +136,14 @@ export async function PATCH(request: Request) {
   }
 }
 
-/**
- * DELETE: Delete a request permanently.
- * Admin only.
- */
+/** DELETE: remove a request permanently. Admin only. */
 export async function DELETE(request: Request) {
-  const isAdmin = await verifyAdmin();
-  if (!isAdmin) {
+  if (!await verifyAdmin()) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-
+    const id = new URL(request.url).searchParams.get('id');
     if (!id) {
       return NextResponse.json({ error: 'Missing request ID' }, { status: 400 });
     }

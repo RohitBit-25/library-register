@@ -1,39 +1,42 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/library-register';
-
-if (!process.env.MONGODB_URI) {
-  console.warn('⚠️ MONGODB_URI environment variable is missing in .env.local. Falling back to local MongoDB.');
-}
+// No localhost fallback. A missing MONGODB_URI used to silently "succeed" here
+// and then fail at query time with an opaque error; now it fails loudly.
+const MONGODB_URI = process.env.MONGODB_URI;
 
 declare global {
-  var mongoose: { conn: typeof import('mongoose') | null, promise: Promise<typeof import('mongoose')> | null };
+  var mongooseCache: {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
+  } | undefined;
 }
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
+const cached = global.mongooseCache ??= { conn: null, promise: null };
 
 async function dbConnect() {
-  if (cached.conn) {
-    return cached.conn;
+  if (cached.conn) return cached.conn;
+
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI is not set. Copy .env.example to .env and fill it in.');
   }
 
   if (!cached.promise) {
-    const opts = {
+    cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
+      // Each serverless instance opens its own pool; uncapped, enough cold
+      // starts will exhaust the Atlas connection limit.
+      maxPoolSize: 10,
+      minPoolSize: 0,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     });
   }
-  
+
   try {
     cached.conn = await cached.promise;
   } catch (e) {
+    // Clear the rejected promise so the next request retries instead of
+    // re-awaiting a permanently failed connection.
     cached.promise = null;
     throw e;
   }

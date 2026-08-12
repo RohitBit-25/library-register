@@ -1,7 +1,15 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
-import { type UserRole, getStoredRole, setStoredRole, loginAsAdminService } from '@/lib/auth';
+import { createContext, useContext, useCallback, useMemo, useSyncExternalStore, type ReactNode } from 'react';
+import useSWR from 'swr';
+import {
+  type UserRole,
+  getStoredRole,
+  setStoredRole,
+  loginAsAdminService,
+  subscribeToRole,
+  getRoleServerSnapshot,
+} from '@/lib/auth';
 
 // ─── Context Shape ──────────────────────────────────────────────
 
@@ -10,7 +18,8 @@ interface AuthContextValue {
   isAdmin: boolean;
   isUser: boolean;
   isAuthenticated: boolean;
-  loginAsAdmin: (pin: string) => Promise<boolean>;
+  isLoading: boolean;
+  loginAsAdmin: (pin: string) => Promise<{ ok: boolean; error?: string }>;
   loginAsUser: () => void;
   logout: () => void;
 }
@@ -20,65 +29,71 @@ const AuthContext = createContext<AuthContextValue>({
   isAdmin: false,
   isUser: false,
   isAuthenticated: false,
-  loginAsAdmin: async () => false,
+  isLoading: true,
+  loginAsAdmin: async () => ({ ok: false }),
   loginAsUser: () => {},
   logout: () => {},
 });
 
+const checkFetcher = async (url: string): Promise<{ isAdmin: boolean }> => {
+  const res = await fetch(url, { credentials: 'same-origin' });
+  if (!res.ok) return { isAdmin: false };
+  return res.json();
+};
+
 // ─── Provider ───────────────────────────────────────────────────
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<{ role: UserRole | null; hydrated: boolean }>({
-    role: null,
-    hydrated: false,
+  // Admin comes from the server session cookie, never from localStorage.
+  // Previously `isAdmin` was read straight out of localStorage, so setting
+  // `library-role=admin` in devtools revealed the whole admin UI (every action
+  // then 401'd — a confusing failure, not a real boundary).
+  const { data, isLoading, mutate } = useSWR('/api/auth/check', checkFetcher, {
+    revalidateOnFocus: true,
+    shouldRetryOnError: false,
   });
+  const isAdmin = data?.isAdmin === true;
 
-  // Hydrate from localStorage on mount
+  // The "user" role carries no privilege, so localStorage is fine for it.
+  const [userOptedIn, setUserOptedIn] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
   useEffect(() => {
-    const stored = getStoredRole();
-    const timer = setTimeout(() => {
-      setState({ role: stored, hydrated: true });
-    }, 0);
-    return () => clearTimeout(timer);
+    setUserOptedIn(getStoredRole() === 'user');
+    setHydrated(true);
   }, []);
 
-  const loginAsAdmin = useCallback(async (pin: string): Promise<boolean> => {
-    const success = await loginAsAdminService(pin);
-    if (success) {
-      setState(prev => ({ ...prev, role: 'admin' }));
-      setStoredRole('admin');
-      return true;
-    }
-    return false;
-  }, []);
+  const loginAsAdmin = useCallback(async (pin: string) => {
+    const result = await loginAsAdminService(pin);
+    if (result.ok) await mutate();
+    return result;
+  }, [mutate]);
 
   const loginAsUser = useCallback(() => {
-    setState(prev => ({ ...prev, role: 'user' }));
     setStoredRole('user');
+    setUserOptedIn(true);
   }, []);
 
   const logout = useCallback(() => {
-    // Clear server-side JWT cookie
-    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
-
-    setState(prev => ({ ...prev, role: null }));
     setStoredRole(null);
-  }, []);
+    setUserOptedIn(false);
+    fetch('/api/auth/logout', { method: 'POST' })
+      .catch(() => {})
+      .finally(() => { mutate({ isAdmin: false }, { revalidate: true }); });
+  }, [mutate]);
+
+  const role: UserRole | null = isAdmin ? 'admin' : userOptedIn ? 'user' : null;
 
   const value = useMemo(() => ({
-    role: state.role,
-    isAdmin: state.role === 'admin',
-    isUser: state.role === 'user',
-    isAuthenticated: state.role !== null,
+    role,
+    isAdmin,
+    isUser: role === 'user',
+    isAuthenticated: role !== null,
+    isLoading: isLoading || !hydrated,
     loginAsAdmin,
     loginAsUser,
     logout,
-  }), [state.role, loginAsAdmin, loginAsUser, logout]);
-
-  // Don't render until hydrated to avoid flash
-  if (!state.hydrated) {
-    return null;
-  }
+  }), [role, isAdmin, isLoading, hydrated, loginAsAdmin, loginAsUser, logout]);
 
   return (
     <AuthContext.Provider value={value}>

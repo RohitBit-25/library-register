@@ -4,36 +4,41 @@ import SeatRequest from '@/models/SeatRequest';
 
 export const dynamic = 'force-dynamic';
 
-type RequestRecord = {
-  _id?: { toString(): string };
-  [key: string]: unknown;
-};
-
-function serializeRequest(request: RequestRecord) {
-  return {
-    ...request,
-    id: request._id?.toString() || request.id,
-  };
-}
-
 /**
  * GET /api/requests/my?phone=XXXXXXXXXX
- * Public endpoint — lets users look up their own requests by phone number.
+ *
+ * Public — a visitor checks the status of a request they submitted. Because it
+ * is unauthenticated and phone numbers are enumerable, it returns ONLY status
+ * fields. It must never expose `documentUrl` (the uploaded ID image),
+ * `transactionId`, `userName`, or `message`: that turned a guessable 10-digit
+ * number into a bulk PII and identity-document lookup.
  */
-export async function GET(request: NextRequest) {
-  const phone = request.nextUrl.searchParams.get('phone');
+const PUBLIC_FIELDS = 'seat status createdAt joinDate duration shift paymentMode';
 
-  if (!phone || phone.length < 10) {
+export async function GET(request: NextRequest) {
+  const phone = (request.nextUrl.searchParams.get('phone') || '').replace(/\D/g, '');
+
+  if (!/^\d{10}$/.test(phone)) {
     return NextResponse.json(
-      { error: 'A valid phone number is required' },
+      { error: 'A valid 10-digit phone number is required' },
       { status: 400 }
     );
   }
 
   try {
     await dbConnect();
-    const requests = await SeatRequest.find({ userPhone: phone }).sort({ createdAt: -1 }).lean<RequestRecord[]>();
-    return NextResponse.json(requests.map(serializeRequest));
+    const requests = await SeatRequest
+      .find({ userPhone: phone })
+      .select(PUBLIC_FIELDS)
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean();
+
+    return NextResponse.json(
+      requests.map((r) => ({ ...r, id: String(r._id) })),
+      // Never let a shared/proxy cache hold one visitor's request list.
+      { headers: { 'Cache-Control': 'no-store' } }
+    );
   } catch (error) {
     console.error('My requests GET error:', error);
     return NextResponse.json(
