@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { motion, HTMLMotionProps } from 'framer-motion';
+import { Sun, Moon, SunMoon, type LucideIcon } from 'lucide-react';
 
 export type BadgeVariant = 'active' | 'expired' | 'expiring' | 'vacant' | 'pending' | 'due' | 'morning' | 'evening' | 'full';
 
@@ -9,20 +10,31 @@ export interface BadgeProps extends HTMLMotionProps<"span"> {
   children?: React.ReactNode;
 }
 
+// Ramp contract (see globals.css): -50 tint bg, -200 tint border, -600/-700 text.
+// Every pair below clears 4.5:1 — verified by scripts/check-contrast.py.
 const badgeConfig: Record<BadgeVariant, { bg: string; border: string; text: string; defaultLabel: string }> = {
-  active:   { bg: 'bg-[rgba(34,195,106,0.20)]',        border: 'border-[rgba(34,195,106,0.3)]',       text: 'text-[var(--emerald-400)]',  defaultLabel: 'Active' },
-  expired:  { bg: 'bg-[rgba(232,66,66,0.20)]',         border: 'border-[rgba(232,66,66,0.3)]',        text: 'text-[var(--ruby-400)]',     defaultLabel: 'Expired' },
-  expiring: { bg: 'bg-[rgba(232,162,10,0.20)]',        border: 'border-[rgba(232,162,10,0.3)]',       text: 'text-[var(--amber-400)]',    defaultLabel: 'Expiring Soon' },
-  due:      { bg: 'bg-[rgba(232,133,58,0.20)]',        border: 'border-[rgba(232,133,58,0.3)]',       text: 'text-[var(--saffron-400)]',  defaultLabel: 'Fee Due' },
-  vacant:   { bg: 'bg-[rgba(61,158,255,0.20)]',        border: 'border-[rgba(61,158,255,0.3)]',       text: 'text-[var(--sapphire-400)]', defaultLabel: 'Vacant' },
-  pending:  { bg: 'bg-[rgba(123,95,245,0.20)]',        border: 'border-[rgba(123,95,245,0.3)]',       text: 'text-[var(--indigo-400)]',   defaultLabel: 'Pending' },
-  morning:  { bg: 'bg-[rgba(232,162,10,0.15)]',        border: 'border-[rgba(232,162,10,0.25)]',      text: 'text-[var(--amber-400)]',    defaultLabel: '🌅 Morning' },
-  evening:  { bg: 'bg-[rgba(123,95,245,0.15)]',        border: 'border-[rgba(123,95,245,0.25)]',      text: 'text-[var(--indigo-400)]',   defaultLabel: '🌙 Evening' },
-  full:     { bg: 'bg-[rgba(232,133,58,0.15)]',        border: 'border-[rgba(232,133,58,0.25)]',      text: 'text-[var(--saffron-400)]',  defaultLabel: '☀️ Full Day' },
+  active:   { bg: 'bg-[var(--emerald-50)]',  border: 'border-[var(--emerald-200)]',  text: 'text-[var(--emerald-600)]',  defaultLabel: 'Active' },
+  expired:  { bg: 'bg-[var(--ruby-50)]',     border: 'border-[var(--ruby-200)]',     text: 'text-[var(--ruby-600)]',     defaultLabel: 'Expired' },
+  expiring: { bg: 'bg-[var(--marigold-50)]', border: 'border-[var(--marigold-200)]', text: 'text-[var(--marigold-700)]', defaultLabel: 'Expiring Soon' },
+  due:      { bg: 'bg-[var(--saffron-50)]',  border: 'border-[var(--saffron-200)]',  text: 'text-[var(--saffron-700)]',  defaultLabel: 'Fee Due' },
+  vacant:   { bg: 'bg-[var(--sapphire-50)]', border: 'border-[var(--sapphire-200)]', text: 'text-[var(--sapphire-600)]', defaultLabel: 'Vacant' },
+  pending:  { bg: 'bg-[var(--indigo-50)]',   border: 'border-[var(--indigo-400)]/40',text: 'text-[var(--indigo-600)]',   defaultLabel: 'Pending' },
+  morning:  { bg: 'bg-[var(--marigold-50)]', border: 'border-[var(--marigold-200)]', text: 'text-[var(--marigold-700)]', defaultLabel: 'Morning' },
+  evening:  { bg: 'bg-[var(--indigo-50)]',   border: 'border-[var(--indigo-400)]/40',text: 'text-[var(--indigo-600)]',   defaultLabel: 'Evening' },
+  full:     { bg: 'bg-[var(--saffron-50)]',  border: 'border-[var(--saffron-200)]',  text: 'text-[var(--saffron-700)]',  defaultLabel: 'Full Day' },
+};
+
+// Shift variants carry an SVG icon rather than an emoji — screen readers
+// announce "🌅" as "sunrise over mountains", and it mismatched SeatTile.
+const shiftIcons: Partial<Record<BadgeVariant, LucideIcon>> = {
+  morning: Sun,
+  evening: Moon,
+  full: SunMoon,
 };
 
 export function Badge({ variant, className, children, ...props }: BadgeProps) {
   const c = badgeConfig[variant];
+  const Icon = shiftIcons[variant];
   return (
     <motion.span
       className={cn(
@@ -35,6 +47,7 @@ export function Badge({ variant, className, children, ...props }: BadgeProps) {
       )}
       {...props}
     >
+      {Icon && <Icon className="w-3 h-3 shrink-0" aria-hidden="true" />}
       {children || c.defaultLabel}
     </motion.span>
   );

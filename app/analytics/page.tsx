@@ -76,14 +76,14 @@ export default function DashboardPage() {
         <div>
           <h1 className="font-display text-2xl font-semibold tracking-[var(--tracking-tight)] text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
             Dashboard
-            <Sparkles className="w-5 h-5 text-[var(--sapphire-500)]" />
+            <Sparkles className="w-5 h-5 text-[var(--sapphire-600)]" />
           </h1>
           <p className="text-sm font-medium text-[var(--text-secondary)] mt-[var(--space-1)]">
             {dateStr}
           </p>
         </div>
         <div className="hidden sm:flex items-center gap-[var(--space-2)] text-xs font-mono text-[var(--text-tertiary)] bg-[var(--bg-elevated)] border-[1.5px] border-[var(--border-subtle)] rounded-[var(--radius-md)] px-[var(--space-3)] py-[var(--space-2)] shadow-[var(--shadow-sm)]">
-          <TrendingUp className="w-3.5 h-3.5 text-[var(--emerald-500)]" />
+          <TrendingUp className="w-3.5 h-3.5 text-[var(--emerald-600)]" />
           {Math.round((stats.occupied / 95) * 100)}% Occupied
         </div>
       </motion.div>
@@ -126,9 +126,9 @@ export default function DashboardPage() {
           <Card variant="base" className="overflow-hidden">
             <div className="px-[var(--space-5)] py-[var(--space-4)] border-b border-[var(--border-subtle)] bg-[var(--bg-muted)]">
               <h2 className="font-display text-sm font-semibold text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
-                <AlertTriangle className="w-4 h-4 text-[var(--marigold-500)]" />
+                <AlertTriangle className="w-4 h-4 text-[var(--marigold-700)]" />
                 Alerts
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--marigold-500)]/10 text-[var(--marigold-500)]">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--marigold-500)]/10 text-[var(--marigold-700)]">
                   {alerts.length}
                 </span>
               </h2>
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                     <td colSpan={4} className="px-[var(--space-5)] py-[var(--space-8)] text-center text-[var(--text-tertiary)]">
                       <div className="flex flex-col items-center gap-[var(--space-2)]">
                         <div className="w-12 h-12 rounded-[var(--radius-full)] bg-[var(--emerald-500)]/10 flex items-center justify-center">
-                          <Check className="w-6 h-6 text-[var(--emerald-500)]" />
+                          <Check className="w-6 h-6 text-[var(--emerald-600)]" />
                         </div>
                         <span className="font-[var(--weight-medium)]">No alerts — everything looks good!</span>
                       </div>

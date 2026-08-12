@@ -29,7 +29,7 @@ export default function SetupPage() {
     >
       <motion.div variants={itemVariants} className="mb-6">
         <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-          <Zap className="w-6 h-6 text-[var(--sapphire-500)]" />
+          <Zap className="w-6 h-6 text-[var(--sapphire-600)]" />
           Automation Setup
         </h1>
         <p className="text-sm font-medium text-[var(--text-secondary)] mt-1">
@@ -45,10 +45,10 @@ export default function SetupPage() {
           </h3>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             {[
-              { icon: <QrCode className="w-5 h-5" />, label: 'Member Scans QR', color: 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]' },
-              { icon: <FileText className="w-5 h-5" />, label: 'Fills Google Form', color: 'bg-[var(--emerald-500)]/10 text-[var(--emerald-400)]' },
-              { icon: <Zap className="w-5 h-5" />, label: 'Script Runs Auto', color: 'bg-[var(--amber-500)]/10 text-[var(--amber-400)]' },
-              { icon: <Mail className="w-5 h-5" />, label: 'You Get Email', color: 'bg-[var(--ruby-500)]/10 text-[var(--ruby-400)]' },
+              { icon: <QrCode className="w-5 h-5" />, label: 'Member Scans QR', color: 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)]' },
+              { icon: <FileText className="w-5 h-5" />, label: 'Fills Google Form', color: 'bg-[var(--emerald-500)]/10 text-[var(--emerald-600)]' },
+              { icon: <Zap className="w-5 h-5" />, label: 'Script Runs Auto', color: 'bg-[var(--amber-500)]/10 text-[var(--marigold-700)]' },
+              { icon: <Mail className="w-5 h-5" />, label: 'You Get Email', color: 'bg-[var(--ruby-500)]/10 text-[var(--ruby-600)]' },
             ].map((step, i) => (
               <div key={i} className="flex items-center gap-3 sm:gap-4">
                 <div className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl ${step.color} border border-current/10`}>
@@ -72,7 +72,7 @@ export default function SetupPage() {
       {/* Instruction Guide */}
       <motion.div variants={itemVariants} className="mt-8">
         <h2 className="text-lg font-extrabold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-          <ListChecks className="w-5 h-5 text-[var(--sapphire-500)]" />
+          <ListChecks className="w-5 h-5 text-[var(--sapphire-600)]" />
           4-Step Integration Guide
         </h2>
 
@@ -87,7 +87,7 @@ export default function SetupPage() {
               <div>
                 <h3 className="text-sm font-bold text-[var(--text-primary)]">Create your Google Form</h3>
                 <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-[var(--sapphire-500)] hover:underline inline-flex items-center gap-1">Google Forms <ExternalLink className="w-3 h-3" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
+                  Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-[var(--sapphire-600)] hover:underline inline-flex items-center gap-1">Google Forms <ExternalLink className="w-3 h-3" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
                 </p>
                 <ol className="list-decimal list-inside mt-2 text-xs font-mono bg-[var(--bg-base)] border border-[var(--border-default)] p-3 rounded-lg text-[var(--text-tertiary)]">
                   <li>Full Name</li>
@@ -145,9 +145,9 @@ export default function SetupPage() {
                   In Apps Script, click the <strong>Clock icon (Triggers)</strong> on the left side. Add a new trigger:
                 </p>
                 <ul className="list-disc list-inside mt-2 text-xs font-mono bg-[var(--bg-base)] border border-[var(--border-default)] p-3 rounded-lg text-[var(--text-tertiary)] leading-loose">
-                  <li>Function to run: <strong className="text-[var(--sapphire-500)]">onFormSubmit</strong></li>
-                  <li>Event source: <strong className="text-[var(--sapphire-500)]">From spreadsheet</strong></li>
-                  <li>Event type: <strong className="text-[var(--sapphire-500)]">On form submit</strong></li>
+                  <li>Function to run: <strong className="text-[var(--sapphire-600)]">onFormSubmit</strong></li>
+                  <li>Event source: <strong className="text-[var(--sapphire-600)]">From spreadsheet</strong></li>
+                  <li>Event type: <strong className="text-[var(--sapphire-600)]">On form submit</strong></li>
                 </ul>
                 <p className="text-xs text-[var(--text-secondary)] mt-3 italic">
                   Save the trigger and grant the required permissions when prompted by Google. You are all set!

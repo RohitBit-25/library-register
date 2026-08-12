@@ -125,7 +125,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-wide">
             Seat Allotment
           </h3>
-          <span className="flex items-center gap-1.5 rounded-lg bg-[var(--sapphire-500)]/10 px-3 py-1.5 text-xs font-bold text-[var(--sapphire-500)] hover:bg-[var(--sapphire-500)]/20 transition-colors">
+          <span className="flex items-center gap-1.5 rounded-lg bg-[var(--sapphire-500)]/10 px-3 py-1.5 text-xs font-bold text-[var(--sapphire-600)] hover:bg-[var(--sapphire-500)]/20 transition-colors">
             <Zap className="w-3.5 h-3.5" />
             {vacantSeats.length} Available
           </span>
@@ -215,15 +215,15 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
                 <div className="flex flex-col items-center gap-2">
                   <CheckCircle2 className="w-10 h-10 text-green-500 shrink-0 drop-shadow-sm" />
                   <span className="text-sm font-bold text-[var(--text-primary)]">{watchDocumentStatus}</span>
-                  <span className="text-xs font-semibold text-[var(--text-secondary)] group-hover:text-[var(--saffron-500)] transition-colors">Click to replace file</span>
+                  <span className="text-xs font-semibold text-[var(--text-secondary)] group-hover:text-[var(--saffron-600)] transition-colors">Click to replace file</span>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-3 text-[var(--text-secondary)] group-hover:text-[var(--saffron-500)] transition-colors">
+                <div className="flex flex-col items-center gap-3 text-[var(--text-secondary)] group-hover:text-[var(--saffron-600)] transition-colors">
                   <div className="bg-[var(--bg-base)] p-3 rounded-full shadow-sm border border-[var(--border-default)] transition-transform group-hover:scale-110 duration-200">
                     <Upload className="w-5 h-5 text-current" />
                   </div>
                   <div>
-                    <span className="text-[13px] font-bold block text-[var(--saffron-500)] drop-shadow-sm">Add file</span>
+                    <span className="text-[13px] font-bold block text-[var(--saffron-600)] drop-shadow-sm">Add file</span>
                     <span className="text-[11px] font-medium opacity-80 mt-1 block tracking-wide">Upload 1 supported file. Max 100 MB.</span>
                   </div>
                 </div>
@@ -284,10 +284,10 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <input 
             type="checkbox" 
             {...register('termsAccepted.rules')}
-            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-500)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
+            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-600)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
           />
           <span className={cn(
-            "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-500)] transition-colors pt-0.5",
+            "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-600)] transition-colors pt-0.5",
             errors.termsAccepted?.rules ? "text-red-500 font-bold" : "text-[var(--text-primary)]"
           )}>
             I agree to follow all rules and regulations of the library.
@@ -298,10 +298,10 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <input 
             type="checkbox" 
             {...register('termsAccepted.damage')}
-            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-500)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
+            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-600)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
           />
           <span className={cn(
-            "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-500)] transition-colors pt-0.5",
+            "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-600)] transition-colors pt-0.5",
             errors.termsAccepted?.damage ? "text-red-500 font-bold" : "text-[var(--text-primary)]"
           )}>
             I will be held responsible for any damage caused by me and agree to pay for the same.
@@ -312,10 +312,10 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <input 
             type="checkbox" 
             {...register('termsAccepted.nonRefundable')}
-            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-500)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
+            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-600)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
           />
           <span className={cn(
-            "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-500)] transition-colors pt-0.5",
+            "text-[13px] font-medium leading-relaxed group-hover:text-[var(--saffron-600)] transition-colors pt-0.5",
             errors.termsAccepted?.nonRefundable ? "text-red-500 font-bold" : "text-[var(--text-primary)]"
           )}>
             Membership is Non-refundable and Non-transferable.

@@ -40,8 +40,8 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
             'pointer-events-none absolute left-4 transition-all duration-300 transform font-medium select-none z-10',
             !!icon && 'left-11',
             props.type === 'date'
-              ? 'top-2 text-[11px] font-bold text-[var(--saffron-500)]' // Date input always elevated
-              : 'top-1/2 -translate-y-1/2 text-sm text-[var(--text-tertiary)] peer-focus:top-2 peer-focus:-translate-y-0 peer-focus:text-[11px] peer-focus:font-bold peer-focus:text-[var(--saffron-500)] peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:-translate-y-0 peer-[&:not(:placeholder-shown)]:text-[11px] peer-[&:not(:placeholder-shown)]:font-bold peer-[&:not(:placeholder-shown)]:text-[var(--text-secondary)]'
+              ? 'top-2 text-[11px] font-bold text-[var(--saffron-600)]' // Date input always elevated
+              : 'top-1/2 -translate-y-1/2 text-sm text-[var(--text-tertiary)] peer-focus:top-2 peer-focus:-translate-y-0 peer-focus:text-[11px] peer-focus:font-bold peer-focus:text-[var(--saffron-600)] peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:-translate-y-0 peer-[&:not(:placeholder-shown)]:text-[11px] peer-[&:not(:placeholder-shown)]:font-bold peer-[&:not(:placeholder-shown)]:text-[var(--text-secondary)]'
           )}
         >
           {label}
@@ -50,7 +50,7 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
         {error && (
           <motion.span 
             initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
-            className="absolute -bottom-5 left-1 text-[11px] font-bold text-[var(--ruby-400)] tracking-wide"
+            className="absolute -bottom-5 left-1 text-[11px] font-bold text-[var(--ruby-600)] tracking-wide"
           >
             {error}
           </motion.span>

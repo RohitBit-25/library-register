@@ -32,7 +32,7 @@ export default function AuditLogsPage() {
     <div className="space-y-[var(--space-6)] max-w-5xl mx-auto py-6">
       <div className="flex flex-col gap-2">
         <h1 className="font-display text-2xl font-bold text-[var(--text-primary)] flex items-center gap-3">
-          <Shield className="w-7 h-7 text-[var(--sapphire-500)]" />
+          <Shield className="w-7 h-7 text-[var(--sapphire-600)]" />
           Audit Logs
         </h1>
         <p className="text-sm text-[var(--text-secondary)]">

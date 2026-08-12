@@ -50,7 +50,7 @@ export default function AuthModal({
       <div className="bg-[var(--bg-surface)] rounded-2xl shadow-[var(--shadow-xl)] w-full max-w-sm border border-[var(--border-default)] overflow-hidden transform transition-all z-10">
         <div className="px-6 py-5 border-b border-[var(--border-default)] flex justify-between items-center bg-[var(--bg-base)]/50">
           <div className="flex items-center gap-2">
-            <Lock className="w-5 h-5 text-[var(--saffron-500)]" />
+            <Lock className="w-5 h-5 text-[var(--saffron-600)]" />
             <h2 className="text-[17px] font-semibold text-[var(--text-primary)]">
               Admin Login
             </h2>

@@ -27,7 +27,7 @@ export function AttendanceLogTable({ data }: { data: AttendanceLog[] }) {
           const dateObj = parseISO(val);
           return (
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[var(--sapphire-500)]/10 flex items-center justify-center text-[var(--sapphire-500)]">
+              <div className="w-8 h-8 rounded-full bg-[var(--sapphire-500)]/10 flex items-center justify-center text-[var(--sapphire-600)]">
                 <CalendarDays className="w-4 h-4" />
               </div>
               <div className="flex flex-col">
@@ -64,13 +64,13 @@ export function AttendanceLogTable({ data }: { data: AttendanceLog[] }) {
         let barClass = "bg-[var(--bg-overlay)]";
         
         if (rate >= 80) {
-          colorClass = "text-[var(--emerald-400)]";
+          colorClass = "text-[var(--emerald-600)]";
           barClass = "bg-[var(--emerald-500)]";
         } else if (rate >= 40) {
-          colorClass = "text-[var(--amber-400)]";
+          colorClass = "text-[var(--marigold-700)]";
           barClass = "bg-[var(--amber-500)]";
         } else if (rate > 0) {
-          colorClass = "text-[var(--ruby-400)]";
+          colorClass = "text-[var(--ruby-600)]";
           barClass = "bg-[var(--ruby-500)]";
         }
 

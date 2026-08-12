@@ -110,7 +110,7 @@ export default function RequestsPage() {
       {/* Header */}
       <div className="mb-5">
         <h1 className="text-[1.25rem] sm:text-[1.5rem] font-bold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-          <Inbox className="w-6 h-6 text-[var(--indigo-500)]" />
+          <Inbox className="w-6 h-6 text-[var(--indigo-600)]" />
           Seat Requests
           {counts.pending > 0 && (
             <span className="px-2 py-0.5 rounded-full text-[0.64rem] font-bold bg-[var(--indigo-500)] text-[var(--text-inverse)] animate-pulse">
@@ -193,9 +193,9 @@ export default function RequestsPage() {
                     <div
                       className={cn(
                         'w-10 h-10 rounded-[var(--radius-xl)] flex items-center justify-center text-[0.8rem] font-mono font-black',
-                        req.status === 'pending' && 'bg-[var(--indigo-500)]/10 text-[var(--indigo-500)]',
-                        req.status === 'approved' && 'bg-[var(--emerald-500)]/10 text-[var(--emerald-500)]',
-                        req.status === 'rejected' && 'bg-[var(--ruby-500)]/10 text-[var(--ruby-500)]',
+                        req.status === 'pending' && 'bg-[var(--indigo-500)]/10 text-[var(--indigo-600)]',
+                        req.status === 'approved' && 'bg-[var(--emerald-500)]/10 text-[var(--emerald-600)]',
+                        req.status === 'rejected' && 'bg-[var(--ruby-500)]/10 text-[var(--ruby-600)]',
                       )}
                     >
                       {req.seat}
@@ -238,20 +238,20 @@ export default function RequestsPage() {
                   {req.paymentMode === 'cash' ? (
                     <>
                       <div className="w-7 h-7 rounded-lg bg-[var(--emerald-500)]/15 flex items-center justify-center flex-shrink-0">
-                        <Banknote className="w-3.5 h-3.5 text-[var(--emerald-400)]" />
+                        <Banknote className="w-3.5 h-3.5 text-[var(--emerald-600)]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="text-[0.64rem] font-bold text-[var(--emerald-400)] block">Cash Payment</span>
+                        <span className="text-[0.64rem] font-bold text-[var(--emerald-600)] block">Cash Payment</span>
                         <span className="text-[10px] text-[var(--text-tertiary)]">Verify cash received at counter</span>
                       </div>
                     </>
                   ) : (
                     <>
                       <div className="w-7 h-7 rounded-lg bg-[var(--saffron-500)]/15 flex items-center justify-center flex-shrink-0">
-                        <Smartphone className="w-3.5 h-3.5 text-[var(--saffron-400)]" />
+                        <Smartphone className="w-3.5 h-3.5 text-[var(--saffron-600)]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="text-[0.64rem] font-bold text-[var(--emerald-400)] block">UPI Payment</span>
+                        <span className="text-[0.64rem] font-bold text-[var(--emerald-600)] block">UPI Payment</span>
                         {req.transactionId && (
                           <span className="text-[11px] font-mono text-[var(--text-secondary)] break-all">Ref: {req.transactionId}</span>
                         )}
@@ -263,7 +263,7 @@ export default function RequestsPage() {
                 {/* Document Preview */}
                 {req.documentUrl && (
                   <div className="mb-3 px-3 py-2 rounded-[var(--radius-lg)] bg-[var(--indigo-500)]/8 border border-[var(--indigo-500)]/20">
-                    <span className="text-[0.64rem] font-bold text-[var(--indigo-400)] flex items-center gap-1.5 mb-2">
+                    <span className="text-[0.64rem] font-bold text-[var(--indigo-600)] flex items-center gap-1.5 mb-2">
                       <FileText className="w-3 h-3" /> ID Document Submitted
                     </span>
                     {req.documentUrl.startsWith('data:image') ? (
@@ -288,7 +288,7 @@ export default function RequestsPage() {
                         href={req.documentUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[11px] text-[var(--indigo-400)] underline flex items-center gap-1"
+                        className="text-[11px] text-[var(--indigo-600)] underline flex items-center gap-1"
                       >
                         <ExternalLink className="w-3 h-3" /> View Document
                       </a>
@@ -319,7 +319,7 @@ export default function RequestsPage() {
                       </Button>
                       <Button
                         variant="secondary"
-                        className="flex-1 text-[0.64rem] h-[36px] bg-[var(--ruby-500)]/10 text-[var(--ruby-500)] hover:bg-[var(--ruby-500)]/20 border-none"
+                        className="flex-1 text-[0.64rem] h-[36px] bg-[var(--ruby-500)]/10 text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/20 border-none"
                         onClick={() => handleReject(req.id, req.seat)}
                       >
                         <X className="w-3.5 h-3.5 mr-1" /> Reject
@@ -329,7 +329,7 @@ export default function RequestsPage() {
                   {req.status !== 'pending' && (
                     <Button
                       variant="ghost"
-                      className="px-3 py-2 h-auto text-[0.64rem] text-[var(--text-tertiary)] hover:text-[var(--ruby-500)] hover:bg-[var(--ruby-500)]/10 ml-auto"
+                      className="px-3 py-2 h-auto text-[0.64rem] text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/10 ml-auto"
                       onClick={() => handleDelete(req.id)}
                     >
                       <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete

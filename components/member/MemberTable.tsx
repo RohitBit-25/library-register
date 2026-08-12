@@ -199,7 +199,7 @@ export default function MemberTable({
             exit={{ opacity: 0, y: -10 }}
             className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-[var(--sapphire-500)]/10 border border-[var(--sapphire-500)]/20 p-3 shadow-sm"
           >
-            <span className="text-sm font-bold text-[var(--sapphire-500)] drop-shadow-sm px-2">
+            <span className="text-sm font-bold text-[var(--sapphire-600)] drop-shadow-sm px-2">
               {selected.size} selected
             </span>
             <Tooltip content="Mark selected members as paid">
@@ -229,7 +229,7 @@ export default function MemberTable({
             <Tooltip content="Download member data as CSV">
               <button
                 onClick={() => onBulkExport(Array.from(selected))}
-                className="cursor-pointer rounded-lg bg-[var(--emerald-500)]/15 px-3.5 py-2 text-xs font-bold text-[var(--emerald-400)] hover:opacity-80 transition-opacity"
+                className="cursor-pointer rounded-lg bg-[var(--emerald-500)]/15 px-3.5 py-2 text-xs font-bold text-[var(--emerald-600)] hover:opacity-80 transition-opacity"
               >
                 Export CSV
               </button>
@@ -287,18 +287,18 @@ export default function MemberTable({
                   className="w-4 h-4 rounded cursor-pointer accent-[var(--saffron-500)]"
                 />
               </th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-500)] transition-colors" onClick={() => toggleSort('seat')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-600)] transition-colors" onClick={() => toggleSort('seat')}>
                 <span className="flex items-center gap-1">Seat <SortIcon field="seat" currentField={sortField} asc={sortAsc} /></span>
               </th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-500)] transition-colors" onClick={() => toggleSort('name')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-600)] transition-colors" onClick={() => toggleSort('name')}>
                 <span className="flex items-center gap-1">Name <SortIcon field="name" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-bold">Phone</th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-500)] transition-colors" onClick={() => toggleSort('joinDate')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-600)] transition-colors" onClick={() => toggleSort('joinDate')}>
                 <span className="flex items-center gap-1">Joined <SortIcon field="joinDate" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-bold">Dur.</th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-500)] transition-colors" onClick={() => toggleSort('expiry')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-600)] transition-colors" onClick={() => toggleSort('expiry')}>
                 <span className="flex items-center gap-1">Expiry <SortIcon field="expiry" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-bold">Status</th>
@@ -340,7 +340,7 @@ export default function MemberTable({
                     <div className="flex items-center gap-2 group">
                       {m.seat}
                       <button onClick={(e) => handleCopy(e, String(m.seat), 'seat')} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Copy className="w-3 h-3 text-[var(--text-tertiary)] hover:text-[var(--sapphire-500)] cursor-pointer" />
+                        <Copy className="w-3 h-3 text-[var(--text-tertiary)] hover:text-[var(--sapphire-600)] cursor-pointer" />
                       </button>
                     </div>
                   </td>
@@ -354,7 +354,7 @@ export default function MemberTable({
                       <div className="flex items-center gap-2 group">
                         {m.phone}
                         <button onClick={(e) => handleCopy(e, m.phone, 'phone number')} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Copy className="w-3 h-3 text-[var(--text-tertiary)] hover:text-[var(--sapphire-500)] cursor-pointer" />
+                          <Copy className="w-3 h-3 text-[var(--text-tertiary)] hover:text-[var(--sapphire-600)] cursor-pointer" />
                         </button>
                       </div>
                     ) : '—'}
@@ -364,7 +364,7 @@ export default function MemberTable({
                   <td className="p-3 text-[var(--text-secondary)] font-medium">{fmtDateShort(m.expiry)}</td>
                   <td className="p-3">
                     {m.vacant ? (
-                      <Link href={`/?seat=${m.seat}`} className="text-[var(--sapphire-500)] text-xs font-bold cursor-pointer hover:underline bg-[var(--sapphire-500)]/10 py-1 px-3 rounded-md">+ Add</Link>
+                      <Link href={`/?seat=${m.seat}`} className="text-[var(--sapphire-600)] text-xs font-bold cursor-pointer hover:underline bg-[var(--sapphire-500)]/10 py-1 px-3 rounded-md">+ Add</Link>
                     ) : (
                       <Badge variant={status} />
                     )}
@@ -407,7 +407,7 @@ export default function MemberTable({
                   {onEdit && (
                     <button
                       onClick={(e) => { e.stopPropagation(); onEdit(m.seat); setOpenActions(null); }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--indigo-500)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--indigo-600)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
                     >
                       <Pencil className="w-4 h-4" />
                       Edit details
@@ -442,7 +442,7 @@ export default function MemberTable({
                   <div className="h-px bg-[var(--border-subtle)] my-1 mx-2" />
                   <button
                     onClick={(e) => { e.stopPropagation(); setSeatToRemove(m.seat); setOpenActions(null); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--ruby-400)] hover:bg-[rgba(232,66,66,0.08)] transition-colors cursor-pointer rounded-lg"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--ruby-600)] hover:bg-[rgba(232,66,66,0.08)] transition-colors cursor-pointer rounded-lg"
                   >
                     <Trash2 className="w-4 h-4" />
                     Remove member
@@ -546,14 +546,14 @@ export default function MemberTable({
                           onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
                           className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-all"
                         >
-                          <Check className="w-4 h-4 text-[var(--sapphire-500)]" />
+                          <Check className="w-4 h-4 text-[var(--sapphire-600)]" />
                           <span className="text-[11px] mt-0.5">{m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}</span>
                         </button>
                         <button
                           onClick={() => { onRenew(m.seat); setOpenActions(null); }}
                           className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-all"
                         >
-                          <RefreshCw className="w-4 h-4 text-[var(--sapphire-500)]" />
+                          <RefreshCw className="w-4 h-4 text-[var(--sapphire-600)]" />
                           <span className="text-[11px] mt-0.5">Renew</span>
                         </button>
                         {m.phone && (
@@ -570,7 +570,7 @@ export default function MemberTable({
                         )}
                         <button
                           onClick={() => { setSeatToRemove(m.seat); setOpenActions(null); }}
-                          className="flex justify-center flex-1 col-span-2 sm:col-span-1 items-center gap-2 cursor-pointer text-xs font-bold px-3 py-3 rounded-xl bg-[rgba(232,66,66,0.06)] text-[var(--ruby-400)] border border-[rgba(232,66,66,0.15)] shadow-sm"
+                          className="flex justify-center flex-1 col-span-2 sm:col-span-1 items-center gap-2 cursor-pointer text-xs font-bold px-3 py-3 rounded-xl bg-[rgba(232,66,66,0.06)] text-[var(--ruby-600)] border border-[rgba(232,66,66,0.15)] shadow-sm"
                         >
                           <Trash2 className="w-4 h-4" />
                           Remove Member

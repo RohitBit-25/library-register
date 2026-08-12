@@ -50,7 +50,7 @@ export default function BottomNav() {
               className={cn(
                 'relative z-10 flex flex-col items-center justify-center gap-[var(--space-1)] min-w-[64px] py-[var(--space-1)] cursor-pointer transition-all',
                 isActive
-                  ? 'text-[var(--saffron-500)] scale-110'
+                  ? 'text-[var(--saffron-600)] scale-110'
                   : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]',
               )}
             >

@@ -56,7 +56,7 @@ export default function MyRequestsPage() {
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-            <Inbox className="w-6 h-6 text-[var(--sapphire-500)]" />
+            <Inbox className="w-6 h-6 text-[var(--sapphire-600)]" />
             My Requests
           </h1>
           <p className="text-sm text-[var(--text-secondary)] mt-0.5">
@@ -121,15 +121,15 @@ export default function MyRequestsPage() {
             {/* Summary chips */}
             {displayResults.length > 0 && (
               <div className="flex flex-wrap items-center gap-2 mb-4">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--saffron-500)]/10 text-[var(--saffron-500)] border-[var(--saffron-500)]/20">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--saffron-500)]/10 text-[var(--saffron-600)] border-[var(--saffron-500)]/20">
                   <Clock className="w-3 h-3" />
                   {pendingCount} Pending
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--emerald-500)]/10 text-[var(--emerald-400)] border-[var(--emerald-500)]/20">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--emerald-500)]/10 text-[var(--emerald-600)] border-[var(--emerald-500)]/20">
                   <CheckCircle className="w-3 h-3" />
                   {approvedCount} Approved
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--ruby-500)]/10 text-[var(--ruby-400)] border-[var(--ruby-500)]/20">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--ruby-500)]/10 text-[var(--ruby-600)] border-[var(--ruby-500)]/20">
                   <XCircle className="w-3 h-3" />
                   {rejectedCount} Rejected
                 </span>
@@ -176,9 +176,9 @@ export default function MyRequestsPage() {
                             <div
                               className={cn(
                                 'w-10 h-10 rounded-xl flex items-center justify-center text-sm font-mono font-black',
-                                req.status === 'pending' && 'bg-[var(--saffron-500)]/10 text-[var(--saffron-500)]',
-                                req.status === 'approved' && 'bg-[var(--emerald-500)]/10 text-[var(--emerald-500)]',
-                                req.status === 'rejected' && 'bg-[var(--ruby-500)]/10 text-[var(--ruby-500)]',
+                                req.status === 'pending' && 'bg-[var(--saffron-500)]/10 text-[var(--saffron-600)]',
+                                req.status === 'approved' && 'bg-[var(--emerald-500)]/10 text-[var(--emerald-600)]',
+                                req.status === 'rejected' && 'bg-[var(--ruby-500)]/10 text-[var(--ruby-600)]',
                               )}
                             >
                               {String(req.seat).padStart(2, '0')}
@@ -233,19 +233,19 @@ export default function MyRequestsPage() {
                         {/* Status Message */}
                         <div className="mt-3 text-xs">
                           {req.status === 'pending' && (
-                            <p className="text-[var(--saffron-500)] font-medium flex items-center gap-1.5">
+                            <p className="text-[var(--saffron-600)] font-medium flex items-center gap-1.5">
                               <Clock className="w-3.5 h-3.5" />
                               Awaiting admin verification of your payment
                             </p>
                           )}
                           {req.status === 'approved' && (
-                            <p className="text-[var(--emerald-400)] font-medium flex items-center gap-1.5">
+                            <p className="text-[var(--emerald-600)] font-medium flex items-center gap-1.5">
                               <CheckCircle className="w-3.5 h-3.5" />
                               Payment verified! Your seat has been allotted.
                             </p>
                           )}
                           {req.status === 'rejected' && (
-                            <p className="text-[var(--ruby-400)] font-medium flex items-center gap-1.5">
+                            <p className="text-[var(--ruby-600)] font-medium flex items-center gap-1.5">
                               <XCircle className="w-3.5 h-3.5" />
                               Request was not approved. Please contact the library.
                             </p>
@@ -269,7 +269,7 @@ export default function MyRequestsPage() {
           >
             <Card variant="base" className="p-10 text-center">
               <div className="w-16 h-16 rounded-2xl bg-[var(--sapphire-500)]/10 flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-[var(--sapphire-500)]" />
+                <Search className="w-8 h-8 text-[var(--sapphire-600)]" />
               </div>
               <h3 className="text-base font-bold text-[var(--text-primary)] mb-1">
                 Find Your Requests

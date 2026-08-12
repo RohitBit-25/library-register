@@ -96,16 +96,16 @@ export default function BrowsePage() {
           {/* Title & Branding */}
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-[var(--sapphire-400)]/10 border border-[var(--sapphire-400)]/30 flex items-center justify-center shrink-0 shadow-[var(--shadow-glow-sapphire)]">
-              <Grid3X3 className="w-6 h-6 text-[var(--sapphire-400)]" />
+              <Grid3X3 className="w-6 h-6 text-[var(--sapphire-600)]" />
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-display font-bold text-[var(--text-primary)] tracking-tight">
                 Library Seats
               </h1>
               <p className="text-xs md:text-sm text-[var(--text-secondary)] font-medium flex items-center gap-2 mt-0.5">
-                <span className="text-[var(--emerald-400)]">{stats.occupied} Occupied</span>
+                <span className="text-[var(--emerald-600)]">{stats.occupied} Occupied</span>
                 <span className="w-1 h-1 rounded-full bg-[var(--text-tertiary)]" />
-                <span className="text-[var(--sapphire-400)]">{stats.vacant} Vacant</span>
+                <span className="text-[var(--sapphire-600)]">{stats.vacant} Vacant</span>
               </p>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function BrowsePage() {
           <div className="flex items-center gap-3">
             {pendingCount > 0 && (
               <button
-                className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--sapphire-400)]/10 border border-[var(--sapphire-400)]/30 text-[var(--sapphire-400)] font-bold text-xs hover:bg-[var(--sapphire-400)]/20 transition-all shadow-[var(--shadow-glow-sapphire)] active:scale-95"
+                className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--sapphire-400)]/10 border border-[var(--sapphire-400)]/30 text-[var(--sapphire-600)] font-bold text-xs hover:bg-[var(--sapphire-400)]/20 transition-all shadow-[var(--shadow-glow-sapphire)] active:scale-95"
                 onClick={() => addToast('success', `${pendingCount} pending request(s)`)}
               >
                 <Inbox className="w-4 h-4" />
@@ -220,7 +220,7 @@ export default function BrowsePage() {
           {/* Map Header */}
           <div className="px-6 py-5 border-b border-[var(--border-default)] bg-[var(--bg-surface)]/50 flex items-center justify-between backdrop-blur-md">
             <div className="flex items-center gap-3">
-              <Grid3X3 className="w-5 h-5 text-[var(--saffron-500)]" />
+              <Grid3X3 className="w-5 h-5 text-[var(--saffron-600)]" />
               <h2 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-widest">
                 {shiftFilter === 'all' ? 'Full Floorplan' : `${shiftFilter} Shift`}
               </h2>
@@ -294,13 +294,13 @@ function BrowseSeatTile({
   // Visual config per status
   const cfg = isVacant
     ? hasRequest
-      ? { accent: 'var(--amber-500)', textColor: 'text-[var(--amber-500)]', bg: 'bg-[var(--amber-500)]/8', border: 'border-[var(--amber-500)]/25' }
-      : { accent: 'var(--sapphire-400)', textColor: 'text-[var(--sapphire-400)]', bg: 'bg-[var(--sapphire-400)]/8', border: 'border-[var(--sapphire-400)]/25' }
+      ? { accent: 'var(--amber-500)', textColor: 'text-[var(--marigold-700)]', bg: 'bg-[var(--amber-500)]/8', border: 'border-[var(--amber-500)]/25' }
+      : { accent: 'var(--sapphire-400)', textColor: 'text-[var(--sapphire-600)]', bg: 'bg-[var(--sapphire-400)]/8', border: 'border-[var(--sapphire-400)]/25' }
     : status === 'expiring'
-      ? { accent: 'var(--amber-500)', textColor: 'text-[var(--amber-400)]', bg: 'bg-[var(--amber-500)]/8', border: 'border-[var(--amber-500)]/25' }
+      ? { accent: 'var(--amber-500)', textColor: 'text-[var(--marigold-700)]', bg: 'bg-[var(--amber-500)]/8', border: 'border-[var(--amber-500)]/25' }
     : status === 'expired' || status === 'due'
-      ? { accent: 'var(--ruby-500)', textColor: 'text-[var(--ruby-400)]', bg: 'bg-[var(--ruby-500)]/8', border: 'border-[var(--ruby-500)]/25' }
-    : { accent: 'var(--emerald-500)', textColor: 'text-[var(--emerald-400)]', bg: 'bg-[var(--emerald-500)]/8', border: 'border-[var(--emerald-500)]/25' };
+      ? { accent: 'var(--ruby-500)', textColor: 'text-[var(--ruby-600)]', bg: 'bg-[var(--ruby-500)]/8', border: 'border-[var(--ruby-500)]/25' }
+    : { accent: 'var(--emerald-500)', textColor: 'text-[var(--emerald-600)]', bg: 'bg-[var(--emerald-500)]/8', border: 'border-[var(--emerald-500)]/25' };
 
   const shiftIcon = member.shift === 'evening' ? <Moon className="w-[10px] h-[10px]" />
     : member.shift === 'full' ? <><Sun className="w-2.5 h-2.5" /><Moon className="w-2.5 h-2.5" /></>

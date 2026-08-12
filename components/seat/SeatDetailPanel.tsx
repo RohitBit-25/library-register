@@ -164,15 +164,15 @@ export default function SeatDetailPanel({
             <div className="space-y-4 pt-2">
               <div>
                 <FloatingLabelInput label="Full Name" {...editRegister('name')} />
-                {editErrors.name && <span className="text-[10px] text-[var(--ruby-400)] block mt-1 ml-1">{editErrors.name.message}</span>}
+                {editErrors.name && <span className="text-[10px] text-[var(--ruby-600)] block mt-1 ml-1">{editErrors.name.message}</span>}
               </div>
               <div>
                 <FloatingLabelInput label="WhatsApp Number" type="tel" inputMode="tel" {...editRegister('phone')} />
-                {editErrors.phone && <span className="text-[10px] text-[var(--ruby-400)] block mt-1 ml-1">{editErrors.phone.message}</span>}
+                {editErrors.phone && <span className="text-[10px] text-[var(--ruby-600)] block mt-1 ml-1">{editErrors.phone.message}</span>}
               </div>
               <div>
                 <FloatingLabelInput label="Date of Joining" type="date" {...editRegister('joinDate')} />
-                {editErrors.joinDate && <span className="text-[10px] text-[var(--ruby-400)] block mt-1 ml-1">{editErrors.joinDate.message}</span>}
+                {editErrors.joinDate && <span className="text-[10px] text-[var(--ruby-600)] block mt-1 ml-1">{editErrors.joinDate.message}</span>}
               </div>
 
               <div>
@@ -235,8 +235,8 @@ export default function SeatDetailPanel({
 
               {editExpiry && (
                 <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 shadow-sm text-center border-dashed">
-                  <span className="text-xs font-bold text-[var(--emerald-500)] uppercase tracking-wider">Calculated Expiry</span>
-                  <p className="text-lg font-black text-[var(--emerald-500)] mt-1 flex justify-center items-center gap-2">
+                  <span className="text-xs font-bold text-[var(--emerald-600)] uppercase tracking-wider">Calculated Expiry</span>
+                  <p className="text-lg font-black text-[var(--emerald-600)] mt-1 flex justify-center items-center gap-2">
                     <Calendar className="w-4 h-4 opacity-70" />
                     {fmtDate(editExpiry)}
                   </p>
@@ -248,7 +248,7 @@ export default function SeatDetailPanel({
               <button
                 type="button"
                 onClick={() => setEditMode(false)}
-                className="flex-1 py-3.5 rounded-xl text-xs font-black uppercase text-[var(--text-secondary)] border border-[var(--border-default)] hover:bg-[var(--bg-base)] hover:text-[var(--ruby-400)] transition-colors cursor-pointer active:scale-95 shadow-sm flex items-center justify-center gap-2"
+                className="flex-1 py-3.5 rounded-xl text-xs font-black uppercase text-[var(--text-secondary)] border border-[var(--border-default)] hover:bg-[var(--bg-base)] hover:text-[var(--ruby-600)] transition-colors cursor-pointer active:scale-95 shadow-sm flex items-center justify-center gap-2"
               >
                 <XCircle className="w-4 h-4" />
                 Cancel
@@ -323,7 +323,7 @@ export default function SeatDetailPanel({
                   {onUpdate && (
                     <button
                       onClick={openEditMode}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-[var(--indigo-500)] bg-[var(--indigo-500)]/10 border border-[var(--indigo-500)]/20 hover:bg-[var(--indigo-500)]/20 transition-colors cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-[var(--indigo-600)] bg-[var(--indigo-500)]/10 border border-[var(--indigo-500)]/20 hover:bg-[var(--indigo-500)]/20 transition-colors cursor-pointer"
                     >
                       <Pencil className="w-4 h-4" />
                       Edit Details
@@ -343,7 +343,7 @@ export default function SeatDetailPanel({
                       <ActionBtn 
                         onClick={() => { onMarkDue(member.seat); onClose(); }} 
                         icon={<CreditCard className="w-4 h-4" />}
-                        className="bg-[var(--saffron-500)]/10 text-[var(--saffron-500)] border border-[var(--saffron-500)]/30 hover:bg-[var(--saffron-500)]/15"
+                        className="bg-[var(--saffron-500)]/10 text-[var(--saffron-600)] border border-[var(--saffron-500)]/30 hover:bg-[var(--saffron-500)]/15"
                       >
                         Mark Due
                       </ActionBtn>
@@ -371,7 +371,7 @@ export default function SeatDetailPanel({
 
                   <button
                     onClick={() => setConfirmRemove(true)}
-                    className="w-full flex items-center justify-center gap-2 text-center text-sm font-bold text-[var(--ruby-500)] py-2.5 rounded-xl border border-[var(--ruby-500)]/20 hover:bg-[var(--ruby-500)]/10 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 text-center text-sm font-bold text-[var(--ruby-600)] py-2.5 rounded-xl border border-[var(--ruby-500)]/20 hover:bg-[var(--ruby-500)]/10 transition-colors cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4" />
                     Remove Member
@@ -407,7 +407,7 @@ export default function SeatDetailPanel({
                   type="date"
                   {...renewRegister('renewDate')}
                 />
-                {renewErrors.renewDate && <span className="text-[10px] text-[var(--ruby-400)] block mt-1 ml-1">{renewErrors.renewDate.message}</span>}
+                {renewErrors.renewDate && <span className="text-[10px] text-[var(--ruby-600)] block mt-1 ml-1">{renewErrors.renewDate.message}</span>}
               </div>
 
               <div>
@@ -440,8 +440,8 @@ export default function SeatDetailPanel({
               </div>
 
               <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 shadow-sm text-center border-dashed">
-                <span className="text-xs font-bold text-[var(--emerald-500)] uppercase tracking-wider">New expiry date</span>
-                <p className="text-lg font-black text-[var(--emerald-500)] mt-1 flex justify-center items-center gap-2">
+                <span className="text-xs font-bold text-[var(--emerald-600)] uppercase tracking-wider">New expiry date</span>
+                <p className="text-lg font-black text-[var(--emerald-600)] mt-1 flex justify-center items-center gap-2">
                   <Calendar className="w-4 h-4 opacity-70" />
                   {renewExpiry ? fmtDate(renewExpiry) : '—'}
                 </p>
@@ -452,7 +452,7 @@ export default function SeatDetailPanel({
               <button
                 type="button"
                 onClick={() => setRenewMode(false)}
-                className="flex-1 py-3.5 rounded-xl text-xs font-black uppercase text-[var(--text-secondary)] border border-[var(--border-default)] hover:bg-[var(--bg-base)] hover:text-[var(--ruby-400)] transition-colors cursor-pointer active:scale-95 shadow-sm"
+                className="flex-1 py-3.5 rounded-xl text-xs font-black uppercase text-[var(--text-secondary)] border border-[var(--border-default)] hover:bg-[var(--bg-base)] hover:text-[var(--ruby-600)] transition-colors cursor-pointer active:scale-95 shadow-sm"
               >
                 Cancel
               </button>

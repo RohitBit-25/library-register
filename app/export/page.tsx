@@ -181,7 +181,7 @@ export default function ExportPage() {
       title: 'Members',
       description: `${stats.occupied} active members • ${stats.vacant} vacant seats`,
       icon: <FileSpreadsheet className="w-5 h-5" />,
-      iconBg: 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]',
+      iconBg: 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)]',
       accentBorder: 'border-l-[var(--sapphire-500)]',
       onExport: exportMembers,
     },
@@ -189,7 +189,7 @@ export default function ExportPage() {
       title: 'Attendance',
       description: `${stats.attendanceDays} days of records • Last 30 days`,
       icon: <CalendarCheck className="w-5 h-5" />,
-      iconBg: 'bg-[var(--emerald-500)]/10 text-[var(--emerald-500)]',
+      iconBg: 'bg-[var(--emerald-500)]/10 text-[var(--emerald-600)]',
       accentBorder: 'border-l-[var(--emerald-500)]',
       onExport: exportAttendance,
     },
@@ -197,7 +197,7 @@ export default function ExportPage() {
       title: 'Seat Requests',
       description: `${requests.length} total • ${stats.pendingRequests} pending`,
       icon: <Inbox className="w-5 h-5" />,
-      iconBg: 'bg-[var(--saffron-500)]/10 text-[var(--saffron-500)]',
+      iconBg: 'bg-[var(--saffron-500)]/10 text-[var(--saffron-600)]',
       accentBorder: 'border-l-[var(--saffron-500)]',
       onExport: exportRequests,
     },
@@ -214,7 +214,7 @@ export default function ExportPage() {
       <motion.div variants={itemVariants} className="mb-[var(--space-6)] flex items-end justify-between">
         <div>
           <h1 className="font-display text-2xl font-semibold tracking-[var(--tracking-tight)] text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
-            <HardDrive className="w-6 h-6 text-[var(--sapphire-500)]" />
+            <HardDrive className="w-6 h-6 text-[var(--sapphire-600)]" />
             Data Export
           </h1>
           <p className="text-sm font-medium text-[var(--text-secondary)] mt-[var(--space-1)]">
@@ -223,7 +223,7 @@ export default function ExportPage() {
         </div>
         {lastExport && (
           <div className="flex items-center gap-[var(--space-2)] text-xs font-mono text-[var(--text-tertiary)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-[var(--radius-md)] px-[var(--space-3)] py-[var(--space-2)] shadow-[var(--shadow-sm)]">
-            <CheckCircle className="w-3.5 h-3.5 text-[var(--emerald-500)]" />
+            <CheckCircle className="w-3.5 h-3.5 text-[var(--emerald-600)]" />
             Last export: {lastExport}
           </div>
         )}
@@ -235,11 +235,11 @@ export default function ExportPage() {
           <div className="p-[var(--space-5)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-[var(--space-4)]">
             <div className="flex items-center gap-[var(--space-4)]">
               <div className="w-12 h-12 rounded-[var(--radius-xl)] bg-[var(--ruby-500)]/10 flex items-center justify-center shrink-0">
-                <Database className="w-6 h-6 text-[var(--ruby-500)]" />
+                <Database className="w-6 h-6 text-[var(--ruby-600)]" />
               </div>
               <div>
                 <h2 className="font-display text-base font-semibold text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
-                  <Shield className="w-4 h-4 text-[var(--ruby-500)]" />
+                  <Shield className="w-4 h-4 text-[var(--ruby-600)]" />
                   Full Database Backup
                 </h2>
                 <p className="text-xs text-[var(--text-secondary)] mt-[var(--space-1)]">
@@ -334,10 +334,10 @@ export default function ExportPage() {
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-[var(--space-4)]">
             {[
-              { label: 'Active Members', value: stats.occupied, color: 'text-[var(--sapphire-500)]' },
+              { label: 'Active Members', value: stats.occupied, color: 'text-[var(--sapphire-600)]' },
               { label: 'Vacant Seats', value: stats.vacant, color: 'text-[var(--text-tertiary)]' },
-              { label: 'Pending Requests', value: stats.pendingRequests, color: 'text-[var(--saffron-500)]' },
-              { label: 'Attendance Days', value: stats.attendanceDays, color: 'text-[var(--emerald-500)]' },
+              { label: 'Pending Requests', value: stats.pendingRequests, color: 'text-[var(--saffron-600)]' },
+              { label: 'Attendance Days', value: stats.attendanceDays, color: 'text-[var(--emerald-600)]' },
             ].map(s => (
               <div key={s.label} className="text-center">
                 <p className={`font-display text-2xl font-semibold ${s.color}`}>{s.value}</p>

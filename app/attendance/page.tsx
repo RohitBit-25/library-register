@@ -65,7 +65,7 @@ export default function AttendancePage() {
 
   if (!isHydrated) return (
     <div className="flex justify-center items-center h-64">
-      <Loader2 className="w-8 h-8 animate-spin text-[var(--sapphire-500)]" />
+      <Loader2 className="w-8 h-8 animate-spin text-[var(--sapphire-600)]" />
     </div>
   );
 
@@ -90,7 +90,7 @@ export default function AttendancePage() {
       <motion.div variants={itemVariants} className="mb-[var(--space-6)] flex flex-col md:flex-row md:items-end justify-between gap-[var(--space-4)]">
         <div>
           <h1 className="font-display text-2xl font-semibold text-[var(--text-primary)] tracking-[var(--tracking-tight)] flex items-center gap-[var(--space-2)]">
-            <CalendarCheck className="w-6 h-6 text-[var(--sapphire-500)]" />
+            <CalendarCheck className="w-6 h-6 text-[var(--sapphire-600)]" />
             Attendance
           </h1>
           <p className="text-sm font-[var(--font-body)] text-[var(--text-secondary)] mt-[var(--space-1)]">
@@ -127,25 +127,25 @@ export default function AttendancePage() {
           <Card variant="base" className="p-[var(--space-4)] relative">
             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sapphire-500)]/10 rounded-bl-[100px] pointer-events-none" />
             <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-3)]">
-              <TrendingUp className="w-4 h-4 text-[var(--sapphire-500)]" />
+              <TrendingUp className="w-4 h-4 text-[var(--sapphire-600)]" />
               <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">Weekly Summary</h3>
             </div>
             <div className="grid grid-cols-3 gap-[var(--space-4)]">
               <div className="text-center">
-                <p className="font-display text-2xl font-semibold text-[var(--sapphire-500)]">{weeklySummary.avgRate}%</p>
+                <p className="font-display text-2xl font-semibold text-[var(--sapphire-600)]">{weeklySummary.avgRate}%</p>
                 <p className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Avg this week</p>
               </div>
               <div className="text-center border-x border-[var(--border-subtle)]">
                 <div className="flex items-center justify-center gap-1">
-                  <Trophy className="w-3.5 h-3.5 text-[var(--emerald-500)]" />
-                  <p className="font-display text-2xl font-semibold text-[var(--emerald-500)]">{weeklySummary.bestRate}%</p>
+                  <Trophy className="w-3.5 h-3.5 text-[var(--emerald-600)]" />
+                  <p className="font-display text-2xl font-semibold text-[var(--emerald-600)]">{weeklySummary.bestRate}%</p>
                 </div>
                 <p className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Best · {weeklySummary.bestDayName}</p>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1">
-                  <TrendingDown className="w-3.5 h-3.5 text-[var(--ruby-500)]" />
-                  <p className="font-display text-2xl font-semibold text-[var(--ruby-500)]">{weeklySummary.worstRate}%</p>
+                  <TrendingDown className="w-3.5 h-3.5 text-[var(--ruby-600)]" />
+                  <p className="font-display text-2xl font-semibold text-[var(--ruby-600)]">{weeklySummary.worstRate}%</p>
                 </div>
                 <p className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Low · {weeklySummary.worstDayName}</p>
               </div>
@@ -169,7 +169,7 @@ export default function AttendancePage() {
               <Card variant="base" className="p-[var(--space-5)] relative">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--sapphire-500)]/10 rounded-bl-[100px] pointer-events-none" />
                 <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-2)]">
-                  <Users className="w-4 h-4 text-[var(--sapphire-500)]" />
+                  <Users className="w-4 h-4 text-[var(--sapphire-600)]" />
                   <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">Check-ins</p>
                 </div>
                 <div className="flex items-baseline gap-[var(--space-2)]">
@@ -181,11 +181,11 @@ export default function AttendancePage() {
               <Card variant="base" className="p-[var(--space-5)] relative">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--emerald-500)]/10 rounded-bl-[100px] pointer-events-none" />
                 <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-2)]">
-                  <Percent className="w-4 h-4 text-[var(--emerald-500)]" />
+                  <Percent className="w-4 h-4 text-[var(--emerald-600)]" />
                   <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">Turnout</p>
                 </div>
                 <div className="flex items-baseline gap-[var(--space-2)]">
-                  <span className="font-display text-4xl font-semibold text-[var(--emerald-500)] tracking-[var(--tracking-tight)]">{attendanceRateToday}%</span>
+                  <span className="font-display text-4xl font-semibold text-[var(--emerald-600)] tracking-[var(--tracking-tight)]">{attendanceRateToday}%</span>
                 </div>
               </Card>
               
@@ -236,14 +236,14 @@ export default function AttendancePage() {
                           className={cn(
                             "relative flex flex-col items-center justify-center aspect-square rounded-[var(--radius-md)] border-[1.5px] transition-all p-[var(--space-2)] gap-[var(--space-1)] cursor-pointer group",
                             checkedIn 
-                              ? "bg-[var(--emerald-500)]/10 border-[var(--emerald-500)] text-[var(--emerald-500)] shadow-[var(--shadow-glow-emerald)]" 
+                              ? "bg-[var(--emerald-500)]/10 border-[var(--emerald-500)] text-[var(--emerald-600)] shadow-[var(--shadow-glow-emerald)]" 
                               : "bg-[var(--bg-elevated)] border-[var(--border-subtle)] hover:border-[var(--saffron-500)] hover:shadow-[var(--shadow-glow-saffron)] text-[var(--text-primary)]"
                           )}
                         >
                           <span className="font-display text-2xl font-semibold tracking-[var(--tracking-tight)]">{member.seat}</span>
                           <span className={cn(
                             "text-[11px] font-medium truncate w-full text-center px-1",
-                            checkedIn ? "text-[var(--emerald-500)]" : "text-[var(--text-secondary)]"
+                            checkedIn ? "text-[var(--emerald-600)]" : "text-[var(--text-secondary)]"
                           )}>
                             {member.name.split(' ')[0]}
                           </span>
@@ -282,7 +282,7 @@ export default function AttendancePage() {
             <Card variant="base" className="p-[var(--space-6)] sm:p-[var(--space-8)]">
               <div className="flex items-center gap-[var(--space-3)] mb-[var(--space-6)]">
                 <div className="w-10 h-10 rounded-xl bg-[var(--sapphire-500)]/10 flex items-center justify-center border border-[var(--sapphire-500)]/20 shadow-[var(--shadow-sm)]">
-                  <CalendarDays className="w-5 h-5 text-[var(--sapphire-500)]" />
+                  <CalendarDays className="w-5 h-5 text-[var(--sapphire-600)]" />
                 </div>
                 <div>
                   <h3 className="font-display text-lg font-semibold text-[var(--text-primary)]">30-Day Contribution Graph</h3>

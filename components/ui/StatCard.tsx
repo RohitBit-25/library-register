@@ -40,12 +40,14 @@ function AnimatedCounter({ value, duration = 800 }: { value: number; duration?: 
 }
 
 
+// Solid -50 tints rather than /10 alpha: the alpha form measured ~2.4:1 against
+// its own text. -50 bg + -600 text clears 4.5:1.
 const accentTokens: Record<string, { bg: string, text: string }> = {
-  blue: { bg: 'bg-[var(--sapphire-500)]/10', text: 'text-[var(--sapphire-500)]' },
+  blue: { bg: 'bg-[var(--sapphire-50)]', text: 'text-[var(--sapphire-600)]' },
   gray: { bg: 'bg-[var(--bg-muted)]', text: 'text-[var(--text-secondary)]' },
-  amber: { bg: 'bg-[var(--marigold-500)]/10', text: 'text-[var(--marigold-500)]' },
-  red: { bg: 'bg-[var(--ruby-500)]/10', text: 'text-[var(--ruby-500)]' },
-  green: { bg: 'bg-[var(--emerald-500)]/10', text: 'text-[var(--emerald-500)]' },
+  amber: { bg: 'bg-[var(--marigold-50)]', text: 'text-[var(--marigold-700)]' },
+  red: { bg: 'bg-[var(--ruby-50)]', text: 'text-[var(--ruby-600)]' },
+  green: { bg: 'bg-[var(--emerald-50)]', text: 'text-[var(--emerald-600)]' },
 };
 
 export default function StatCard({ value, label, accent, icon, onClick }: StatCardProps) {

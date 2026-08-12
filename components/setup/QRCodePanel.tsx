@@ -59,17 +59,17 @@ export default function QRCodePanel() {
       {/* Status Bar */}
       <div className="flex items-center gap-2 px-6 py-3 border-b border-[var(--border-subtle)] bg-[rgba(34,195,106,0.15)]">
         <div className="w-2.5 h-2.5 rounded-full bg-[var(--emerald-400)] animate-pulse-subtle" />
-        <span className="text-xs font-bold text-[var(--emerald-400)]">
+        <span className="text-xs font-bold text-[var(--emerald-600)]">
           ✓ App Portal Active
         </span>
-        <Sparkles className="w-3.5 h-3.5 text-[var(--emerald-400)] ml-auto" />
+        <Sparkles className="w-3.5 h-3.5 text-[var(--emerald-600)] ml-auto" />
       </div>
 
       <div className="flex flex-col md:flex-row">
         {/* Left side: Info & Actions */}
         <div className="flex-1 p-6 md:p-8 flex flex-col justify-center border-b md:border-b-0 md:border-r border-[var(--border-subtle)]">
           <h2 className="text-xl font-extrabold text-[var(--text-primary)] mb-2 flex items-center gap-2">
-            <QrCode className="w-5 h-5 text-[var(--saffron-500)]" />
+            <QrCode className="w-5 h-5 text-[var(--saffron-600)]" />
             Library Portal QR Code
           </h2>
           <p className="text-sm text-[var(--text-secondary)] mb-6">
@@ -134,7 +134,7 @@ export default function QRCodePanel() {
           <button
             onClick={handleDownload}
             disabled={!url}
-            className="mt-6 flex items-center justify-center gap-2 px-6 py-2.5 bg-[var(--saffron-500)]/15 text-[var(--saffron-400)] hover:bg-[var(--saffron-500)] hover:text-[var(--saffron-50)] rounded-[var(--radius-full)] font-bold text-sm transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 flex items-center justify-center gap-2 px-6 py-2.5 bg-[var(--saffron-500)]/15 text-[var(--saffron-600)] hover:bg-[var(--saffron-500)] hover:text-[var(--saffron-50)] rounded-[var(--radius-full)] font-bold text-sm transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="w-4 h-4" />
             Download PNG

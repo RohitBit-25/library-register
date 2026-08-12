@@ -216,7 +216,7 @@ export default function SeatRequestSheet({
                 /* ── Occupied State ──────────────────── */
                 <div className="p-6 text-center">
                   <div className="w-16 h-16 rounded-2xl bg-[var(--ruby-500)]/10 flex items-center justify-center mx-auto mb-4">
-                    <Armchair className="w-8 h-8 text-[var(--ruby-400)]" />
+                    <Armchair className="w-8 h-8 text-[var(--ruby-600)]" />
                   </div>
                   <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">
                     Seat #{member.seat} is Occupied
@@ -247,13 +247,13 @@ export default function SeatRequestSheet({
                     transition={{ type: 'spring', stiffness: 400, damping: 15, delay: 0.1 }}
                     className="w-20 h-20 rounded-full bg-[var(--emerald-500)]/15 flex items-center justify-center mx-auto mb-5"
                   >
-                    <CheckCircle2 className="w-10 h-10 text-[var(--emerald-500)]" />
+                    <CheckCircle2 className="w-10 h-10 text-[var(--emerald-600)]" />
                   </motion.div>
                   <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">
                     Request Submitted!
                   </h3>
                   <p className="text-sm text-[var(--text-secondary)]">
-                    Admin will verify and allot <span className="font-bold text-[var(--saffron-500)]">Seat #{member.seat}</span> to you shortly.
+                    Admin will verify and allot <span className="font-bold text-[var(--saffron-600)]">Seat #{member.seat}</span> to you shortly.
                   </p>
                 </motion.div>
               ) : (
@@ -274,7 +274,7 @@ export default function SeatRequestSheet({
                         <div>
                           <h3 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
                             Request Seat #{member.seat}
-                            <Sparkles className="w-4 h-4 text-[var(--saffron-500)]" />
+                            <Sparkles className="w-4 h-4 text-[var(--saffron-600)]" />
                           </h3>
                           <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
                             Fill details below to reserve this seat
@@ -336,7 +336,7 @@ export default function SeatRequestSheet({
                     {paymentMode === 'cash' ? (
                       <div className="p-4 rounded-xl border bg-[var(--emerald-500)]/5 border-[var(--emerald-500)]/20 flex items-start gap-3">
                         <div className="w-8 h-8 rounded-lg bg-[var(--emerald-500)]/15 flex items-center justify-center shrink-0 mt-0.5">
-                          <Banknote className="w-4 h-4 text-[var(--emerald-400)]" />
+                          <Banknote className="w-4 h-4 text-[var(--emerald-600)]" />
                         </div>
                         <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                           Please pay at the library counter. Admin will confirm your payment and allot the seat.
@@ -345,7 +345,7 @@ export default function SeatRequestSheet({
                     ) : (
                       <div className="rounded-xl border border-[var(--sapphire-500)]/20 bg-gradient-to-b from-[var(--sapphire-500)]/8 to-transparent overflow-hidden">
                         <div className="flex flex-col items-center py-5 px-4">
-                          <p className="text-[10px] font-black text-[var(--sapphire-400)] mb-3 uppercase tracking-[0.2em] flex items-center gap-2">
+                          <p className="text-[10px] font-black text-[var(--sapphire-600)] mb-3 uppercase tracking-[0.2em] flex items-center gap-2">
                             <Smartphone className="w-3.5 h-3.5" />
                             Scan & Pay via UPI
                           </p>
@@ -368,7 +368,7 @@ export default function SeatRequestSheet({
                     <div>
                       <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <User className="w-3.5 h-3.5" />
-                        Full Name <span className="text-[var(--ruby-400)]">*</span>
+                        Full Name <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div className="relative">
                         <input
@@ -380,7 +380,7 @@ export default function SeatRequestSheet({
                           className={inputCls}
                         />
                         {nameValid && (
-                          <CheckCircle2 className="w-4 h-4 text-[var(--emerald-500)] absolute right-3 top-1/2 -translate-y-1/2" />
+                          <CheckCircle2 className="w-4 h-4 text-[var(--emerald-600)] absolute right-3 top-1/2 -translate-y-1/2" />
                         )}
                       </div>
                     </div>
@@ -389,7 +389,7 @@ export default function SeatRequestSheet({
                     <div>
                       <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <Phone className="w-3.5 h-3.5" />
-                        Phone Number <span className="text-[var(--ruby-400)]">*</span>
+                        Phone Number <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div className="relative">
                         <input
@@ -407,7 +407,7 @@ export default function SeatRequestSheet({
                           className={cn(inputCls, 'font-mono')}
                         />
                         {phoneValid && (
-                          <CheckCircle2 className="w-4 h-4 text-[var(--emerald-500)] absolute right-3 top-1/2 -translate-y-1/2" />
+                          <CheckCircle2 className="w-4 h-4 text-[var(--emerald-600)] absolute right-3 top-1/2 -translate-y-1/2" />
                         )}
                       </div>
                     </div>
@@ -416,7 +416,7 @@ export default function SeatRequestSheet({
                     <div>
                       <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <CalendarDays className="w-3.5 h-3.5" />
-                        Date of Joining <span className="text-[var(--ruby-400)]">*</span>
+                        Date of Joining <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <input
                         type="date"
@@ -431,7 +431,7 @@ export default function SeatRequestSheet({
                     <div>
                       <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <CalendarDays className="w-3.5 h-3.5" />
-                        Membership Duration <span className="text-[var(--ruby-400)]">*</span>
+                        Membership Duration <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div role="radiogroup" aria-label="Membership Duration" className="grid grid-cols-2 gap-2">
                         {durationOptions.map(option => (
@@ -458,7 +458,7 @@ export default function SeatRequestSheet({
                     <div>
                       <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5" />
-                        Preferred Shift <span className="text-[var(--ruby-400)]">*</span>
+                        Preferred Shift <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div role="radiogroup" aria-label="Preferred Shift" className="grid grid-cols-3 gap-2">
                         {shiftOptions.map(option => (
@@ -486,7 +486,7 @@ export default function SeatRequestSheet({
                       <div>
                         <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                           <Smartphone className="w-3.5 h-3.5" />
-                          UPI Reference <span className="text-[var(--ruby-400)]">*</span>
+                          UPI Reference <span className="text-[var(--ruby-600)]">*</span>
                         </label>
                         <input
                           type="text"
@@ -496,7 +496,7 @@ export default function SeatRequestSheet({
                           className={cn(inputCls, 'font-mono uppercase')}
                         />
                         {!paymentValid && (
-                          <p className="mt-2 text-[11px] font-semibold text-[var(--ruby-400)]">
+                          <p className="mt-2 text-[11px] font-semibold text-[var(--ruby-600)]">
                             Add the payment reference so admin can verify it.
                           </p>
                         )}
@@ -527,10 +527,10 @@ export default function SeatRequestSheet({
                         >
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-xl bg-[var(--saffron-500)]/10 flex items-center justify-center">
-                              <Camera className="w-4 h-4 text-[var(--saffron-500)]" />
+                              <Camera className="w-4 h-4 text-[var(--saffron-600)]" />
                             </div>
                             <div className="w-9 h-9 rounded-xl bg-[var(--sapphire-500)]/10 flex items-center justify-center">
-                              <Upload className="w-4 h-4 text-[var(--sapphire-500)]" />
+                              <Upload className="w-4 h-4 text-[var(--sapphire-600)]" />
                             </div>
                           </div>
                           <span className="text-xs font-medium">
@@ -544,21 +544,21 @@ export default function SeatRequestSheet({
                         <div className="rounded-xl border border-[var(--emerald-500)]/30 bg-[var(--emerald-500)]/5 p-3 flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-[var(--emerald-500)]/15 flex items-center justify-center shrink-0">
                             {documentUrl.startsWith('data:image') ? (
-                              <ImageIcon className="w-5 h-5 text-[var(--emerald-400)]" />
+                              <ImageIcon className="w-5 h-5 text-[var(--emerald-600)]" />
                             ) : (
-                              <FileText className="w-5 h-5 text-[var(--emerald-400)]" />
+                              <FileText className="w-5 h-5 text-[var(--emerald-600)]" />
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-bold text-[var(--text-primary)] truncate">{documentName}</p>
-                            <p className="text-[10px] text-[var(--emerald-400)] flex items-center gap-1 mt-0.5">
+                            <p className="text-[10px] text-[var(--emerald-600)] flex items-center gap-1 mt-0.5">
                               <CheckCircle2 className="w-3 h-3" /> Uploaded successfully
                             </p>
                           </div>
                           <button
                             type="button"
                             onClick={removeDocument}
-                            className="cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--ruby-500)] hover:bg-[var(--ruby-500)]/10 transition-all"
+                            className="cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/10 transition-all"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -586,7 +586,7 @@ export default function SeatRequestSheet({
                       <motion.div
                         initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-3 rounded-xl bg-[var(--ruby-500)]/10 border border-[var(--ruby-500)]/20 text-[var(--ruby-400)] text-sm text-center font-medium"
+                        className="p-3 rounded-xl bg-[var(--ruby-500)]/10 border border-[var(--ruby-500)]/20 text-[var(--ruby-600)] text-sm text-center font-medium"
                       >
                         {errorMsg}
                       </motion.div>

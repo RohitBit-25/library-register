@@ -18,11 +18,12 @@ const icons = {
   info: Info,
 };
 
+// The only coloured element is the icon; -600 keeps it >=5:1 on the white surface.
 const styles = {
-  success: 'border-[var(--emerald-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--emerald-400)]',
-  warning: 'border-[var(--amber-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--amber-400)]',
-  error: 'border-[var(--ruby-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--ruby-400)]',
-  info: 'border-[var(--sapphire-400)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--sapphire-400)]'
+  success: 'border-[var(--emerald-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--emerald-600)]',
+  warning: 'border-[var(--marigold-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--marigold-700)]',
+  error: 'border-[var(--ruby-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--ruby-600)]',
+  info: 'border-[var(--sapphire-500)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)] text-[var(--sapphire-600)]'
 };
 
 export default function ToastContainer({ toasts, onRemove }: ToastContainerProps) {

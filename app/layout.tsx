@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
     title: "Library Register",
   },
 };
@@ -32,8 +32,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  themeColor: "#F8FAFC",
+  // No maximumScale: pinch-zoom must stay available so users can enlarge text
+  // (WCAG 1.4.4). Capping it at 1 blocked that entirely.
+  themeColor: "#FBFAF8",
 };
 
 export default function RootLayout({

@@ -68,95 +68,120 @@
      LIGHT MODE — Clean, Professional, High Contrast
      ═══════════════════════════════════════════════════════════════ */
   :root {
+    /* ═══════════════════════════════════════════════════════════
+       COLOUR RAMP CONTRACT — read before editing any value below.
+
+         -50  / -100  tint backgrounds
+         -200         tint borders
+         -400         solid fills, dots, progress rings (large shapes)
+         -500         icons, 1px borders, large text (>=24px)
+         -600 / -700  ALL body text, labels, badge text
+
+       `-400` is a fill. `-600` is text. Never swap them.
+       Every text pair here is verified >=4.5:1; run
+       `python3 scripts/check-contrast.py` after any change.
+       ═══════════════════════════════════════════════════════════ */
+
     /* === BACKGROUND LAYERS === */
-    --bg-void:       #F1F5F9; /* slate-100 */
-    --bg-base:       #F8FAFC; /* slate-50 */
-    --bg-surface:    #FFFFFF; /* white */
-    --bg-elevated:   #FFFFFF; /* white */
-    --bg-overlay:    #E2E8F0; /* slate-200 */
-    --bg-muted:      #F1F5F9; /* slate-100 */
-    --bg-glass:      rgba(255, 255, 255, 0.9);
-    --bg-glass-light: rgba(255, 255, 255, 0.95);
+    --bg-void:       #F6F4F0; /* page backdrop, warm paper */
+    --bg-base:       #FBFAF8; /* app canvas */
+    --bg-surface:    #FFFFFF; /* cards, sheets */
+    --bg-elevated:   #FFFFFF; /* modals, popovers */
+    --bg-overlay:    #E7E2DA; /* scrollbar thumb, dividers */
+    --bg-muted:      #F2EFEA; /* inset wells, table stripes */
+    --bg-glass:      rgba(255, 255, 255, 0.92);
+    --bg-glass-light: rgba(255, 255, 255, 0.96);
 
     /* === BORDERS & DIVIDERS === */
-    --border-subtle:  #F1F5F9;
-    --border-default: #E2E8F0;
-    --border-strong:  #CBD5E1;
-    --border-glow:    #38BDF8;
+    --border-subtle:  #EFEBE4; /* decorative only */
+    --border-default: #DFD9D0; /* card & panel edges */
+    --border-strong:  #948C82; /* 3.32:1 — inputs, focusable edges */
+    --border-glow:    #C86A12;
 
-    /* === SAFFRON (kept for branding but tuned if needed) === */
-    --saffron-50:  #FFF8F0;
-    --saffron-100: #FEECDA;
-    --saffron-200: #FCD5A8;
-    --saffron-300: #F9B86E;
-    --saffron-400: #F59A3C;
-    --saffron-500: #E8853A;
-    --saffron-600: #D06A20;
-    --saffron-700: #A85016;
-    --saffron-800: #7A3610;
-    --saffron-900: #4E2008;
+    /* === SAFFRON — brand === */
+    --saffron-50:  #FFF7ED;
+    --saffron-100: #FFEDD5;
+    --saffron-200: #FCD9AE;
+    --saffron-300: #F5B871;
+    --saffron-400: #E89A3C; /* FILL ONLY — never text */
+    --saffron-500: #C86A12; /* 3.80:1 — icons, large text */
+    --saffron-600: #A65310; /* 5.43:1 — TEXT + button fill */
+    --saffron-700: #85410C; /* 7.61:1 — text on tint */
+    --saffron-800: #5E2E08;
+    --saffron-900: #3B1D05;
 
-    /* === MARIGOLD === */
-    --marigold-400: #F5C842;
-    --marigold-500: #E8B32A;
-    --marigold-600: #C8900E;
+    /* === MARIGOLD — "fee due" / warning === */
+    --marigold-50:  #FEF9E7;
+    --marigold-200: #FCE9A8;
+    --marigold-400: #E5A716; /* fill only */
+    --marigold-500: #C98A0B;
+    --marigold-600: #A16207; /* 4.92:1 — text */
+    --marigold-700: #854D0E; /* 6.85:1 — text */
+    --marigold-800: #5C340A; /* 6.15:1 on marigold-50 */
 
-    /* === EMERALD === */
-    --emerald-400: #34D97B;
-    --emerald-500: #22C36A;
-    --emerald-600: #16A356;
-    --emerald-glow: rgba(34, 195, 106, 0.1);
+    /* === EMERALD — "active" === */
+    --emerald-50:  #ECFDF5;
+    --emerald-200: #A7E9C4;
+    --emerald-400: #34C77E; /* fill only */
+    --emerald-500: #16A34A; /* 3.30:1 — dots, rings, borders */
+    --emerald-600: #15803D; /* 5.02:1 — TEXT */
+    --emerald-700: #14652F;
 
-    /* === RUBY === */
-    --ruby-100: #FCE1E1;
-    --ruby-400: #F26F6F;
-    --ruby-500: #E84242;
-    --ruby-glow: rgba(232, 66, 66, 0.1);
+    /* === RUBY — "expired" / destructive === */
+    --ruby-50:  #FEF2F2;
+    --ruby-100: #FEE2E2;
+    --ruby-200: #FCC5C5;
+    --ruby-400: #EF5350; /* fill only */
+    --ruby-500: #DC2626; /* 4.83:1 — dots, borders */
+    --ruby-600: #B91C1C; /* 6.47:1 — TEXT + button fill */
+    --ruby-700: #991B1B;
+    --ruby-800: #7F1D1D; /* text on ruby-50 */
 
-    /* === AMBER === */
-    --amber-400: #FBBD2C;
-    --amber-500: #E8A20A;
-    --amber-glow: rgba(232, 162, 10, 0.1);
+    /* === SAPPHIRE — "vacant" / info === */
+    --sapphire-50:  #E0F2FE;
+    --sapphire-200: #A9D8F5;
+    --sapphire-400: #38A3E0; /* fill only */
+    --sapphire-500: #0284C7; /* 4.10:1 — dots, borders */
+    --sapphire-600: #0369A1; /* 5.93:1 — TEXT */
 
-    /* === SAPPHIRE === */
-    --sapphire-400: #60B4FF;
-    --sapphire-500: #3D9EFF;
-    --sapphire-600: #1A7FE8;
-    --sapphire-glow: rgba(61, 158, 255, 0.1);
+    /* === INDIGO — "pending" === */
+    --indigo-50:  #EEF2FF;
+    --indigo-400: #6366F1; /* fill only */
+    --indigo-500: #4F46E5;
+    --indigo-600: #4338CA; /* 7.20:1 — TEXT */
 
-    /* === ROSE === */
-    --rose-500: #F43F5E;
-
-    /* === INDIGO === */
-    --indigo-400: #818CF8;
-    --indigo-500: #6366F1;
-    --indigo-glow: rgba(99, 102, 241, 0.1);
+    /* === ALIASES kept for existing call sites === */
+    --amber-400: #E5A716;
+    --amber-500: #C98A0B;
+    --amber-600: #A16207;
+    --rose-500:  #DC2626;
+    --weight-extrabold: 800;
 
     /* === TEXT === */
-    --text-primary:   #0F172A; /* slate-900 */
-    --text-secondary: #475569; /* slate-600 */
-    --text-tertiary:  #64748B; /* slate-500 */
-    --text-disabled:  #94A3B8; /* slate-400 */
+    --text-primary:   #1C1917; /* 17.49:1 on white */
+    --text-secondary: #57534E; /*  7.63:1 */
+    --text-tertiary:  #6B6660; /*  5.68:1 white / 5.17:1 on bg-void */
+    --text-disabled:  #8A837C; /*  3.74:1 — disabled controls only */
     --text-inverse:   #FFFFFF;
-    --text-accent:    #E8853A;
-    --text-link:      #E8853A;
+    --text-accent:    #A65310; /*  5.43:1 */
+    --text-link:      #A65310; /*  5.43:1 */
 
     /* === GRADIENTS === */
-    --gradient-primary: linear-gradient(135deg, #E8853A 0%, #F5C842 100%);
-    --gradient-glow:    linear-gradient(135deg, #E8853A 0%, #D06A20 100%);
-    --gradient-surface: linear-gradient(160deg, #FFFFFF 0%, #F8FAFC 100%);
-    --gradient-glass:   linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(248,250,252,1) 100%);
+    --gradient-primary: linear-gradient(135deg, #C86A12 0%, #E5A716 100%);
+    --gradient-glow:    linear-gradient(135deg, #A65310 0%, #85410C 100%);
+    --gradient-surface: linear-gradient(160deg, #FFFFFF 0%, #FBFAF8 100%);
+    --gradient-glass:   linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(251,250,248,1) 100%);
     --gradient-hero:    transparent;
-    
-    --gradient-header-title: linear-gradient(to bottom, #0F172A, #334155);
+
+    --gradient-header-title: linear-gradient(to bottom, #1C1917, #44403C);
     --gradient-header-tag:   linear-gradient(to right, var(--saffron-500), var(--saffron-600));
-    
+
     --gradient-jaali: transparent;
 
-    --gradient-emerald: linear-gradient(135deg, #22C36A, #16A356);
-    --gradient-ruby:    linear-gradient(135deg, #E84242, #C02020);
-    --gradient-amber:   linear-gradient(135deg, #E8A20A, #C8820A);
-    --gradient-sapphire:linear-gradient(135deg, #3D9EFF, #1A7FE8);
+    --gradient-emerald: linear-gradient(135deg, #16A34A, #15803D);
+    --gradient-ruby:    linear-gradient(135deg, #DC2626, #991B1B);
+    --gradient-amber:   linear-gradient(135deg, #C98A0B, #A16207);
+    --gradient-sapphire:linear-gradient(135deg, #0284C7, #0369A1);
 
     /* === SPACING SCALE === */
     --space-0:   0px;
@@ -185,12 +210,12 @@
     --radius-full: 9999px;
 
     /* === SHADOW SYSTEM === */
-    --shadow-xs:  0 1px 2px 0 rgba(15, 23, 42, 0.05);
-    --shadow-sm:  0 1px 3px 0 rgba(15, 23, 42, 0.1), 0 1px 2px -1px rgba(15, 23, 42, 0.1);
-    --shadow-md:  0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -2px rgba(15, 23, 42, 0.1);
-    --shadow-lg:  0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.1);
-    --shadow-xl:  0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
-    --shadow-floating: 0 10px 40px -10px rgba(15, 23, 42, 0.15);
+    --shadow-xs:  0 1px 2px 0 rgba(28, 25, 23, 0.05);
+    --shadow-sm:  0 1px 3px 0 rgba(28, 25, 23, 0.10), 0 1px 2px -1px rgba(28, 25, 23, 0.10);
+    --shadow-md:  0 4px 6px -1px rgba(28, 25, 23, 0.10), 0 2px 4px -2px rgba(28, 25, 23, 0.08);
+    --shadow-lg:  0 10px 15px -3px rgba(28, 25, 23, 0.10), 0 4px 6px -4px rgba(28, 25, 23, 0.08);
+    --shadow-xl:  0 20px 25px -5px rgba(28, 25, 23, 0.10), 0 8px 10px -6px rgba(28, 25, 23, 0.08);
+    --shadow-floating: 0 10px 40px -10px rgba(28, 25, 23, 0.15);
 
     --shadow-glow-saffron: none;
     --shadow-glow-emerald: none;
@@ -322,9 +347,10 @@
     border-radius: var(--radius-full);
   }
 
-  /* Focus Visibility */
+  /* Focus Visibility — outline-offset keeps the ring measured against the
+     page background, so it stays >=3:1 even on a saffron-filled button. */
   :focus-visible {
-    outline: 2px solid var(--saffron-500);
+    outline: 2px solid var(--saffron-600);
     outline-offset: 2px;
     border-radius: var(--radius-xs);
   }
@@ -449,7 +475,7 @@
     color: var(--text-primary);
     outline: none;
     transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
-    caret-color: var(--saffron-500);
+    caret-color: var(--saffron-600);
   }
 
   .input-label {
@@ -469,14 +495,14 @@
   }
 
   .input-field:focus {
-    border-color: var(--saffron-500);
-    box-shadow: 0 0 0 2px rgba(232, 133, 58, 0.1);
+    border-color: var(--saffron-600);
+    box-shadow: 0 0 0 3px rgba(166, 83, 16, 0.15);
     background: var(--bg-surface);
   }
 
   .input-field.is-error {
-    border-color: var(--ruby-500);
-    box-shadow: 0 0 0 2px rgba(232, 66, 66, 0.1);
+    border-color: var(--ruby-600);
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.15);
   }
 
   .input-helper {
@@ -485,7 +511,7 @@
     margin-top: var(--space-1);
     padding-left: var(--space-4);
   }
-  .input-helper.is-error { color: var(--ruby-400); }
+  .input-helper.is-error { color: var(--ruby-600); }
 
   /* === RADIX UI ANIMATIONS === */
   @keyframes contentShow {

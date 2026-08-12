@@ -121,7 +121,7 @@ export default function KioskPage() {
                 ))}
                 <button
                   onClick={handleDelete}
-                  className="aspect-square rounded-2xl bg-[var(--ruby-500)]/10 border border-[var(--ruby-500)]/30 text-[var(--ruby-400)] hover:bg-[var(--ruby-500)]/20 transition-all flex items-center justify-center font-bold uppercase text-[11px] tracking-wider hover:-translate-y-1 active:scale-95 shadow-sm cursor-pointer"
+                  className="aspect-square rounded-2xl bg-[var(--ruby-500)]/10 border border-[var(--ruby-500)]/30 text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/20 transition-all flex items-center justify-center font-bold uppercase text-[11px] tracking-wider hover:-translate-y-1 active:scale-95 shadow-sm cursor-pointer"
                 >
                   Clear
                 </button>
@@ -170,7 +170,7 @@ export default function KioskPage() {
               </h2>
               <p className="text-[var(--text-tertiary)] font-medium mb-8">
                 Current Status: {isPresent(todayStr, activeMember.seat) ? (
-                  <span className="text-[var(--emerald-500)] font-bold inline-flex items-center gap-1">Checked In <CheckCircle2 className="w-4 h-4" /></span>
+                  <span className="text-[var(--emerald-600)] font-bold inline-flex items-center gap-1">Checked In <CheckCircle2 className="w-4 h-4" /></span>
                 ) : (
                   <span className="text-[var(--text-secondary)] font-bold inline-flex items-center gap-1">Checked Out <XCircle className="w-4 h-4" /></span>
                 )}
@@ -180,7 +180,7 @@ export default function KioskPage() {
                 <button
                   onClick={() => handleCheckAction('in')}
                   disabled={isPresent(todayStr, activeMember.seat)}
-                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--emerald-500)]/10 border-2 border-[var(--emerald-500)]/30 text-[var(--emerald-400)] hover:bg-[var(--emerald-500)]/20 hover:-translate-y-1 transition-all disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
+                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--emerald-500)]/10 border-2 border-[var(--emerald-500)]/30 text-[var(--emerald-600)] hover:bg-[var(--emerald-500)]/20 hover:-translate-y-1 transition-all disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
                 >
                   <LogIn className="w-8 h-8 mb-2" />
                   <span className="font-extrabold uppercase tracking-widest text-[11px]">Check In</span>

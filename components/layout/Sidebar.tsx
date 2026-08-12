@@ -77,8 +77,8 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--saffron-500)]/5 via-transparent to-transparent pointer-events-none" />
         
         <div className="flex items-center gap-2.5 relative z-10">
-          <div className="w-9 h-9 rounded-xl bg-[var(--saffron-500)] flex items-center justify-center shadow-md shadow-[var(--saffron-500)]/20">
-            <BookOpen className="w-[18px] h-[18px] text-[#1a1a16]" />
+          <div className="w-9 h-9 rounded-xl bg-[var(--saffron-600)] flex items-center justify-center shadow-md shadow-[var(--saffron-600)]/20">
+            <BookOpen className="w-[18px] h-[18px] text-[var(--text-inverse)]" />
           </div>
           <div>
             <h1 className="text-sm font-extrabold text-[var(--text-primary)] leading-tight tracking-tight">
@@ -93,7 +93,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
 
       {/* Admin badge */}
       <div className="px-6 pb-4 relative z-10">
-        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)]">
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--sapphire-50)] text-[var(--sapphire-600)]">
           <Shield className="w-3.5 h-3.5" />
           <span className="text-[11px] font-bold">Admin Mode</span>
         </div>
@@ -110,7 +110,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
               className={cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer relative active:scale-[0.98]',
                 isActive
-                  ? 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-500)] font-bold shadow-sm'
+                  ? 'bg-[var(--sapphire-50)] text-[var(--sapphire-600)] font-bold shadow-sm'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-[var(--text-primary)] hover:shadow-sm',
               )}
             >
@@ -122,7 +122,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
               </span>
               <span className="flex-1">{item.label}</span>
               {item.badge && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--saffron-500)]/15 text-[var(--saffron-500)] animate-pulse-subtle">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--saffron-50)] text-[var(--saffron-700)] animate-pulse-subtle">
                   {item.badge}
                 </span>
               )}
@@ -139,7 +139,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
         <Tooltip content="Sign out of the system" side="right">
           <button
             onClick={handleLogout}
-            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--ruby-500)] hover:bg-[var(--ruby-500)]/10 active:scale-[0.98] transition-all border border-[var(--border-default)] hover:border-[var(--ruby-500)]/20 shadow-sm"
+            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/10 active:scale-[0.98] transition-all border border-[var(--border-default)] hover:border-[var(--ruby-500)]/20 shadow-sm"
           >
             <LogOut className="w-4 h-4" />
             Logout

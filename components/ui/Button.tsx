@@ -10,27 +10,28 @@ export interface ButtonProps extends HTMLMotionProps<"button"> {
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', children, ...props }, ref) => {
     
-    const baseClasses = "inline-flex items-center justify-center relative overflow-hidden focus-visible:ring-2 focus-visible:ring-saffron-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
-    
+    const baseClasses = "inline-flex items-center justify-center relative overflow-hidden focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+
+    // -600 fills, not -500: white on saffron-500 measured 2.68:1; saffron-600 gives 5.43:1.
     const variants = {
       primary: `
-        bg-[var(--saffron-500)] text-[var(--text-inverse)] 
+        bg-[var(--saffron-600)] text-[var(--text-inverse)]
         font-[var(--font-body)] font-[var(--weight-semibold)] tracking-[var(--tracking-wide)]
-        rounded-[var(--radius-sm)] border border-[var(--saffron-600)] shadow-[var(--shadow-sm)]
-        hover:bg-[var(--saffron-600)] hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5
+        rounded-[var(--radius-sm)] border border-[var(--saffron-700)] shadow-[var(--shadow-sm)]
+        hover:bg-[var(--saffron-700)] hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5
         transition-all duration-200
       `,
       secondary: `
-        bg-transparent text-[var(--saffron-400)] 
+        bg-transparent text-[var(--saffron-700)]
         border border-[var(--border-strong)] rounded-[var(--radius-sm)]
         font-[var(--font-body)] font-[var(--weight-medium)]
-        hover:bg-[rgba(232,133,58,0.08)] hover:border-[var(--border-glow)]
+        hover:bg-[var(--saffron-50)] hover:border-[var(--saffron-600)]
         transition-all duration-200
       `,
       danger: `
-        bg-[rgba(232,66,66,0.12)] text-[var(--ruby-400)]
-        border border-[rgba(232,66,66,0.25)] rounded-[var(--radius-sm)]
-        hover:bg-[rgba(232,66,66,0.22)] hover:shadow-[var(--shadow-glow-ruby)]
+        bg-[var(--ruby-50)] text-[var(--ruby-600)]
+        border border-[var(--ruby-200)] rounded-[var(--radius-sm)]
+        hover:bg-[var(--ruby-100)] hover:border-[var(--ruby-500)]
         transition-all duration-200
       `,
       ghost: `
