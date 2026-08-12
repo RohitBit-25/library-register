@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useCallback, useMemo, useSyncExternalStore, type ReactNode } from 'react';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import {
   type UserRole,
   getStoredRole,
@@ -48,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Previously `isAdmin` was read straight out of localStorage, so setting
   // `library-role=admin` in devtools revealed the whole admin UI (every action
   // then 401'd — a confusing failure, not a real boundary).
+  const { mutate: globalMutate } = useSWRConfig();
   const { data, isLoading, mutate } = useSWR('/api/auth/check', checkFetcher, {
     revalidateOnFocus: true,
     shouldRetryOnError: false,
@@ -64,22 +65,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
   const userOptedIn = storedRole === 'user';
 
+  // Every endpoint returns different data per role — /api/members is redacted
+  // for anonymous callers, /api/requests 401s. AppShell mounts useMembers()
+  // even on /landing, so SWR has already cached the anonymous responses by the
+  // time someone logs in. Without this the admin sees the redacted list
+  // (every member named "Occupied") until a hard refresh.
+  const invalidateAll = useCallback(
+    () => globalMutate(() => true, undefined, { revalidate: true }),
+    [globalMutate]
+  );
+
   const loginAsAdmin = useCallback(async (pin: string) => {
     const result = await loginAsAdminService(pin);
-    if (result.ok) await mutate();
+    if (result.ok) {
+      await mutate();
+      await invalidateAll();
+    }
     return result;
-  }, [mutate]);
+  }, [mutate, invalidateAll]);
 
   const loginAsUser = useCallback(() => {
     setStoredRole('user');
-  }, []);
+    invalidateAll();
+  }, [invalidateAll]);
 
   const logout = useCallback(() => {
     setStoredRole(null);
     fetch('/api/auth/logout', { method: 'POST' })
       .catch(() => {})
-      .finally(() => { mutate({ isAdmin: false }, { revalidate: true }); });
-  }, [mutate]);
+      .finally(() => {
+        mutate({ isAdmin: false }, { revalidate: true });
+        // Drop cached admin data so it can't be read back after sign-out.
+        invalidateAll();
+      });
+  }, [mutate, invalidateAll]);
 
   const role: UserRole | null = isAdmin ? 'admin' : userOptedIn ? 'user' : null;
 

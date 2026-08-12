@@ -1,62 +1,24 @@
 @import "tailwindcss";
 
-  /* === TAILWIND V4 INTEGRATION === */
+  /* === TAILWIND V4 INTEGRATION ===
+     Fonts and animations only — deliberately NO --color-* entries.
+
+     A `--color-<name>` here makes Tailwind generate `text-<name>` /
+     `bg-<name>` utilities. `--color-base` therefore turned the stock
+     font-size class `text-base` into a COLOUR utility, painting text
+     #FBFAF8 (near-white) on white. It silently broke 14 elements,
+     including the text you type into the search box and every form input.
+
+     Colours are referenced as `text-[var(--token)]` / `bg-[var(--token)]`
+     everywhere, so none of those mappings were ever needed. If you re-add
+     any, never use a name that collides with a built-in utility
+     (base, xs, sm, md, lg, xl, left, right, center, top, bottom...). */
   @theme inline {
     --font-devanagari: var(--font-devanagari-hindi), serif;
     --font-display: var(--font-outfit), sans-serif;
     --font-serif-display: var(--font-serif), Georgia, serif;
     --font-body: var(--font-outfit), -apple-system, sans-serif;
     --font-mono: var(--font-dm-mono), 'Cascadia Code', monospace;
-
-    --color-void: var(--bg-void);
-    --color-base: var(--bg-base);
-    --color-surface: var(--bg-surface);
-    --color-elevated: var(--bg-elevated);
-    --color-overlay: var(--bg-overlay);
-    --color-muted: var(--bg-muted);
-    --color-glass: var(--bg-glass);
-    
-    --color-saffron-50: var(--saffron-50);
-    --color-saffron-100: var(--saffron-100);
-    --color-saffron-200: var(--saffron-200);
-    --color-saffron-300: var(--saffron-300);
-    --color-saffron-400: var(--saffron-400);
-    --color-saffron-500: var(--saffron-500);
-    --color-saffron-600: var(--saffron-600);
-    --color-saffron-700: var(--saffron-700);
-    --color-saffron-800: var(--saffron-800);
-    --color-saffron-900: var(--saffron-900);
-
-    --color-marigold-400: var(--marigold-400);
-    --color-marigold-500: var(--marigold-500);
-    --color-marigold-600: var(--marigold-600);
-
-    --color-emerald-400: var(--emerald-400);
-    --color-emerald-500: var(--emerald-500);
-    --color-emerald-600: var(--emerald-600);
-
-    --color-ruby-400: var(--ruby-400);
-    --color-ruby-500: var(--ruby-500);
-
-    --color-amber-400: var(--amber-400);
-    --color-amber-500: var(--amber-500);
-
-    --color-sapphire-400: var(--sapphire-400);
-    --color-sapphire-500: var(--sapphire-500);
-    --color-sapphire-600: var(--sapphire-600);
-
-    --color-rose-500: var(--rose-500);
-
-    --color-indigo-400: var(--indigo-400);
-    --color-indigo-500: var(--indigo-500);
-
-    --color-primary: var(--text-primary);
-    --color-secondary: var(--text-secondary);
-    --color-tertiary: var(--text-tertiary);
-    --color-disabled: var(--text-disabled);
-    --color-inverse: var(--text-inverse);
-    --color-accent: var(--text-accent);
-    --color-link: var(--text-link);
 
     --animate-shimmer: shimmer 1.6s infinite;
     --animate-content-show: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);

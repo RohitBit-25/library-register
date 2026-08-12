@@ -51,6 +51,29 @@ for (const file of SOURCE_DIRS.flatMap((d) => walk(join(root, d)))) {
   }
 }
 
+// A `--color-<name>` in @theme generates `text-<name>`/`bg-<name>` utilities.
+// When <name> collides with a built-in Tailwind class, the colour version wins
+// and silently repaints text — `--color-base` turned the font-size class
+// `text-base` into near-white text on white across 14 elements.
+const RESERVED = [
+  'base', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl',
+  'left', 'right', 'center', 'justify', 'start', 'end', 'top', 'bottom',
+  'wrap', 'nowrap', 'balance', 'pretty',
+];
+const themeBlock = css.match(/@theme[^{]*\{([\s\S]*?)\n\s*\}/)?.[1] ?? '';
+const collisions = [...themeBlock.matchAll(/--color-([a-z0-9-]+)\s*:/gi)]
+  .map((m) => m[1])
+  .filter((name) => RESERVED.includes(name));
+
+if (collisions.length) {
+  console.error('\n@theme --color-* names that collide with built-in Tailwind utilities:\n');
+  for (const c of collisions) {
+    console.error(`  --color-${c}  →  breaks the built-in \`text-${c}\` / \`bg-${c}\` class`);
+  }
+  console.error('\nRename them, or drop the mapping and use text-[var(--token)] instead.\n');
+  process.exit(1);
+}
+
 const runtime = runtimeFontVars(root);
 const missing = [...used.entries()].filter(
   ([token]) => !defined.has(token) && !runtime.has(token)
