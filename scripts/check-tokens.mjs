@@ -15,8 +15,15 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SOURCE_DIRS = ['app', 'components', 'lib', 'hooks'];
 const EXTS = new Set(['.ts', '.tsx', '.css']);
 
-// Injected at runtime by next/font onto <html>, so they are never in globals.css.
-const RUNTIME_DEFINED = new Set(['--font-outfit', '--font-dm-mono']);
+// next/font injects its `variable:` names onto <html> at runtime, so they never
+// appear in globals.css. Read them from layout.tsx rather than hardcoding, so
+// adding a font doesn't trip this check.
+function runtimeFontVars(root) {
+  const layout = readFileSync(join(root, 'app', 'layout.tsx'), 'utf8');
+  return new Set(
+    [...layout.matchAll(/variable:\s*["'](--[a-z0-9-]+)["']/gi)].map((m) => m[1])
+  );
+}
 
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {
@@ -44,8 +51,9 @@ for (const file of SOURCE_DIRS.flatMap((d) => walk(join(root, d)))) {
   }
 }
 
+const runtime = runtimeFontVars(root);
 const missing = [...used.entries()].filter(
-  ([token]) => !defined.has(token) && !RUNTIME_DEFINED.has(token)
+  ([token]) => !defined.has(token) && !runtime.has(token)
 );
 
 if (missing.length) {

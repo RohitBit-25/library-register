@@ -7,6 +7,7 @@ import { Sun, Moon, Plus, Calendar as CalendarIcon, Clock } from 'lucide-react';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 
 import { type FaceDir } from './SeatMap';
+import SeatAvatar from './SeatAvatar';
 
 interface SeatTileProps {
   member: Member;
@@ -135,13 +136,10 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
               <div 
                 className={cn("transition-transform group-hover:scale-105", compact ? "mb-0.5" : "mb-1")}
               >
-                <img 
-                  src={`https://api.dicebear.com/9.x/micah/svg?seed=${encodeURIComponent(member.name + member.seat)}&backgroundColor=transparent`}
-                  alt={`${member.name} avatar`}
-                  width={compact ? 32 : 44}
-                  height={compact ? 32 : 44}
-                  loading="lazy"
-                  className="pointer-events-none drop-shadow-sm"
+                <SeatAvatar
+                  name={member.name}
+                  seat={member.seat}
+                  size={compact ? 32 : 44}
                 />
               </div>
               <span className={cn(
