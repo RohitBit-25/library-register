@@ -102,25 +102,32 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Search"
               className="relative w-full max-w-xl mx-4 bg-[var(--bg-surface)] rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden border border-[var(--border-default)]"
             >
               <div className="flex items-center px-4 py-4 border-b border-[var(--border-subtle)]">
-                <Search className="w-5 h-5 text-[var(--sapphire-600)] mr-3 shrink-0" />
+                <Search className="w-5 h-5 text-[var(--sapphire-600)] mr-3 shrink-0" aria-hidden="true" />
                 <input
                   id="global-search-input"
                   ref={inputRef}
                   autoFocus
-                  type="text"
+                  type="search"
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   placeholder="What are you looking for?"
+                  // A placeholder is not an accessible name: it vanishes as
+                  // soon as you type, and many screen readers skip it.
+                  aria-label="Search members and seats"
                   className="flex-1 bg-transparent border-none text-base font-medium text-[var(--text-primary)] focus:outline-none placeholder:text-[var(--text-tertiary)]"
                 />
                 <button
                   onClick={() => setIsOpen(false)}
+                  aria-label="Close search"
                   className="cursor-pointer p-1 rounded-full hover:bg-[var(--bg-base)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors ml-3 shrink-0"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-5 h-5" aria-hidden="true" />
                 </button>
               </div>
 

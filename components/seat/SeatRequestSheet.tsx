@@ -558,9 +558,10 @@ export default function SeatRequestSheet({
                           <button
                             type="button"
                             onClick={removeDocument}
+                            aria-label="Remove uploaded document"
                             className="cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/10 transition-all"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4" aria-hidden="true" />
                           </button>
                         </div>
                       )}

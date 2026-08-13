@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, X } from 'lucide-react';
 import Portal from './Portal';
-import { useEffect } from 'react';
+import { useEffect, useId } from 'react';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -26,6 +26,9 @@ export default function ConfirmDialog({
   cancelText = 'Cancel',
   variant = 'danger'
 }: ConfirmDialogProps) {
+  const titleId = useId();
+  const descId = useId();
+
   // Lock body scroll when open
   useEffect(() => {
     if (isOpen) {
@@ -37,6 +40,15 @@ export default function ConfirmDialog({
       document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
+
+  // Escape to dismiss. This is a destructive confirm, so it must be
+  // cancellable from the keyboard without hunting for the close button.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
 
   return (
     <Portal>
@@ -56,18 +68,22 @@ export default function ConfirmDialog({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -10 }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
+              aria-describedby={descId}
               className="relative w-full max-w-sm bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-[var(--shadow-xl)] overflow-hidden"
             >
               <div className="p-5">
                 <div className="flex items-start gap-4">
                   <div className={`p-2 rounded-full flex-shrink-0 ${variant === 'danger' ? 'bg-[var(--ruby-500)]/20 text-[var(--ruby-600)]' : 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)]'}`}>
-                    <AlertCircle className="w-6 h-6" />
+                    <AlertCircle className="w-6 h-6" aria-hidden="true" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-[var(--text-primary)]">
+                    <h3 id={titleId} className="text-lg font-bold text-[var(--text-primary)]">
                       {title}
                     </h3>
-                    <p className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">
+                    <p id={descId} className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">
                       {description}
                     </p>
                   </div>

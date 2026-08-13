@@ -72,9 +72,12 @@ export default function Modal({
             onClick={() => { onConfirm(); onClose(); }}
             className={cn(
               'cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-surface)]',
+              // -600 fills with white text. Was dark text on ruby-500 (3.62:1)
+              // and white on saffron-500 (3.80:1) — both below AA.
+              'text-[var(--text-inverse)]',
               confirmVariant === 'danger'
-                ? 'bg-[var(--ruby-500)] text-[var(--text-primary)] hover:brightness-110'
-                : 'bg-[var(--saffron-500)] text-[var(--text-inverse)] hover:brightness-110',
+                ? 'bg-[var(--ruby-600)] hover:bg-[var(--ruby-700)]'
+                : 'bg-[var(--saffron-600)] hover:bg-[var(--saffron-700)]',
             )}
           >
             {confirmLabel}
