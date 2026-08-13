@@ -1,4 +1,14 @@
-import { type SeatPosition } from '@/components/seat/SeatMap';
+// Geometry types live here, in the data layer. They were declared in
+// components/seat/SeatMap.tsx and imported back up, so the layout config
+// depended on the component that renders it — meaning nothing in lib/ could
+// use them without pulling in React.
+export type FaceDir = 'up' | 'down' | 'left' | 'right';
+
+export interface SeatPosition {
+  x: number;
+  y: number;
+  face: FaceDir;
+}
 
 export interface WallDetail {
   label: string;
@@ -23,12 +33,8 @@ export const LAYOUT_CONFIG = {
     { label: 'Window', start: 3, end: 4, wall: 'right', type: 'window' },
     { label: 'Window', start: 11, end: 12, wall: 'right', type: 'window' },
   ] as WallDetail[],
-  FLOOR_DESKS: [
-    { leftCol: 1, topRow: 2, widthCols: 2, heightRows: 10 },
-    { leftCol: 4, topRow: 3, widthCols: 2, heightRows: 10 },
-    { leftCol: 9, topRow: 3, widthCols: 1, heightRows: 7 },
-    { leftCol: 12, topRow: 3, widthCols: 1, heightRows: 9 },
-  ],
+  // FLOOR_DESKS removed: desks are now derived from seat positions in
+  // lib/deskLayout.ts, so furniture cannot drift out of sync with seating.
   FLOOR_PLANTS: [
     { col: 1, row: 1 },
     { col: 13, row: 12 },
