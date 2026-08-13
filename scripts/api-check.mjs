@@ -10,8 +10,11 @@
  *   npm run dev            # in one terminal
  *   npm run check:api      # in another
  *
- * Writes are made to a seat you nominate with SEAT=<n> (default 95) and are
- * rolled back. Point BASE at a dev server, never production.
+ * Set ADMIN_PIN to also run the authenticated checks. Order matters: the
+ * lockout check runs last and only with CHECK_LOCKOUT=1, because it leaves
+ * every staff account locked for 15 minutes.
+ *
+ * Point BASE at a dev server, never production.
  */
 import assert from 'node:assert/strict';
 
@@ -187,23 +190,6 @@ await check('rate limiter returns 429 with Retry-After after the 6th try', async
   assert.ok(sawLimit, 'no 429 within 8 submissions — the limiter is not firing');
 });
 
-// ─── Login lockout ────────────────────────────────────────────────
-
-await check('wrong PIN is rejected and eventually locks out', async () => {
-  let locked = false;
-  for (let i = 0; i < 8; i++) {
-    const res = await json('/api/auth', { pin: '000000' });
-    assert.equal(res.status === 200, false, 'a wrong PIN must never authenticate');
-    assert.ok([401, 429].includes(res.status), `unexpected status ${res.status}`);
-    if (res.status === 429) {
-      locked = true;
-      assert.ok(res.headers.get('retry-after'), 'a lockout must carry Retry-After');
-      break;
-    }
-  }
-  assert.ok(locked, 'no lockout after 8 wrong PINs — brute force is unbounded');
-});
-
 // ─── Authenticated checks (only with ADMIN_PIN set) ───────────────
 
 if (PIN) {
@@ -260,6 +246,47 @@ if (PIN) {
       assert.equal(res.status, 400, `expected 400, got ${res.status}`);
     });
 
+    // ── Waitlist ──────────────────────────────────────────────
+    // Only meaningful against a scratch database, because proving the
+    // full-house branch means occupying every seat. Skipped otherwise
+    // rather than quietly passing.
+    const statsRes = await req('/api/stats', auth);
+    const stats = await statsRes.json();
+
+    await check('a request for an occupied seat is refused while others are free', async () => {
+      if (stats.vacant === 0) {
+        console.log('       (library is full — this branch cannot be tested here)');
+        return;
+      }
+      const membersRes = await req('/api/members', auth);
+      const members = await membersRes.json();
+      const taken = members.find((m) => !m.vacant);
+      if (!taken) {
+        console.log('       (no occupied seat to test against)');
+        return;
+      }
+      const res = await json('/api/requests', {
+        seat: taken.seat, userName: 'Contract Check', userPhone: '9800000001',
+        paymentMode: 'cash',
+      });
+      assert.equal(res.status, 409, `expected 409, got ${res.status}`);
+    });
+
+    await check('a full library queues the request instead of turning it away', async () => {
+      if (stats.vacant > 0) {
+        console.log('       (seats are free — run against a full scratch DB to cover this)');
+        return;
+      }
+      const res = await json('/api/requests', {
+        seat: SEAT, userName: 'Contract Waitlist', userPhone: '9800000002',
+        paymentMode: 'cash',
+      });
+      assert.equal(res.status, 201, `expected 201, got ${res.status}`);
+      const body = await res.json();
+      assert.equal(body.status, 'waitlisted');
+      assert.equal(body.waitlisted, true, 'the caller must be told they were queued');
+    });
+
     await check('logout clears the session', async () => {
       const res = await json('/api/auth/logout', {}, auth);
       assert.ok(res.ok, `logout returned ${res.status}`);
@@ -269,6 +296,32 @@ if (PIN) {
   }
 } else {
   console.log('\n  (set ADMIN_PIN to also run the authenticated checks)');
+}
+
+// ─── Login lockout ────────────────────────────────────────────────
+
+// Opt-in: this check locks every staff account for 15 minutes. The per-staff
+// counter cannot tell which account a wrong PIN was meant for, so a failure
+// counts against all of them — see the comment in app/api/auth. Running it by
+// default would lock the admin out of their own library, and would make the
+// suite fail on its own second run.
+if (process.env.CHECK_LOCKOUT === '1') {
+await check('wrong PIN is rejected and eventually locks out', async () => {
+  let locked = false;
+  for (let i = 0; i < 8; i++) {
+    const res = await json('/api/auth', { pin: '000000' });
+    assert.equal(res.status === 200, false, 'a wrong PIN must never authenticate');
+    assert.ok([401, 429].includes(res.status), `unexpected status ${res.status}`);
+    if (res.status === 429) {
+      locked = true;
+      assert.ok(res.headers.get('retry-after'), 'a lockout must carry Retry-After');
+      break;
+    }
+  }
+  assert.ok(locked, 'no lockout after 8 wrong PINs — brute force is unbounded');
+});
+} else {
+  console.log('\n  (set CHECK_LOCKOUT=1 to also test the PIN lockout — it locks staff out for 15 minutes)');
 }
 
 console.log(`\n${passed} passed, ${failed} failed.\n`);

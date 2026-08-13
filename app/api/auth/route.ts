@@ -3,10 +3,44 @@ import { encrypt, SESSION_COOKIE, SESSION_MAX_AGE_SECONDS } from '@/lib/auth-ser
 import { cookies } from 'next/headers';
 import { checkStaffPin } from '@/lib/pin-store';
 import AuditLog from '@/models/AuditLog';
+import { consumeRateLimit, callerKey } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * Attempts allowed per caller per 15 minutes, checked before the PIN is.
+ *
+ * The per-staff lockout in pin-store cannot tell which account a wrong PIN
+ * was meant for — there is no username — so a failure counts against every
+ * account. Left alone, anyone could lock the whole staff out of the system
+ * for 15 minutes on repeat, without credentials.
+ *
+ * This limit means a single source burns its own quota long before it burns
+ * the staff's. It does not stop a distributed attempt; that is a real
+ * residual risk of PIN-only auth, and the reason `/setup` should be used to
+ * move to per-staff PINs rather than one shared one.
+ *
+ * 12 in 15 minutes is far above what a human mistyping a 6-digit PIN needs,
+ * and well below the 5 failures that trigger a staff lockout across a
+ * realistic number of attackers.
+ */
+const LOGIN_LIMIT = 12;
+const LOGIN_WINDOW_SECONDS = 15 * 60;
+
 export async function POST(request: Request) {
+  const limit = await consumeRateLimit(
+    'auth', callerKey(request), LOGIN_LIMIT, LOGIN_WINDOW_SECONDS
+  );
+  if (!limit.ok) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: `Too many attempts from this connection. Try again in ${Math.ceil(limit.retryAfterSeconds / 60)} minute(s).`,
+      },
+      { status: 429, headers: { 'Retry-After': String(limit.retryAfterSeconds) } }
+    );
+  }
+
   let pin: unknown;
   try {
     ({ pin } = await request.json());
