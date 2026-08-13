@@ -103,7 +103,7 @@ export default function AttendancePage() {
           <button 
             onClick={() => setView('today')}
             className={cn(
-              "px-[var(--space-5)] py-[var(--space-2)] text-sm font-semibold rounded-[var(--radius-md)] transition-all",
+              "px-[var(--space-5)] py-[var(--space-2)] text-sm font-semibold rounded-[var(--radius-md)] transition-ui",
               view === 'today' ? "bg-[var(--sapphire-500)] text-[var(--saffron-50)] shadow-[var(--shadow-sm)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
             )}
           >
@@ -112,7 +112,7 @@ export default function AttendancePage() {
           <button 
             onClick={() => setView('history')}
             className={cn(
-              "px-[var(--space-5)] py-[var(--space-2)] text-sm font-semibold rounded-[var(--radius-md)] transition-all",
+              "px-[var(--space-5)] py-[var(--space-2)] text-sm font-semibold rounded-[var(--radius-md)] transition-ui",
               view === 'history' ? "bg-[var(--sapphire-500)] text-[var(--saffron-50)] shadow-[var(--shadow-sm)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
             )}
           >
@@ -234,7 +234,7 @@ export default function AttendancePage() {
                           key={member.seat}
                           onClick={() => handleToggle(member.seat, checkedIn)}
                           className={cn(
-                            "relative flex flex-col items-center justify-center aspect-square rounded-[var(--radius-md)] border-[1.5px] transition-all p-[var(--space-2)] gap-[var(--space-1)] cursor-pointer group",
+                            "relative flex flex-col items-center justify-center aspect-square rounded-[var(--radius-md)] border-[1.5px] transition-ui p-[var(--space-2)] gap-[var(--space-1)] cursor-pointer group",
                             checkedIn 
                               ? "bg-[var(--emerald-500)]/10 border-[var(--emerald-500)] text-[var(--emerald-600)] shadow-[var(--shadow-glow-emerald)]" 
                               : "bg-[var(--bg-elevated)] border-[var(--border-subtle)] hover:border-[var(--saffron-500)] hover:shadow-[var(--shadow-glow-saffron)] text-[var(--text-primary)]"
@@ -308,7 +308,7 @@ export default function AttendancePage() {
                         className="flex flex-col items-center justify-center cursor-crosshair"
                       >
                         <div className={cn(
-                          "w-10 h-10 sm:w-12 sm:h-12 rounded-[var(--radius-md)] flex flex-col items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1 hover:shadow-lg",
+                          "w-10 h-10 sm:w-12 sm:h-12 rounded-[var(--radius-md)] flex flex-col items-center justify-center transition-ui duration-300 hover:scale-110 hover:-translate-y-1 hover:shadow-lg",
                           colorClass,
                           isToday && "ring-4 ring-[var(--saffron-500)]/30 ring-offset-2 ring-offset-[var(--bg-elevated)]"
                         )}>

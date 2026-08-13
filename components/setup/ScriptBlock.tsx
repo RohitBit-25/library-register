@@ -141,7 +141,7 @@ export default function ScriptBlock() {
         </div>
         <button
           onClick={handleCopy}
-          className="flex cursor-pointer items-center gap-2 rounded-lg border border-transparent px-3.5 py-1.5 text-xs font-bold text-[var(--text-secondary)] transition-all hover:border-[var(--border-default)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]"
+          className="flex cursor-pointer items-center gap-2 rounded-lg border border-transparent px-3.5 py-1.5 text-xs font-bold text-[var(--text-secondary)] transition-ui hover:border-[var(--border-default)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]"
         >
           {copied
             ? <Check className="h-3.5 w-3.5 text-[var(--emerald-600)]" aria-hidden="true" />

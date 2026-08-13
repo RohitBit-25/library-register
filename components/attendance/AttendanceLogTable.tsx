@@ -78,8 +78,8 @@ export function AttendanceLogTable({ data }: { data: AttendanceLog[] }) {
           <div className="flex items-center gap-3">
             <div className="flex-1 max-w-[100px] h-2 bg-[var(--bg-overlay)] rounded-full overflow-hidden">
               <div 
-                className={cn("h-full rounded-full transition-all duration-500", barClass)}
-                style={{ width: `${rate}%` }}
+                className={cn("meter-fill h-full w-full rounded-full", barClass)}
+                style={{ ['--fill' as string]: rate / 100 }}
               />
             </div>
             <div className={cn("flex items-center gap-1 font-bold min-w-[50px] justify-end", colorClass)}>

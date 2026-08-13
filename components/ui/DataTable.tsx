@@ -155,7 +155,7 @@ export function DataTable<TData, TValue>({
             placeholder={searchPlaceholder}
             value={globalFilter ?? ''}
             onChange={(event) => setGlobalFilter(event.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-[var(--border-default)] rounded-xl bg-[var(--bg-muted)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/30 focus:border-transparent transition-all shadow-sm"
+            className="w-full pl-9 pr-4 py-2 border border-[var(--border-default)] rounded-xl bg-[var(--bg-muted)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/30 focus:border-transparent transition-ui shadow-sm"
           />
         </div>
       </div>
@@ -241,14 +241,14 @@ export function DataTable<TData, TValue>({
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer border border-transparent hover:border-[var(--border-subtle)]"
+            className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-ui cursor-pointer border border-transparent hover:border-[var(--border-subtle)]"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer border border-transparent hover:border-[var(--border-subtle)]"
+            className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-ui cursor-pointer border border-transparent hover:border-[var(--border-subtle)]"
           >
             <ChevronRight className="w-5 h-5" />
           </button>

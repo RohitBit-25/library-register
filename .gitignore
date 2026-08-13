@@ -43,3 +43,6 @@ next-env.d.ts
 
 # playwright-mcp session artifacts
 .playwright-mcp/
+
+# installed agent skills (external, re-installable via npx skills add)
+.agents/

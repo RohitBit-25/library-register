@@ -118,7 +118,7 @@ export default function RequestsPage() {
             key={tab.key}
             onClick={() => setFilter(tab.key)}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-lg)] text-[0.64rem] font-bold transition-all duration-200 cursor-pointer whitespace-nowrap hover:-translate-y-[1px] hover:shadow-[var(--shadow-sm)] active:scale-95',
+              'flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-lg)] text-[0.64rem] font-bold transition-ui duration-200 cursor-pointer whitespace-nowrap hover:-translate-y-[1px] hover:shadow-[var(--shadow-sm)] active:scale-95',
               filter === tab.key
                 ? 'bg-[var(--indigo-500)] text-[var(--text-inverse)] shadow-[var(--shadow-sm)]'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] hover:border-[var(--border-strong)]',

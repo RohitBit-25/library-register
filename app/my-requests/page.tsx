@@ -86,13 +86,13 @@ export default function MyRequestsPage() {
             onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
             onKeyDown={e => { if (e.key === 'Enter') handleSearch(); }}
             placeholder="10-digit mobile number"
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/40 transition-all font-mono tracking-wider"
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/40 transition-ui font-mono tracking-wider"
           />
           <button
             onClick={handleSearch}
             disabled={phone.length < 10 || loading}
             className={cn(
-              'cursor-pointer px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2',
+              'cursor-pointer px-5 py-2.5 rounded-xl text-sm font-bold transition-ui flex items-center gap-2',
               phone.length >= 10 && !loading
                 ? 'bg-[var(--sapphire-500)] text-[var(--text-inverse)] hover:shadow-lg active:scale-[0.98]'
                 : 'bg-[var(--bg-muted)] text-[var(--text-tertiary)] cursor-not-allowed'

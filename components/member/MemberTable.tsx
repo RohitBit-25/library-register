@@ -252,7 +252,7 @@ export default function MemberTable({
           placeholder="Search name, phone, seat... (Press / to focus)"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/30 focus:border-[var(--sapphire-500)]/50 transition-all shadow-sm"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/30 focus:border-[var(--sapphire-500)]/50 transition-ui shadow-sm"
         />
       </div>
 
@@ -263,7 +263,7 @@ export default function MemberTable({
             key={f.value}
             onClick={() => setFilter(f.value)}
             className={cn(
-               'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer border shadow-sm',
+               'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-ui duration-200 cursor-pointer border shadow-sm',
               filter === f.value
                 ? 'bg-[var(--sapphire-500)] text-[#1a1a16] border-[var(--sapphire-500)] shadow-[var(--shadow-md)] -translate-y-[1px]'
                 : 'bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-sm)] hover:-translate-y-[1px]',
@@ -544,14 +544,14 @@ export default function MemberTable({
                       <div className="p-3 grid grid-cols-2 gap-2">
                         <button
                           onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
-                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-all"
+                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-ui"
                         >
                           <Check className="w-4 h-4 text-[var(--sapphire-600)]" />
                           <span className="text-[11px] mt-0.5">{m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}</span>
                         </button>
                         <button
                           onClick={() => { onRenew(m.seat); setOpenActions(null); }}
-                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-all"
+                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-ui"
                         >
                           <RefreshCw className="w-4 h-4 text-[var(--sapphire-600)]" />
                           <span className="text-[11px] mt-0.5">Renew</span>

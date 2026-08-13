@@ -181,7 +181,7 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
     <div
       className={`
         absolute flex items-center justify-center
-        transition-all duration-200 ease-in-out
+        transition-ui duration-200 ease-in-out
         hover:z-30
         focus-within:ring-2 focus-within:ring-[var(--saffron-500)] focus-within:z-30
         ${className}

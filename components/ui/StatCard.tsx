@@ -74,7 +74,7 @@ export default function StatCard({ value, label, accent, icon, onClick }: StatCa
       className={cn(
         // `relative` + `overflow-hidden`: the corner overlay below is absolute
         // and had no positioned ancestor, so it escaped the card entirely.
-        'relative overflow-hidden text-left w-full rounded-[var(--radius-lg)] border-[1.5px] border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-[var(--space-5)] shadow-[var(--shadow-sm)] cursor-pointer group transition-all duration-300',
+        'relative overflow-hidden text-left w-full rounded-[var(--radius-lg)] border-[1.5px] border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-[var(--space-5)] shadow-[var(--shadow-sm)] cursor-pointer group transition-ui duration-300',
         // --shadow-glow-saffron is `none` in this palette, so the old hover
         // shadow did nothing.
         'hover:border-[var(--saffron-500)] hover:shadow-[var(--shadow-lg)]'

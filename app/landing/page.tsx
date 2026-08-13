@@ -127,7 +127,7 @@ export default function LandingPage() {
           <button
             type="button"
             onClick={handleStudentClick}
-            className="group mt-9 w-full max-w-md cursor-pointer rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 text-left shadow-[var(--shadow-sm)] transition-all hover:-translate-y-0.5 hover:border-[var(--saffron-600)] hover:shadow-[var(--shadow-md)]"
+            className="group mt-9 w-full max-w-md cursor-pointer rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 text-left shadow-[var(--shadow-sm)] transition-ui hover:-translate-y-0.5 hover:border-[var(--saffron-600)] hover:shadow-[var(--shadow-md)]"
           >
             <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--saffron-700)]">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--emerald-500)]" aria-hidden="true" />

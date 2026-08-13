@@ -114,27 +114,27 @@ export default function KioskPage() {
                   <button
                     key={num}
                     onClick={() => handleNumpad(num.toString())}
-                    className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-[var(--border-subtle)] text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-all active:scale-95 cursor-pointer"
+                    className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-[var(--border-subtle)] text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-ui active:scale-95 cursor-pointer"
                   >
                     {num}
                   </button>
                 ))}
                 <button
                   onClick={handleDelete}
-                  className="aspect-square rounded-2xl bg-[var(--ruby-500)]/10 border border-[var(--ruby-500)]/30 text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/20 transition-all flex items-center justify-center font-bold uppercase text-[11px] tracking-wider hover:-translate-y-1 active:scale-95 shadow-sm cursor-pointer"
+                  className="aspect-square rounded-2xl bg-[var(--ruby-500)]/10 border border-[var(--ruby-500)]/30 text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/20 transition-ui flex items-center justify-center font-bold uppercase text-[11px] tracking-wider hover:-translate-y-1 active:scale-95 shadow-sm cursor-pointer"
                 >
                   Clear
                 </button>
                 <button
                   onClick={() => handleNumpad('0')}
-                  className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-[var(--border-subtle)] text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-all active:scale-95 cursor-pointer"
+                  className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-[var(--border-subtle)] text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-ui active:scale-95 cursor-pointer"
                 >
                   0
                 </button>
                 <button
                   onClick={handleEnter}
                   disabled={!seatInput}
-                  className="aspect-square rounded-2xl bg-[var(--saffron-500)] text-[#1a1a16] disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl hover:shadow-[var(--saffron-500)]/20 hover:-translate-y-1 transition-all flex items-center justify-center cursor-pointer active:scale-95"
+                  className="aspect-square rounded-2xl bg-[var(--saffron-500)] text-[#1a1a16] disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl hover:shadow-[var(--saffron-500)]/20 hover:-translate-y-1 transition-ui flex items-center justify-center cursor-pointer active:scale-95"
                 >
                   <ArrowRight className="w-8 h-8" />
                 </button>
@@ -180,7 +180,7 @@ export default function KioskPage() {
                 <button
                   onClick={() => handleCheckAction('in')}
                   disabled={isPresent(todayStr, activeMember.seat)}
-                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--emerald-500)]/10 border-2 border-[var(--emerald-500)]/30 text-[var(--emerald-600)] hover:bg-[var(--emerald-500)]/20 hover:-translate-y-1 transition-all disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
+                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--emerald-500)]/10 border-2 border-[var(--emerald-500)]/30 text-[var(--emerald-600)] hover:bg-[var(--emerald-500)]/20 hover:-translate-y-1 transition-ui disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
                 >
                   <LogIn className="w-8 h-8 mb-2" />
                   <span className="font-extrabold uppercase tracking-widest text-[11px]">Check In</span>
@@ -188,7 +188,7 @@ export default function KioskPage() {
                 <button
                   onClick={() => handleCheckAction('out')}
                   disabled={!isPresent(todayStr, activeMember.seat)}
-                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:-translate-y-1 transition-all disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
+                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:-translate-y-1 transition-ui disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
                 >
                   <LogOut className="w-8 h-8 mb-2" />
                   <span className="font-extrabold uppercase tracking-widest text-[11px]">Check Out</span>

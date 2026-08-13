@@ -184,8 +184,8 @@ export default function ExpiryPage() {
             </span>
             <div className="flex-1 h-1.5 rounded-full bg-[var(--bg-base)] overflow-hidden border border-[var(--border-default)]/50 shadow-inner">
               <div
-                className={cn('h-full rounded-full transition-all duration-1000 ease-out shadow-sm', barColor)}
-                style={{ width: `${fillPct}%` }}
+                className={cn('meter-fill h-full w-full rounded-full shadow-sm', barColor)}
+                style={{ ['--fill' as string]: fillPct / 100 }}
               />
             </div>
           </div>
@@ -209,7 +209,7 @@ export default function ExpiryPage() {
           <Tooltip content="Send WhatsApp Reminder">
             <button
               onClick={() => handleWhatsApp(row.original)}
-              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--emerald-500)]/10 text-[var(--emerald-600)] hover:bg-[var(--emerald-500)]/20 shadow-sm hover:scale-105 transition-all active:scale-95 border border-[var(--emerald-500)]/20"
+              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--emerald-500)]/10 text-[var(--emerald-600)] hover:bg-[var(--emerald-500)]/20 shadow-sm hover:scale-105 transition-ui active:scale-95 border border-[var(--emerald-500)]/20"
             >
               <MessageCircle className="w-4 h-4" />
             </button>
@@ -218,7 +218,7 @@ export default function ExpiryPage() {
             <button
               onClick={() => handleRenew(row.original.seat)}
               aria-label={`Renew membership for seat ${row.original.seat}`}
-              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)] hover:bg-[var(--sapphire-500)]/20 shadow-sm hover:scale-105 transition-all active:scale-95 border border-[var(--sapphire-500)]/20"
+              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)] hover:bg-[var(--sapphire-500)]/20 shadow-sm hover:scale-105 transition-ui active:scale-95 border border-[var(--sapphire-500)]/20"
             >
               <RefreshCw className="w-4 h-4" aria-hidden="true" />
             </button>
@@ -231,7 +231,7 @@ export default function ExpiryPage() {
               <button
                 onClick={() => setConfirmVacate(row.original)}
                 aria-label={`Vacate seat ${row.original.seat} — membership expired`}
-                className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--ruby-500)]/10 text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/20 shadow-sm hover:scale-105 transition-all active:scale-95 border border-[var(--ruby-500)]/20"
+                className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--ruby-500)]/10 text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/20 shadow-sm hover:scale-105 transition-ui active:scale-95 border border-[var(--ruby-500)]/20"
               >
                 <Trash2 className="w-4 h-4" aria-hidden="true" />
               </button>

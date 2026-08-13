@@ -195,7 +195,7 @@ export default function SeatDetailPanel({
                           aria-checked={field.value === d}
                           onClick={() => field.onChange(d)}
                           className={cn(
-                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer',
+                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-ui duration-300 cursor-pointer',
                             field.value === d
                               ? 'bg-[var(--saffron-500)] text-white shadow-md ring-1 ring-[var(--saffron-500)]/50 z-10'
                               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100',
@@ -224,7 +224,7 @@ export default function SeatDetailPanel({
                           aria-checked={field.value === f}
                           onClick={() => field.onChange(f)}
                           className={cn(
-                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer capitalize',
+                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-ui duration-300 cursor-pointer capitalize',
                             field.value === f
                               ? (f === 'paid' ? 'bg-[var(--emerald-600)] text-[var(--saffron-50)] shadow-md' : 'bg-[var(--saffron-500)] text-white shadow-md')
                               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100',
@@ -260,7 +260,7 @@ export default function SeatDetailPanel({
               </button>
               <button
                 type="submit"
-                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-[var(--indigo-500)] text-[var(--saffron-50)] hover:brightness-110 transition-all cursor-pointer shadow-lg shadow-[var(--indigo-500)]/20 active:scale-95 flex items-center justify-center gap-2"
+                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-[var(--indigo-500)] text-[var(--saffron-50)] hover:brightness-110 transition-ui cursor-pointer shadow-lg shadow-[var(--indigo-500)]/20 active:scale-95 flex items-center justify-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 Save Changes
@@ -430,7 +430,7 @@ export default function SeatDetailPanel({
                           aria-checked={field.value === d}
                           onClick={() => field.onChange(d)}
                           className={cn(
-                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer relative overflow-hidden',
+                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-ui duration-300 cursor-pointer relative overflow-hidden',
                             field.value === d
                               ? 'bg-[var(--sapphire-600)] text-[var(--saffron-50)] shadow-md scale-100 ring-1 ring-[var(--sapphire-500)]/50 z-10'
                               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] scale-[0.98] hover:scale-100 z-0',
@@ -463,7 +463,7 @@ export default function SeatDetailPanel({
               </button>
               <button
                 type="submit"
-                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-[var(--sapphire-600)] text-[var(--saffron-50)] hover:bg-[var(--sapphire-500)] transition-all cursor-pointer shadow-lg shadow-[var(--sapphire-500)]/20 hover:shadow-xl hover:shadow-[var(--sapphire-500)]/30 active:scale-95"
+                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-[var(--sapphire-600)] text-[var(--saffron-50)] hover:bg-[var(--sapphire-500)] transition-ui cursor-pointer shadow-lg shadow-[var(--sapphire-500)]/20 hover:shadow-xl hover:shadow-[var(--sapphire-500)]/30 active:scale-95"
               >
                 Confirm Renewal
               </button>
@@ -513,7 +513,7 @@ export default function SeatDetailPanel({
         </h3>
         <button 
           onClick={() => { setRenewMode(false); setEditMode(false); onClose(); }}
-          className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] transition-all hover:rotate-90 duration-200"
+          className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] transition-ui hover:rotate-90 duration-200"
           aria-label="Close panel"
         >
           <X className="w-5 h-5" />

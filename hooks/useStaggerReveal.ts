@@ -29,7 +29,17 @@ function distanceFromCentre(seat: number): number {
 export function useStaggerReveal<T extends HTMLElement>(
   /** Flip true once seats have actually rendered. */
   ready: boolean,
-  spreadMs = 420
+  /**
+   * Total spread across all tiles. Deliberately short.
+   *
+   * The seat map is the admin's home screen — seen many times a day, which
+   * puts it in the "near-imperceptible or nothing" tier, not the tier that
+   * gets a showpiece reveal. This started at 420ms spread + 420ms duration
+   * (~840ms end to end), which is showpiece timing on a screen someone opens
+   * fifty times a shift. 160 + 240 keeps the spatial cue and gets out of the
+   * way. Tiles remain clickable throughout — the reveal never blocks input.
+   */
+  spreadMs = 160
 ) {
   const containerRef = useRef<T>(null);
   const hasRun = useRef(false);
@@ -59,8 +69,12 @@ export function useStaggerReveal<T extends HTMLElement>(
 
     const animation = animate(tiles, {
       opacity: [0, 1],
-      scale: [0.88, 1],
-      duration: 420,
+      // Never scale(0) — nothing in the real world appears from nothing.
+      // 0.94 is enough to read as arrival without looking like a zoom.
+      scale: [0.94, 1],
+      duration: 240,
+      // ease-out: entrances start fast and settle. ease-in would stall at the
+      // exact moment the user is looking at the map.
       ease: 'out(3)',
       delay: stagger(spreadMs / Math.max(tiles.length, 1)),
     });

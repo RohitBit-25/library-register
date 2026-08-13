@@ -57,7 +57,7 @@ export default function DurationDonut({ data }: DurationDonutProps) {
                   initial={{ strokeDasharray: `0 ${circumference}` }}
                   animate={{ strokeDasharray }}
                   transition={{ duration: 1, delay: i * 0.1, ease: 'easeOut' }}
-                  className="transition-all hover:opacity-80 cursor-pointer"
+                  className="transition-ui hover:opacity-80 cursor-pointer"
                 />
               );
               

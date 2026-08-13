@@ -20,20 +20,20 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         font-[var(--font-body)] font-[var(--weight-semibold)] tracking-[var(--tracking-wide)]
         rounded-[var(--radius-sm)] border border-[var(--saffron-700)] shadow-[var(--shadow-sm)]
         hover:bg-[var(--saffron-700)] hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5
-        transition-all duration-200
+        transition-ui duration-200
       `,
       secondary: `
         bg-transparent text-[var(--saffron-700)]
         border border-[var(--border-strong)] rounded-[var(--radius-sm)]
         font-[var(--font-body)] font-[var(--weight-medium)]
         hover:bg-[var(--saffron-50)] hover:border-[var(--saffron-600)]
-        transition-all duration-200
+        transition-ui duration-200
       `,
       danger: `
         bg-[var(--ruby-50)] text-[var(--ruby-600)]
         border border-[var(--ruby-200)] rounded-[var(--radius-sm)]
         hover:bg-[var(--ruby-100)] hover:border-[var(--ruby-500)]
-        transition-all duration-200
+        transition-ui duration-200
       `,
       ghost: `
         bg-transparent text-[var(--text-secondary)] border-none rounded-[var(--radius-sm)]
@@ -44,7 +44,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-[var(--shadow-xs)]
         text-[var(--text-secondary)] rounded-full
         hover:bg-[var(--bg-surface)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)] hover:shadow-[var(--shadow-sm)] hover:-translate-y-0.5
-        transition-all duration-200 flex items-center justify-center
+        transition-ui duration-200 flex items-center justify-center
       `
     };
 

@@ -131,7 +131,7 @@ export default function SeatGridContent() {
   return (
     <div className="relative min-h-screen pb-20">
       <div className={cn(
-        "transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] w-full",
+        "transition-ui duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] w-full",
         selectedSeat !== null && !isMobile ? 'pr-[380px]' : ''
       )}>
         

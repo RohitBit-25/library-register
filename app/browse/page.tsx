@@ -115,7 +115,7 @@ export default function BrowsePage() {
           <div className="flex items-center gap-3">
             {pendingCount > 0 && (
               <button
-                className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--sapphire-400)]/10 border border-[var(--sapphire-400)]/30 text-[var(--sapphire-600)] font-bold text-xs hover:bg-[var(--sapphire-400)]/20 transition-all shadow-[var(--shadow-glow-sapphire)] active:scale-95"
+                className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--sapphire-400)]/10 border border-[var(--sapphire-400)]/30 text-[var(--sapphire-600)] font-bold text-xs hover:bg-[var(--sapphire-400)]/20 transition-ui shadow-[var(--shadow-glow-sapphire)] active:scale-95"
                 onClick={() => addToast('success', `${pendingCount} pending request(s)`)}
               >
                 <Inbox className="w-4 h-4" />
@@ -125,7 +125,7 @@ export default function BrowsePage() {
               </button>
             )}
             <button
-              className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-[var(--text-secondary)] font-medium text-xs hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-all active:scale-95"
+              className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-[var(--text-secondary)] font-medium text-xs hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-ui active:scale-95"
               onClick={() => { logout(); router.push('/landing'); }}
             >
               <LogOut className="w-4 h-4" />
@@ -161,7 +161,7 @@ export default function BrowsePage() {
                 </span>
                 {stat.label !== 'Total Seats' && (
                    <div className="w-16 h-1.5 rounded-full bg-[var(--bg-muted)] overflow-hidden hidden sm:block">
-                     <div className="h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${(stat.value / stats.total) * 100}%`, background: stat.color }} />
+                     <div className="meter-fill h-full w-full rounded-full" style={{ ['--fill' as string]: stats.total ? stat.value / stats.total : 0, background: stat.color }} />
                    </div>
                 )}
               </div>
@@ -183,7 +183,7 @@ export default function BrowsePage() {
                 key={tab.value}
                 onClick={() => setShiftFilter(tab.value)}
                 className={cn(
-                  "cursor-pointer flex items-center justify-center gap-2 px-4 md:px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 capitalize tracking-wide flex-1 md:flex-auto whitespace-nowrap",
+                  "cursor-pointer flex items-center justify-center gap-2 px-4 md:px-5 py-2.5 rounded-xl text-xs font-bold transition-ui duration-300 capitalize tracking-wide flex-1 md:flex-auto whitespace-nowrap",
                   shiftFilter === tab.value
                     ? "bg-[var(--saffron-500)] text-[var(--bg-void)] shadow-[var(--shadow-glow-saffron)]"
                     : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-muted)]/40"
@@ -325,7 +325,7 @@ function BrowseSeatTile({
       <button
         onClick={() => isVacant && onClick(member.seat)}
         className={cn(
-          'relative flex flex-col items-center justify-between rounded-xl w-full h-full py-1.5 px-1 transition-all duration-300 border overflow-hidden',
+          'relative flex flex-col items-center justify-between rounded-xl w-full h-full py-1.5 px-1 transition-ui duration-300 border overflow-hidden',
           cfg.bg, cfg.border,
           isVacant
             ? 'cursor-pointer hover:scale-[1.08] hover:z-20 hover:shadow-lg active:scale-95'

@@ -183,7 +183,7 @@ export default function SeatRequestSheet({
 
   // Shared input classes
   const inputCls =
-    'w-full px-4 py-3 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 focus:border-[var(--saffron-500)]/50 transition-all duration-200';
+    'w-full px-4 py-3 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 focus:border-[var(--saffron-500)]/50 transition-ui duration-200';
 
   return (
     <AnimatePresence>
@@ -229,7 +229,7 @@ export default function SeatRequestSheet({
                   </p>
                   <button
                     onClick={onClose}
-                    className="cursor-pointer px-6 py-2.5 rounded-xl bg-[var(--bg-base)] border border-[var(--border-default)] text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all"
+                    className="cursor-pointer px-6 py-2.5 rounded-xl bg-[var(--bg-base)] border border-[var(--border-default)] text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-ui"
                   >
                     Close
                   </button>
@@ -283,7 +283,7 @@ export default function SeatRequestSheet({
                       </div>
                       <button
                         onClick={onClose}
-                        className="cursor-pointer w-8 h-8 rounded-xl bg-[var(--bg-base)] border border-[var(--border-default)] flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-all"
+                        className="cursor-pointer w-8 h-8 rounded-xl bg-[var(--bg-base)] border border-[var(--border-default)] flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-ui"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -305,7 +305,7 @@ export default function SeatRequestSheet({
                           aria-checked={paymentMode === 'cash'}
                           onClick={() => setPaymentMode('cash')}
                           className={cn(
-                            'cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all duration-300',
+                            'cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-ui duration-300',
                             paymentMode === 'cash'
                               ? 'bg-[var(--emerald-500)] text-[#1a1a16] shadow-lg shadow-[var(--emerald-500)]/25'
                               : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]',
@@ -320,7 +320,7 @@ export default function SeatRequestSheet({
                           aria-checked={paymentMode === 'upi'}
                           onClick={() => setPaymentMode('upi')}
                           className={cn(
-                            'cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all duration-300',
+                            'cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-ui duration-300',
                             paymentMode === 'upi'
                               ? 'bg-[var(--sapphire-500)] text-white shadow-lg shadow-[var(--sapphire-500)]/25'
                               : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]',
@@ -523,7 +523,7 @@ export default function SeatRequestSheet({
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
-                          className="cursor-pointer w-full py-5 rounded-xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--bg-base)] text-[var(--text-tertiary)] hover:border-[var(--saffron-500)]/40 hover:bg-[var(--saffron-500)]/5 transition-all duration-200 flex flex-col items-center gap-2.5"
+                          className="cursor-pointer w-full py-5 rounded-xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--bg-base)] text-[var(--text-tertiary)] hover:border-[var(--saffron-500)]/40 hover:bg-[var(--saffron-500)]/5 transition-ui duration-200 flex flex-col items-center gap-2.5"
                         >
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-xl bg-[var(--saffron-500)]/10 flex items-center justify-center">
@@ -559,7 +559,7 @@ export default function SeatRequestSheet({
                             type="button"
                             onClick={removeDocument}
                             aria-label="Remove uploaded document"
-                            className="cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/10 transition-all"
+                            className="cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/10 transition-ui"
                           >
                             <Trash2 className="w-4 h-4" aria-hidden="true" />
                           </button>
@@ -600,7 +600,7 @@ export default function SeatRequestSheet({
                       onClick={handleSubmit}
                       disabled={!isValid || loading}
                       className={cn(
-                        'cursor-pointer w-full py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2.5 shadow-lg',
+                        'cursor-pointer w-full py-3.5 rounded-2xl text-sm font-bold transition-ui duration-300 flex items-center justify-center gap-2.5 shadow-lg',
                         isValid && !loading
                           ? 'bg-gradient-to-r from-[var(--saffron-500)] to-[var(--saffron-600,var(--saffron-500))] text-[#1a1a16] hover:shadow-[var(--saffron-500)]/30 hover:shadow-xl active:scale-[0.98]'
                           : 'bg-[var(--bg-muted)] text-[var(--text-tertiary)] cursor-not-allowed shadow-none',

@@ -22,7 +22,7 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
         <input
           ref={ref}
           className={cn(
-            'peer w-full rounded-[var(--radius-xl)] border bg-[var(--bg-elevated)] px-4 pt-6 pb-2 text-base font-medium text-[var(--text-primary)] placeholder-transparent shadow-[var(--shadow-sm)] outline-none transition-all duration-200',
+            'peer w-full rounded-[var(--radius-xl)] border bg-[var(--bg-elevated)] px-4 pt-6 pb-2 text-base font-medium text-[var(--text-primary)] placeholder-transparent shadow-[var(--shadow-sm)] outline-none transition-ui duration-200',
             !!icon && 'pl-11',
             error 
               ? 'border-[var(--ruby-500)] focus:border-[var(--ruby-500)] focus:ring-4 focus:ring-[var(--ruby-500)]/20' 
@@ -37,7 +37,7 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
         
         <label
           className={cn(
-            'pointer-events-none absolute left-4 transition-all duration-300 transform font-medium select-none z-10',
+            'pointer-events-none absolute left-4 transition-ui duration-300 transform font-medium select-none z-10',
             !!icon && 'left-11',
             props.type === 'date'
               ? 'top-2 text-[11px] font-bold text-[var(--saffron-600)]' // Date input always elevated

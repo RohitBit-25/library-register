@@ -134,7 +134,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <FieldGroup label="Seat Number" required error={errors.seat?.message}>
           <select
             {...register('seat', { valueAsNumber: true })}
-            className="w-full cursor-pointer rounded-xl border border-[var(--border-default)] px-4 py-3.5 text-sm font-mono font-bold bg-[var(--bg-surface)]/50 text-[var(--text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--saffron-500)]/10 focus:border-[var(--saffron-500)]/50 backdrop-blur-md transition-all duration-300"
+            className="w-full cursor-pointer rounded-xl border border-[var(--border-default)] px-4 py-3.5 text-sm font-mono font-bold bg-[var(--bg-surface)]/50 text-[var(--text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--saffron-500)]/10 focus:border-[var(--saffron-500)]/50 backdrop-blur-md transition-ui duration-300"
           >
             {vacantSeats.length === 0 ? (
               <option value="-1">No seats available</option>
@@ -204,7 +204,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         {/* Document Upload */}
         <div className="pt-2">
           <FieldGroup label="Aadhar/Pan card" required error={errors.documentStatus?.message}>
-            <div className="relative border-2 border-dashed border-[var(--border-default)] rounded-xl p-8 hover:bg-[var(--bg-base)] transition-all duration-200 text-center group cursor-pointer bg-surface/30">
+            <div className="relative border-2 border-dashed border-[var(--border-default)] rounded-xl p-8 hover:bg-[var(--bg-base)] transition-ui duration-200 text-center group cursor-pointer bg-surface/30">
               <input 
                 type="file" 
                 onChange={handleFileChange}
@@ -328,14 +328,14 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <button
           type="submit"
           disabled={vacantSeats.length === 0 || !isValid}
-          className="flex-1 rounded-xl bg-[var(--saffron-500)] py-4 text-[13px] font-black tracking-widest uppercase text-[#1a1a16] hover:brightness-110 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[var(--saffron-500)]/20 hover:shadow-xl hover:shadow-[var(--saffron-500)]/30 active:scale-[0.98]"
+          className="flex-1 rounded-xl bg-[var(--saffron-500)] py-4 text-[13px] font-black tracking-widest uppercase text-[#1a1a16] hover:brightness-110 transition-ui duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[var(--saffron-500)]/20 hover:shadow-xl hover:shadow-[var(--saffron-500)]/30 active:scale-[0.98]"
         >
           Submit Form
         </button>
         <button
           type="button"
           onClick={clearForm}
-          className="rounded-xl border border-[var(--border-default)] px-6 text-[13px] font-black uppercase text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-[var(--ruby-600)] transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98]"
+          className="rounded-xl border border-[var(--border-default)] px-6 text-[13px] font-black uppercase text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-[var(--ruby-600)] transition-ui duration-300 cursor-pointer shadow-sm active:scale-[0.98]"
         >
           Clear
         </button>
@@ -392,7 +392,7 @@ function SegmentedControl({
           type="button"
           onClick={() => onChange(opt.value)}
           className={cn(
-            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-all duration-300 cursor-pointer relative overflow-hidden',
+            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-ui duration-300 cursor-pointer relative overflow-hidden',
             value === opt.value
               ? 'bg-[var(--saffron-500)] text-white shadow-md scale-100 ring-1 ring-[var(--saffron-500)]/50 z-10'
               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100 z-0',

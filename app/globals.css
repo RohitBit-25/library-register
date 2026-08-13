@@ -30,7 +30,9 @@
     --animate-content-show: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
     --animate-content-hide: contentHide 150ms cubic-bezier(0.16, 1, 0.3, 1);
     --animate-fade-in: fade-in 150ms ease-out;
-    --animate-fade-out: fade-out 150ms ease-in;
+    /* ease-out, not ease-in: an exit that starts slow holds the user's
+       attention on the thing they just dismissed. */
+    --animate-fade-out: fade-out 150ms cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   /* ═══════════════════════════════════════════════════════════════
@@ -219,20 +221,37 @@
     --weight-semibold:600;
     --weight-bold:    700;
 
-    /* === ANIMATION === */
-    --ease-standard:   cubic-bezier(0.4, 0.0, 0.2, 1.0);
-    --ease-enter:      cubic-bezier(0.0, 0.0, 0.2, 1.0);
-    --ease-exit:       cubic-bezier(0.4, 0.0, 1.0, 1.0);
+    /* === ANIMATION ===
+       Curves are the strong UI set, not the built-ins. The old values here
+       were `cubic-bezier(0.4, 0, 0.2, 1)` and friends — Material's defaults,
+       which are too weak to read as intentional at UI durations.
+
+       Rules these encode:
+         · ease-out for anything entering or exiting
+         · ease-in-out for movement across the screen
+         · NEVER ease-in on UI — it stalls at the exact moment the user looks
+       Source: easing.dev */
+    --ease-out:        cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out:     cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-drawer:     cubic-bezier(0.32, 0.72, 0, 1);
+
+    /* Back-compat aliases so existing call sites pick up the stronger curves
+       rather than needing 200 edits. --ease-exit deliberately maps to
+       ease-out, not an ease-in curve. */
+    --ease-standard:   var(--ease-in-out);
+    --ease-enter:      var(--ease-out);
+    --ease-exit:       var(--ease-out);
+    --ease-smooth:     var(--ease-out);
     --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
     --ease-bounce:     cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    --ease-smooth:     cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
+    /* UI motion stays under 300ms. --duration-slow and up are for the rare
+       tier only (first-run reveals), never for dropdowns or hovers. */
     --duration-instant:  80ms;
     --duration-fast:    150ms;
-    --duration-normal:  250ms;
-    --duration-slow:    380ms;
-    --duration-lazy:    550ms;
-    --duration-dramatic:800ms;
+    --duration-normal:  220ms;
+    --duration-slow:    280ms;
+    --duration-lazy:    400ms;
 
     /* === LAYOUT === */
     --sidebar-width: 220px;
@@ -603,4 +622,55 @@
   @media (prefers-reduced-motion: reduce) {
     .sheen::after { display: none; }
     .surface-lift:hover { transform: none; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     MOTION UTILITIES
+     ═══════════════════════════════════════════════════════════════ */
+
+  /* Replaces `transition-all`, which was used in 78 places. `all` transitions
+     every animatable property — including layout ones the browser must
+     recalculate — so a single hover could trigger layout, paint and
+     composite. These are the properties UI elements actually change, and
+     nothing else. */
+  .transition-ui {
+    transition-property: color, background-color, border-color, fill, stroke,
+                         box-shadow, opacity, transform;
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-out);
+  }
+
+  /* Hover motion must not fire on touch: tapping synthesises a hover, so an
+     ungated :hover transform sticks after the finger lifts. Anything that
+     MOVES on hover belongs behind this; colour-only hovers are fine ungated. */
+  @media (hover: hover) and (pointer: fine) {
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .hover-press:active {
+      transform: translateY(0) scale(0.99);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .transition-ui { transition-duration: 0.01ms; }
+    .hover-lift:hover { transform: none; }
+  }
+
+  /* Meter / progress fill.
+     Scales on the X axis instead of animating `width`. Width is a layout
+     property: the browser must reflow, repaint and composite every frame,
+     and with several meters on screen that lands on the main thread during
+     the exact moment a page is loading data. transform is composite-only.
+     Set --fill (0–1) on the element. */
+  .meter-fill {
+    transform: scaleX(var(--fill, 0));
+    transform-origin: left center;
+    transition: transform var(--duration-slow) var(--ease-out);
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .meter-fill { transition-duration: 0.01ms; }
   }

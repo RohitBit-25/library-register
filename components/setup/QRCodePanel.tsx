@@ -83,7 +83,7 @@ export default function QRCodePanel() {
                 href={url || '/'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--saffron-500)] text-[#1a1a16] rounded-[var(--radius-md)] font-[var(--weight-bold)] text-sm hover:opacity-90 transition-all shadow-[var(--shadow-glow-saffron)]"
+                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--saffron-500)] text-[#1a1a16] rounded-[var(--radius-md)] font-[var(--weight-bold)] text-sm hover:opacity-90 transition-ui shadow-[var(--shadow-glow-saffron)]"
               >
                 <ExternalLink className="w-4 h-4" />
                 Open Portal
@@ -134,7 +134,7 @@ export default function QRCodePanel() {
           <button
             onClick={handleDownload}
             disabled={!url}
-            className="mt-6 flex items-center justify-center gap-2 px-6 py-2.5 bg-[var(--saffron-500)]/15 text-[var(--saffron-600)] hover:bg-[var(--saffron-500)] hover:text-[var(--saffron-50)] rounded-[var(--radius-full)] font-bold text-sm transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 flex items-center justify-center gap-2 px-6 py-2.5 bg-[var(--saffron-500)]/15 text-[var(--saffron-600)] hover:bg-[var(--saffron-500)] hover:text-[var(--saffron-50)] rounded-[var(--radius-full)] font-bold text-sm transition-ui active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="w-4 h-4" />
             Download PNG

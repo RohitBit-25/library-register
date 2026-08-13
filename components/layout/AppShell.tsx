@@ -80,7 +80,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
       <TopBar />
       <main 
         className={cn(
-          "min-h-screen transition-all flex flex-col bg-[var(--bg-void)]",
+          "min-h-screen transition-ui flex flex-col bg-[var(--bg-void)]",
           isAdmin 
             ? "pt-14 pb-16 lg:pb-0 lg:pt-0 lg:ml-[240px]" 
             : "pt-14 pb-16 lg:pb-0 lg:pt-14" 
