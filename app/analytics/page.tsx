@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/useToast';
 import StatCard from '@/components/ui/StatCard';
 import Badge, { BadgeVariant } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
+import DurationDonut from '@/components/charts/DurationDonut';
 import { Button } from '@/components/ui/Button';
 import { getSeatStatus, fmtDate, daysUntilExpiry } from '@/lib/utils';
 import { type Member } from '@/lib/types';
@@ -241,7 +242,16 @@ export default function DashboardPage() {
       )}
 
       {/* Bottom row: Sparkline + Priority table */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-5 gap-[var(--space-4)]">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-[var(--space-4)] mb-[var(--space-6)]">
+        {/* Membership mix — byDuration was already computed by /api/stats and
+            thrown away; DurationDonut existed but nothing imported it. */}
+        <Card variant="base" className="lg:col-span-2 p-[var(--space-5)]">
+          <h3 className="font-display mb-[var(--space-4)] text-sm font-semibold text-[var(--text-primary)]">
+            Membership Mix
+          </h3>
+          <DurationDonut data={stats.byDuration} />
+        </Card>
+
         {/* Attendance trend — real records, not a generated curve */}
         <Card variant="base" className="lg:col-span-2 p-[var(--space-5)]">
           <div className="mb-[var(--space-4)] flex items-baseline justify-between gap-2">

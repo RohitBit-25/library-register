@@ -128,6 +128,45 @@ It was a `console.log` next to a TODO, with three defects:
 
 Verified live: `401` without the secret, run 1 sends 1, run 2 sends 0, renewal re-enables, and a member with no phone is reported rather than silently dropped.
 
+---
+
+## 0d. Fourth pass — fabricated data, and the missing half of fee management
+
+### The dashboard was inventing its own history
+
+`app/analytics/page.tsx` built a 30-day "occupancy" curve with `Math.random()` and rendered it as a real trend:
+
+```js
+const noise = Math.floor(Math.random() * 8) - 4;
+data.push(Math.max(30, Math.min(95, current + noise - ...)));
+```
+
+An admin reading that chart was drawing conclusions from noise. This is the most dangerous class of bug in the codebase — not a crash, not a visual glitch, but **confidently wrong information presented as fact**.
+
+It now plots genuine daily attendance from records the app was already collecting, and when the window is empty it says *"No attendance recorded yet"* rather than drawing a flat line that could be mistaken for real zero attendance. `trendDaysWithData` tells the UI how much of the window is actually populated so it can caveat itself.
+
+### Fee management had no money in it
+
+The register tracked `fee: 'paid' | 'due'` and nothing else — no amount, anywhere. The question a fee register exists to answer, *"how much is outstanding?"*, had no answer.
+
+| Added | What it does |
+|---|---|
+| `lib/pricing.ts` | One rate table, overridable per deployment via `NEXT_PUBLIC_PLAN_RATES`. Unknown/empty durations are worth `0`, never `NaN` — a mid-signup member with `duration: ''` cannot poison a total. |
+| `models/Payment.ts` | Append-only ledger. Corrections are new rows, never mutations. |
+| `/api/payments` | The ledger, filterable by seat and date range — *"when did this member actually pay?"* for receipts and disputes. |
+| `/api/stats` → `revenue` | Outstanding (exact), contract value, monthly run rate, and collections summed from the ledger. |
+
+**Why a ledger and not a field.** The first cut stamped `lastPaymentAt` / `lastPaymentAmount` on the Member. That is one slot per member, so a member paying twice inside the reporting window overwrote their own first payment and the total silently undercounted. Verified against a running server: two collections from one member now read **₹3,800 / 2 payments**, where the field approach stayed at ₹1,900. Money does not belong in a field that can be clobbered.
+
+Only genuine transitions are recorded — re-saving an already-paid member is not a second payment, also verified.
+
+`hasPaymentHistory` lets the dashboard say *"Not tracked yet"* instead of showing ₹0 and implying the library collected nothing. History builds forward from deploy; it cannot reconstruct payments that were never captured, and it does not pretend otherwise.
+
+### Dead code removed and revived
+
+- `OccupancySparkline` — deleted. Orphaned, and duplicated a local `Sparkline` in the analytics page.
+- `DurationDonut` — orphaned but useful, so wired to the `byDuration` data `/api/stats` was already computing and throwing away. Its colours were hardcoded stock Tailwind hexes sitting outside the design system; now tokens.
+
 ### Product decisions confirmed with the owner
 
 - **One seat = one member.** The `shift` field is that member's attendance window, not a sellable slot. Seats are *not* shared between a morning and an evening student, so no data-model change was made.
