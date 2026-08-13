@@ -53,12 +53,11 @@ Flagged in the audit as deferred; it needs a bucket, not a code change. Until th
 - Move to S3/R2/Vercel Blob with signed URLs.
 - Add a retention job: purge documents 30 days after approve/reject.
 
-### 6. There is exactly one admin
-One PIN, shared. The audit log says "Admin" for every action, so it cannot answer *who* vacated a seat.
-
-- Named staff accounts, each with their own PIN.
-- Stamp `user` on `AuditLog` — the field already exists and always says "Admin".
-- Optional: a read-only role for a helper who marks attendance but cannot vacate seats.
+### 6. ~~There is exactly one admin~~ — DONE
+Named staff accounts shipped. Each person has their own PIN, the session carries
+their identity, and every audit row records who acted. Owners can add and revoke
+staff; revoking preserves the name on rows they already created. The old single
+credential migrates automatically, so the existing PIN keeps working.
 
 ### 7. No backup runs on its own
 Export is manual. A library that loses its member list loses its business.
