@@ -93,9 +93,9 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
             <BookOpen className="w-[18px] h-[18px] text-[var(--text-inverse)]" />
           </div>
           <div>
-            <h1 className="text-sm font-extrabold text-[var(--text-primary)] leading-tight tracking-tight">
+            <p className="text-sm font-extrabold text-[var(--text-primary)] leading-tight tracking-tight">
               Library Register
-            </h1>
+            </p>
             <p className="text-[11px] text-[var(--text-tertiary)] font-medium">
               {dateStr}
             </p>

@@ -210,8 +210,8 @@ export default function AttendancePage() {
                   <div className="w-14 h-14 bg-[var(--bg-overlay)] rounded-[var(--radius-2xl)] mb-[var(--space-3)] flex justify-center items-center shadow-[var(--shadow-sm)] border border-[var(--border-subtle)]">
                     <UserCheck className="w-7 h-7 text-[var(--text-tertiary)]" />
                   </div>
-                  <span className="text-[var(--text-md)] font-[var(--weight-semibold)] text-[var(--text-primary)]">No seats are currently occupied.</span>
-                  <p className="text-[var(--text-sm)] font-[var(--weight-medium)] text-[var(--text-secondary)] mt-[var(--space-1)]">Add members to start tracking attendance.</p>
+                  <span className="text-md font-[var(--weight-semibold)] text-[var(--text-primary)]">No seats are currently occupied.</span>
+                  <p className="text-sm font-[var(--weight-medium)] text-[var(--text-secondary)] mt-[var(--space-1)]">Add members to start tracking attendance.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-10 gap-[var(--space-3)]">

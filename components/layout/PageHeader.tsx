@@ -14,10 +14,16 @@ import type { ReactNode } from 'react';
  * they are `aria-hidden` and tinted like the other tertiary marks rather than
  * carrying a status colour of their own.
  *
- * Sizes come from the type scale as tokens, never Tailwind's `text-2xl` and
- * friends: `@theme` redefines those utilities, so `text-4xl` in this codebase
- * is 3.81rem rather than the stock 2.25rem. Two pages had picked their title
- * size from the Tailwind name and landed 60px tall by accident.
+ * Sizes use the named utilities — `text-lg`, `text-xl` — which `@theme` has
+ * already remapped onto this project's scale (`text-xl` is 1.95rem here, not
+ * the stock 1.25rem).
+ *
+ * NOT `text-[var(--text-xl)]`. Tailwind's `text-` prefix covers both colour
+ * and size, and an arbitrary `var()` is ambiguous, so it compiles to a colour
+ * and the font-size is silently dropped. Titles written that way rendered at
+ * the inherited 16px — which is most of why page titles looked inconsistent
+ * in the first place, and why every Button and Badge label was 16px instead
+ * of its intended size.
  */
 export default function PageHeader({
   title,
@@ -39,7 +45,7 @@ export default function PageHeader({
   return (
     <header className={`mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between ${className}`}>
       <div className="min-w-0">
-        <h1 className="flex items-center gap-2.5 font-display text-[var(--text-lg)] font-bold tracking-[var(--tracking-tight)] text-[var(--text-primary)] sm:text-[var(--text-xl)]">
+        <h1 className="flex items-center gap-2.5 font-display text-lg font-bold tracking-[var(--tracking-tight)] text-[var(--text-primary)] sm:text-xl">
           {icon && (
             <span className="shrink-0 text-[var(--text-tertiary)]" aria-hidden="true">
               {icon}

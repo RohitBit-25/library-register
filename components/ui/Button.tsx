@@ -49,9 +49,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const sizes = {
-      sm: "px-3 py-1.5 text-[var(--text-sm)] min-h-[32px]",
-      md: variant === 'icon' ? "w-10 h-10 min-w-[44px] min-h-[44px]" : "px-6 py-[12px] text-[var(--text-sm)] min-h-[44px]",
-      lg: "px-8 py-4 text-[var(--text-base)] min-h-[52px]",
+      sm: "px-3 py-1.5 text-sm min-h-[32px]",
+      md: variant === 'icon' ? "w-10 h-10 min-w-[44px] min-h-[44px]" : "px-6 py-[12px] text-sm min-h-[44px]",
+      lg: "px-8 py-4 text-base min-h-[52px]",
     };
 
     // The icon variant doesn't use standard padding/size unless overridden

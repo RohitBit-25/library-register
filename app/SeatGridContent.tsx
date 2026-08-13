@@ -150,7 +150,7 @@ export default function SeatGridContent() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="text-[var(--text-xl)] md:text-[var(--text-2xl)] font-bold tracking-tight text-[var(--text-primary)]"
+                  className="text-xl md:text-2xl font-bold tracking-tight text-[var(--text-primary)]"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
                   Reading Hall Seats

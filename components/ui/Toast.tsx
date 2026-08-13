@@ -63,7 +63,7 @@ export default function ToastContainer({ toasts, onRemove }: ToastContainerProps
               role="alert"
             >
               <Icon className="w-5 h-5 shrink-0 mt-0.5" />
-              <p className="text-[var(--text-sm)] font-[var(--font-body)] text-[var(--text-primary)] flex-1 leading-[1.5]">
+              <p className="text-sm font-[var(--font-body)] text-[var(--text-primary)] flex-1 leading-[1.5]">
                 {t.message}
               </p>
               <button

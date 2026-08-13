@@ -48,7 +48,7 @@ export function Badge({ variant, className, children, ...props }: BadgeProps) {
       className={cn(
         "inline-flex items-center gap-[var(--space-1)] px-[10px] py-[4px]",
         "rounded-[var(--radius-full)] border-[1.5px]",
-        "font-[var(--font-body)] text-[var(--text-xs)] font-[var(--weight-semibold)]",
+        "font-[var(--font-body)] text-xs font-[var(--weight-semibold)]",
         "tracking-[var(--tracking-widest)] uppercase",
         c.bg, c.border, c.text,
         className

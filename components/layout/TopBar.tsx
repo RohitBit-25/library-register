@@ -24,9 +24,9 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
         <div className="w-7 h-7 rounded-lg bg-[var(--saffron-600)] flex items-center justify-center shadow-sm shadow-[var(--saffron-600)]/20">
           <BookOpen className="w-3.5 h-3.5 text-[var(--text-inverse)]" />
         </div>
-        <h1 className="text-sm font-extrabold text-[var(--text-primary)] tracking-tight">
+        <p className="text-sm font-extrabold text-[var(--text-primary)] tracking-tight">
           {title}
-        </h1>
+        </p>
         {isAuthenticated && (
           <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--sapphire-50)] text-[var(--sapphire-600)]">
             {isAdmin ? (

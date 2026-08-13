@@ -594,8 +594,8 @@ export default function MemberTable({
           <div className="w-14 h-14 bg-[var(--bg-overlay)] rounded-[var(--radius-2xl)] flex items-center justify-center mx-auto mb-[var(--space-3)] border border-[var(--border-subtle)]">
             <Search className="w-7 h-7 text-[var(--text-tertiary)]" />
           </div>
-          <h3 className="text-[var(--text-md)] font-[var(--weight-semibold)] text-[var(--text-primary)] mb-[var(--space-1)]">No members found</h3>
-          <p className="text-[var(--text-sm)] text-[var(--text-secondary)] font-[var(--weight-medium)]">Try adjusting your filters or search query.</p>
+          <h3 className="text-md font-[var(--weight-semibold)] text-[var(--text-primary)] mb-[var(--space-1)]">No members found</h3>
+          <p className="text-sm text-[var(--text-secondary)] font-[var(--weight-medium)]">Try adjusting your filters or search query.</p>
         </motion.div>
       )}
     </div>
