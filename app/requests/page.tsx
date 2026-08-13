@@ -2,9 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import { useSeatRequests } from '@/hooks/useSeatRequests';
-import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
-import { fmtDate, cn, calcExpiry, todayISO, durationLabel, shiftLabel } from '@/lib/utils';
+import { fmtDate, cn, todayISO, durationLabel, shiftLabel } from '@/lib/utils';
 import { type SeatRequest } from '@/lib/types';
 import {
   Inbox,
@@ -33,7 +32,6 @@ type FilterTab = 'pending' | 'approved' | 'rejected' | 'all';
 
 export default function RequestsPage() {
   const { requests, approveRequest, rejectRequest, deleteRequest } = useSeatRequests();
-  const { add } = useMembers();
   const { addToast } = useToast();
   const router = useRouter();
   const [filter, setFilter] = useState<FilterTab>('pending');
@@ -53,31 +51,19 @@ export default function RequestsPage() {
     return { pending, approved, rejected, all: requests.length };
   }, [requests]);
 
+  // Approval and allotment happen together on the server (PATCH /api/requests),
+  // so they cannot diverge. If the seat was taken in the meantime the request
+  // stays pending and we send the admin to the seat map to sort it out.
   const handleApprove = async (req: SeatRequest) => {
-    approveRequest(req.id);
+    const result = await approveRequest(req.id);
 
-    // Auto-allot the member to the seat with request data
-    const joinDate = req.joinDate || todayISO();
-    const duration = req.duration || '3M';
-    const shift = req.shift || 'full';
-    const expiry = calcExpiry(joinDate, duration);
-
-    const success = await add(req.seat, {
-      name: req.userName,
-      phone: req.userPhone,
-      shift,
-      joinDate,
-      duration,
-      expiry,
-      fee: 'paid',
-      paymentMode: req.paymentMode || 'upi',
-      termsAccepted: true,
-    });
-
-    if (success) {
+    if (result.ok) {
       addToast('success', `Seat #${req.seat} allotted to ${req.userName}`);
-    } else {
-      addToast('warning', `Request approved but Seat #${req.seat} is occupied. Use the form to assign manually.`);
+      return;
+    }
+
+    addToast('error', result.error ?? 'Could not approve this request.');
+    if (result.status === 409) {
       const query = new URLSearchParams({
         seat: String(req.seat),
         name: req.userName,
@@ -88,14 +74,16 @@ export default function RequestsPage() {
     }
   };
 
-  const handleReject = (id: string | number, seat: number) => {
-    rejectRequest(id);
-    addToast('warning', `Request for Seat #${seat} rejected`);
+  const handleReject = async (id: string | number, seat: number) => {
+    const result = await rejectRequest(id);
+    if (result.ok) addToast('warning', `Request for Seat #${seat} rejected`);
+    else addToast('error', result.error ?? 'Could not reject this request.');
   };
 
-  const handleDelete = (id: string | number) => {
-    deleteRequest(id);
-    addToast('warning', 'Request deleted');
+  const handleDelete = async (id: string | number) => {
+    const result = await deleteRequest(id);
+    if (result.ok) addToast('warning', 'Request deleted');
+    else addToast('error', result.error ?? 'Could not delete this request.');
   };
 
   const tabs: { key: FilterTab; label: string; icon: React.ReactNode; count: number }[] = [

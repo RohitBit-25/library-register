@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
 import Member from '@/models/Member';
+import AuditLog from '@/models/AuditLog';
 import { verifyAdmin } from '@/lib/auth-server';
-import { todayISO } from '@/lib/utils';
+import { todayISO, calcExpiry } from '@/lib/utils';
 import { seatRequestCreateSchema, seatRequestUpdateSchema, formatZodError } from '@/lib/schemas';
 
 export const dynamic = 'force-dynamic';
@@ -109,7 +110,15 @@ export async function POST(request: Request) {
   }
 }
 
-/** PATCH: approve/reject. Admin only. */
+/**
+ * PATCH: approve/reject. Admin only.
+ *
+ * Approving ALSO allots the seat, here on the server, in that order:
+ * claim the seat first, then mark the request approved. The client used to do
+ * both as two separate calls — and did not await the first — so a failed
+ * allotment still left the request marked "approved" with no member behind it.
+ * Two admins approving different requests for the same seat both succeeded.
+ */
 export async function PATCH(request: Request) {
   if (!await verifyAdmin()) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -123,13 +132,69 @@ export async function PATCH(request: Request) {
     const { id, status } = parsed.data;
 
     await dbConnect();
-    const updated = await SeatRequest.findByIdAndUpdate(id, { status }, { new: true });
 
-    if (!updated) {
+    const req = await SeatRequest.findById(id);
+    if (!req) {
       return NextResponse.json({ error: 'Request not found' }, { status: 404 });
     }
+    if (req.status === status) {
+      return NextResponse.json(serializeRequest(req.toObject()));
+    }
 
-    return NextResponse.json(serializeRequest(updated.toObject()));
+    if (status !== 'approved') {
+      req.status = status;
+      await req.save();
+      await AuditLog.create({
+        action: status === 'rejected' ? 'Rejected Request' : 'Reopened Request',
+        details: `Seat ${req.seat} request from ${req.userName}`,
+        seat: req.seat,
+      });
+      return NextResponse.json(serializeRequest(req.toObject()));
+    }
+
+    // Claim the seat atomically. If it is already taken this returns null and
+    // the request stays pending, so the admin can act on it again.
+    const joinDate = req.joinDate || todayISO();
+    const duration = req.duration || '3M';
+    const allotted = await Member.findOneAndUpdate(
+      { seat: req.seat, vacant: true },
+      {
+        $set: {
+          name: req.userName,
+          phone: req.userPhone,
+          shift: req.shift || 'full',
+          joinDate,
+          duration,
+          expiry: calcExpiry(joinDate, duration),
+          fee: 'paid',
+          vacant: false,
+          paymentMode: req.paymentMode || 'upi',
+          termsAccepted: true,
+        },
+      },
+      { new: true }
+    ).lean();
+
+    if (!allotted) {
+      return NextResponse.json(
+        { error: `Seat ${req.seat} is already occupied. Vacate it first, or reject this request.` },
+        { status: 409 }
+      );
+    }
+
+    req.status = 'approved';
+    await req.save();
+
+    await AuditLog.create({
+      action: 'Approved Request',
+      details: `Seat ${req.seat} allotted to ${req.userName} (${duration})`,
+      seat: req.seat,
+    });
+
+    return NextResponse.json({
+      ...serializeRequest(req.toObject()),
+      allottedMember: allotted,
+    });
   } catch (error) {
     console.error('Request PATCH error:', error);
     return NextResponse.json({ error: 'Failed to update request' }, { status: 500 });

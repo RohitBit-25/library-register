@@ -1,7 +1,12 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate as globalMutate } from 'swr';
+
+/** What an admin action actually did — callers surface `error` to the user. */
+export type ActionResult =
+  | { ok: true }
+  | { ok: false; status?: number; error?: string };
 import { type SeatRequest } from '@/lib/types';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -121,43 +126,55 @@ export function useSeatRequests() {
 
   // ─── Admin-only actions ────────────────────────────────────────
 
-  const approveRequest = useCallback(async (id: string | number) => {
-    if (!isAdmin) return;
+  // These three used to `await fetch(...)` without checking res.ok and swallow
+  // the error in a catch, so a 401/409 looked identical to success and the UI
+  // cheerfully reported "approved". They now report what actually happened.
+  const setStatus = useCallback(async (
+    id: string | number,
+    status: 'approved' | 'rejected'
+  ): Promise<ActionResult> => {
+    if (!isAdmin) return { ok: false, error: 'Admin only' };
     try {
-      await fetch('/api/requests', {
+      const res = await fetch('/api/requests', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status: 'approved' }),
+        body: JSON.stringify({ id, status }),
       });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        return { ok: false, status: res.status, error: body.error };
+      }
+
+      // Approving allots a seat server-side, so the member list is now stale.
       mutate();
-    } catch (err) {
-      console.error('Failed to approve request:', err);
+      if (status === 'approved') globalMutate('/api/members');
+      return { ok: true };
+    } catch {
+      return { ok: false, error: 'Network error. Check your connection.' };
     }
   }, [isAdmin, mutate]);
 
-  const rejectRequest = useCallback(async (id: string | number) => {
-    if (!isAdmin) return;
-    try {
-      await fetch('/api/requests', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status: 'rejected' }),
-      });
-      mutate();
-    } catch (err) {
-      console.error('Failed to reject request:', err);
-    }
-  }, [isAdmin, mutate]);
+  const approveRequest = useCallback(
+    (id: string | number) => setStatus(id, 'approved'), [setStatus]);
 
-  const deleteRequest = useCallback(async (id: string | number) => {
-    if (!isAdmin) return;
+  const rejectRequest = useCallback(
+    (id: string | number) => setStatus(id, 'rejected'), [setStatus]);
+
+  const deleteRequest = useCallback(async (id: string | number): Promise<ActionResult> => {
+    if (!isAdmin) return { ok: false, error: 'Admin only' };
     try {
-      await fetch(`/api/requests?id=${id}`, {
+      const res = await fetch(`/api/requests?id=${encodeURIComponent(String(id))}`, {
         method: 'DELETE',
       });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        return { ok: false, status: res.status, error: body.error };
+      }
       mutate();
-    } catch (err) {
-      console.error('Failed to delete request:', err);
+      return { ok: true };
+    } catch {
+      return { ok: false, error: 'Network error. Check your connection.' };
     }
   }, [isAdmin, mutate]);
 

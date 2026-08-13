@@ -43,9 +43,16 @@ const defined = new Set(
   [...css.matchAll(/^\s*(--[a-z0-9-]+)\s*:/gim)].map((m) => m[1])
 );
 
+/** Drop comments so prose mentioning `var(--token)` isn't read as a reference. */
+function stripComments(text) {
+  return text
+    .replace(/\/\*[\s\S]*?\*\//g, '')  // /* block */ — CSS and JS
+    .replace(/^\s*\/\/.*$/gm, '');     // // line — anchored, so URLs survive
+}
+
 const used = new Map(); // token -> first file that used it
 for (const file of SOURCE_DIRS.flatMap((d) => walk(join(root, d)))) {
-  const text = readFileSync(file, 'utf8');
+  const text = stripComments(readFileSync(file, 'utf8'));
   for (const m of text.matchAll(/var\((--[a-z0-9-]+)\)/g)) {
     if (!used.has(m[1])) used.set(m[1], file.slice(root.length + 1));
   }

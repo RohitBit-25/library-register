@@ -73,7 +73,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "relative flex items-center bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-sm transition-all hover:border-sapphire-500/50 group h-[46px] px-4 w-full text-left cursor-pointer",
+          "relative flex items-center bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-sm transition-all hover:border-[var(--sapphire-500)]/50 group h-[46px] px-4 w-full text-left cursor-pointer",
           className
         )}
       >

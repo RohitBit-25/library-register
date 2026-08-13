@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Documentation must not generate utilities. Tailwind v4 auto-scans every
+   non-ignored file, so prose in AUDIT_REPORT.md that *describes* a class
+   (e.g. `text-[var(--*-600)]`) was being compiled into a real — and invalid —
+   CSS rule, producing build warnings. */
+@source not "../**/*.md";
+
   /* === TAILWIND V4 INTEGRATION ===
      Fonts and animations only — deliberately NO --color-* entries.
 

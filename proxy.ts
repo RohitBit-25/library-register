@@ -4,13 +4,16 @@ import { jwtVerify } from 'jose';
 /**
  * Server-side route protection.
  *
+ * Next.js 16 renamed Middleware to Proxy: the file must be `proxy.ts` and the
+ * export `proxy`. `middleware.ts` still runs but logs a deprecation warning.
+ *
  * Admin gating used to be entirely client-side (a useEffect redirect in
  * AppShell), which meant admin page bundles shipped to every visitor and the
- * page always painted one frame before bouncing. This stops the request at the
- * edge instead.
+ * page always painted one frame before bouncing. This stops the request first.
  *
- * The API routes still call verifyAdmin() themselves — this is defence in
- * depth for navigations, not a replacement for it.
+ * Per the Next 16 docs, Proxy is for *optimistic* checks only — never the sole
+ * authorization layer. Every API route still calls verifyAdmin() itself; this
+ * is defence in depth for navigations.
  */
 
 const ADMIN_ROUTES = [
@@ -34,7 +37,7 @@ async function isAdmin(token: string | undefined): Promise<boolean> {
   }
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (!ADMIN_ROUTES.includes(pathname)) return NextResponse.next();

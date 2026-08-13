@@ -3,27 +3,60 @@
 **Project:** `library-register` — Next.js 16.2.1 / React 19.2.4 / Tailwind v4 / MongoDB (Mongoose 9)
 **Audited:** 12 Aug 2026
 **Scope:** Frontend (26 components, 14 routes), Backend (10 API routes), Database (4 Mongoose models), Design system
-**Verified against:** `tsc --noEmit` (clean), `eslint` (2 warnings), WCAG 2.1 AA computed contrast ratios
+**Verified against:** `eslint` (0 problems), `tsc --noEmit` (clean), `next build`, WCAG 2.1 AA computed contrast ratios, and live HTTP probes against `npm start`
+
+> **Sections 0–9 below describe the state at audit time.** They are kept as the
+> record of what was wrong and why each fix is shaped the way it is. For what is
+> actually true of the code now, see §0a immediately below.
 
 ---
 
-## 0a. Status — what has already been applied
+## 0a. Status — all 50 items
 
-The palette work (§2, §3) is **done and verified**. Everything else in this report is still outstanding.
+**48 of 50 applied and verified.** Two are deferred with reasons given below.
 
-| Item | State |
+Run `npm run verify` to re-check everything: lint → typecheck → CSS-token check → contrast check → self-tests.
+
+### Verified against a running instance
+
+Not just "it builds" — the following were exercised over HTTP against `npm start`:
+
+| Check | Result |
 |---|---|
-| §2 — 13 undefined colour tokens | **Fixed.** All ramps completed 50→900. Expired / fee-due seats now render their status colour |
-| §3.2 — light palette | **Applied** to `app/globals.css`. Warm-neutral ground, saffron brand preserved |
-| §3.3 — ramp contract | **Documented** as a comment block at the top of `:root` |
-| §3.4 — `Badge`, `Button`, `Toast`, `StatCard`, `Sidebar`, `TopBar` | **Fixed** — plus a sweep of ~150 further `text-[var(--*-400/500)]` sites across 22 files |
-| #11 — emoji icons in `Badge` | **Fixed** — now `Sun` / `Moon` / `SunMoon` from lucide, `aria-hidden` |
-| #9, #10 — PWA theme colour + status bar | **Fixed** — `manifest.json` and `layout.tsx` both `#FBFAF8`, `statusBarStyle: "default"` |
-| — `maximumScale: 1` in viewport | **Removed.** It blocked pinch-zoom entirely (WCAG 1.4.4) — found while editing `layout.tsx` |
+| `GET /api/debug/seed` | `404` — endpoint deleted |
+| `GET /` `/members` `/analytics` `/audit` `/export` anonymous | `307 → /landing` (middleware) |
+| `GET /api/requests` `/audit` `/attendance` anonymous | `401` |
+| `GET /api/members` anonymous | `200`, occupancy only — no `phone`/`joinDate`/`expiry`/`fee` in payload |
+| `GET /api/requests/my?phone=…` | no `documentUrl` / `transactionId` / `userName` in response |
+| `GET /api/cron/reminders` without secret | `503` (fails closed) |
+| Wrong PIN ×5 | `401, 401, 401, 401` then `429` + `Retry-After` — lockout engages |
+| Stored PIN format | `scrypt$…` — hashed, not plaintext |
+| `PATCH /api/members/9999` and `/abc` | `400 Invalid seat number` |
+| `PATCH` with `{"fee":"banana"}` / `{"isAdmin":true}` | `400` — enum + unknown-key rejected |
+| Double-allot same seat | `200` then `409 Seat is already occupied` |
+| Attendance `$addToSet` / `$pull` | `[5] → [5,7] → [7]` |
+| `POST /api/requests` 3.8 MB body | `413` |
+| Public POST: seat 9999 / bad phone / UPI without txn / occupied seat | `400 / 400 / 400 / 409` |
+| Landing page body background | `rgb(251,250,248)` — light token, zero `#080604` remaining |
+| Mobile 375px landing | no horizontal scroll |
+| Seat tile status contrast | active 17.49:1, expiring 10.58:1, expired 9.16:1, due 10.21:1, vacant 6.65:1 |
 
-Verified by: `scripts/check-contrast.py` (20/20 pass), the token diff in §9 (empty), `tsc --noEmit` (clean), `eslint` (2 pre-existing warnings), `next build` (21 routes, success).
+### Two bugs found only by looking at the running app
 
-Not touched: `app/landing/page.tsx` (#5) still carries its own dark inline stylesheet — that is a rewrite, not a token swap, and is sequenced for week 3.
+Both were invisible to the build, the linter, and the type checker.
+
+**1. `--color-base` silently repainted text near-white.** The `@theme inline` block mapped `--color-base: var(--bg-base)`, which makes Tailwind generate `text-base` as a **colour** utility. `text-base` is also the stock font-size class, so 14 elements — including `FloatingLabelInput` and the `GlobalSearch` input — rendered text at `#FBFAF8` on white: **1.01:1**, invisible. Caught by measuring computed styles, not by reading code.
+
+Fixed by deleting the entire `--color-*` block (a codebase-wide grep found exactly one consumer, since everything uses the `[var(--token)]` form). `npm run check:tokens` now fails the build on any `--color-*` name that collides with a built-in utility.
+
+**2. Admins saw redacted data.** `AppShell` calls `useMembers()` unconditionally, so SWR cached the anonymous `/api/members` response while still on `/landing`. Logging in never invalidated it, so every member showed as "Occupied" until a hard refresh. Caught by noticing every avatar read `OC` in a screenshot. Fixed by invalidating the whole SWR cache on any role change.
+
+### Deferred
+
+| # | Item | Why |
+|---|---|---|
+| 37 | Move ID documents to object storage | Needs an S3/R2/Blob bucket and credentials that don't exist yet. The exploitable half — the missing server-side size limit (#36) — **is** fixed, and the documents are no longer exposed publicly (#28). |
+| 19 | Re-compress `icon-512.png` (319 KB) | Needs an image tool not available here. The other 2.3 MB of dead assets were deleted; `public/` went 2.2 MB → 336 KB. |
 
 ---
 
@@ -538,61 +571,61 @@ Also: the fallback to `mongodb://localhost:27017` (line 3) means a missing `MONG
 
 | # | Priority | Suggestion |
 |---|---|---|
-| 1 | **P0** | Define the 13 missing colour tokens (§2). Expired and fee-due seats currently render with no colour — the seat map's core signal is invisible |
-| 2 | **P0** | Replace the `:root` palette with §3.2. This alone fixes 24 failing contrast pairs |
-| 3 | **P0** | Fix `Badge.tsx` — all 6 variants sit between 1.45:1 and 2.32:1. Use `-50` tint + `-600` text |
-| 4 | **P0** | Fix the primary button: white on `--saffron-500` is **2.68:1**. Move to `--saffron-600` for 5.43:1 |
-| 5 | **P0** | Convert `app/landing/page.tsx` off its 508-line dark inline `<style>` to design tokens |
-| 6 | **P1** | Change `--text-link` / `--text-accent` from `#E8853A` (2.68:1) to `#A65310` (5.43:1) |
-| 7 | **P1** | Move the landing page's Google Fonts `@import` into `next/font/google` in `layout.tsx` — it is render-blocking and bypasses font optimisation |
-| 8 | **P1** | Replace the triple-click-logo admin login (`landing/page.tsx:32-40`) with a visible, keyboard-reachable "Staff login" link |
-| 9 | **P1** | Reconcile `manifest.json` `theme_color` (`#1a1a16`, dark) with `layout.tsx` `themeColor` (`#F8FAFC`). Set both to `#FBFAF8` |
-| 10 | **P1** | Change `appleWebApp.statusBarStyle` from `"black-translucent"` to `"default"` — it is a light app |
-| 11 | **P1** | Remove the 3 emoji used as icons in `Badge.tsx:19-21` (🌅 🌙 ☀️). Use the `Sun`/`Moon` lucide icons the app already uses in `SeatTile.tsx` |
-| 12 | **P1** | Add `app/error.tsx`, `app/loading.tsx`, and `app/not-found.tsx` — none exist, so any render error shows the raw Next.js error overlay |
-| 13 | **P1** | `--border-default` (#E2E8F0) is 1.23:1 against white. Interactive borders need ≥3:1 — use `--border-strong` #948C82 (3.32:1) on inputs and focusable elements |
-| 14 | **P1** | `SeatTile.tsx:139` fetches a DiceBear avatar per seat — 95 third-party requests per map render, on the critical path, with `member.name` in the query string (see #38). Generate initials-based avatars locally instead |
-| 15 | **P1** | `useMembers` uses `getDefaultMembers()` (95 vacant seats) as SWR `fallbackData`. Every load flashes "all seats free" before real data arrives. Use `<Skeleton>` — the component already exists |
-| 16 | **P2** | `--text-disabled` #94A3B8 is 2.56:1. Disabled controls are WCAG-exempt but this is unreadable; #8A837C gives 3.74:1 |
-| 17 | **P2** | `next/image` is never used; `SeatTile.tsx:138` triggers the eslint `no-img-element` warning. Two of the app's three PNGs are >600 KB |
-| 18 | **P2** | Delete 2.3 MB of unreferenced assets: `royal-library-bg.png` (672 KB), `assets/desk.png` (671 KB), `assets/plant.png` (631 KB). `grep` finds zero references |
-| 19 | **P2** | `icon-512.png` is 319 KB for a 512×512 icon. Should be ~20 KB — run it through `oxipng`/`squoosh` |
-| 20 | **P2** | 82 of 83 `<button>` elements lack `aria-label`. Icon-only buttons (`Toast.tsx:59`, `requests/page.tsx:281`) are unusable with a screen reader |
-| 21 | **P2** | 3 `<div onClick>` handlers exist with no `role="button"`, `tabIndex`, or key handler — unreachable by keyboard |
-| 22 | **P2** | `AuthModal.tsx` has no focus trap, no `role="dialog"`, no `aria-modal`, and no Escape handler. `SeatRequestSheet.tsx:70-77` implements Escape correctly — apply the same pattern |
-| 23 | **P2** | `Toast.tsx` uses `role="alert"` on each toast but the container has no `aria-live` region, so toasts appearing after page load may not be announced |
-| 24 | **P3** | `--text-xs` is `0.64rem` ≈ 10.2 px. Combined with `tracking-widest` + `uppercase` in `Badge`, this is below the 12 px floor for comfortable reading. Raise the bottom of the type scale to `0.75rem` |
-| 25 | **P3** | 60 of ~120 defined tokens are never referenced (whole `@theme inline` colour block, all `--gradient-*`, all `--duration-*`). Prune — dead tokens are what let #1 happen unnoticed |
+| 1 | **DONE** | Define the 13 missing colour tokens (§2). Expired and fee-due seats currently render with no colour — the seat map's core signal is invisible |
+| 2 | **DONE** | Replace the `:root` palette with §3.2. This alone fixes 24 failing contrast pairs |
+| 3 | **DONE** | Fix `Badge.tsx` — all 6 variants sit between 1.45:1 and 2.32:1. Use `-50` tint + `-600` text |
+| 4 | **DONE** | Fix the primary button: white on `--saffron-500` is **2.68:1**. Move to `--saffron-600` for 5.43:1 |
+| 5 | **DONE** | Convert `app/landing/page.tsx` off its 508-line dark inline `<style>` to design tokens |
+| 6 | **DONE** | Change `--text-link` / `--text-accent` from `#E8853A` (2.68:1) to `#A65310` (5.43:1) |
+| 7 | **DONE** | Move the landing page's Google Fonts `@import` into `next/font/google` in `layout.tsx` — it is render-blocking and bypasses font optimisation |
+| 8 | **DONE** | Replace the triple-click-logo admin login (`landing/page.tsx:32-40`) with a visible, keyboard-reachable "Staff login" link |
+| 9 | **DONE** | Reconcile `manifest.json` `theme_color` (`#1a1a16`, dark) with `layout.tsx` `themeColor` (`#F8FAFC`). Set both to `#FBFAF8` |
+| 10 | **DONE** | Change `appleWebApp.statusBarStyle` from `"black-translucent"` to `"default"` — it is a light app |
+| 11 | **DONE** | Remove the 3 emoji used as icons in `Badge.tsx:19-21` (🌅 🌙 ☀️). Use the `Sun`/`Moon` lucide icons the app already uses in `SeatTile.tsx` |
+| 12 | **DONE** | Add `app/error.tsx`, `app/loading.tsx`, and `app/not-found.tsx` — none exist, so any render error shows the raw Next.js error overlay |
+| 13 | **DONE** | `--border-default` (#E2E8F0) is 1.23:1 against white. Interactive borders need ≥3:1 — use `--border-strong` #948C82 (3.32:1) on inputs and focusable elements |
+| 14 | **DONE** | `SeatTile.tsx:139` fetches a DiceBear avatar per seat — 95 third-party requests per map render, on the critical path, with `member.name` in the query string (see #38). Generate initials-based avatars locally instead |
+| 15 | **DONE** | `useMembers` uses `getDefaultMembers()` (95 vacant seats) as SWR `fallbackData`. Every load flashes "all seats free" before real data arrives. Use `<Skeleton>` — the component already exists |
+| 16 | **DONE** | `--text-disabled` #94A3B8 is 2.56:1. Disabled controls are WCAG-exempt but this is unreadable; #8A837C gives 3.74:1 |
+| 17 | **DONE** | `next/image` is never used; `SeatTile.tsx:138` triggers the eslint `no-img-element` warning. Two of the app's three PNGs are >600 KB |
+| 18 | **DONE** | Delete 2.3 MB of unreferenced assets: `royal-library-bg.png` (672 KB), `assets/desk.png` (671 KB), `assets/plant.png` (631 KB). `grep` finds zero references |
+| 19 | **DEFERRED** | `icon-512.png` is 319 KB for a 512×512 icon. Should be ~20 KB — run it through `oxipng`/`squoosh` |
+| 20 | **DONE** | 82 of 83 `<button>` elements lack `aria-label`. Icon-only buttons (`Toast.tsx:59`, `requests/page.tsx:281`) are unusable with a screen reader |
+| 21 | **DONE** | 3 `<div onClick>` handlers exist with no `role="button"`, `tabIndex`, or key handler — unreachable by keyboard |
+| 22 | **DONE** | `AuthModal.tsx` has no focus trap, no `role="dialog"`, no `aria-modal`, and no Escape handler. `SeatRequestSheet.tsx:70-77` implements Escape correctly — apply the same pattern |
+| 23 | **DONE** | `Toast.tsx` uses `role="alert"` on each toast but the container has no `aria-live` region, so toasts appearing after page load may not be announced |
+| 24 | **DONE** | `--text-xs` is `0.64rem` ≈ 10.2 px. Combined with `tracking-widest` + `uppercase` in `Badge`, this is below the 12 px floor for comfortable reading. Raise the bottom of the type scale to `0.75rem` |
+| 25 | **DONE** | 60 of ~120 defined tokens are never referenced (whole `@theme inline` colour block, all `--gradient-*`, all `--duration-*`). Prune — dead tokens are what let #1 happen unnoticed |
 
 ### Backend / Database / Architecture — 25
 
 | # | Priority | Suggestion |
 |---|---|---|
-| 26 | **P0** | **Remove the `ADMIN_SECRET` fallback** (`auth-server.ts:4`). It is currently unset, so all sessions are signed with a string published in the repo — anyone can forge an admin cookie |
-| 27 | **P0** | **Delete `app/api/debug/seed/route.ts`.** Unauthenticated `GET` that runs `Member.deleteMany({})` — one URL wipes the database |
-| 28 | **P0** | **Lock down `GET /api/requests/my?phone=`.** Public, unauthenticated, returns full PII including base64 ID documents, keyed on an enumerable 10-digit phone number |
-| 29 | **P0** | Add real rate limiting to `POST /api/auth`. The 2-second `setTimeout` (`auth/route.ts:26`) delays each response but does nothing against concurrency — 10,000 parallel requests crack a 4-digit PIN in seconds |
-| 30 | **P0** | Stop the service worker caching `/api/*` (`sw.js:45`). It persists admin PII in `CacheStorage` across logout and can revive a stale `{"isAdmin":true}` |
-| 31 | **P1** | Fix the attendance lost-update race — replace read-modify-write with `$addToSet` / `$pull` (§6.1) |
-| 32 | **P1** | Fix the seat-allotment TOCTOU — put `vacant: true` in the update filter instead of a separate check (§6.2) |
-| 33 | **P1** | Validate `[seat]` as an integer in 1–95 and drop `upsert: true` — `PATCH /api/members/9999` currently creates a phantom seat |
-| 34 | **P1** | Hash the admin PIN (bcrypt/argon2) instead of storing it plaintext in `.admin-pin.json`, and compare in constant time |
-| 35 | **P1** | Replace `lib/pin-store.ts` filesystem storage. `process.cwd()` is read-only on Vercel and ephemeral everywhere else — the PIN silently reverts to `process.env.ADMIN_PIN` (or the hardcoded `'123456'`) on every deploy |
-| 36 | **P1** | Enforce the 2 MB upload limit **server-side**. It exists only in `SeatRequestSheet.tsx:91`; the public `POST /api/requests` accepts arbitrary-size base64 |
-| 37 | **P1** | Move ID documents out of MongoDB to object storage with signed URLs and a retention policy (§6.5) |
-| 38 | **P1** | Stop sending member names to `api.dicebear.com`. `SeatTile.tsx:139` puts `member.name + seat` in a third-party query string — an unnecessary PII disclosure on every render |
-| 39 | **P1** | Add `middleware.ts` for server-side route protection. Admin gating is entirely client-side today (§5.2) |
-| 40 | **P1** | Escape CSV output in `export/page.tsx:91`. Embedded `"` breaks the row, and a name beginning `=`, `+`, `-`, or `@` executes as a formula in Excel — and names come from *public* seat-request submissions |
-| 41 | **P1** | Validate every API body with Zod. `zod` is already a dependency and already used in two form components — the API layer has only ad-hoc `if (!data.seat)` checks |
-| 42 | **P1** | Validate `data.seat` in `POST /api/requests` as an integer in 1–95 — it is currently unbounded |
-| 43 | **P2** | Delete the dead `contexts/AuthContext.tsx` (0 importers) and derive `isAdmin` from the server rather than `localStorage` (§5.1) |
-| 44 | **P2** | Move seeding out of `GET /api/members` into a `scripts/seed.ts`. A read endpoint that writes is both non-idempotent and racy on cold start (§5.3) |
-| 45 | **P2** | Add `enum` constraints to `Member` schema `duration`/`fee`/`shift` — `lib/types.ts` defines the unions but the DB accepts anything (§6.7) |
-| 46 | **P2** | Add `maxPoolSize`, `serverSelectionTimeoutMS`, `socketTimeoutMS` to the Mongoose connect options, and fail loudly on a missing `MONGODB_URI` instead of falling back to localhost (§6.8) |
-| 47 | **P2** | Index `AuditLog.timestamp` and add a 180-day TTL. It is sorted on an unindexed field and grows forever while only 100 rows are ever read (§6.6) |
-| 48 | **P2** | Remove the duplicate index on `Attendance.date` — `unique: true` already creates one |
-| 49 | **P2** | Remove 8 unused dependencies: `@avatune/micah-theme`, `@avatune/react`, `recharts`, `react-zoom-pan-pinch`, and 4 `@radix-ui` packages. Confirmed 0 references each; `recharts` alone is ~500 KB |
-| 50 | **P2** | Add tests. There are none. Start with the pure functions that carry real money and date logic: `calcExpiry`, `daysUntilExpiry`, `getSeatStatus`, and the CSV escaping from #40 |
+| 26 | **DONE** | **Remove the `ADMIN_SECRET` fallback** (`auth-server.ts:4`). It is currently unset, so all sessions are signed with a string published in the repo — anyone can forge an admin cookie |
+| 27 | **DONE** | **Delete `app/api/debug/seed/route.ts`.** Unauthenticated `GET` that runs `Member.deleteMany({})` — one URL wipes the database |
+| 28 | **DONE** | **Lock down `GET /api/requests/my?phone=`.** Public, unauthenticated, returns full PII including base64 ID documents, keyed on an enumerable 10-digit phone number |
+| 29 | **DONE** | Add real rate limiting to `POST /api/auth`. The 2-second `setTimeout` (`auth/route.ts:26`) delays each response but does nothing against concurrency — 10,000 parallel requests crack a 4-digit PIN in seconds |
+| 30 | **DONE** | Stop the service worker caching `/api/*` (`sw.js:45`). It persists admin PII in `CacheStorage` across logout and can revive a stale `{"isAdmin":true}` |
+| 31 | **DONE** | Fix the attendance lost-update race — replace read-modify-write with `$addToSet` / `$pull` (§6.1) |
+| 32 | **DONE** | Fix the seat-allotment TOCTOU — put `vacant: true` in the update filter instead of a separate check (§6.2) |
+| 33 | **DONE** | Validate `[seat]` as an integer in 1–95 and drop `upsert: true` — `PATCH /api/members/9999` currently creates a phantom seat |
+| 34 | **DONE** | Hash the admin PIN (bcrypt/argon2) instead of storing it plaintext in `.admin-pin.json`, and compare in constant time |
+| 35 | **DONE** | Replace `lib/pin-store.ts` filesystem storage. `process.cwd()` is read-only on Vercel and ephemeral everywhere else — the PIN silently reverts to `process.env.ADMIN_PIN` (or the hardcoded `'123456'`) on every deploy |
+| 36 | **DONE** | Enforce the 2 MB upload limit **server-side**. It exists only in `SeatRequestSheet.tsx:91`; the public `POST /api/requests` accepts arbitrary-size base64 |
+| 37 | **DEFERRED** | Move ID documents out of MongoDB to object storage with signed URLs and a retention policy (§6.5) |
+| 38 | **DONE** | Stop sending member names to `api.dicebear.com`. `SeatTile.tsx:139` puts `member.name + seat` in a third-party query string — an unnecessary PII disclosure on every render |
+| 39 | **DONE** | Add `middleware.ts` for server-side route protection. Admin gating is entirely client-side today (§5.2) |
+| 40 | **DONE** | Escape CSV output in `export/page.tsx:91`. Embedded `"` breaks the row, and a name beginning `=`, `+`, `-`, or `@` executes as a formula in Excel — and names come from *public* seat-request submissions |
+| 41 | **DONE** | Validate every API body with Zod. `zod` is already a dependency and already used in two form components — the API layer has only ad-hoc `if (!data.seat)` checks |
+| 42 | **DONE** | Validate `data.seat` in `POST /api/requests` as an integer in 1–95 — it is currently unbounded |
+| 43 | **DONE** | Delete the dead `contexts/AuthContext.tsx` (0 importers) and derive `isAdmin` from the server rather than `localStorage` (§5.1) |
+| 44 | **DONE** | Move seeding out of `GET /api/members` into a `scripts/seed.ts`. A read endpoint that writes is both non-idempotent and racy on cold start (§5.3) |
+| 45 | **DONE** | Add `enum` constraints to `Member` schema `duration`/`fee`/`shift` — `lib/types.ts` defines the unions but the DB accepts anything (§6.7) |
+| 46 | **DONE** | Add `maxPoolSize`, `serverSelectionTimeoutMS`, `socketTimeoutMS` to the Mongoose connect options, and fail loudly on a missing `MONGODB_URI` instead of falling back to localhost (§6.8) |
+| 47 | **DONE** | Index `AuditLog.timestamp` and add a 180-day TTL. It is sorted on an unindexed field and grows forever while only 100 rows are ever read (§6.6) |
+| 48 | **DONE** | Remove the duplicate index on `Attendance.date` — `unique: true` already creates one |
+| 49 | **DONE** | Remove 8 unused dependencies: `@avatune/micah-theme`, `@avatune/react`, `recharts`, `react-zoom-pan-pinch`, and 4 `@radix-ui` packages. Confirmed 0 references each; `recharts` alone is ~500 KB |
+| 50 | **DONE** | Add tests. There are none. Start with the pure functions that carry real money and date logic: `calcExpiry`, `daysUntilExpiry`, `getSeatStatus`, and the CSV escaping from #40 |
 
 ---
 

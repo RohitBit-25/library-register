@@ -19,6 +19,21 @@ export function calcExpiry(joinDate: string, duration: Duration): string {
 }
 
 /**
+ * The date a renewal should be measured from: the later of the member's
+ * current expiry and today.
+ *
+ * Renewing used to always start from today, so a member who renewed *before*
+ * their term ended silently forfeited the days they had already paid for
+ * (expires 20th, renews on the 15th → lost 5 days). Starting from the old
+ * expiry instead would hand free time to someone renewing late, so it is the
+ * later of the two.
+ */
+export function renewalStartDate(currentExpiry: string, today = todayISO()): string {
+  if (!currentExpiry) return today;
+  return currentExpiry > today ? currentExpiry : today;
+}
+
+/**
  * Days until expiry (negative = expired)
  */
 export function daysUntilExpiry(expiry: string): number {

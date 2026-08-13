@@ -26,7 +26,7 @@ execFileSync('npx', [
 ], { cwd: root, stdio: 'inherit' });
 
 const { escapeCsvValue, toCsv } = await import(pathToFileURL(join(out, 'csv.js')).href);
-const { calcExpiry, daysUntilExpiry, getSeatStatus, firstName } =
+const { calcExpiry, daysUntilExpiry, getSeatStatus, firstName, renewalStartDate } =
   await import(pathToFileURL(join(out, 'utils.js')).href);
 
 let n = 0;
@@ -116,6 +116,22 @@ check('expiring window boundary is 7 days inclusive', () => {
   const base = { seat: 1, name: 'A', phone: '', joinDate: '', duration: '3M', shift: 'full', vacant: false, fee: 'paid' };
   assert.equal(getSeatStatus({ ...base, expiry: iso(7) }), 'expiring');
   assert.equal(getSeatStatus({ ...base, expiry: iso(8) }), 'active');
+});
+
+check('renewing early keeps the days already paid for', () => {
+  // Term runs to the 20th, member renews on the 15th. Renewal must start from
+  // the 20th, not today — otherwise they lose 5 days they paid for.
+  assert.equal(renewalStartDate('2026-08-20', '2026-08-15'), '2026-08-20');
+  assert.equal(calcExpiry(renewalStartDate('2026-08-20', '2026-08-15'), '3M'), '2026-11-20');
+});
+
+check('renewing late does not grant free backdated time', () => {
+  // Term ended on the 5th, member renews on the 15th: start from today.
+  assert.equal(renewalStartDate('2026-08-05', '2026-08-15'), '2026-08-15');
+});
+
+check('renewalStartDate handles a member with no expiry', () => {
+  assert.equal(renewalStartDate('', '2026-08-15'), '2026-08-15');
 });
 
 check('firstName truncates long names', () => {

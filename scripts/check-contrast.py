@@ -55,6 +55,12 @@ CHECKS = [
     ("--marigold-700",   "--marigold-50", 4.5),   # "expiring" badge
     ("--sapphire-600",   "--sapphire-50", 4.5),   # "vacant" badge
     ("--indigo-600",     "--indigo-50",   4.5),   # "pending" badge
+    # Solid-fill buttons carrying light text (Renew, Mark Paid, Assign Seat).
+    # These rendered as no-ops until the bare `bg-sapphire-500` utilities were
+    # converted to token form, so their contrast had never actually applied.
+    ("--saffron-50",     "--sapphire-600", 4.5),
+    ("--saffron-50",     "--emerald-600",  4.5),
+    ("--saffron-50",     "--indigo-500",   4.5),
     ("--border-strong",  "--bg-surface",  3.0),   # input / focusable edges
     ("--emerald-500",    "--bg-surface",  3.0),   # status dots & rings
     ("--ruby-500",       "--bg-surface",  3.0),
