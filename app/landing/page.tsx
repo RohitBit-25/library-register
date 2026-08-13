@@ -7,7 +7,8 @@ import { useSeatRequests } from '@/hooks/useSeatRequests';
 import { useToast } from '@/hooks/useToast';
 import { type Member, type Shift, type Duration } from '@/lib/types';
 import { getSeatStatus, cn, firstName } from '@/lib/utils';
-import { SeatMapContainer, SeatMapWrapper, type FaceDir } from '@/components/seat/SeatMap';
+import { formatSeatmapData } from '@/lib/seatmapCanvasAdapter';
+import SeatmapCanvasWrapper from '@/components/seat/SeatmapCanvasWrapper';
 import UnifiedHeader from '@/components/layout/UnifiedHeader';
 import StudentSidebar from '@/components/layout/StudentSidebar';
 import SeatRequestSheet from '@/components/seat/SeatRequestSheet';
@@ -215,32 +216,29 @@ export default function LandingPage() {
                       Reading Table
                     </div>
 
-                    <div className="mt-20">
-                      <SeatMapContainer>
-                        <AnimatePresence>
-                          {filtered.map(member => (
-                            <SeatMapWrapper key={member.seat} seatNum={member.seat}>
-                              {(face: FaceDir) => (
-                                <motion.div
-                                  initial={{ opacity: 0, scale: 0.8 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  exit={{ opacity: 0, scale: 0.8 }}
-                                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                                  className="w-full h-full"
-                                >
-                                  <BrowseSeatTile
-                                    member={member}
-                                    face={face}
-                                    onClick={handleSeatClick}
-                                    isSelected={selectedSeat === member.seat}
-                                    hasRequest={requests.some(r => r.seat === member.seat && r.status === 'pending')}
-                                  />
-                                </motion.div>
-                              )}
-                            </SeatMapWrapper>
-                          ))}
-                        </AnimatePresence>
-                      </SeatMapContainer>
+                    <div className="mt-20 h-[500px] w-full">
+                      <SeatmapCanvasWrapper
+                        data={formatSeatmapData(filtered)}
+                        options={{
+                          legend: false,
+                          style: {
+                            seat: {
+                              radius: 18,
+                              hover: '#f59e0b',
+                              selected: '#d97706',
+                            }
+                          }
+                        }}
+                        onSeatClick={(seat: any) => {
+                          const seatNum = parseInt(seat.id, 10);
+                          handleSeatClick(seatNum);
+                          if (seat.selected) {
+                            // Use vanilla method logic if available
+                            // But usually, selection is handled via CSS classes or state internally, 
+                            // we'll manage our own selection state visually.
+                          }
+                        }}
+                      />
                     </div>
                   </div>
                 )}
@@ -352,47 +350,4 @@ export default function LandingPage() {
   );
 }
 
-// ─── Seat Tile ────────────────────────────────────────────────────────────────
 
-function BrowseSeatTile({
-  member,
-  face,
-  onClick,
-  isSelected,
-  hasRequest,
-}: {
-  member: Member;
-  face: FaceDir;
-  onClick: (seat: number) => void;
-  isSelected: boolean;
-  hasRequest: boolean;
-}) {
-  const isVacant = member.vacant;
-
-  const bg = isSelected ? 'bg-[var(--saffron-500)] text-white border-[var(--saffron-600)]'
-    : isVacant ? 'bg-[var(--emerald-50)] text-[var(--emerald-700)] border-[var(--emerald-200)]'
-    : 'bg-[var(--ruby-50)] text-[var(--ruby-400)] border-[var(--ruby-200)]';
-
-  return (
-    <div className="group relative w-full h-full p-[2px]">
-      <button
-        onClick={() => onClick(member.seat)}
-        className={cn(
-          'relative flex items-center justify-center rounded-lg w-full h-full transition-ui duration-200 border',
-          bg,
-          isVacant ? 'cursor-pointer hover:shadow-md' : 'cursor-default opacity-80',
-        )}
-        aria-label={`Seat ${member.seat} — ${isVacant ? 'vacant' : 'occupied'}`}
-      >
-        <Armchair className="w-[18px] h-[18px]" />
-      </button>
-      
-      {isSelected && (
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-lg rounded-xl px-2 py-1 z-50 flex items-center justify-center text-[10px] font-bold text-[var(--saffron-700)] whitespace-nowrap animate-in fade-in zoom-in duration-200">
-          Seat {member.seat}
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[var(--bg-surface)] border-b border-r border-[var(--border-default)] rotate-45" />
-        </div>
-      )}
-    </div>
-  );
-}

@@ -44,6 +44,10 @@ export interface DashboardStats {
   /** Genuine daily attendance, not a generated curve. */
   trend: { date: string; present: number }[];
   trendDaysWithData: number;
+  /** Real snapshot rows. Gaps are absent, never interpolated. */
+  occupancyHistory: { date: string; occupied: number; vacant: number; collected: number; contractValue: number }[];
+  /** Month-over-month change, or null when there is not enough history. */
+  growth: { from: string; to: string; occupiedDelta: number; pct: number } | null;
   asOf: string;
 }
 
@@ -58,6 +62,7 @@ const EMPTY: DashboardStats = {
     collected30d: 0, collectedThisMonth: 0, paymentCount30d: 0, hasPaymentHistory: false,
   },
   trend: [], trendDaysWithData: 0,
+  occupancyHistory: [], growth: null,
   asOf: '',
 };
 

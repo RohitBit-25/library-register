@@ -11,7 +11,7 @@ export interface ISeatRequest extends Document {
   transactionId: string;
   paymentMode: 'upi' | 'cash';
   documentUrl: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'waitlisted';
   /** Set when the retention job clears documentUrl — proves it was purged,
    *  not that one was never uploaded. */
   documentPurgedAt: Date | null;
@@ -29,7 +29,7 @@ const SeatRequestSchema = new Schema<ISeatRequest>({
   transactionId: { type: String, default: '' },
   paymentMode: { type: String, enum: ['upi', 'cash'], default: 'upi' },
   documentUrl: { type: String, default: '' },
-  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+  status: { type: String, enum: ['pending', 'approved', 'rejected', 'waitlisted'], default: 'pending' },
   documentPurgedAt: { type: Date, default: null }
 }, {
   timestamps: true

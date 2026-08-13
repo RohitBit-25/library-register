@@ -53,7 +53,7 @@ export interface SeatRequest {
   transactionId?: string;
   paymentMode: 'upi' | 'cash';
   documentUrl?: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'waitlisted';
   createdAt: string | Date;
 }
 

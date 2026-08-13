@@ -97,17 +97,31 @@ export async function POST(request: Request) {
   try {
     await dbConnect();
 
-    // Don't accept requests for a seat that is already taken — otherwise the
-    // admin queue fills with requests that can never be approved.
+    // If the requested seat is taken but others are free, that is a mistake
+    // worth correcting — send them back to pick an available one.
+    //
+    // If the whole library is full, rejecting turns away a paying customer
+    // whose phone number we already have. Queue them instead: the request is
+    // recorded as `waitlisted`, and the admin sees it when a seat frees.
     const seatDoc = await Member.findOne({ seat: data.seat }).select('vacant').lean<{ vacant: boolean } | null>();
-    if (seatDoc && !seatDoc.vacant) {
-      return NextResponse.json({ error: 'That seat is no longer available' }, { status: 409 });
+    const seatTaken = seatDoc && !seatDoc.vacant;
+
+    let status: 'pending' | 'waitlisted' = 'pending';
+    if (seatTaken) {
+      const vacantSeats = await Member.countDocuments({ vacant: true });
+      if (vacantSeats > 0) {
+        return NextResponse.json(
+          { error: 'That seat is no longer available. Please pick another.' },
+          { status: 409 }
+        );
+      }
+      status = 'waitlisted';
     }
 
     const existing = await SeatRequest.findOne({
       seat: data.seat,
       userPhone: data.userPhone,
-      status: 'pending',
+      status: { $in: ['pending', 'waitlisted'] },
     });
     if (existing) {
       return NextResponse.json(
@@ -119,10 +133,18 @@ export async function POST(request: Request) {
     const newRequest = await SeatRequest.create({
       ...data,
       joinDate: data.joinDate || todayISO(),
-      status: 'pending',
+      status,
     });
 
-    return NextResponse.json(serializeRequest(newRequest.toObject()), { status: 201 });
+    return NextResponse.json(
+      {
+        ...serializeRequest(newRequest.toObject()),
+        // The caller needs to know they were queued rather than booked, so the
+        // confirmation can say so instead of implying a seat is held.
+        waitlisted: status === 'waitlisted',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Request POST error:', error);
     return NextResponse.json({ error: 'Failed to submit request' }, { status: 500 });

@@ -29,7 +29,7 @@ export const duration = z.enum(['1M', '3M', '6M', '1Y']);
 export const shift = z.enum(['morning', 'evening', 'full']);
 export const feeStatus = z.enum(['paid', 'due']);
 export const paymentMode = z.enum(['upi', 'cash']);
-export const requestStatus = z.enum(['pending', 'approved', 'rejected']);
+export const requestStatus = z.enum(['pending', 'approved', 'rejected', 'waitlisted']);
 
 /** Accepts an inline image/PDF data URI, size-capped. Empty string = none. */
 export const documentDataUri = z

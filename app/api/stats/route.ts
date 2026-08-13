@@ -3,6 +3,7 @@ import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
 import Attendance from '@/models/Attendance';
 import Payment from '@/models/Payment';
+import OccupancySnapshot from '@/models/OccupancySnapshot';
 import { verifyAdmin } from '@/lib/auth-server';
 import { todayLocalISO, addDaysISO, EXPIRING_WINDOW_DAYS } from '@/lib/seat-status';
 import { planPrice, monthlyValue } from '@/lib/pricing';
@@ -208,6 +209,36 @@ export async function GET() {
     }
     const daysWithData = records.length;
 
+    // ── Occupancy history ──────────────────────────────────────
+    // Only real snapshot rows. Gaps stay gaps: a day the job did not run is
+    // absent from the series rather than interpolated, so the chart cannot
+    // imply a measurement that was never taken.
+    const snapshots = await OccupancySnapshot
+      .find({ date: { $gte: addDaysISO(today, -89), $lte: today } })
+      .select('date occupied vacant collected contractValue -_id')
+      .sort({ date: 1 })
+      .lean<{ date: string; occupied: number; vacant: number; collected: number; contractValue: number }[]>();
+
+    const occupancyHistory = snapshots;
+
+    // Month-over-month change, only when both ends actually exist.
+    let growth: { from: string; to: string; occupiedDelta: number; pct: number } | null = null;
+    if (snapshots.length >= 2) {
+      const latest = snapshots[snapshots.length - 1];
+      const monthAgo = addDaysISO(today, -30);
+      // Nearest snapshot at or before the 30-day mark.
+      const baseline = [...snapshots].reverse().find((s) => s.date <= monthAgo);
+      if (baseline && baseline.date !== latest.date) {
+        const delta = latest.occupied - baseline.occupied;
+        growth = {
+          from: baseline.date,
+          to: latest.date,
+          occupiedDelta: delta,
+          pct: baseline.occupied > 0 ? Math.round((delta / baseline.occupied) * 100) : 0,
+        };
+      }
+    }
+
     return NextResponse.json(
       {
         occupied: occupiedCount,
@@ -243,6 +274,10 @@ export async function GET() {
         // Days in the window that actually have an attendance record. The UI
         // uses this to avoid drawing a confident line through mostly-empty data.
         trendDaysWithData: daysWithData,
+        // Real occupancy history from the nightly snapshot. Empty until the
+        // job has run — never back-filled with guesses.
+        occupancyHistory,
+        growth,
         asOf: today,
       },
       { headers: { 'Cache-Control': 'no-store' } }
