@@ -15,7 +15,25 @@ export const dynamic = 'force-dynamic';
  */
 const PUBLIC_FIELDS = 'seat status createdAt joinDate duration shift paymentMode';
 
+/** Lookups per caller per hour. A student checks their own status a handful
+ *  of times; a script walking the 10-digit phone space needs thousands. */
+const LOOKUP_LIMIT = 30;
+const LOOKUP_WINDOW_SECONDS = 3600;
+
 export async function GET(request: NextRequest) {
+  // The response is already stripped to status fields, but the endpoint still
+  // answers "does this phone number exist in the library" for any number
+  // supplied. Unlimited, that is a membership-enumeration oracle.
+  const limit = await consumeRateLimit(
+    'requests-my', callerKey(request), LOOKUP_LIMIT, LOOKUP_WINDOW_SECONDS
+  );
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: 'Too many lookups. Please try again later.' },
+      { status: 429, headers: { 'Retry-After': String(limit.retryAfterSeconds) } }
+    );
+  }
+
   const phone = (request.nextUrl.searchParams.get('phone') || '').replace(/\D/g, '');
 
   if (!/^\d{10}$/.test(phone)) {
