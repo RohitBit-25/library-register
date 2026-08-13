@@ -372,7 +372,7 @@ export default function ExpiryPage() {
               + `Fee is marked paid and the payment is recorded. Use the sliders button instead to change the plan or date.`
             : ''
         }
-        confirmText="Renew &amp; mark paid"
+        confirmText="Renew and mark paid"
         variant="primary"
       />
     </div>
