@@ -12,6 +12,9 @@ export interface ISeatRequest extends Document {
   paymentMode: 'upi' | 'cash';
   documentUrl: string;
   status: 'pending' | 'approved' | 'rejected';
+  /** Set when the retention job clears documentUrl — proves it was purged,
+   *  not that one was never uploaded. */
+  documentPurgedAt: Date | null;
   createdAt: Date;
 }
 
@@ -26,7 +29,8 @@ const SeatRequestSchema = new Schema<ISeatRequest>({
   transactionId: { type: String, default: '' },
   paymentMode: { type: String, enum: ['upi', 'cash'], default: 'upi' },
   documentUrl: { type: String, default: '' },
-  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }
+  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+  documentPurgedAt: { type: Date, default: null }
 }, {
   timestamps: true
 });
@@ -34,5 +38,7 @@ const SeatRequestSchema = new Schema<ISeatRequest>({
 // Indexes for filtering
 SeatRequestSchema.index({ status: 1 });
 SeatRequestSchema.index({ userPhone: 1, status: 1 });
+// The retention job scans by status + age.
+SeatRequestSchema.index({ status: 1, updatedAt: 1 });
 
 export default mongoose.models.SeatRequest || mongoose.model<ISeatRequest>('SeatRequest', SeatRequestSchema);

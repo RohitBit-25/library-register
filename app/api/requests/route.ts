@@ -6,6 +6,7 @@ import AuditLog from '@/models/AuditLog';
 import { getSession } from '@/lib/auth-server';
 import { todayISO, calcExpiry } from '@/lib/utils';
 import { seatRequestCreateSchema, seatRequestUpdateSchema, formatZodError } from '@/lib/schemas';
+import { consumeRateLimit, callerKey } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,8 +56,25 @@ export async function GET() {
   }
 }
 
+/** Submissions allowed per caller per hour. A genuine student submits once,
+ *  maybe twice after a mistake; five is generous and still stops a flood. */
+const SUBMIT_LIMIT = 5;
+const SUBMIT_WINDOW_SECONDS = 3600;
+
 /** POST: submit a new request. Public — treat every field as hostile. */
 export async function POST(request: Request) {
+  // The only public write in the app. Body size was capped; frequency was not,
+  // so one script could fill the admin queue with 2MB submissions.
+  const limit = await consumeRateLimit(
+    'requests', callerKey(request), SUBMIT_LIMIT, SUBMIT_WINDOW_SECONDS
+  );
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: 'Too many requests from this connection. Please try again later.' },
+      { status: 429, headers: { 'Retry-After': String(limit.retryAfterSeconds) } }
+    );
+  }
+
   let raw: unknown;
   try {
     raw = await readJsonCapped(request);
