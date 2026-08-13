@@ -4,6 +4,9 @@ import Member from '@/models/Member';
 import AuditLog from '@/models/AuditLog';
 import { verifyAdmin } from '@/lib/auth-server';
 import { memberPatchSchema, seatNumber, formatZodError } from '@/lib/schemas';
+import Payment from '@/models/Payment';
+import { planPrice } from '@/lib/pricing';
+import { todayLocalISO } from '@/lib/seat-status';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,11 +50,43 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
       ? { seat: seatId, vacant: true }
       : { seat: seatId };
 
+    // Record the collection when the fee flips to paid, so revenue comes from
+    // real events rather than being inferred from current state.
+    const writes: Record<string, unknown> = { ...patch };
+    let paymentToRecord: {
+      amount: number; duration: string;
+      name: string; phone: string; mode: 'upi' | 'cash' | null;
+    } | null = null;
+
+    if (patch.fee === 'paid') {
+      const current = await Member.findOne({ seat: seatId })
+        .select('duration fee name phone paymentMode')
+        .lean<{
+          duration?: string; fee?: string; name?: string;
+          phone?: string; paymentMode?: 'upi' | 'cash' | null;
+        } | null>();
+
+      // Only an actual transition counts. Re-saving an already-paid member
+      // must not look like a second payment.
+      if (current?.fee !== 'paid') {
+        const duration = patch.duration ?? current?.duration ?? '';
+        paymentToRecord = {
+          amount: planPrice(duration),
+          duration,
+          name: patch.name ?? current?.name ?? '',
+          phone: patch.phone ?? current?.phone ?? '',
+          mode: patch.paymentMode ?? current?.paymentMode ?? null,
+        };
+        writes.lastPaymentAt = new Date();
+        writes.lastPaymentAmount = paymentToRecord.amount;
+      }
+    }
+
     // No upsert: the 95 seats are seeded once. Upserting on an unvalidated
     // path param used to let PATCH /api/members/9999 invent a phantom seat.
     const updatedMember = await Member.findOneAndUpdate(
       filter,
-      { $set: patch },
+      { $set: writes },
       { new: true }
     ).lean();
 
@@ -60,6 +95,20 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
         return NextResponse.json({ error: 'Seat is already occupied' }, { status: 409 });
       }
       return NextResponse.json({ error: 'Seat not found' }, { status: 404 });
+    }
+
+    // Append-only ledger row. Written after the member update succeeds, so a
+    // failed write never leaves a payment recorded against nothing.
+    if (paymentToRecord && paymentToRecord.amount > 0) {
+      await Payment.create({
+        seat: seatId,
+        memberName: paymentToRecord.name,
+        memberPhone: paymentToRecord.phone,
+        amount: paymentToRecord.amount,
+        duration: paymentToRecord.duration,
+        paymentMode: paymentToRecord.mode,
+        date: todayLocalISO(),
+      });
     }
 
     let actionDesc = 'Updated Member';

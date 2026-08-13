@@ -26,6 +26,24 @@ export interface DashboardStats {
   dueMembers: Member[];
   expiringThisWeek: Member[];
   truncated: { expired: boolean; due: boolean; expiring: boolean };
+  revenue: {
+    /** Owed right now — exact, derived from the plan rate table. */
+    outstanding: number;
+    /** Total value of every active plan. */
+    contractValue: number;
+    /** All plans normalised to a per-month figure. */
+    monthlyRunRate: number;
+    /** Real stamped payments in the last 30 days. */
+    collected30d: number;
+    collectedThisMonth: number;
+    paymentCount30d: number;
+    /** False until a payment is recorded — lets the UI say "not tracked yet"
+     *  rather than implying the library collected nothing. */
+    hasPaymentHistory: boolean;
+  };
+  /** Genuine daily attendance, not a generated curve. */
+  trend: { date: string; present: number }[];
+  trendDaysWithData: number;
   asOf: string;
 }
 
@@ -35,6 +53,11 @@ const EMPTY: DashboardStats = {
   byDuration: { '1M': 0, '3M': 0, '6M': 0, '1Y': 0 },
   expiredMembers: [], dueMembers: [], expiringThisWeek: [],
   truncated: { expired: false, due: false, expiring: false },
+  revenue: {
+    outstanding: 0, contractValue: 0, monthlyRunRate: 0,
+    collected30d: 0, collectedThisMonth: 0, paymentCount30d: 0, hasPaymentHistory: false,
+  },
+  trend: [], trendDaysWithData: 0,
   asOf: '',
 };
 

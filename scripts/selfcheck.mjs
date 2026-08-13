@@ -23,7 +23,8 @@ writeFileSync(join(out, 'package.json'), '{"type":"module"}');
 // import each other with explicit .ts extensions (so plain Node can load them
 // in scripts/), and tsc rewrites those to .js on emit.
 execFileSync('npx', [
-  'tsc', 'lib/csv.ts', 'lib/utils.ts', 'lib/types.ts', 'lib/seat-status.ts', 'lib/notify.ts',
+  'tsc', 'lib/csv.ts', 'lib/utils.ts', 'lib/types.ts', 'lib/seat-status.ts',
+  'lib/notify.ts', 'lib/pricing.ts',
   '--outDir', out, '--module', 'esnext', '--target', 'es2020',
   '--moduleResolution', 'bundler', '--skipLibCheck',
   '--allowImportingTsExtensions', '--rewriteRelativeImportExtensions',
@@ -36,6 +37,8 @@ const { getSeatState, getSeatStatus, todayLocalISO, addDaysISO } =
   await import(pathToFileURL(join(out, 'seat-status.js')).href);
 const { buildExpiryMessage, normalisePhone } =
   await import(pathToFileURL(join(out, 'notify.js')).href);
+const { planPrice, monthlyValue, formatINR, formatINRCompact, PLAN_MONTHS, DEFAULT_PLAN_RATES } =
+  await import(pathToFileURL(join(out, 'pricing.js')).href);
 
 let n = 0;
 const check = (name, fn) => { fn(); n++; console.log(`  ok  ${name}`); };
@@ -198,6 +201,60 @@ check('renewing late does not grant free backdated time', () => {
 
 check('renewalStartDate handles a member with no expiry', () => {
   assert.equal(renewalStartDate('', '2026-08-15'), '2026-08-15');
+});
+
+console.log('\nPricing');
+
+check('every plan has a price and a month count', () => {
+  for (const plan of ['1M', '3M', '6M', '1Y']) {
+    assert.ok(planPrice(plan) > 0, `${plan} has no price`);
+    assert.ok(PLAN_MONTHS[plan] > 0, `${plan} has no month count`);
+  }
+});
+
+check('unknown or empty duration is worth 0, never NaN', () => {
+  // A member mid-signup has duration '' — that must not poison a total.
+  for (const bad of ['', undefined, null, 'banana', '2M']) {
+    assert.equal(planPrice(bad), 0, `planPrice(${bad}) should be 0`);
+    assert.equal(monthlyValue(bad), 0, `monthlyValue(${bad}) should be 0`);
+  }
+});
+
+check('longer plans are cheaper per month', () => {
+  // If this inverts, the rate table has a typo that would quietly cost money.
+  const perMonth = ['1M', '3M', '6M', '1Y'].map(monthlyValue);
+  for (let i = 1; i < perMonth.length; i++) {
+    assert.ok(
+      perMonth[i] <= perMonth[i - 1],
+      `plan ${i} costs more per month than the shorter one`
+    );
+  }
+});
+
+check('monthlyValue is price divided by months', () => {
+  assert.equal(monthlyValue('1Y'), DEFAULT_PLAN_RATES['1Y'] / 12);
+  assert.equal(monthlyValue('3M'), DEFAULT_PLAN_RATES['3M'] / 3);
+});
+
+check('outstanding total sums only unpaid plans', () => {
+  const members = [
+    { duration: '3M', fee: 'due' },
+    { duration: '1Y', fee: 'paid' },
+    { duration: '1M', fee: 'due' },
+    { duration: '',   fee: 'due' },   // mid-signup, no plan yet
+  ];
+  const outstanding = members
+    .filter(m => m.fee === 'due')
+    .reduce((sum, m) => sum + planPrice(m.duration), 0);
+  assert.equal(outstanding, DEFAULT_PLAN_RATES['3M'] + DEFAULT_PLAN_RATES['1M']);
+});
+
+check('currency formatting is whole rupees', () => {
+  assert.match(formatINR(1900), /1,900/);
+  assert.ok(!formatINR(1900).includes('.'), 'should not show paise');
+  assert.equal(formatINRCompact(800), '₹800');
+  assert.equal(formatINRCompact(45600), '₹45.6K');
+  assert.equal(formatINRCompact(120000), '₹1.2L');
 });
 
 check('firstName truncates long names', () => {

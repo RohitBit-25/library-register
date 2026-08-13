@@ -8,6 +8,9 @@ export interface IMember extends Document, Omit<MemberType, 'seat'> {
   /** Server-side reminder bookkeeping — never sent to the client. */
   reminderSentFor: string;
   reminderSentAt: Date | null;
+  /** Payment ledger, stamped when `fee` transitions to 'paid'. */
+  lastPaymentAt: Date | null;
+  lastPaymentAmount: number;
 }
 
 // Enums mirror the unions in lib/types.ts. Without them the schema accepted
@@ -32,6 +35,13 @@ const MemberSchema = new Schema<IMember>({
   // no extra bookkeeping or cleanup needed.
   reminderSentFor: { type: String, default: '' },
   reminderSentAt: { type: Date, default: null },
+
+  // Stamped by the API whenever `fee` flips to 'paid'. Without a timestamp,
+  // "collected this month" is unanswerable — only the current paid/due state
+  // was ever recorded. Builds forward from the first payment after deploy;
+  // it cannot reconstruct history that was never captured.
+  lastPaymentAt: { type: Date, default: null },
+  lastPaymentAmount: { type: Number, default: 0 },
 }, {
   timestamps: true
 });

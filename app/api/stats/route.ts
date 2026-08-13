@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
+import Attendance from '@/models/Attendance';
+import Payment from '@/models/Payment';
 import { verifyAdmin } from '@/lib/auth-server';
 import { todayLocalISO, addDaysISO, EXPIRING_WINDOW_DAYS } from '@/lib/seat-status';
+import { planPrice, monthlyValue } from '@/lib/pricing';
 
 export const dynamic = 'force-dynamic';
+
+/** Days of attendance history returned for the dashboard trend. */
+const TREND_DAYS = 30;
 
 /** Cap on each alert list so one very neglected library can't return 95 rows
  *  of PII in a dashboard payload. */
@@ -79,6 +85,20 @@ export async function GET() {
             { $limit: ALERT_LIMIT },
             { $project: MEMBER_FIELDS },
           ],
+          // Every occupied seat's plan, so money can be totalled in JS where
+          // the rate table lives (one source of truth for prices).
+          plans: [
+            { $match: occupied },
+            {
+              $project: {
+                _id: 0,
+                duration: 1,
+                fee: 1,
+                lastPaymentAt: 1,
+                lastPaymentAmount: 1,
+              },
+            },
+          ],
           counts: [
             {
               $group: {
@@ -122,6 +142,72 @@ export async function GET() {
 
     const c = result.counts[0] ?? { expired: 0, due: 0, expiring: 0, withDues: 0 };
 
+    // ── Money ──────────────────────────────────────────────────
+    // Only what the data actually supports. `collected30d` counts real
+    // stamped payments, so it reads 0 until the first payment is recorded
+    // after deploy — it does not back-fill history that was never captured.
+    const plans = result.plans as {
+      duration?: string; fee?: string;
+      lastPaymentAt?: Date | null; lastPaymentAmount?: number;
+    }[];
+
+    let outstanding = 0;      // owed right now — exact
+    let contractValue = 0;    // total value of all active plans
+    let monthlyRunRate = 0;   // plans normalised to a monthly figure
+
+    for (const p of plans) {
+      const price = planPrice(p.duration);
+      contractValue += price;
+      monthlyRunRate += monthlyValue(p.duration);
+      if (p.fee === 'due') outstanding += price;
+    }
+
+    // Collections come from the append-only Payment ledger, not from a field
+    // on the member. A per-member field holds one payment, so a member paying
+    // twice inside the window overwrote their own first payment and the total
+    // undercounted.
+    const since30 = addDaysISO(today, -29);
+    const monthStart = today.slice(0, 8) + '01';
+    const [collections] = await Payment.aggregate([
+      { $match: { date: { $gte: since30 <= monthStart ? since30 : monthStart } } },
+      {
+        $facet: {
+          last30: [
+            { $match: { date: { $gte: since30 } } },
+            { $group: { _id: null, total: { $sum: '$amount' }, n: { $sum: 1 } } },
+          ],
+          thisMonth: [
+            { $match: { date: { $gte: monthStart } } },
+            { $group: { _id: null, total: { $sum: '$amount' }, n: { $sum: 1 } } },
+          ],
+        },
+      },
+    ]);
+
+    const c30 = collections?.last30?.[0] ?? { total: 0, n: 0 };
+    const cMonth = collections?.thisMonth?.[0] ?? { total: 0, n: 0 };
+    const anyPaymentEver = await Payment.estimatedDocumentCount();
+
+    // ── Real attendance trend ──────────────────────────────────
+    // The dashboard used to render Math.random() noise as a 30-day occupancy
+    // history. This is the genuine article, from the attendance records that
+    // were already being collected. Days with no record read 0 — the library
+    // was closed or nobody marked attendance, and inventing a value there is
+    // exactly the bug being fixed.
+    const trendStart = addDaysISO(today, -(TREND_DAYS - 1));
+    const records = await Attendance
+      .find({ date: { $gte: trendStart, $lte: today } })
+      .select('date seats')
+      .lean<{ date: string; seats: number[] }[]>();
+
+    const byDate = new Map(records.map((r) => [r.date, r.seats?.length ?? 0]));
+    const trend: { date: string; present: number }[] = [];
+    for (let i = 0; i < TREND_DAYS; i++) {
+      const d = addDaysISO(trendStart, i);
+      trend.push({ date: d, present: byDate.get(d) ?? 0 });
+    }
+    const daysWithData = records.length;
+
     return NextResponse.json(
       {
         occupied: occupiedCount,
@@ -142,6 +228,21 @@ export async function GET() {
           due: c.due > ALERT_LIMIT,
           expiring: c.expiring > ALERT_LIMIT,
         },
+        revenue: {
+          outstanding,
+          contractValue,
+          monthlyRunRate: Math.round(monthlyRunRate),
+          collected30d: c30.total,
+          collectedThisMonth: cMonth.total,
+          paymentCount30d: c30.n,
+          // Lets the UI say "no payments recorded yet" instead of implying
+          // the library collected nothing.
+          hasPaymentHistory: anyPaymentEver > 0,
+        },
+        trend,
+        // Days in the window that actually have an attendance record. The UI
+        // uses this to avoid drawing a confident line through mostly-empty data.
+        trendDaysWithData: daysWithData,
         asOf: today,
       },
       { headers: { 'Cache-Control': 'no-store' } }

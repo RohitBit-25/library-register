@@ -9,7 +9,9 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { getSeatStatus, fmtDate, daysUntilExpiry } from '@/lib/utils';
 import { type Member } from '@/lib/types';
-import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw, TrendingUp, Sparkles } from 'lucide-react';
+import { formatINR, getPlanRates } from '@/lib/pricing';
+import { cn } from '@/lib/utils';
+import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw, TrendingUp, Sparkles, IndianRupee } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
 
@@ -53,8 +55,6 @@ export default function DashboardPage() {
   // Priority members (top 10 needing attention)
   const priorityMembers = [...alerts].slice(0, 10);
 
-  // Sparkline: last 30 days (mockable occupancy data)
-  const occupancyData = generateSparklineData(stats.occupied);
 
   const handleMarkPaid = async (seat: number) => {
     await update(seat, { fee: 'paid' }, (msg) => addToast('error', msg));
@@ -125,6 +125,58 @@ export default function DashboardPage() {
         />
       </motion.div>
 
+      {/* ── Money ──────────────────────────────────────────────────
+          The register tracked paid/due but never an amount, so the question
+          it exists to answer — how much is outstanding — had no answer.
+          Every figure here derives from lib/pricing.ts. */}
+      <motion.div variants={itemVariants} className="mb-[var(--space-6)]">
+        <Card variant="base" className="overflow-hidden">
+          <div className="flex items-center justify-between gap-2 border-b border-[var(--border-subtle)] bg-[var(--bg-muted)] px-[var(--space-5)] py-[var(--space-4)]">
+            <h2 className="font-display flex items-center gap-[var(--space-2)] text-sm font-semibold text-[var(--text-primary)]">
+              <IndianRupee className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
+              Fees
+            </h2>
+            <span className="text-[11px] font-medium text-[var(--text-tertiary)]">
+              at {getPlanRates()['1M']}/mo base rate
+            </span>
+          </div>
+
+          <dl className="grid grid-cols-2 gap-px bg-[var(--border-subtle)] lg:grid-cols-4">
+            <MoneyStat
+              label="Outstanding"
+              value={formatINR(stats.revenue.outstanding)}
+              tone={stats.revenue.outstanding > 0 ? 'warn' : 'ok'}
+              hint={`${stats.withDues} member${stats.withDues === 1 ? '' : 's'} owing`}
+              onClick={() => router.push('/members?filter=due')}
+            />
+            <MoneyStat
+              label="Collected (30d)"
+              value={
+                stats.revenue.hasPaymentHistory
+                  ? formatINR(stats.revenue.collected30d)
+                  : 'Not tracked yet'
+              }
+              tone={stats.revenue.hasPaymentHistory ? 'ok' : 'neutral'}
+              hint={
+                stats.revenue.hasPaymentHistory
+                  ? `${stats.revenue.paymentCount30d} payment${stats.revenue.paymentCount30d === 1 ? '' : 's'} · ${formatINR(stats.revenue.collectedThisMonth)} this month`
+                  : 'starts once fees are marked paid'
+              }
+            />
+            <MoneyStat
+              label="Active plan value"
+              value={formatINR(stats.revenue.contractValue)}
+              hint={`${stats.occupied} active membership${stats.occupied === 1 ? '' : 's'}`}
+            />
+            <MoneyStat
+              label="Monthly run rate"
+              value={formatINR(stats.revenue.monthlyRunRate)}
+              hint="all plans normalised per month"
+            />
+          </dl>
+        </Card>
+      </motion.div>
+
       {/* Alert banner */}
       {alerts.length > 0 && (
         <motion.div variants={itemVariants} className="mb-[var(--space-6)]">
@@ -190,12 +242,37 @@ export default function DashboardPage() {
 
       {/* Bottom row: Sparkline + Priority table */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-5 gap-[var(--space-4)]">
-        {/* Sparkline */}
+        {/* Attendance trend — real records, not a generated curve */}
         <Card variant="base" className="lg:col-span-2 p-[var(--space-5)]">
-          <h3 className="font-display text-sm font-semibold text-[var(--text-primary)] mb-[var(--space-4)]">
-            Occupancy This Month
-          </h3>
-          <Sparkline data={occupancyData} />
+          <div className="mb-[var(--space-4)] flex items-baseline justify-between gap-2">
+            <h3 className="font-display text-sm font-semibold text-[var(--text-primary)]">
+              Daily Attendance
+            </h3>
+            <span className="text-[11px] font-medium text-[var(--text-tertiary)]">
+              last 30 days
+            </span>
+          </div>
+
+          {stats.trendDaysWithData === 0 ? (
+            // Saying so beats drawing a flat line that looks like real zero
+            // attendance. This chart previously rendered Math.random() noise.
+            <div className="flex h-[120px] flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border-default)] bg-[var(--bg-muted)] text-center">
+              <p className="text-sm font-semibold text-[var(--text-secondary)]">
+                No attendance recorded yet
+              </p>
+              <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">
+                Mark attendance to start building this trend
+              </p>
+            </div>
+          ) : (
+            <>
+              <Sparkline data={stats.trend.map((d) => d.present)} />
+              <p className="mt-2 text-[11px] text-[var(--text-tertiary)]">
+                {stats.trendDaysWithData} of 30 days have records
+                {stats.trendDaysWithData < 30 && ' — gaps show as zero'}
+              </p>
+            </>
+          )}
         </Card>
 
         {/* Priority table */}
@@ -331,14 +408,51 @@ function Sparkline({ data }: { data: number[] }) {
   );
 }
 
-// ─── Generate mock sparkline data ───────────────────────────────
+// The 30-day "occupancy" curve used to be generated here with Math.random()
+// and rendered as though it were history. It is now real attendance data from
+// /api/stats — see the Daily Attendance card above.
 
-function generateSparklineData(current: number): number[] {
-  const data: number[] = [];
-  for (let i = 0; i < 30; i++) {
-    const noise = Math.floor(Math.random() * 8) - 4;
-    data.push(Math.max(30, Math.min(95, current + noise - Math.floor((29 - i) * 0.3))));
-  }
-  data[data.length - 1] = current;
-  return data;
+/* ─── Money stat tile ─────────────────────────────────────────── */
+
+function MoneyStat({
+  label,
+  value,
+  hint,
+  tone = 'neutral',
+  onClick,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+  tone?: 'neutral' | 'ok' | 'warn';
+  onClick?: () => void;
+}) {
+  const toneClass =
+    tone === 'warn' ? 'text-[var(--marigold-700)]'
+    : tone === 'ok' ? 'text-[var(--emerald-600)]'
+    : 'text-[var(--text-primary)]';
+
+  const Wrapper = onClick ? 'button' : 'div';
+
+  return (
+    <Wrapper
+      {...(onClick ? { onClick, type: 'button' as const } : {})}
+      className={cn(
+        'bg-[var(--bg-surface)] p-[var(--space-4)] text-left',
+        onClick && 'cursor-pointer transition-colors hover:bg-[var(--bg-muted)]'
+      )}
+    >
+      <dt className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
+        {label}
+      </dt>
+      <dd>
+        <span className={cn('tabular mt-1 block font-display text-xl font-semibold', toneClass)}>
+          {value}
+        </span>
+        {hint && (
+          <span className="mt-0.5 block text-[11px] text-[var(--text-tertiary)]">{hint}</span>
+        )}
+      </dd>
+    </Wrapper>
+  );
 }

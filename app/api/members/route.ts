@@ -16,7 +16,7 @@ export async function GET() {
       // collection and both inserted — the second threw on the unique index.
       // Reminder bookkeeping is server-side only — the client never reads it.
       const members = await Member.find({})
-        .select('-reminderSentFor -reminderSentAt -__v')
+        .select('-reminderSentFor -reminderSentAt -lastPaymentAt -lastPaymentAmount -__v')
         .sort({ seat: 1 })
         .lean();
       return NextResponse.json(members, { headers: { 'Cache-Control': 'no-store' } });
