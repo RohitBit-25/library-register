@@ -33,15 +33,46 @@ export async function decrypt(input: string): Promise<Record<string, unknown>> {
   return payload as Record<string, unknown>;
 }
 
-export async function verifyAdmin(): Promise<boolean> {
+export interface Session {
+  isAdmin: true;
+  staffId: string;
+  name: string;
+  role: 'owner' | 'staff';
+}
+
+/**
+ * The signed-in staff member, or null.
+ *
+ * The session used to carry only `{ isAdmin: true }`, so the server knew
+ * someone was authorised but never who — which is why every audit row said
+ * "Admin". It now carries identity, and every mutation stamps it.
+ */
+export async function getSession(): Promise<Session | null> {
   const cookieStore = await cookies();
-  const session = cookieStore.get(SESSION_COOKIE)?.value;
-  if (!session) return false;
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  if (!token) return null;
   try {
-    const parsed = await decrypt(session);
-    return parsed.isAdmin === true;
+    const p = await decrypt(token);
+    if (p.isAdmin !== true) return null;
+    return {
+      isAdmin: true,
+      staffId: typeof p.staffId === 'string' ? p.staffId : '',
+      // Sessions issued before staff accounts existed carry no name; they
+      // stay valid until expiry and report the old label rather than crashing.
+      name: typeof p.name === 'string' ? p.name : 'Admin',
+      role: p.role === 'owner' ? 'owner' : 'staff',
+    };
   } catch {
-    // Bad signature, expired, or ADMIN_SECRET unset — all mean "not admin".
-    return false;
+    // Bad signature, expired, or ADMIN_SECRET unset — all mean "not signed in".
+    return null;
   }
+}
+
+export async function verifyAdmin(): Promise<boolean> {
+  return (await getSession()) !== null;
+}
+
+/** Owner-only actions: managing staff, and anything destructive. */
+export async function verifyOwner(): Promise<boolean> {
+  return (await getSession())?.role === 'owner';
 }
