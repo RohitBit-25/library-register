@@ -21,6 +21,15 @@ const ADMIN_ROUTES = [
   '/audit', '/export', '/attendance', '/expiry', '/setup', '/payments', '/staff',
 ];
 
+/**
+ * Signature check only — deliberately no database.
+ *
+ * Revoked sessions (see lib/auth-server.ts) are rejected at the data layer,
+ * not here: this runs on every page navigation, and a Mongo round-trip per
+ * navigation is a poor trade for a check the API already performs. Every
+ * admin page loads its data through a guarded route, so a revoked token gets
+ * past this gate and then renders nothing.
+ */
 async function isAdmin(token: string | undefined): Promise<boolean> {
   if (!token) return false;
   const secret = process.env.ADMIN_SECRET;

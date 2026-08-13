@@ -1,5 +1,8 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
+import { randomUUID } from 'node:crypto';
+import dbConnect from '@/lib/mongodb';
+import RevokedSession from '@/models/RevokedSession';
 
 // No fallback. A hardcoded default here would be published in the repo, and
 // anyone could forge an admin_session cookie with it. Generate one with:
@@ -22,8 +25,32 @@ export async function encrypt(payload: Record<string, unknown>) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
+    // A unique ID per token, so signing out can revoke this session
+    // specifically rather than every session the staff member holds.
+    .setJti(randomUUID())
     .setExpirationTime('7d')
     .sign(getKey());
+}
+
+/**
+ * Stop accepting a token before it expires on its own.
+ *
+ * Stores the token's own expiry so the row lives exactly as long as the
+ * token it invalidates, and no longer.
+ */
+export async function revokeToken(token: string): Promise<void> {
+  try {
+    const p = await decrypt(token);
+    if (typeof p.jti !== 'string' || typeof p.exp !== 'number') return;
+    await dbConnect();
+    await RevokedSession.updateOne(
+      { jti: p.jti },
+      { $set: { jti: p.jti, expiresAt: new Date(p.exp * 1000) } },
+      { upsert: true }
+    );
+  } catch {
+    // An unparseable token is already useless — nothing to revoke.
+  }
 }
 
 export async function decrypt(input: string): Promise<Record<string, unknown>> {
@@ -54,6 +81,13 @@ export async function getSession(): Promise<Session | null> {
   try {
     const p = await decrypt(token);
     if (p.isAdmin !== true) return null;
+
+    // Signed out, but the holder still has the token.
+    if (typeof p.jti === 'string') {
+      await dbConnect();
+      if (await RevokedSession.exists({ jti: p.jti })) return null;
+    }
+
     return {
       isAdmin: true,
       staffId: typeof p.staffId === 'string' ? p.staffId : '',
