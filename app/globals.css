@@ -103,6 +103,7 @@
     --ruby-50:  #FEF2F2;
     --ruby-100: #FEE2E2;
     --ruby-200: #FCC5C5;
+    --ruby-300: #F79999; /* tint border / disabled fill */
     --ruby-400: #EF5350; /* fill only */
     --ruby-500: #DC2626; /* 4.83:1 — dots, borders */
     --ruby-600: #B91C1C; /* 6.47:1 — TEXT + button fill */
