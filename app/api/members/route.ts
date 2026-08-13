@@ -14,7 +14,11 @@ export async function GET() {
       // Seeding moved to `npm run seed`. A GET that runs insertMany is not
       // idempotent, and two concurrent cold-start requests both saw an empty
       // collection and both inserted — the second threw on the unique index.
-      const members = await Member.find({}).sort({ seat: 1 }).lean();
+      // Reminder bookkeeping is server-side only — the client never reads it.
+      const members = await Member.find({})
+        .select('-reminderSentFor -reminderSentAt -__v')
+        .sort({ seat: 1 })
+        .lean();
       return NextResponse.json(members, { headers: { 'Cache-Control': 'no-store' } });
     }
 

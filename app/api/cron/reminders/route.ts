@@ -2,80 +2,97 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
 import AuditLog from '@/models/AuditLog';
+import { todayLocalISO, addDaysISO } from '@/lib/seat-status';
+import { sendExpiryReminder } from '@/lib/notify';
 
-// This route should be triggered daily via a Cron Job (e.g., Vercel Cron or AWS EventBridge)
 export const dynamic = 'force-dynamic';
 
+/** Remind anyone expiring within this many days. */
+export const REMINDER_WINDOW_DAYS = 3;
+
+/**
+ * GET /api/cron/reminders — daily expiry reminders. Trigger from Vercel Cron
+ * or any scheduler with `Authorization: Bearer $CRON_SECRET`.
+ *
+ * Three properties this job needs, none of which it had before:
+ *
+ * 1. **Idempotent.** It stamps `reminderSentFor` with the expiry it reminded
+ *    about, and skips anyone already stamped. Re-running sends nothing.
+ *    Previously every run re-sent to the same people.
+ *
+ * 2. **Self-healing.** It matches a *window* (expiring within N days and not
+ *    yet expired), not `expiry === today + 3`. With exact matching, one failed
+ *    or skipped run meant that day's cohort was never reminded at all —
+ *    silently. With a window, the next successful run catches them.
+ *
+ * 3. **Honest.** A member is only stamped if the send actually succeeded, so a
+ *    provider outage doesn't silently mark everyone as notified.
+ */
 export async function GET(request: Request) {
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    console.error('CRON_SECRET is not set — refusing to run the reminder job.');
+    return NextResponse.json({ error: 'Not configured' }, { status: 503 });
+  }
+  if (request.headers.get('authorization') !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    // 1. Verify cron secret. Fail closed: the previous guard was skipped
-    //    entirely when CRON_SECRET was unset, leaving this endpoint public.
-    const cronSecret = process.env.CRON_SECRET;
-    if (!cronSecret) {
-      console.error('CRON_SECRET is not set — refusing to run the reminder job.');
-      return NextResponse.json({ error: 'Not configured' }, { status: 503 });
-    }
-    if (request.headers.get('authorization') !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     await dbConnect();
-    
-    // 2. Find members expiring exactly in 3 days
-    const today = new Date();
-    const targetDate = new Date(today);
-    targetDate.setDate(targetDate.getDate() + 3);
-    
-    // Format YYYY-MM-DD
-    const targetDateStr = targetDate.toISOString().split('T')[0];
 
-    // Find non-vacant members whose expiry is EXACTLY targetDateStr.
-    // Plain equality, not $regex: expiry is stored as a bare YYYY-MM-DD string,
-    // and $regex cannot use the { vacant, expiry } index.
-    const membersToRemind = await Member.find({
-      vacant: { $ne: true },
-      expiry: targetDateStr,
-    }).lean();
+    // Local date, not toISOString(): that is UTC, so in IST this job used to
+    // target the wrong day's cohort whenever it ran before 05:30.
+    const today = todayLocalISO();
+    const windowEnd = addDaysISO(today, REMINDER_WINDOW_DAYS);
 
-    if (membersToRemind.length === 0) {
-      return NextResponse.json({ message: 'No members expire in exactly 3 days.' });
+    const candidates = await Member.find({
+      vacant: false,
+      expiry: { $nin: ['', null], $gte: today, $lte: windowEnd },
+      // Not already reminded about *this* expiry.
+      $expr: { $ne: ['$reminderSentFor', '$expiry'] },
+    }).lean<{ seat: number; name: string; phone: string; expiry: string }[]>();
+
+    const result = { eligible: candidates.length, sent: 0, skippedNoPhone: 0, failed: 0 };
+
+    for (const m of candidates) {
+      if (!m.phone) {
+        result.skippedNoPhone++;
+        continue;
+      }
+
+      const outcome = await sendExpiryReminder({
+        name: m.name,
+        phone: m.phone,
+        seat: m.seat,
+        expiry: m.expiry,
+        today,
+      });
+
+      if (!outcome.ok) {
+        result.failed++;
+        console.error(`Reminder failed for seat ${m.seat}: ${outcome.error}`);
+        continue; // Deliberately not stamped — retried on the next run.
+      }
+
+      await Member.updateOne(
+        { seat: m.seat, expiry: m.expiry },
+        { $set: { reminderSentFor: m.expiry, reminderSentAt: new Date() } }
+      );
+      result.sent++;
     }
 
-    let notificationsSent = 0;
-
-    // 3. Process each member (Simulated WhatsApp Integration)
-    for (const member of membersToRemind) {
-      if (!member.phone) continue;
-
-      const message = `Hi ${member.name}, your library fee for Seat ${member.seat} expires in 3 days (${targetDateStr}). Please renew to keep your seat.`;
-      
-      // ====================================================================
-      // TODO: Replace this block with your Twilio/Meta WhatsApp API call
-      // Example using Twilio:
-      // await twilioClient.messages.create({
-      //   body: message,
-      //   from: 'whatsapp:+14155238886',
-      //   to: `whatsapp:+91${member.phone}`
-      // });
-      // ====================================================================
-
-      console.log(`[WhatsApp API Simulated] Sending to ${member.phone}: ${message}`);
-      notificationsSent++;
-    }
-
-    // 4. Log the action
-    if (notificationsSent > 0) {
+    if (result.sent > 0 || result.failed > 0) {
       await AuditLog.create({
         action: 'Automated Reminders',
-        details: `Sent expiry reminder to ${notificationsSent} members.`,
+        details:
+          `Expiry reminders for ${today}..${windowEnd}: ` +
+          `${result.sent} sent, ${result.failed} failed, ` +
+          `${result.skippedNoPhone} skipped (no phone).`,
       });
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: `Simulated sending ${notificationsSent} WhatsApp reminders.` 
-    });
-
+    return NextResponse.json({ success: true, window: { from: today, to: windowEnd }, ...result });
   } catch (error) {
     console.error('Cron job error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

@@ -5,6 +5,9 @@ import type { Member as MemberType } from '../lib/types.ts';
 
 export interface IMember extends Document, Omit<MemberType, 'seat'> {
   seat: number;
+  /** Server-side reminder bookkeeping — never sent to the client. */
+  reminderSentFor: string;
+  reminderSentAt: Date | null;
 }
 
 // Enums mirror the unions in lib/types.ts. Without them the schema accepted
@@ -21,7 +24,14 @@ const MemberSchema = new Schema<IMember>({
   vacant: { type: Boolean, default: true },
   paymentMode: { type: String, enum: ['upi', 'cash', null], default: null },
   documentStatus: { type: String, default: null },
-  termsAccepted: { type: Boolean, default: null }
+  termsAccepted: { type: Boolean, default: null },
+
+  // The `expiry` value we last sent an expiry reminder about. Makes the cron
+  // idempotent: re-running it the same day sends nothing. Renewing changes
+  // `expiry`, so this stops matching and the member becomes eligible again —
+  // no extra bookkeeping or cleanup needed.
+  reminderSentFor: { type: String, default: '' },
+  reminderSentAt: { type: Date, default: null },
 }, {
   timestamps: true
 });

@@ -1,7 +1,6 @@
 'use client';
 
-import { useMembers } from '@/hooks/useMembers';
-import { useStats } from '@/hooks/useStats';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useToastProvider } from '@/hooks/useToast';
 import { useAuth, AuthProvider } from '@/hooks/useAuth';
 import { useSeatRequests } from '@/hooks/useSeatRequests';
@@ -22,8 +21,10 @@ const STANDALONE_ROUTES = ['/landing', '/kiosk'];
 const USER_ROUTES = ['/browse', '/my-requests'];
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
-  const { members } = useMembers();
-  const stats = useStats(members);
+  // Only the sidebar's "N due" badge needs numbers here. This used to call
+  // useMembers() + useStats(), pulling all 95 member records — names, phones,
+  // join dates — on every single page just to render one badge.
+  const { stats } = useDashboardStats();
   const { toasts, addToast, removeToast, ToastContext } = useToastProvider();
   const { isAuthenticated, isAdmin, isLoading } = useAuth();
   const { pendingCount } = useSeatRequests();
@@ -73,7 +74,9 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 
   return (
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
-      {isAdmin && <Sidebar dueCount={stats.due} pendingRequests={pendingCount} />}
+      {/* withDues, not due: the badge means "how many owe money", and `due`
+          now excludes members who are also expired (expired outranks it). */}
+      {isAdmin && <Sidebar dueCount={stats.withDues} pendingRequests={pendingCount} />}
       <TopBar />
       <main 
         className={cn(

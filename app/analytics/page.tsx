@@ -1,7 +1,7 @@
 'use client';
 
 import { useMembers } from '@/hooks/useMembers';
-import { useStats } from '@/hooks/useStats';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useToast } from '@/hooks/useToast';
 import StatCard from '@/components/ui/StatCard';
 import Badge, { BadgeVariant } from '@/components/ui/Badge';
@@ -28,8 +28,10 @@ const itemVariants: Variants = {
 };
 
 export default function DashboardPage() {
-  const { members, update } = useMembers();
-  const stats = useStats(members);
+  // Counters and alert lists come from the server (MongoDB aggregation).
+  // `update` still needs useMembers for the optimistic Mark-Paid write.
+  const { update } = useMembers();
+  const { stats, refresh: refreshStats } = useDashboardStats();
   const { addToast } = useToast();
   const router = useRouter();
 
@@ -54,8 +56,11 @@ export default function DashboardPage() {
   // Sparkline: last 30 days (mockable occupancy data)
   const occupancyData = generateSparklineData(stats.occupied);
 
-  const handleMarkPaid = (seat: number) => {
-    update(seat, { fee: 'paid' }, (msg) => addToast('error', msg));
+  const handleMarkPaid = async (seat: number) => {
+    await update(seat, { fee: 'paid' }, (msg) => addToast('error', msg));
+    // Counters live on the server now, so they must be re-fetched — the
+    // optimistic member update alone no longer moves them.
+    await refreshStats();
     addToast('success', `Seat ${seat} — fee marked as paid`);
   };
 

@@ -19,15 +19,23 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 // Transpile the TS sources we need into a temp dir, then import them.
 const out = mkdtempSync(join(tmpdir(), 'lib-selfcheck-'));
 writeFileSync(join(out, 'package.json'), '{"type":"module"}');
+// allowImportingTsExtensions + rewriteRelativeImportExtensions: the lib/ files
+// import each other with explicit .ts extensions (so plain Node can load them
+// in scripts/), and tsc rewrites those to .js on emit.
 execFileSync('npx', [
-  'tsc', 'lib/csv.ts', 'lib/utils.ts', 'lib/types.ts',
+  'tsc', 'lib/csv.ts', 'lib/utils.ts', 'lib/types.ts', 'lib/seat-status.ts', 'lib/notify.ts',
   '--outDir', out, '--module', 'esnext', '--target', 'es2020',
   '--moduleResolution', 'bundler', '--skipLibCheck',
+  '--allowImportingTsExtensions', '--rewriteRelativeImportExtensions',
 ], { cwd: root, stdio: 'inherit' });
 
 const { escapeCsvValue, toCsv } = await import(pathToFileURL(join(out, 'csv.js')).href);
-const { calcExpiry, daysUntilExpiry, getSeatStatus, firstName, renewalStartDate } =
+const { calcExpiry, daysUntilExpiry, firstName, renewalStartDate } =
   await import(pathToFileURL(join(out, 'utils.js')).href);
+const { getSeatState, getSeatStatus, todayLocalISO, addDaysISO } =
+  await import(pathToFileURL(join(out, 'seat-status.js')).href);
+const { buildExpiryMessage, normalisePhone } =
+  await import(pathToFileURL(join(out, 'notify.js')).href);
 
 let n = 0;
 const check = (name, fn) => { fn(); n++; console.log(`  ok  ${name}`); };
@@ -93,29 +101,87 @@ check('daysUntilExpiry sign is correct either side of today', () => {
   assert.ok(daysUntilExpiry(iso(-10)) < 0);
 });
 
-check('getSeatStatus precedence: vacant > due > expired > expiring > active', () => {
-  const iso = (offset) => {
-    const d = new Date();
-    d.setDate(d.getDate() + offset);
-    return d.toISOString().split('T')[0];
-  };
-  const base = { seat: 1, name: 'A', phone: '', joinDate: '', duration: '3M', shift: 'full' };
-  assert.equal(getSeatStatus({ ...base, vacant: true, fee: 'due', expiry: iso(-5) }), 'vacant');
-  assert.equal(getSeatStatus({ ...base, vacant: false, fee: 'due', expiry: iso(90) }), 'due');
-  assert.equal(getSeatStatus({ ...base, vacant: false, fee: 'paid', expiry: iso(-5) }), 'expired');
-  assert.equal(getSeatStatus({ ...base, vacant: false, fee: 'paid', expiry: iso(3) }), 'expiring');
-  assert.equal(getSeatStatus({ ...base, vacant: false, fee: 'paid', expiry: iso(90) }), 'active');
+const TODAY = '2026-08-13';
+const at = (offset) => addDaysISO(TODAY, offset);
+const member = (over) => ({
+  seat: 1, name: 'A', phone: '', joinDate: '', duration: '3M',
+  shift: 'full', vacant: false, fee: 'paid', ...over,
+});
+
+check('status precedence: vacant > expired > due > expiring > active', () => {
+  const s = (o) => getSeatStatus(member(o), TODAY);
+  assert.equal(s({ vacant: true, fee: 'due', expiry: at(-5) }), 'vacant');
+  assert.equal(s({ fee: 'due', expiry: at(90) }), 'due');
+  assert.equal(s({ expiry: at(-5) }), 'expired');
+  assert.equal(s({ expiry: at(3) }), 'expiring');
+  assert.equal(s({ expiry: at(90) }), 'active');
+});
+
+check('expired outranks due — an overstayer is not merely "Fee Due"', () => {
+  // The whole point of the precedence change. Someone 5 months past their term
+  // who never paid used to read as "due", hiding that the seat should be
+  // reclaimed and counting them in the wrong dashboard tile.
+  const overstayer = member({ fee: 'due', expiry: at(-150) });
+  assert.equal(getSeatStatus(overstayer, TODAY), 'expired');
+});
+
+check('hasDues survives the precedence change', () => {
+  // Losing the money signal would be an unacceptable trade for the above.
+  const overstayer = getSeatState(member({ fee: 'due', expiry: at(-150) }), TODAY);
+  assert.equal(overstayer.status, 'expired');
+  assert.equal(overstayer.hasDues, true);
+
+  const paidUp = getSeatState(member({ fee: 'paid', expiry: at(-150) }), TODAY);
+  assert.equal(paidUp.status, 'expired');
+  assert.equal(paidUp.hasDues, false);
 });
 
 check('expiring window boundary is 7 days inclusive', () => {
-  const iso = (offset) => {
-    const d = new Date();
-    d.setDate(d.getDate() + offset);
-    return d.toISOString().split('T')[0];
-  };
-  const base = { seat: 1, name: 'A', phone: '', joinDate: '', duration: '3M', shift: 'full', vacant: false, fee: 'paid' };
-  assert.equal(getSeatStatus({ ...base, expiry: iso(7) }), 'expiring');
-  assert.equal(getSeatStatus({ ...base, expiry: iso(8) }), 'active');
+  assert.equal(getSeatStatus(member({ expiry: at(7) }), TODAY), 'expiring');
+  assert.equal(getSeatStatus(member({ expiry: at(8) }), TODAY), 'active');
+  assert.equal(getSeatStatus(member({ expiry: at(0) }), TODAY), 'expiring');
+});
+
+check('a member with no expiry is never expired', () => {
+  const s = getSeatState(member({ expiry: '' }), TODAY);
+  assert.equal(s.status, 'active');
+  assert.equal(s.daysLeft, Infinity);
+});
+
+check('dates are local, not UTC — no overnight off-by-one', () => {
+  // todayISO() was `new Date().toISOString()`, which is UTC. In IST (+5:30)
+  // that returns YESTERDAY between 00:00 and 05:30 every day, so members got
+  // join dates a day early and the cron targeted the wrong cohort.
+  const midnightIST = new Date(2026, 7, 14, 0, 30); // 14 Aug, 00:30 local
+  assert.equal(todayLocalISO(midnightIST), '2026-08-14');
+  assert.notEqual(midnightIST.toISOString().split('T')[0], '2026-08-14');
+});
+
+check('addDaysISO crosses month and year boundaries', () => {
+  assert.equal(addDaysISO('2026-08-30', 3), '2026-09-02');
+  assert.equal(addDaysISO('2026-12-30', 3), '2027-01-02');
+  assert.equal(addDaysISO('2028-02-28', 1), '2028-02-29'); // leap year
+});
+
+check('reminder window catches a cohort a missed run would have skipped', () => {
+  // The cron used to match `expiry === today + 3` exactly, so one failed run
+  // meant that day's members were never reminded. A window self-heals.
+  const windowEnd = addDaysISO(TODAY, 3);
+  for (const offset of [0, 1, 2, 3]) {
+    const e = at(offset);
+    assert.ok(e >= TODAY && e <= windowEnd, `expiry ${e} should be in window`);
+  }
+  assert.ok(at(4) > windowEnd, 'day 4 is outside the window');
+  assert.ok(at(-1) < TODAY, 'already-expired is outside the window');
+});
+
+check('reminder message and phone normalisation', () => {
+  assert.match(buildExpiryMessage({ name: 'Rohit Singh', phone: '9829230576', seat: 7, expiry: at(1), today: TODAY }), /tomorrow/);
+  assert.match(buildExpiryMessage({ name: 'Rohit', phone: '9829230576', seat: 7, expiry: TODAY, today: TODAY }), /today/);
+  assert.match(buildExpiryMessage({ name: 'Rohit', phone: '9829230576', seat: 7, expiry: at(3), today: TODAY }), /in 3 days/);
+  assert.equal(normalisePhone('98292 30576'), '919829230576');
+  assert.equal(normalisePhone('919829230576'), '919829230576');
+  assert.equal(normalisePhone('123'), null);
 });
 
 check('renewing early keeps the days already paid for', () => {

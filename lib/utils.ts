@@ -1,4 +1,4 @@
-import { type Member, type SeatStatus, type Duration } from './types';
+import type { SeatStatus, Duration } from './types.ts';
 
 // ─── Date Utilities ─────────────────────────────────────────────
 
@@ -33,28 +33,24 @@ export function renewalStartDate(currentExpiry: string, today = todayISO()): str
   return currentExpiry > today ? currentExpiry : today;
 }
 
-/**
- * Days until expiry (negative = expired)
- */
-export function daysUntilExpiry(expiry: string): number {
-  if (!expiry) return Infinity;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const exp = new Date(expiry);
-  exp.setHours(0, 0, 0, 0);
-  return Math.ceil((exp.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-}
+// Seat state lives in lib/seat-status.ts so the server, the /api/stats
+// aggregation and the browser all derive it from one place. Re-exported here
+// because ~16 call sites already import it from utils.
+export {
+  getSeatState,
+  getSeatStatus,
+  todayLocalISO,
+  addDaysISO,
+  daysUntil,
+  EXPIRING_WINDOW_DAYS,
+  type SeatState,
+} from './seat-status.ts';
 
-/**
- * Derive seat status from member record
- */
-export function getSeatStatus(m: Member): SeatStatus {
-  if (m.vacant) return 'vacant';
-  if (m.fee === 'due') return 'due';
-  const daysLeft = daysUntilExpiry(m.expiry);
-  if (daysLeft < 0) return 'expired';
-  if (daysLeft <= 7) return 'expiring';
-  return 'active';
+import { daysUntil as _daysUntil, todayLocalISO as _todayLocalISO } from './seat-status.ts';
+
+/** Days until expiry (negative = expired). Alias kept for existing call sites. */
+export function daysUntilExpiry(expiry: string): number {
+  return _daysUntil(expiry);
 }
 
 /**
@@ -83,10 +79,15 @@ export function fmtDateShort(dateStr: string): string {
 }
 
 /**
- * Get today's date as YYYY-MM-DD
+ * Today as YYYY-MM-DD in the *local* timezone.
+ *
+ * This used to be `new Date().toISOString().split('T')[0]`, which is UTC. In
+ * IST (UTC+5:30) that returns yesterday's date every day between midnight and
+ * 05:30 — so overnight, new members got a join date one day early and the
+ * reminder cron targeted the wrong cohort.
  */
 export function todayISO(): string {
-  return new Date().toISOString().split('T')[0];
+  return _todayLocalISO();
 }
 
 /**
