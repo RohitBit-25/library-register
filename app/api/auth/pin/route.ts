@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
-import { verifyAdmin } from '@/lib/auth-server';
-import { checkAdminPin, setAdminPin, PIN_PATTERN } from '@/lib/pin-store';
+import { getSession } from '@/lib/auth-server';
+import { checkStaffPin, setStaffPin, isPinTaken, PIN_PATTERN } from '@/lib/pin-store';
+import AuditLog from '@/models/AuditLog';
 
 export const dynamic = 'force-dynamic';
 
+/** POST /api/auth/pin — change your own PIN. */
 export async function POST(request: Request) {
-  if (!await verifyAdmin()) {
+  const session = await getSession();
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -28,9 +31,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Goes through the same lockout path as login, so this endpoint can't be
-    // used as an unthrottled oracle for guessing the current PIN.
-    const check = await checkAdminPin(currentPin);
+    // Same lockout path as sign-in, so this cannot be used as an unthrottled
+    // oracle for guessing the current PIN.
+    const check = await checkStaffPin(currentPin);
     if (!check.ok) {
       if (check.reason === 'locked') {
         return NextResponse.json(
@@ -41,7 +44,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Current PIN is incorrect' }, { status: 403 });
     }
 
-    await setAdminPin(newPin);
+    // The PIN identifies the person, so it must stay unique — two staff with
+    // the same PIN would make sign-in ambiguous and the audit trail wrong.
+    if (await isPinTaken(newPin)) {
+      return NextResponse.json(
+        { error: 'That PIN is already in use by another staff member' },
+        { status: 409 }
+      );
+    }
+
+    // Change the PIN of whoever the *current* PIN belongs to, not whoever the
+    // cookie claims — they must match, and this is the safer of the two.
+    await setStaffPin(check.staff.id, newPin);
+
+    await AuditLog.create({
+      user: check.staff.name,
+      action: 'Changed PIN',
+      details: `${check.staff.name} changed their own PIN`,
+    });
+
     return NextResponse.json({ success: true, message: 'PIN updated successfully' });
   } catch (error) {
     console.error('PIN change error:', error);

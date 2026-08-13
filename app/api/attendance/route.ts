@@ -2,14 +2,15 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Attendance from '@/models/Attendance';
 import AuditLog from '@/models/AuditLog';
-import { verifyAdmin } from '@/lib/auth-server';
+import { getSession } from '@/lib/auth-server';
 import { attendanceSchema, formatZodError } from '@/lib/schemas';
 
 export const dynamic = 'force-dynamic';
 
 /** GET: attendance history (last 365 days). Admin only. */
 export async function GET() {
-  if (!await verifyAdmin()) {
+  const session = await getSession();
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -29,7 +30,8 @@ export async function GET() {
  *   { date, seats[], allPresent:true } — set the whole day
  */
 export async function POST(request: Request) {
-  if (!await verifyAdmin()) {
+  const session = await getSession();
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -51,6 +53,7 @@ export async function POST(request: Request) {
       );
 
       await AuditLog.create({
+        user: session.name,
         action: 'Marked Bulk Attendance',
         details: `Marked all ${seats.length} members as present for ${body.date}`,
       });
@@ -70,6 +73,7 @@ export async function POST(request: Request) {
     ).lean<{ seats: number[] } | null>();
 
     await AuditLog.create({
+      user: session.name,
       action: present ? 'Marked Present' : 'Marked Absent',
       details: `Seat ${seat} marked ${present ? 'present' : 'absent'} for ${date}`,
       seat,

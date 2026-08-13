@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
 import AuditLog from '@/models/AuditLog';
-import { verifyAdmin } from '@/lib/auth-server';
+import { getSession } from '@/lib/auth-server';
 import { memberPatchSchema, seatNumber, formatZodError } from '@/lib/schemas';
 import Payment from '@/models/Payment';
 import { planPrice } from '@/lib/pricing';
@@ -18,7 +18,8 @@ const VACANT_RESET = {
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ seat: string }> }) {
   try {
-    if (!await verifyAdmin()) {
+    const session = await getSession();
+    if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -118,6 +119,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
     else if (patch.fee) actionDesc = `Fee marked as ${patch.fee}`;
 
     await AuditLog.create({
+      user: session.name,
       action: actionDesc,
       details: `Seat ${seatId}: ${Object.keys(patch).join(', ')}`,
       seat: seatId,
@@ -132,7 +134,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ seat: string }> }) {
   try {
-    if (!await verifyAdmin()) {
+    const session = await getSession();
+    if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -157,6 +160,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ s
     // The DELETE path used to skip the audit log entirely, so vacating a seat
     // left no trace.
     await AuditLog.create({
+      user: session.name,
       action: 'Vacated Seat',
       details: `Seat ${seatId} was vacated.`,
       seat: seatId,

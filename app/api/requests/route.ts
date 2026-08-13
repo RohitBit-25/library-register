@@ -3,7 +3,7 @@ import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
 import Member from '@/models/Member';
 import AuditLog from '@/models/AuditLog';
-import { verifyAdmin } from '@/lib/auth-server';
+import { getSession } from '@/lib/auth-server';
 import { todayISO, calcExpiry } from '@/lib/utils';
 import { seatRequestCreateSchema, seatRequestUpdateSchema, formatZodError } from '@/lib/schemas';
 
@@ -38,7 +38,8 @@ async function readJsonCapped(request: Request): Promise<unknown> {
 
 /** GET: list all seat requests. Admin only. */
 export async function GET() {
-  if (!await verifyAdmin()) {
+  const session = await getSession();
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -120,7 +121,8 @@ export async function POST(request: Request) {
  * Two admins approving different requests for the same seat both succeeded.
  */
 export async function PATCH(request: Request) {
-  if (!await verifyAdmin()) {
+  const session = await getSession();
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -145,6 +147,7 @@ export async function PATCH(request: Request) {
       req.status = status;
       await req.save();
       await AuditLog.create({
+        user: session.name,
         action: status === 'rejected' ? 'Rejected Request' : 'Reopened Request',
         details: `Seat ${req.seat} request from ${req.userName}`,
         seat: req.seat,
@@ -186,6 +189,7 @@ export async function PATCH(request: Request) {
     await req.save();
 
     await AuditLog.create({
+      user: session.name,
       action: 'Approved Request',
       details: `Seat ${req.seat} allotted to ${req.userName} (${duration})`,
       seat: req.seat,
@@ -203,7 +207,8 @@ export async function PATCH(request: Request) {
 
 /** DELETE: remove a request permanently. Admin only. */
 export async function DELETE(request: Request) {
-  if (!await verifyAdmin()) {
+  const session = await getSession();
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

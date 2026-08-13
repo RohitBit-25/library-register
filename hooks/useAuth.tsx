@@ -16,6 +16,10 @@ import {
 interface AuthContextValue {
   role: UserRole | null;
   isAdmin: boolean;
+  /** Signed-in staff member's name, or null. */
+  staffName: string | null;
+  /** Owners can manage staff; staff cannot. */
+  isOwner: boolean;
   isUser: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -27,6 +31,8 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue>({
   role: null,
   isAdmin: false,
+  staffName: null,
+  isOwner: false,
   isUser: false,
   isAuthenticated: false,
   isLoading: true,
@@ -35,7 +41,9 @@ const AuthContext = createContext<AuthContextValue>({
   logout: () => {},
 });
 
-const checkFetcher = async (url: string): Promise<{ isAdmin: boolean }> => {
+interface SessionInfo { isAdmin: boolean; name?: string; role?: 'owner' | 'staff' }
+
+const checkFetcher = async (url: string): Promise<SessionInfo> => {
   const res = await fetch(url, { credentials: 'same-origin' });
   if (!res.ok) return { isAdmin: false };
   return res.json();
@@ -49,11 +57,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // `library-role=admin` in devtools revealed the whole admin UI (every action
   // then 401'd — a confusing failure, not a real boundary).
   const { mutate: globalMutate } = useSWRConfig();
-  const { data, isLoading, mutate } = useSWR('/api/auth/check', checkFetcher, {
+  const { data, isLoading, mutate } = useSWR<SessionInfo>('/api/auth/check', checkFetcher, {
     revalidateOnFocus: true,
     shouldRetryOnError: false,
   });
   const isAdmin = data?.isAdmin === true;
+  // Who is signed in — every audit row now carries this name.
+  const staffName = data?.name ?? null;
+  const isOwner = data?.role === 'owner';
 
   // The "user" role carries no privilege, so localStorage is fine for it.
   // Read via useSyncExternalStore rather than an effect+setState, which would
@@ -105,13 +116,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo(() => ({
     role,
     isAdmin,
+    staffName,
+    isOwner,
     isUser: role === 'user',
     isAuthenticated: role !== null,
     isLoading,
     loginAsAdmin,
     loginAsUser,
     logout,
-  }), [role, isAdmin, isLoading, loginAsAdmin, loginAsUser, logout]);
+  }), [role, isAdmin, staffName, isOwner, isLoading, loginAsAdmin, loginAsUser, logout]);
 
   return (
     <AuthContext.Provider value={value}>
