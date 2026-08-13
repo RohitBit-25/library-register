@@ -60,6 +60,37 @@ Fixed by deleting the entire `--color-*` block (a codebase-wide grep found exact
 
 ---
 
+## 0b. Second pass — framework conventions and domain logic
+
+A later review against the Next.js 16 bundled docs (`node_modules/next/dist/docs/`, as `AGENTS.md` instructs) and a trace of the actual business workflow surfaced nine further issues, none of which were in the original 50.
+
+### Framework
+
+| Finding | Fix |
+|---|---|
+| **`middleware.ts` is the pre-16 name.** Next 16 renamed Middleware to Proxy; the old file still ran but logged a deprecation. The bundled docs for 16.2.1 specify `proxy.ts` + `export function proxy`, and keep the export named `config` (the general guidance saying `proxyConfig` is wrong for this version — the shipped docs win). | Renamed to `proxy.ts`. Build now reports `ƒ Proxy` with no deprecation. |
+| **Tailwind compiled documentation into CSS.** Tailwind v4 auto-scans every non-ignored file, so prose in this very report describing a class (`` `text-[var(--*-600)]` ``) became a real, invalid CSS rule and produced build warnings. | `@source not "../**/*.md";` in `globals.css`. Path is relative to the CSS file, so the `../` matters. |
+| **27 bare colour utilities emitted no CSS at all.** `bg-sapphire-500`, `bg-emerald-500`, `text-sapphire-500` etc. across 3 files. `globals.css` deliberately defines no `--color-*` entries (see §0a bug 1), and Tailwind has no `sapphire` in its default palette — so these classes did nothing. The Renew and Mark-Paid buttons had **no background** under `text-[var(--saffron-50)]`, i.e. near-white text on white. | Converted to `[var(--token)]` form. Because they then rendered for the first time, their contrast had never actually applied — the solid fills were bumped to `-600` (white on sapphire-500 was 3.86:1, on emerald-500 3.10:1). |
+
+Checked and already correct: `useSearchParams` is Suspense-wrapped; no async client components; no non-serializable props across the RSC boundary; the one `<img>` is a base64 data URI that `next/image` cannot optimize.
+
+### Domain logic
+
+| Finding | Fix |
+|---|---|
+| **Approval and allotment could diverge.** The client called `approveRequest()` — *without awaiting it* — and then separately `add()`. If the seat was taken, the request was already marked "approved" with no member behind it. Two admins approving different requests for the same seat both succeeded. | Both now happen in one server-side operation in `PATCH /api/requests`: claim the seat atomically first, mark approved only if that succeeded. Verified under contention — second approval returns `409` and the request **stays pending**. |
+| **Admin actions reported success on failure.** `approveRequest` / `rejectRequest` / `deleteRequest` awaited `fetch` without checking `res.ok` and swallowed errors in a `catch`, so `401` and `409` were indistinguishable from success. | Each returns a result the UI surfaces. |
+| **Renewing early destroyed paid-for days.** Renewal always started from *today*. A member whose term ran to the 20th who renewed on the 15th silently lost 5 days. | `renewalStartDate()` = `max(current expiry, today)` — which also avoids gifting free time to someone renewing late. Three tests cover both directions. |
+| **A second unescaped CSV builder.** `app/members/page.tsx` built its own rows by hand — the same injection bug already fixed in the Export page. Names come from the *public* request form. | Routed through the shared `toCsv()` helper. |
+| **Expired seats had no exit.** Per the product decision they are flagged only and never auto-vacated — but freeing one meant leaving the tracker and finding the seat on the map. | A "Free this seat" action on expired rows, with a confirm naming the member and how long ago they expired. Verified: seat cleared and audit-logged. |
+
+### Product decisions confirmed with the owner
+
+- **One seat = one member.** The `shift` field is that member's attendance window, not a sellable slot. Seats are *not* shared between a morning and an evening student, so no data-model change was made.
+- **Expired seats are flagged, never auto-vacated.** A human always decides when a seat is released.
+
+---
+
 ## 0. Executive Summary
 
 | Area | Verdict |
