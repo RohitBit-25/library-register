@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
+import { consumeRateLimit, callerKey } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
