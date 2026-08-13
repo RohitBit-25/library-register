@@ -4,6 +4,7 @@ import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
 import MemberTable from '@/components/member/MemberTable';
 import Modal from '@/components/ui/Modal';
+import { toCsv } from '@/lib/csv';
 import { useState } from 'react';
 
 export default function MembersPage() {
@@ -43,12 +44,18 @@ export default function MembersPage() {
     const selectedMembers = members.filter(m => seats.includes(m.seat) && !m.vacant);
     if (selectedMembers.length === 0) return;
     
-    const headers = 'Seat,Name,Phone,Shift,JoinDate,Duration,Expiry,FeeStatus\n';
-    const rows = selectedMembers.map(m => 
-      `${m.seat},"${m.name}","${m.phone}",${m.shift},${m.joinDate},${m.duration},${m.expiry},${m.fee}`
-    ).join('\n');
-    
-    const blob = new Blob([headers + rows], { type: 'text/csv' });
+    // Same shared helper as the Export page. This used to build rows by hand
+    // with bare quotes and no escaping, so a name containing `"` split the row
+    // and a name starting with `=`/`+`/`-`/`@` executed as a formula in Excel —
+    // and names come from the public seat-request form.
+    const csv = toCsv(
+      ['Seat', 'Name', 'Phone', 'Shift', 'JoinDate', 'Duration', 'Expiry', 'FeeStatus'],
+      selectedMembers.map(m => [
+        m.seat, m.name, m.phone, m.shift, m.joinDate, m.duration, m.expiry, m.fee,
+      ])
+    );
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

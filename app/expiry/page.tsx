@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
 import { daysUntilExpiry, fmtDate, firstName, cn } from '@/lib/utils';
@@ -13,7 +13,9 @@ import {
   RefreshCw,
   Flame,
   MessageCircle,
+  Trash2,
 } from 'lucide-react';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { useRouter } from 'next/navigation';
 import { DataTable } from '@/components/ui/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
@@ -56,9 +58,10 @@ function UrgencyStat({
 type ExpiryMember = Member & { daysLeft: number };
 
 export default function ExpiryPage() {
-  const { members } = useMembers();
+  const { members, vacate } = useMembers();
   const { addToast } = useToast();
   const router = useRouter();
+  const [confirmVacate, setConfirmVacate] = useState<ExpiryMember | null>(null);
 
   const occupiedMembers = useMemo(() => {
     return members
@@ -75,6 +78,14 @@ export default function ExpiryPage() {
   const handleRenew = useCallback((seat: number) => {
     router.push(`/?seat=${seat}`);
   }, [router]);
+
+  const handleConfirmVacate = useCallback(() => {
+    if (!confirmVacate) return;
+    const { seat, name } = confirmVacate;
+    vacate(seat, (msg) => addToast('error', msg));
+    addToast('success', `Seat ${seat} freed — ${name} removed`);
+    setConfirmVacate(null);
+  }, [confirmVacate, vacate, addToast]);
 
   const handleWhatsApp = useCallback((m: ExpiryMember) => {
     if (!m.phone) {
@@ -206,11 +217,26 @@ export default function ExpiryPage() {
           <Tooltip content="Renew Membership">
             <button
               onClick={() => handleRenew(row.original.seat)}
+              aria-label={`Renew membership for seat ${row.original.seat}`}
               className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)] hover:bg-[var(--sapphire-500)]/20 shadow-sm hover:scale-105 transition-all active:scale-95 border border-[var(--sapphire-500)]/20"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
             </button>
           </Tooltip>
+          {/* Expired seats stay occupied until someone frees them (deliberate —
+              no auto-vacate). Without this the admin had to leave the tracker,
+              find the seat on the map, and vacate it from there. */}
+          {row.original.daysLeft < 0 && (
+            <Tooltip content="Free this seat">
+              <button
+                onClick={() => setConfirmVacate(row.original)}
+                aria-label={`Vacate seat ${row.original.seat} — membership expired`}
+                className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--ruby-500)]/10 text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/20 shadow-sm hover:scale-105 transition-all active:scale-95 border border-[var(--ruby-500)]/20"
+              >
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
+              </button>
+            </Tooltip>
+          )}
         </div>
       ),
     },
@@ -286,6 +312,20 @@ export default function ExpiryPage() {
             </div>
           </div>
         )}
+      />
+
+      <ConfirmDialog
+        isOpen={confirmVacate !== null}
+        onClose={() => setConfirmVacate(null)}
+        onConfirm={handleConfirmVacate}
+        title={confirmVacate ? `Free seat ${confirmVacate.seat}?` : ''}
+        description={
+          confirmVacate
+            ? `${confirmVacate.name}'s membership expired on ${fmtDate(confirmVacate.expiry)} (${Math.abs(confirmVacate.daysLeft)} days ago). Freeing the seat clears their details and makes it available to request. This cannot be undone.`
+            : ''
+        }
+        confirmText="Free seat"
+        variant="danger"
       />
     </div>
   );
