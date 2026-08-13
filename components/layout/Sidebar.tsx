@@ -14,6 +14,7 @@ import {
   Shield,
   HardDrive,
   IndianRupee,
+  Users2,
 } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { useRouter } from 'next/navigation';
@@ -32,7 +33,7 @@ interface SidebarProps {
 
 export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarProps) {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { logout, staffName } = useAuth();
   const router = useRouter();
 
   const navItems: NavItem[] = [
@@ -59,6 +60,11 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
       href: '/export',
       label: 'Export Data',
       icon: <HardDrive className="w-5 h-5" />,
+    },
+    {
+      href: '/staff',
+      label: 'Staff',
+      icon: <Users2 className="w-5 h-5" />,
     },
     {
       href: '/audit',
@@ -101,7 +107,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
       <div className="px-6 pb-4 relative z-10">
         <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--sapphire-50)] text-[var(--sapphire-600)]">
           <Shield className="w-3.5 h-3.5" />
-          <span className="text-[11px] font-bold">Admin Mode</span>
+          <span className="text-[11px] font-bold truncate">{staffName ?? 'Admin'}</span>
         </div>
       </div>
 
