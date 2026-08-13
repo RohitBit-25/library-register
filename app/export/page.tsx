@@ -22,6 +22,7 @@ import {
   HardDrive,
   Clock,
 } from 'lucide-react';
+import PageHeader from '@/components/layout/PageHeader';
 
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -219,22 +220,18 @@ export default function ExportPage() {
       className="max-w-4xl pb-24"
     >
       {/* Header */}
-      <motion.div variants={itemVariants} className="mb-[var(--space-6)] flex items-end justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-semibold tracking-[var(--tracking-tight)] text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
-            <HardDrive className="w-6 h-6 text-[var(--sapphire-600)]" />
-            Data Export
-          </h1>
-          <p className="text-sm font-medium text-[var(--text-secondary)] mt-[var(--space-1)]">
-            Download members, attendance, and request data.
-          </p>
-        </div>
-        {lastExport && (
-          <div className="flex items-center gap-[var(--space-2)] text-xs font-mono text-[var(--text-tertiary)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-[var(--radius-md)] px-[var(--space-3)] py-[var(--space-2)] shadow-[var(--shadow-sm)]">
-            <CheckCircle className="w-3.5 h-3.5 text-[var(--emerald-600)]" />
-            Last export: {lastExport}
-          </div>
-        )}
+      <motion.div variants={itemVariants}>
+        <PageHeader
+          title="Data Export"
+          icon={<HardDrive className="h-5 w-5" />}
+          subtitle="Download members, attendance, and request data."
+          actions={lastExport ? (
+            <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-muted)] px-3 py-1.5 text-xs font-semibold tabular text-[var(--text-secondary)]">
+              <CheckCircle className="h-3.5 w-3.5 text-[var(--emerald-600)]" aria-hidden="true" />
+              Last export: {lastExport}
+            </div>
+          ) : undefined}
+        />
       </motion.div>
 
       {/* Full Backup Card */}

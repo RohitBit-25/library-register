@@ -11,6 +11,7 @@ import { formatINR } from '@/lib/pricing';
 import { toCsv } from '@/lib/csv';
 import { type Duration } from '@/lib/types';
 import { IndianRupee, Receipt as ReceiptIcon, Download, Wallet, Smartphone, Banknote } from 'lucide-react';
+import PageHeader from '@/components/layout/PageHeader';
 
 type RangeKey = '7d' | '30d' | '90d' | 'month';
 
@@ -67,15 +68,11 @@ export default function PaymentsPage() {
 
   return (
     <div className="animate-fade-in max-w-5xl pb-24">
-      <div className="mb-6">
-        <h1 className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-2xl">
-          <IndianRupee className="h-6 w-6 text-[var(--emerald-600)]" aria-hidden="true" />
-          Collections
-        </h1>
-        <p className="mt-1 text-sm font-medium text-[var(--text-secondary)]">
-          Every fee recorded, with a receipt for each.
-        </p>
-      </div>
+      <PageHeader
+        title="Collections"
+        icon={<IndianRupee className="h-5 w-5" />}
+        subtitle="Every fee recorded, with a receipt for each."
+      />
 
       {/* Range + export */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">

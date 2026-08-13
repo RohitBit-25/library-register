@@ -12,9 +12,10 @@ import { getSeatStatus, fmtDate, daysUntilExpiry } from '@/lib/utils';
 import { type Member } from '@/lib/types';
 import { formatINR, getPlanRates } from '@/lib/pricing';
 import { cn } from '@/lib/utils';
-import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw, TrendingUp, Sparkles, IndianRupee } from 'lucide-react';
+import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw, TrendingUp, IndianRupee } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
+import PageHeader from '@/components/layout/PageHeader';
 
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -78,20 +79,17 @@ export default function DashboardPage() {
       animate="animate"
     >
       {/* Page header */}
-      <motion.div variants={itemVariants} className="mb-[var(--space-6)] flex items-end justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-semibold tracking-[var(--tracking-tight)] text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
-            Dashboard
-            <Sparkles className="w-5 h-5 text-[var(--sapphire-600)]" />
-          </h1>
-          <p className="text-sm font-medium text-[var(--text-secondary)] mt-[var(--space-1)]">
-            {dateStr}
-          </p>
-        </div>
-        <div className="hidden sm:flex items-center gap-[var(--space-2)] text-xs font-mono text-[var(--text-tertiary)] bg-[var(--bg-elevated)] border-[1.5px] border-[var(--border-subtle)] rounded-[var(--radius-md)] px-[var(--space-3)] py-[var(--space-2)] shadow-[var(--shadow-sm)]">
-          <TrendingUp className="w-3.5 h-3.5 text-[var(--emerald-600)]" />
-          {Math.round((stats.occupied / 95) * 100)}% Occupied
-        </div>
+      <motion.div variants={itemVariants}>
+        <PageHeader
+          title="Dashboard"
+          subtitle={dateStr}
+          actions={
+            <div className="hidden items-center gap-2 rounded-lg bg-[var(--bg-muted)] px-3 py-1.5 text-xs font-semibold tabular text-[var(--text-secondary)] sm:flex">
+              <TrendingUp className="h-3.5 w-3.5 text-[var(--emerald-600)]" aria-hidden="true" />
+              {Math.round((stats.occupied / 95) * 100)}% occupied
+            </div>
+          }
+        />
       </motion.div>
 
       {/* Stat cards */}
@@ -276,7 +274,10 @@ export default function DashboardPage() {
             </div>
           ) : (
             <>
-              <Sparkline data={stats.trend.map((d) => d.present)} />
+              <Sparkline
+                data={stats.trend.map((d) => d.present)}
+                startLabel={formatShortDate(stats.trend[0]?.date)}
+              />
               <p className="mt-2 text-[11px] text-[var(--text-tertiary)]">
                 {stats.trendDaysWithData} of 30 days have records
                 {stats.trendDaysWithData < 30 && ' — gaps show as zero'}
@@ -340,9 +341,23 @@ export default function DashboardPage() {
   );
 }
 
+/** "2026-07-15" → "15 Jul". Parsed as parts, never `new Date(string)`,
+ *  which reads a bare date as UTC and shifts it a day back in IST. */
+function formatShortDate(iso?: string): string {
+  if (!iso) return '';
+  const [, m, d] = iso.split('-').map(Number);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${d} ${months[m - 1] ?? ''}`.trim();
+}
+
 // ─── Sparkline SVG Component ────────────────────────────────────
 
-function Sparkline({ data }: { data: number[] }) {
+/**
+ * `startLabel` is the first date in the series, not a constant. The axis used
+ * to read "Mar 1" whatever the window actually covered — on a 30-day trend
+ * ending 13 August it was mislabelling the range by four months.
+ */
+function Sparkline({ data, startLabel }: { data: number[]; startLabel: string }) {
   const max = Math.max(...data, 1);
   const min = Math.min(...data);
   const w = 400;
@@ -359,6 +374,13 @@ function Sparkline({ data }: { data: number[] }) {
   const fillD = `${pathD} L${pad + ((data.length - 1) / (data.length - 1)) * (w - pad * 2)},${h - pad} L${pad},${h - pad} Z`;
 
   return (
+    <>
+    {/*
+      The SVG stretches to the container width, so anything sized in viewBox
+      units scales with it. The two axis labels were `fontSize={10}` inside
+      that viewBox and rendered at roughly 28px on a desktop — larger than the
+      card's own heading. They live in HTML now, where 11px means 11px.
+    */}
     <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
       {/* Grid lines */}
       {[0, 25, 50, 75, 100].map(pct => {
@@ -385,7 +407,7 @@ function Sparkline({ data }: { data: number[] }) {
         cx={pad + ((data.length - 1) / (data.length - 1)) * (w - pad * 2)}
         cy={h - pad - ((data[data.length - 1] - min) / (max - min || 1)) * (h - pad * 2)}
         r={5}
-        fill="var(--sapphire-500)"
+        fill="var(--saffron-600)"
         stroke="var(--bg-elevated)"
         strokeWidth={2.5}
       />
@@ -394,27 +416,25 @@ function Sparkline({ data }: { data: number[] }) {
         cx={pad + ((data.length - 1) / (data.length - 1)) * (w - pad * 2)}
         cy={h - pad - ((data[data.length - 1] - min) / (max - min || 1)) * (h - pad * 2)}
         r={10}
-        fill="var(--sapphire-500)"
+        fill="var(--saffron-600)"
         opacity={0.15}
       />
-      {/* Labels */}
-      <text x={pad} y={h - 1} fontSize={10} fill="currentColor" opacity={0.4} className="font-mono">
-        Mar 1
-      </text>
-      <text x={w - pad} y={h - 1} fontSize={10} fill="currentColor" opacity={0.4} textAnchor="end" className="font-mono">
-        Today
-      </text>
       <defs>
         <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--sapphire-500)" />
-          <stop offset="100%" stopColor="var(--sapphire-500)" stopOpacity={0} />
+          <stop offset="0%" stopColor="var(--saffron-500)" />
+          <stop offset="100%" stopColor="var(--saffron-500)" stopOpacity={0} />
         </linearGradient>
         <linearGradient id="sparkLineGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="var(--sapphire-400)" />
-          <stop offset="100%" stopColor="var(--sapphire-500)" />
+          <stop offset="0%" stopColor="var(--saffron-500)" />
+          <stop offset="100%" stopColor="var(--saffron-700)" />
         </linearGradient>
       </defs>
     </svg>
+    <div className="flex items-center justify-between px-1 pt-1 text-[11px] font-medium tabular text-[var(--text-tertiary)]">
+      <span>{startLabel}</span>
+      <span>Today</span>
+    </div>
+    </>
   );
 }
 

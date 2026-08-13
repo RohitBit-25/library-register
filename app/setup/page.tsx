@@ -4,6 +4,7 @@ import { motion, Variants } from 'framer-motion';
 import { ExternalLink, ListChecks, Zap, ArrowRight, QrCode, Mail, FileText } from 'lucide-react';
 import QRCodePanel from '@/components/setup/QRCodePanel';
 import ScriptBlock from '@/components/setup/ScriptBlock';
+import PageHeader from '@/components/layout/PageHeader';
 
 const containerVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -27,14 +28,12 @@ export default function SetupPage() {
       animate="animate"
       className="max-w-[1000px] pb-12"
     >
-      <motion.div variants={itemVariants} className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-          <Zap className="w-6 h-6 text-[var(--sapphire-600)]" />
-          Automation Setup
-        </h1>
-        <p className="text-sm font-medium text-[var(--text-secondary)] mt-1">
-          Connect Google Forms for automated seat allotment and email notifications.
-        </p>
+      <motion.div variants={itemVariants}>
+        <PageHeader
+          title="Automation Setup"
+          icon={<Zap className="h-5 w-5" />}
+          subtitle="Connect Google Forms for automated seat allotment and email notifications."
+        />
       </motion.div>
 
       {/* Automation Flow Diagram */}
@@ -134,9 +133,9 @@ export default function SetupPage() {
           </div>
 
           {/* Step 4 */}
-          <div className="card-base p-5 rounded-xl shadow-sm" style={{borderLeft: '3px solid var(--indigo-500)'}}>
+          <div className="card-base p-5 rounded-xl shadow-sm" style={{borderLeft: '3px solid var(--saffron-500)'}}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--indigo-500)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 4
               </div>
               <div>

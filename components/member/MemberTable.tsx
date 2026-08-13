@@ -265,7 +265,7 @@ export default function MemberTable({
             className={cn(
                'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-ui duration-200 cursor-pointer border shadow-sm',
               filter === f.value
-                ? 'bg-[var(--sapphire-500)] text-[#1a1a16] border-[var(--sapphire-500)] shadow-[var(--shadow-md)] -translate-y-[1px]'
+                ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] border-[var(--saffron-600)] shadow-[var(--shadow-md)] -translate-y-[1px]'
                 : 'bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-sm)] hover:-translate-y-[1px]',
             )}
           >
@@ -407,7 +407,7 @@ export default function MemberTable({
                   {onEdit && (
                     <button
                       onClick={(e) => { e.stopPropagation(); onEdit(m.seat); setOpenActions(null); }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--indigo-600)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--saffron-700)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
                     >
                       <Pencil className="w-4 h-4" />
                       Edit details

@@ -1,0 +1,12 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch();
+const p = await (await b.newContext()).newPage();
+const errs = [];
+p.on('pageerror', e => errs.push(e.message));
+await p.goto('http://localhost:3000/landing');
+await p.evaluate(async () => { await fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:'246810'})}); });
+await p.goto('http://localhost:3000/browse');
+await p.waitForTimeout(5000);
+const broken = await p.evaluate(() => document.body.innerText.includes('Something went wrong'));
+console.log('pageerrors:', errs.length ? errs[0].slice(0,120) : 'none', '| error screen:', broken);
+await b.close();

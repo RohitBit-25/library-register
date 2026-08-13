@@ -6,6 +6,8 @@ import MemberTable from '@/components/member/MemberTable';
 import Modal from '@/components/ui/Modal';
 import { toCsv } from '@/lib/csv';
 import { useState } from 'react';
+import PageHeader from '@/components/layout/PageHeader';
+import { Users } from 'lucide-react';
 
 export default function MembersPage() {
   const { members, update, vacate, bulkMarkPaid, bulkRemove } = useMembers();
@@ -86,16 +88,11 @@ export default function MembersPage() {
 
   return (
     <div>
-      <div className="mb-5 flex items-start justify-between">
-        <div>
-          <h1 className="text-[var(--text-xl)] sm:text-[var(--text-2xl)] font-[var(--weight-extrabold)] text-[var(--text-primary)] tracking-tight">
-            All Members
-          </h1>
-          <p className="text-[var(--text-sm)] text-[var(--text-secondary)] mt-0.5">
-            {members.filter(m => !m.vacant).length} members · {members.filter(m => m.vacant).length} vacant
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="All Members"
+        icon={<Users className="h-5 w-5" />}
+        subtitle={`${members.filter(m => !m.vacant).length} members · ${members.filter(m => m.vacant).length} vacant`}
+      />
 
       <MemberTable
         members={members}

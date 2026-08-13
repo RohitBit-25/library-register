@@ -174,6 +174,63 @@ Only genuine transitions are recorded — re-saving an already-paid member is no
 
 ---
 
+## 0e. Fifth pass — the waitlist, the past, and what the tests were not testing
+
+### A full library was turning customers away
+
+`POST /api/requests` rejected any request for an occupied seat. Two very different situations got the same answer:
+
+- **Seat taken, others free** — a mistake. Now a `409` telling them to pick another.
+- **Whole library full** — not a mistake. Rejecting here discards a paying customer whose phone number you already have. The request is now stored as `waitlisted`, and the response carries `waitlisted: true` so the confirmation says *queued* rather than implying a seat is held.
+
+The queue only matters at one moment: when a seat frees. So `DELETE /api/members/[seat]` returns the waiting list with its response, and the map toasts *"3 on the waitlist — Priya is first."* A waitlist that lives in a tab nobody opens is not a waitlist. The Requests page also gained a Waitlist tab with its own count.
+
+Verified against a running server on an isolated scratch database filled to all 95 seats: full house → `201` + `waitlisted`; seat taken while others free → `409`; free seat → `201` + `pending`; vacate → the queued person came back in the response.
+
+### The app had no memory of last month
+
+`/api/stats` answered *"how full are we now?"* — never *"are we growing?"*, which is the question that decides whether to expand. `models/OccupancySnapshot` plus `GET /api/cron/snapshot` records one row a day. The write is an upsert keyed on the date, so a retried cron run overwrites rather than double-counts, and `?date=` backfills a day the job missed.
+
+Counts are **stored, not derived on read**. A member who is later deleted, or a plan whose price changes, would otherwise silently rewrite history. `present` is `null` when nobody marked attendance — distinct from a genuine zero — and days with no row stay absent from the series rather than being interpolated. Same rule as the attendance chart: no invented data points.
+
+### Signing out did not sign you out
+
+The logout route deleted the cookie in the browser. The JWT itself stayed valid for its remaining seven days, so anything else holding a copy — a shared library desktop where the cookie was already captured, a restored browser session — was still the admin.
+
+Tokens now carry a `jti`, logout records it in a TTL collection that expires exactly when the token would, and `getSession()` rejects revoked tokens. The page proxy still does a signature-only check, deliberately: it runs on every navigation and a database round-trip per navigation is a poor trade for a check the API already performs. Every admin page loads its data through a guarded route, so a revoked token gets past the gate and then renders nothing.
+
+**Found by the new test suite, not by reading the code.**
+
+### Anyone could lock out all the staff
+
+The per-staff lockout cannot tell which account a wrong PIN was meant for — there is no username — so a failed attempt counts against every account. Five wrong guesses locked the entire staff out for 15 minutes, repeatable indefinitely, with no credentials.
+
+`POST /api/auth` now consumes a per-caller rate limit *before* checking the PIN: 12 attempts per 15 minutes, far above what a human mistyping a 6-digit PIN needs. This does not stop a distributed attempt — that is a genuine residual risk of PIN-only auth, and the argument for per-staff PINs via `/setup` rather than one shared one.
+
+### The tests were testing the safe half
+
+`scripts/selfcheck.mjs` covered pure functions. The API routes — where the races, the auth and the money live — were verified by hand with curl on every change, which means they were verified thoroughly once and then on memory.
+
+`npm run check:api` runs 29 HTTP contract checks against a live server. Two details worth recording:
+
+- **Each POST claims its own `x-forwarded-for`.** The rate limiter runs before validation, so a suite sharing one identity poisons its own later checks and fails outright on a second run within the hour. That header is what the limiter keys on and is client-controlled by design — which is exactly why it is documented as a speed bump and not a boundary.
+- **The lockout check is opt-in** (`CHECK_LOCKOUT=1`). Running it by default would lock the admin out of their own library for 15 minutes and break every check after it.
+
+Two checks skip rather than silently pass when the database cannot exercise their branch — proving the full-house path means occupying all 95 seats, which only makes sense against a scratch database. A check that quietly passes because it could not run is worse than no check.
+
+### Keyboard navigation on the seat map
+
+Tab order follows seat number, which jumps across the room between runs, so reaching seat 90 took 90 presses. Arrow keys now move across the floor plan itself.
+
+Two things only a real browser caught:
+
+- `SeatMapWrapper` already put `data-seat` on its positioning `div`, which is not focusable. `querySelector('[data-seat="42"]')` matched that div first and `focus()` did nothing at all. The selector is now scoped to the button.
+- Pressing Up at seat 1 jumped to seat 80 — nine columns across the room, the only seat with a smaller `y`. Technically upward, but it reads as teleporting. Candidates are now capped at two cells of sideways drift, which covers a facing pair and the next run across an aisle and nothing further.
+
+An edge press leaves the key unhandled, so the page still scrolls instead of trapping focus. Verified in a browser: a down-left-up-right round trip returns to where it started, and in attendance mode navigation covers only the seats actually rendered.
+
+---
+
 ## 0. Executive Summary
 
 | Area | Verdict |

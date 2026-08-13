@@ -258,7 +258,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         
         {watchPaymentMode === 'upi' && (
           <div className="bg-[var(--bg-base)] rounded-xl p-6 flex flex-col items-center justify-center border border-[var(--border-default)] mt-2 text-center animate-in fade-in zoom-in-95 duration-200 shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
+            <div className="absolute top-0 w-full h-1 bg-[var(--saffron-500)]" />
             <p className="text-[13px] font-black tracking-wide text-[var(--text-primary)] mb-4 uppercase">Scan to pay via UPI</p>
             <div className="p-3 bg-white rounded-xl shadow-sm border border-black/5">
               <QRCodeCanvas 

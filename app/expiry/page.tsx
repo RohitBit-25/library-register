@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation';
 import { DataTable } from '@/components/ui/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { Tooltip } from '@/components/ui/Tooltip';
+import PageHeader from '@/components/layout/PageHeader';
 
 /* ─── Urgency Stat Card ───────────────────────────────────────── */
 function UrgencyStat({
@@ -281,17 +282,11 @@ export default function ExpiryPage() {
   return (
     <div className="animate-fade-in max-w-6xl pb-24">
       {/* ── Header ─────────────────────────────────────────────── */}
-      <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-            <CalendarSearch className="w-6 h-6 text-[var(--ruby-600)]" />
-            Expiry Tracker
-          </h1>
-          <p className="text-sm font-medium text-[var(--text-secondary)] mt-1">
-            Monitor memberships nearing expiration via an advanced data grid.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Expiry Tracker"
+        icon={<CalendarSearch className="h-5 w-5" />}
+        subtitle="Memberships ending soon, and the ones already past their date."
+      />
 
       {/* ── Urgency Summary Bar ──────────────────────────────────── */}
       <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-3">

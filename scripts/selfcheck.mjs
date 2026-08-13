@@ -282,6 +282,12 @@ check('arrow nav crosses to the facing run, not diagonally', () => {
   assert.equal(getSeatPositionConfig(right).y, getSeatPositionConfig(11).y);
 });
 
+check('arrow nav will not teleport across the room', () => {
+  // Seats 80-84 are the only ones above seat 1's row, but they sit nine
+  // columns away. Pressing Up at seat 1 must do nothing, not jump there.
+  assert.equal(nextSeatInDirection(1, 'up', ALL_SEATS), null);
+});
+
 check('arrow nav stops at the edge instead of wrapping', () => {
   // Column 14 is the right wall — nothing further right exists.
   assert.equal(nextSeatInDirection(90, 'right', ALL_SEATS), null);

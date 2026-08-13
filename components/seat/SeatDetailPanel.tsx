@@ -159,7 +159,7 @@ export default function SeatDetailPanel({
             animate={{ opacity: 1, x: 0 }}
             className="space-y-4"
           >
-            <div className="bg-[var(--indigo-500)] rounded-xl p-4 text-[var(--saffron-50)] shadow-lg shadow-[var(--indigo-500)]/20">
+            <div className="bg-[var(--saffron-700)] rounded-xl p-4 text-[var(--saffron-50)] shadow-lg shadow-[var(--saffron-500)]/20">
               <p className="text-xs font-bold uppercase tracking-wider opacity-80">Editing</p>
               <h4 className="text-lg font-black mt-1 tracking-tight">
                 Seat {member.seat} — {member.name.split(' ')[0]}
@@ -260,7 +260,7 @@ export default function SeatDetailPanel({
               </button>
               <button
                 type="submit"
-                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-[var(--indigo-500)] text-[var(--saffron-50)] hover:brightness-110 transition-ui cursor-pointer shadow-lg shadow-[var(--indigo-500)]/20 active:scale-95 flex items-center justify-center gap-2"
+                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-[var(--saffron-600)] text-[var(--saffron-50)] hover:brightness-110 transition-ui cursor-pointer shadow-lg shadow-[var(--indigo-500)]/20 active:scale-95 flex items-center justify-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 Save Changes
@@ -328,7 +328,7 @@ export default function SeatDetailPanel({
                   {onUpdate && (
                     <button
                       onClick={openEditMode}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-[var(--indigo-600)] bg-[var(--indigo-500)]/10 border border-[var(--indigo-500)]/20 hover:bg-[var(--indigo-500)]/20 transition-colors cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-[var(--saffron-700)go-600)] bg-[var(--indigo-500)]/10 border border-[var(--indigo-500)]/20 hover:bg-[var(--indigo-500)]/20 transition-colors cursor-pointer"
                     >
                       <Pencil className="w-4 h-4" />
                       Edit Details

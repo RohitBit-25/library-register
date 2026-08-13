@@ -69,16 +69,21 @@ Export is manual. A library that loses its member list loses its business.
 
 ## Tier 3 — the product gets smarter
 
-### 8. Waitlist
-When all 95 seats are full, a student requesting a seat gets a rejection. That is a lost customer with a known phone number.
+### 8. Waitlist — done
+When all 95 seats were full, a student requesting a seat got a flat rejection. That is a lost customer whose phone number you already have.
 
-- Queue requests against a full house; notify automatically when a seat frees (the vacate path already exists).
+- `POST /api/requests` now distinguishes the two cases. Seat taken but others free → `409`, so they pick another. Whole library full → the request is stored as `waitlisted` and the response says so, rather than implying a seat is held.
+- Vacating a seat returns the queue with the response, and the map toasts *"N on the waitlist — X is first"*. That is the only moment the queue is actionable; a table nobody opens is not a waitlist.
+- The Requests page has a Waitlist tab with its own count.
+- Automatic notification still waits on the WhatsApp provider (Tier 1 #3).
 
-### 9. Occupancy history
-`/api/stats` reports *current* occupancy. Nothing records what it was last month, so "are we growing?" is unanswerable.
+### 9. Occupancy history — done
+`/api/stats` reported *current* occupancy. Nothing recorded what it was last month, so "are we growing?" — the question that decides whether to expand — had no answer.
 
-- A nightly snapshot row: date, occupied, vacant, revenue.
-- Then the dashboard can show a real trend — the same honesty rule as the attendance chart: no invented data points.
+- `GET /api/cron/snapshot` writes one row per day: occupied, vacant, expired, dues, contract value, collections, attendance. `CRON_SECRET`-guarded, `?date=` backfills a missed day, and the write is an upsert keyed on date so a retry cannot double-count.
+- `/api/stats` returns the last 90 days plus a month-over-month `growth` figure.
+- Gaps stay gaps. A day the job did not run is absent from the series, never interpolated — the same rule as the attendance chart.
+- Counts are stored, not recomputed on read: a deleted member or a changed plan price would otherwise silently rewrite the past.
 
 ### 10. Shift sharing — revisit only if the business wants it
 You confirmed one seat = one member. If that ever changes, the model needs `(seat, shift)` as the key, and it touches the schema, the map, the stats and the request flow. Worth doing deliberately, not incrementally.
@@ -92,7 +97,7 @@ You confirmed one seat = one member. If that ever changes, the model needs `(sea
 | 11 | **Seat tiles are busy at 48px** — avatar, name, shift icon, day count and a progress ring compete inside one small square. The ring duplicates what the tile colour already says. | Legibility at a glance is the map's whole job |
 | 12 | **No empty state on the floor plan** for a brand-new library — 95 dashed squares with no explanation | First-run impression |
 | 13 | **Mobile floor plan** is a pinch-and-pan experience; fit-to-width helps but a list view would serve phones better | Most Indian admins will use a phone |
-| 14 | **Keyboard navigation on the map** — arrow keys between seats, Enter to open. Currently mouse-only. | Speed for a daily operator |
+| 14 | ~~Keyboard navigation on the map~~ — **done.** Arrow keys move across the floor plan; Enter opens the seat. Tab order follows seat number, which jumps across the room between runs, so reaching seat 90 took 90 presses. Movement is capped at two cells of sideways drift, so Up at seat 1 does nothing rather than teleporting nine columns to seat 80, and an edge press leaves the key unhandled so the page still scrolls. | Speed for a daily operator |
 | 15 | **`icon-512.png` is 319 KB** for a 512px icon; should be ~20 KB | Carried over from the original audit |
 
 ---
@@ -101,11 +106,11 @@ You confirmed one seat = one member. If that ever changes, the model needs `(sea
 
 | # | Item | Why |
 |---|---|---|
-| 16 | **No rate limit on `POST /api/requests`** — the public submission endpoint. Size is capped; frequency is not. One script can fill the admin queue. | The last unprotected public write |
+| 16 | ~~No rate limit on `POST /api/requests`~~ — **done**, and `POST /api/auth` now has one too. The per-staff lockout cannot tell which account a wrong PIN was meant for, so a failure counted against every account — anyone could lock the whole staff out for 15 minutes, repeatedly, without credentials. A 12-per-15-minutes per-caller limit runs before the PIN is checked. It does not stop a distributed attempt; that is a real residual risk of PIN-only auth. | The last unprotected public write |
 | 17 | **`/api/members` returns all 95 rows** on every page. Fine at 95, wrong at 500. | Pagination before a second branch |
 | 18 | **No structured logging.** `console.error` only — no request IDs, so a user report cannot be traced to a failure. | Debugging production blind |
 | 19 | **Audit log has no UI filter** — 100 rows, no search by seat or action | It exists but is hard to use |
-| 20 | **Tests cover pure functions only.** The API routes — where the races and the auth live — are verified by hand each time. | Those are the parts that carry risk |
+| 20 | ~~Tests cover pure functions only~~ — **done.** `npm run check:api` runs 29 HTTP contract checks against a live server: auth boundaries on every admin route, PII redaction on the public `/api/members`, page redirects, payload validation, rate limiting, the waitlist branches, and session revocation. Each POST claims its own `x-forwarded-for` so the suite cannot poison its own rate-limit window. The lockout check is opt-in (`CHECK_LOCKOUT=1`) because it locks staff out for 15 minutes. | Those are the parts that carry risk |
 
 ---
 

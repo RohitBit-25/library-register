@@ -28,6 +28,7 @@ import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import PageHeader from '@/components/layout/PageHeader';
 
 type FilterTab = 'pending' | 'waitlisted' | 'approved' | 'rejected' | 'all';
 
@@ -99,20 +100,16 @@ export default function RequestsPage() {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="mb-5">
-        <h1 className="text-[1.25rem] sm:text-[1.5rem] font-bold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-          <Inbox className="w-6 h-6 text-[var(--indigo-600)]" />
-          Seat Requests
-          {counts.pending > 0 && (
-            <span className="px-2 py-0.5 rounded-full text-[0.64rem] font-bold bg-[var(--indigo-500)] text-[var(--text-inverse)] animate-pulse">
-              {counts.pending} new
-            </span>
-          )}
-        </h1>
-        <p className="text-[0.8rem] text-[var(--text-secondary)] mt-0.5">
-          Review and verify payments for seat requests
-        </p>
-      </div>
+      <PageHeader
+        title="Seat Requests"
+        icon={<Inbox className="h-5 w-5" />}
+        subtitle="Review and verify payments for seat requests."
+        badge={counts.pending > 0 ? (
+          <span className="px-2 py-0.5 rounded-full text-[0.64rem] font-bold bg-[var(--saffron-600)] text-[var(--text-inverse)] animate-pulse">
+            {counts.pending} new
+          </span>
+        ) : undefined}
+      />
 
       {/* Filter Tabs */}
       <div className="flex items-center gap-1 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-[var(--radius-xl)] p-1 shadow-[var(--shadow-sm)] mb-5 overflow-x-auto">
@@ -123,7 +120,7 @@ export default function RequestsPage() {
             className={cn(
               'flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-lg)] text-[0.64rem] font-bold transition-ui duration-200 cursor-pointer whitespace-nowrap hover:-translate-y-[1px] hover:shadow-[var(--shadow-sm)] active:scale-95',
               filter === tab.key
-                ? 'bg-[var(--indigo-500)] text-[var(--text-inverse)] shadow-[var(--shadow-sm)]'
+                ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-[var(--shadow-sm)]'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] hover:border-[var(--border-strong)]',
             )}
           >
@@ -172,7 +169,7 @@ export default function RequestsPage() {
               variant="base"
               className={cn(
                 'overflow-hidden shadow-[var(--shadow-sm)]',
-                req.status === 'pending' && 'border-l border-l-[var(--indigo-500)]',
+                req.status === 'pending' && 'border-l border-l-[var(--sapphire-500)]',
                 req.status === 'approved' && 'border-l border-l-[var(--emerald-500)]',
                 req.status === 'rejected' && 'border-l border-l-[var(--ruby-500)]',
                 req.status === 'waitlisted' && 'border-l border-l-[var(--marigold-500)]',
@@ -185,7 +182,7 @@ export default function RequestsPage() {
                     <div
                       className={cn(
                         'w-10 h-10 rounded-[var(--radius-xl)] flex items-center justify-center text-[0.8rem] font-mono font-black',
-                        req.status === 'pending' && 'bg-[var(--indigo-500)]/10 text-[var(--indigo-600)]',
+                        req.status === 'pending' && 'bg-[var(--sapphire-50)] text-[var(--sapphire-600)]',
                         req.status === 'approved' && 'bg-[var(--emerald-500)]/10 text-[var(--emerald-600)]',
                         req.status === 'rejected' && 'bg-[var(--ruby-500)]/10 text-[var(--ruby-600)]',
                       )}
@@ -254,8 +251,8 @@ export default function RequestsPage() {
 
                 {/* Document Preview */}
                 {req.documentUrl && (
-                  <div className="mb-3 px-3 py-2 rounded-[var(--radius-lg)] bg-[var(--indigo-500)]/8 border border-[var(--indigo-500)]/20">
-                    <span className="text-[0.64rem] font-bold text-[var(--indigo-600)] flex items-center gap-1.5 mb-2">
+                  <div className="mb-3 px-3 py-2 rounded-[var(--radius-lg)] bg-[var(--sapphire-50)] border border-[var(--sapphire-200)]">
+                    <span className="text-[0.64rem] font-bold text-[var(--sapphire-600)] flex items-center gap-1.5 mb-2">
                       <FileText className="w-3 h-3" /> ID Document Submitted
                     </span>
                     {req.documentUrl.startsWith('data:image') ? (
@@ -280,7 +277,7 @@ export default function RequestsPage() {
                         href={req.documentUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[11px] text-[var(--indigo-600)] underline flex items-center gap-1"
+                        className="text-[11px] text-[var(--text-link)] underline flex items-center gap-1"
                       >
                         <ExternalLink className="w-3 h-3" /> View Document
                       </a>

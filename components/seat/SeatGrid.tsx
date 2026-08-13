@@ -52,8 +52,10 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
     const current = Number(active?.dataset?.seat);
     if (!current) return;
 
+    // SeatMapWrapper puts data-seat on its positioning div too, and that div
+    // is not focusable — match the button or focus() silently does nothing.
     const container = e.currentTarget;
-    const seats = Array.from(container.querySelectorAll<HTMLElement>('[data-seat]'))
+    const seats = Array.from(container.querySelectorAll<HTMLElement>('button[data-seat]'))
       .map((el) => Number(el.dataset.seat));
 
     const next = nextSeatInDirection(current, dir, seats);
@@ -62,7 +64,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
     // Only swallow the key once a move is certain, so an edge seat still lets
     // the page scroll rather than trapping focus.
     e.preventDefault();
-    container.querySelector<HTMLElement>(`[data-seat="${next}"]`)?.focus();
+    container.querySelector<HTMLElement>(`button[data-seat="${next}"]`)?.focus();
   }, []);
 
   const occupiedCount = useMemo(() => members.filter(m => !m.vacant).length, [members]);

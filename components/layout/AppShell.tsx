@@ -18,6 +18,12 @@ const STANDALONE_ROUTES = ['/landing', '/kiosk'];
 
 
 // ─── Routes accessible to regular users ─────────────────────────
+//
+// These carry their own chrome (UnifiedHeader + StudentSidebar), so the admin
+// Sidebar, TopBar and BottomNav must not be layered on top. An admin visiting
+// /browse otherwise saw three navigation systems at once — the admin rail, the
+// student rail and the public header — with the floor plan squeezed into
+// whatever was left.
 const USER_ROUTES = ['/browse', '/my-requests'];
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
@@ -50,7 +56,9 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     }
   }, [isAuthenticated, isAdmin, isLoading, pathname, router, isStandalone]);
 
-  if (isStandalone) {
+  const ownsChrome = isStandalone || USER_ROUTES.includes(pathname);
+
+  if (ownsChrome) {
     return (
       <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
         {children}

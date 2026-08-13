@@ -9,15 +9,25 @@ import { memo } from 'react';
  * external host. Nothing leaves the browser now.
  */
 
-// Fixed palette so a given member always gets the same colour. All values are
-// -600/-700 shades, so white text on them clears 4.5:1.
+// Warm neutrals only, varying in weight rather than hue.
+//
+// This palette used to be the six status colours — saffron, emerald,
+// sapphire, indigo, marigold, ruby — assigned by hashing the member's name.
+// On the floor plan that put a green chip on an expired member and a red chip
+// on a paid-up one, directly contradicting the status ring drawn around it.
+// Ninety-five of them turned the map into confetti and buried the six seats
+// that actually needed attention.
+//
+// An avatar answers "who is this", never "how are they doing". The variation
+// is kept because it helps recognise a regular at a glance; the hues are gone
+// because only status may use hue. White on every value clears 4.5:1.
 const PALETTE = [
-  { bg: '#A65310', fg: '#FFFFFF' }, // saffron-600
-  { bg: '#15803D', fg: '#FFFFFF' }, // emerald-600
-  { bg: '#0369A1', fg: '#FFFFFF' }, // sapphire-600
-  { bg: '#4338CA', fg: '#FFFFFF' }, // indigo-600
-  { bg: '#854D0E', fg: '#FFFFFF' }, // marigold-700
-  { bg: '#B91C1C', fg: '#FFFFFF' }, // ruby-600
+  { bg: '#57534E', fg: '#FFFFFF' }, //  7.63:1
+  { bg: '#4A443F', fg: '#FFFFFF' }, //  9.59:1
+  { bg: '#6B6660', fg: '#FFFFFF' }, //  5.68:1
+  { bg: '#78716C', fg: '#FFFFFF' }, //  4.80:1
+  { bg: '#5F544B', fg: '#FFFFFF' }, //  7.35:1
+  { bg: '#413B36', fg: '#FFFFFF' }, // 11.03:1
 ];
 
 /** Stable, order-independent hash so colours don't shuffle between renders. */

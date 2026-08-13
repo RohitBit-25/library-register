@@ -15,7 +15,6 @@
     "check:api": "node scripts/api-check.mjs"
   },
   "dependencies": {
-    "@alisaitteke/seatmap-canvas": "^2.7.6",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tanstack/react-table": "^8.21.3",

@@ -7,14 +7,16 @@ interface DurationDonutProps {
 }
 
 export default function DurationDonut({ data }: DurationDonutProps) {
-  // Token colours, not stock Tailwind hexes — these sat outside the design
-  // system entirely. All -600/-700 shades: distinct in hue from each other,
-  // and >=4.5:1 on white so the legend swatches and text both read clearly.
+  // An ordered ramp, not four unrelated hues. Plan length is an ordinal
+  // scale — 1M through 1Y — so the colours should get deeper as the
+  // commitment gets longer. Four different colours implied four unrelated
+  // categories and borrowed hues that mean "active", "expiring" and
+  // "information" everywhere else in the app.
   const categories = [
-    { key: '1M', label: '1 Month',  color: 'var(--sapphire-600)' },
-    { key: '3M', label: '3 Months', color: 'var(--emerald-600)' },
-    { key: '6M', label: '6 Months', color: 'var(--marigold-700)' },
-    { key: '1Y', label: '1 Year',   color: 'var(--indigo-600)' },
+    { key: '1M', label: '1 Month',  color: 'var(--saffron-300)' },
+    { key: '3M', label: '3 Months', color: 'var(--saffron-500)' },
+    { key: '6M', label: '6 Months', color: 'var(--saffron-600)' },
+    { key: '1Y', label: '1 Year',   color: 'var(--saffron-800)' },
   ];
 
   const total = Object.values(data).reduce((acc, val) => acc + val, 0);

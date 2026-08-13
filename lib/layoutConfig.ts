@@ -70,6 +70,16 @@ export function getSeatPositionConfig(n: number): SeatPosition {
  * sideways offset, so a step right lands on the seat across the desk rather
  * than one diagonally away that happens to be marginally closer overall.
  */
+/**
+ * How far off the travel line a candidate may sit, in grid cells.
+ *
+ * Without this, pressing Up from seat 1 jumps to seat 80 — nine columns
+ * across the room — because it is the only seat with a smaller y. Technically
+ * upward, but it reads as teleporting. Two cells covers a facing pair (one
+ * apart) and the next run across an aisle (two apart), and nothing further.
+ */
+const MAX_SIDEWAYS_DRIFT = 2;
+
 export function nextSeatInDirection(
   from: number,
   dir: FaceDir,
@@ -88,6 +98,7 @@ export function nextSeatInDirection(
     const travel = (alongX ? p.x - origin.x : p.y - origin.y) * sign;
     if (travel <= 0) continue;
     const sideways = Math.abs(alongX ? p.y - origin.y : p.x - origin.x);
+    if (sideways > MAX_SIDEWAYS_DRIFT) continue;
     // Travel dominates; sideways only breaks ties within the same step.
     const score = travel * 100 + sideways;
     if (score < bestScore) {
@@ -96,4 +107,45 @@ export function nextSeatInDirection(
     }
   }
   return best;
+}
+
+/**
+ * What is actually true about a seat's position, derived from the floor plan.
+ *
+ * The browse page used to print the same list for every seat — "Near Window",
+ * "Good Lighting", "AC Area", "Quiet Zone" — so seat 45, in the middle of the
+ * room with walls on no side, advertised a window. The plan already records
+ * where the windows and air conditioning are; this reads them.
+ *
+ * Deliberately conservative: only claims a seat is near something when it sits
+ * within one cell of it. A claim a student can check by walking in is worth
+ * more than a longer list.
+ */
+export function seatAmenities(n: number): string[] {
+  const { x, y } = getSeatPositionConfig(n);
+  const { COLS, ROWS, WALL_DETAILS } = LAYOUT_CONFIG;
+  const out: string[] = [];
+
+  const nearWall = {
+    bottom: y >= ROWS - 2,
+    right: x >= COLS - 1,
+    left: x <= 1,
+    top: y <= 2,
+  };
+
+  for (const d of WALL_DETAILS) {
+    const along = d.wall === 'bottom' || d.wall === 'top' ? x : y;
+    if (along < d.start - 1 || along > d.end + 1) continue;
+    if (!nearWall[d.wall]) continue;
+    const label = d.type === 'window' ? 'Next to a window' : 'Under the air conditioning';
+    if (!out.includes(label)) out.push(label);
+  }
+
+  // The entrance sits above columns 6-9; seats beside it get the foot traffic.
+  if (nearWall.top && x >= 5 && x <= 10) out.push('Near the entrance');
+  else if (!nearWall.top && !nearWall.bottom) out.push('Away from the doors');
+
+  if (nearWall.left || nearWall.right) out.push('Wall side, one neighbour');
+
+  return out;
 }

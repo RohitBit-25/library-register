@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { fmtDate } from '@/lib/utils';
 import { Users, ShieldCheck, UserPlus, Ban, RotateCcw, KeyRound } from 'lucide-react';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface StaffRow {
   id: string;
@@ -71,16 +72,16 @@ export default function StaffPage() {
 
   return (
     <div className="animate-fade-in max-w-3xl pb-24">
-      <div className="mb-6">
-        <h1 className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-2xl">
-          <Users className="h-6 w-6 text-[var(--sapphire-600)]" aria-hidden="true" />
-          Staff
-        </h1>
-        <p className="mt-1 text-sm font-medium text-[var(--text-secondary)]">
-          Each person signs in with their own PIN, so the activity log records who did what.
-          {staffName && <> You are signed in as <strong className="text-[var(--text-primary)]">{staffName}</strong>.</>}
-        </p>
-      </div>
+      <PageHeader
+        title="Staff"
+        icon={<Users className="h-5 w-5" />}
+        subtitle={
+          <>
+            Each person signs in with their own PIN, so the activity log records who did what.
+            {staffName && <> You are signed in as <strong className="text-[var(--text-primary)]">{staffName}</strong>.</>}
+          </>
+        }
+      />
 
       {isOwner && (
         <div className="mb-5">

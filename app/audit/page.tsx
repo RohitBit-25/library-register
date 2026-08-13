@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Shield, Clock, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface AuditLogEntry {
   _id: string;
@@ -30,15 +31,11 @@ export default function AuditLogsPage() {
 
   return (
     <div className="space-y-[var(--space-6)] max-w-5xl mx-auto py-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="font-display text-2xl font-bold text-[var(--text-primary)] flex items-center gap-3">
-          <Shield className="w-7 h-7 text-[var(--sapphire-600)]" />
-          Audit Logs
-        </h1>
-        <p className="text-sm text-[var(--text-secondary)]">
-          Activity history and system logs for complete accountability.
-        </p>
-      </div>
+      <PageHeader
+        title="Activity Log"
+        icon={<Shield className="h-5 w-5" />}
+        subtitle="Activity history and system logs for complete accountability."
+      />
 
       <Card variant="base" className="overflow-hidden">
         <div className="overflow-x-auto overflow-y-auto max-h-[calc(100vh-250px)] custom-scrollbar">

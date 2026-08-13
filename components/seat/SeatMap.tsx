@@ -205,7 +205,7 @@ function EntryMarker() {
       className="absolute top-0 -translate-x-1/2 z-20"
       style={{ left: PAD + 6 * CELL, width: 4 * CELL }}
     >
-      <div className="w-full h-12 bg-[var(--bg-surface)] border-x border-b border-[var(--border-default)] rounded-b-xl flex items-end justify-center pb-2 relative shadow-sm">
+      <div className="w-full h-9 bg-[var(--bg-surface)] border-x border-b border-[var(--border-default)] rounded-b-xl flex items-end justify-center pb-1.5 relative shadow-sm">
         <div className="flex items-center gap-2 px-3 py-1 bg-[var(--saffron-50)] rounded-md border border-[var(--saffron-200)]">
           <DoorOpen className="w-3 h-3 text-[var(--saffron-600)]" />
           <span className="text-[9px] font-bold text-[var(--saffron-700)] uppercase tracking-[0.2em]">Entrance</span>
@@ -271,9 +271,18 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
  * there was more room to the right, so a third of the library was invisible
  * on a laptop. Never scales above 1: a small room should not be blown up.
  */
+/**
+ * Smallest the plan may shrink to. Below this a 48px seat is under 20px and
+ * stops being a tap target, so the phone layout offers zoom instead of
+ * shrinking further.
+ */
+const MIN_SCALE = 0.42;
+
 function useFitToWidth() {
   const outerRef = React.useRef<HTMLDivElement>(null);
   const [scale, setScale] = React.useState(1);
+  /** True when the room is wider than the screen even at MIN_SCALE. */
+  const [overflows, setOverflows] = React.useState(false);
 
   React.useEffect(() => {
     const el = outerRef.current;
@@ -282,7 +291,9 @@ function useFitToWidth() {
     const measure = () => {
       // Padding is part of the visual frame, so measure against content width.
       const available = el.clientWidth - 32;
-      setScale(Math.min(1, Math.max(0.45, available / CANVAS_W)));
+      const exact = available / CANVAS_W;
+      setScale(Math.min(1, Math.max(MIN_SCALE, exact)));
+      setOverflows(exact < MIN_SCALE);
     };
 
     measure();
@@ -291,26 +302,40 @@ function useFitToWidth() {
     return () => ro.disconnect();
   }, []);
 
-  return { outerRef, scale };
+  return { outerRef, scale, overflows };
 }
 
 export function SeatMapContainer({ children }: { children: ReactNode }) {
-  const { outerRef, scale } = useFitToWidth();
+  const { outerRef, scale, overflows } = useFitToWidth();
 
   return (
     <div
       ref={outerRef}
       className="w-full relative group rounded-xl overflow-auto custom-scrollbar bg-[var(--bg-surface)] border border-[var(--border-default)]"
-      style={{ minHeight: '600px' }}
+      style={{ minHeight: scale < 1 ? undefined : '600px' }}
     >
+      {/*
+        Scaling from `top center` inside a `w-max` box meant the untransformed
+        1160px canvas was centred first and only then shrunk, so on a phone the
+        whole plan landed several hundred pixels to the right of the viewport
+        and the card rendered blank — every seat in the library, invisible.
+
+        Scale from the top-left and reserve a box of exactly the scaled size,
+        then centre that box. The plan now always starts at the left edge.
+      */}
       <div
-        className="mx-auto w-max p-4 sm:p-6"
+        className="mx-auto"
+        style={{
+          width: CANVAS_W * scale,
+          height: CANVAS_H * scale,
+        }}
+      >
+      <div
         style={{
           transform: `scale(${scale})`,
-          transformOrigin: 'top center',
-          // Reserve the scaled height so the card doesn't keep a tall gap
-          // underneath the shrunken plan.
-          height: scale < 1 ? CANVAS_H * scale + 48 : undefined,
+          transformOrigin: 'top left',
+          width: CANVAS_W,
+          height: CANVAS_H,
         }}
       >
         {/* ── Main Canvas ── */}
@@ -331,16 +356,16 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
 
           {/* ── Unclipped Elements ── */}
           {/* Section labels */}
-          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 0 * CELL + 4, top: PAD - 20 }}>
+          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 0 * CELL + 4, top: PAD - 12 }}>
             <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-[var(--text-tertiary)]">Row A</span>
           </div>
-          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 5 * CELL + 4, top: PAD - 20 }}>
+          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 5 * CELL + 4, top: PAD - 12 }}>
             <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-[var(--text-tertiary)]">Row B</span>
           </div>
-          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 8 * CELL + 4, top: PAD - 20 }}>
+          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 8 * CELL + 4, top: PAD - 12 }}>
             <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-[var(--text-tertiary)]">Row C</span>
           </div>
-          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 12 * CELL + 4, top: PAD - 20 }}>
+          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 12 * CELL + 4, top: PAD - 12 }}>
             <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-[var(--text-tertiary)]">Row D</span>
           </div>
 
@@ -353,6 +378,15 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
           </div>
         </div>
       </div>
+      </div>
+
+      {/* Below MIN_SCALE the room no longer fits, so say so rather than
+          letting a third of the library sit silently off-screen. */}
+      {overflows && (
+        <p className="px-4 pb-3 text-center text-[11px] font-medium text-[var(--text-tertiary)]">
+          Scroll sideways to see the rest of the hall
+        </p>
+      )}
     </div>
   );
 }
