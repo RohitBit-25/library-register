@@ -92,6 +92,7 @@
 
     /* === EMERALD — "active" === */
     --emerald-50:  #ECFDF5;
+    --emerald-100: #D6F5E4;
     --emerald-200: #A7E9C4;
     --emerald-400: #34C77E; /* fill only */
     --emerald-500: #16A34A; /* 3.30:1 — dots, rings, borders */

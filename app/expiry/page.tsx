@@ -3,7 +3,7 @@
 import { useMemo, useCallback, useState } from 'react';
 import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
-import { daysUntilExpiry, fmtDate, firstName, cn } from '@/lib/utils';
+import { daysUntilExpiry, fmtDate, firstName, cn, renewalStartDate, durationLabel, calcExpiry } from '@/lib/utils';
 import { type Member } from '@/lib/types';
 import {
   CalendarSearch,
@@ -14,6 +14,7 @@ import {
   Flame,
   MessageCircle,
   Trash2,
+  SlidersHorizontal,
 } from 'lucide-react';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { useRouter } from 'next/navigation';
@@ -58,10 +59,11 @@ function UrgencyStat({
 type ExpiryMember = Member & { daysLeft: number };
 
 export default function ExpiryPage() {
-  const { members, vacate } = useMembers();
+  const { members, vacate, renew } = useMembers();
   const { addToast } = useToast();
   const router = useRouter();
   const [confirmVacate, setConfirmVacate] = useState<ExpiryMember | null>(null);
+  const [confirmRenew, setConfirmRenew] = useState<ExpiryMember | null>(null);
 
   const occupiedMembers = useMemo(() => {
     return members
@@ -75,7 +77,27 @@ export default function ExpiryPage() {
   const totalWeek = occupiedMembers.filter(m => m.daysLeft > 0 && m.daysLeft <= 7).length;
   const totalMonth = occupiedMembers.filter(m => m.daysLeft > 7 && m.daysLeft <= 30).length;
 
-  const handleRenew = useCallback((seat: number) => {
+  // Renewal was six steps: find member, open panel, Renew, pick date, pick
+  // duration, confirm. The common case is "same plan again", and both inputs
+  // are already known — the member's own duration, and the correct start date
+  // from renewalStartDate (which protects days they already paid for). One
+  // click plus a confirm now covers it; the seat panel remains the escape
+  // hatch for changing plan or backdating.
+  const handleQuickRenew = useCallback((m: ExpiryMember) => {
+    setConfirmRenew(m);
+  }, []);
+
+  const doQuickRenew = useCallback(() => {
+    if (!confirmRenew) return;
+    const { seat, duration, expiry, name } = confirmRenew;
+    const plan = (duration || '3M') as '1M' | '3M' | '6M' | '1Y';
+    const start = renewalStartDate(expiry);
+    renew(seat, start, plan, (msg) => addToast('error', msg));
+    addToast('success', `${name} renewed for ${durationLabel(plan)}`);
+    setConfirmRenew(null);
+  }, [confirmRenew, renew, addToast]);
+
+  const handleOpenSeat = useCallback((seat: number) => {
     router.push(`/?seat=${seat}`);
   }, [router]);
 
@@ -214,13 +236,23 @@ export default function ExpiryPage() {
               <MessageCircle className="w-4 h-4" />
             </button>
           </Tooltip>
-          <Tooltip content="Renew Membership">
+          <Tooltip content={`Renew ${durationLabel((row.original.duration || '3M') as never)} — same plan`}>
             <button
-              onClick={() => handleRenew(row.original.seat)}
-              aria-label={`Renew membership for seat ${row.original.seat}`}
-              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)] hover:bg-[var(--sapphire-500)]/20 shadow-sm hover:scale-105 transition-ui active:scale-95 border border-[var(--sapphire-500)]/20"
+              onClick={() => handleQuickRenew(row.original)}
+              aria-label={`Renew seat ${row.original.seat} for another ${durationLabel((row.original.duration || '3M') as never)}`}
+              className="flex h-8 cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2.5 text-[11px] font-bold text-[var(--emerald-600)] shadow-sm transition-ui hover:bg-[var(--emerald-100)] active:scale-95"
             >
-              <RefreshCw className="w-4 h-4" aria-hidden="true" />
+              <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+              Renew
+            </button>
+          </Tooltip>
+          <Tooltip content="Open seat — change plan or date">
+            <button
+              onClick={() => handleOpenSeat(row.original.seat)}
+              aria-label={`Open seat ${row.original.seat} to change the plan`}
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--sapphire-500)]/20 bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)] shadow-sm transition-ui hover:bg-[var(--sapphire-500)]/20 active:scale-95"
+            >
+              <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
             </button>
           </Tooltip>
           {/* Expired seats stay occupied until someone frees them (deliberate —
@@ -240,7 +272,7 @@ export default function ExpiryPage() {
         </div>
       ),
     },
-  ], [handleRenew, handleWhatsApp]);
+  ], [handleQuickRenew, handleOpenSeat, handleWhatsApp]);
 
   return (
     <div className="animate-fade-in max-w-6xl pb-24">
@@ -326,6 +358,22 @@ export default function ExpiryPage() {
         }
         confirmText="Free seat"
         variant="danger"
+      />
+
+      <ConfirmDialog
+        isOpen={confirmRenew !== null}
+        onClose={() => setConfirmRenew(null)}
+        onConfirm={doQuickRenew}
+        title={confirmRenew ? `Renew ${confirmRenew.name}?` : ''}
+        description={
+          confirmRenew
+            ? `${durationLabel((confirmRenew.duration || '3M') as never)} starting ${fmtDate(renewalStartDate(confirmRenew.expiry))}, `
+              + `new expiry ${fmtDate(calcExpiry(renewalStartDate(confirmRenew.expiry), (confirmRenew.duration || '3M') as never))}. `
+              + `Fee is marked paid and the payment is recorded. Use the sliders button instead to change the plan or date.`
+            : ''
+        }
+        confirmText="Renew &amp; mark paid"
+        variant="primary"
       />
     </div>
   );
