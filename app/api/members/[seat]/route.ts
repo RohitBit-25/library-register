@@ -5,6 +5,7 @@ import AuditLog from '@/models/AuditLog';
 import { getSession } from '@/lib/auth-server';
 import { memberPatchSchema, seatNumber, formatZodError } from '@/lib/schemas';
 import Payment from '@/models/Payment';
+import SeatRequest from '@/models/SeatRequest';
 import { planPrice } from '@/lib/pricing';
 import { todayLocalISO } from '@/lib/seat-status';
 
@@ -166,7 +167,19 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ s
       seat: seatId,
     });
 
-    return NextResponse.json(vacatedMember);
+    // A freed seat is the only moment the waitlist becomes actionable, so the
+    // response carries it. Otherwise the queue is a table nobody thinks to
+    // open, and people stay queued while a seat sits empty.
+    const waitlist = await SeatRequest.find({ status: 'waitlisted' })
+      .select('seat userName userPhone createdAt')
+      .sort({ createdAt: 1 })
+      .limit(5)
+      .lean();
+
+    return NextResponse.json({
+      ...vacatedMember,
+      waitlist: waitlist.map((w) => ({ ...w, id: String(w._id) })),
+    });
   } catch (error) {
     console.error('Error vacating member:', error);
     return NextResponse.json({ error: 'Failed to vacate member' }, { status: 500 });

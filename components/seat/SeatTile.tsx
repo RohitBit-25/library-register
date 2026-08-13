@@ -73,6 +73,7 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
       >
         <button
           onClick={() => onClick(member.seat)}
+          data-seat={member.seat}
           className={cn(
             'relative flex flex-col items-center justify-between rounded-lg transition-ui duration-200 cursor-pointer z-10 w-full h-full border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2',
             tileClass[status],

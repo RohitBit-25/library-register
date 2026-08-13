@@ -41,6 +41,7 @@ function AttendanceTileInner({ member, present, onToggle }: AttendanceTileProps)
     <button
       type="button"
       onClick={() => onToggle(member.seat)}
+      data-seat={member.seat}
       // The whole tile is the target — a 48px tile is already at the small end
       // for a finger, so there is no smaller checkbox inside it.
       className={cn(

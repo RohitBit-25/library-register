@@ -104,7 +104,11 @@ export default function ExpiryPage() {
   const handleConfirmVacate = useCallback(() => {
     if (!confirmVacate) return;
     const { seat, name } = confirmVacate;
-    vacate(seat, (msg) => addToast('error', msg));
+    vacate(seat, (msg) => addToast('error', msg)).then((waiting) => {
+      if (waiting.length) {
+        addToast('warning', `${waiting.length} on the waitlist — ${waiting[0].userName} is first.`);
+      }
+    });
     addToast('success', `Seat ${seat} freed — ${name} removed`);
     setConfirmVacate(null);
   }, [confirmVacate, vacate, addToast]);

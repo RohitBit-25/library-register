@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import SeatTile from './SeatTile';
 import AttendanceTile from './AttendanceTile';
 import { SeatMapContainer, SeatMapWrapper, type FaceDir } from './SeatMap';
+import { nextSeatInDirection } from '@/lib/layoutConfig';
 import { useAttendance } from '@/hooks/useAttendance';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import { Sun, Moon, Layers, Grid3X3, ClipboardCheck, Settings2, CheckCheck } from 'lucide-react';
@@ -36,6 +37,33 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
     if (isPresent(todayStr, seat)) markAbsent(todayStr, seat);
     else markPresent(todayStr, seat);
   }, [isPresent, markAbsent, markPresent, todayStr]);
+
+  // Arrow keys walk the floor plan. Tab order follows seat number, which
+  // jumps across the room between runs, so reaching seat 90 by keyboard meant
+  // 90 presses. Handled at the container so it works for both tile types.
+  const handleMapKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    const DIRS: Record<string, FaceDir> = {
+      ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
+    };
+    const dir = DIRS[e.key];
+    if (!dir) return;
+
+    const active = document.activeElement as HTMLElement | null;
+    const current = Number(active?.dataset?.seat);
+    if (!current) return;
+
+    const container = e.currentTarget;
+    const seats = Array.from(container.querySelectorAll<HTMLElement>('[data-seat]'))
+      .map((el) => Number(el.dataset.seat));
+
+    const next = nextSeatInDirection(current, dir, seats);
+    if (next === null) return;
+
+    // Only swallow the key once a move is certain, so an edge seat still lets
+    // the page scroll rather than trapping focus.
+    e.preventDefault();
+    container.querySelector<HTMLElement>(`[data-seat="${next}"]`)?.focus();
+  }, []);
 
   const occupiedCount = useMemo(() => members.filter(m => !m.vacant).length, [members]);
 
@@ -146,6 +174,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
             </div>
           </div>
 
+          <div onKeyDown={handleMapKeyDown} role="group" aria-label="Seat map — use arrow keys to move between seats">
           <SeatMapContainer>
             {(mode === 'attendance' || shiftFilter === 'all' ? members : filtered).map(member => (
               <SeatMapWrapper key={member.seat} seatNum={member.seat}>
@@ -171,6 +200,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
               </SeatMapWrapper>
             ))}
           </SeatMapContainer>
+          </div>
         </div>
       </div>
     </LazyMotion>

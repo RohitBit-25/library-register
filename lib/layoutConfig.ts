@@ -58,3 +58,42 @@ export function getSeatPositionConfig(n: number): SeatPosition {
   if (n >= 85 && n <= 95) return { x: 14, y: 1 + (n - 84), face: 'left' };
   return { x: 1, y: 1, face: 'up' };
 }
+
+/**
+ * The seat nearest to `from` in the given direction, or null at the edge.
+ *
+ * 95 seats means 95 Tab presses to reach the last one. Arrow keys need to move
+ * the way the eye does — across the floor plan — not in DOM order, which
+ * follows seat number and jumps across the room between runs.
+ *
+ * Candidates are ranked by distance along the travel axis first, then by
+ * sideways offset, so a step right lands on the seat across the desk rather
+ * than one diagonally away that happens to be marginally closer overall.
+ */
+export function nextSeatInDirection(
+  from: number,
+  dir: FaceDir,
+  seats: number[]
+): number | null {
+  const origin = getSeatPositionConfig(from);
+  const alongX = dir === 'left' || dir === 'right';
+  const sign = dir === 'right' || dir === 'down' ? 1 : -1;
+
+  let best: number | null = null;
+  let bestScore = Infinity;
+
+  for (const seat of seats) {
+    if (seat === from) continue;
+    const p = getSeatPositionConfig(seat);
+    const travel = (alongX ? p.x - origin.x : p.y - origin.y) * sign;
+    if (travel <= 0) continue;
+    const sideways = Math.abs(alongX ? p.y - origin.y : p.x - origin.x);
+    // Travel dominates; sideways only breaks ties within the same step.
+    const score = travel * 100 + sideways;
+    if (score < bestScore) {
+      bestScore = score;
+      best = seat;
+    }
+  }
+  return best;
+}

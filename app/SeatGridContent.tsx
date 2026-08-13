@@ -109,7 +109,11 @@ export default function SeatGridContent() {
   };
 
   const handleRemove = (seat: number) => {
-    vacate(seat, (msg) => addToast('error', msg));
+    vacate(seat, (msg) => addToast('error', msg)).then((waiting) => {
+      if (waiting.length) {
+        addToast('warning', `${waiting.length} on the waitlist — ${waiting[0].userName} is first.`);
+      }
+    });
     addToast('success', `Seat ${seat} is now vacant`);
   };
 

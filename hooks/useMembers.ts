@@ -38,6 +38,14 @@ async function fetchWithRetry(
 
 // ─── Hook ──────────────────────────────────────────────────────────
 
+/** Someone queued for a seat while the library was full. */
+export type WaitlistEntry = {
+  id: string;
+  seat: number;
+  userName: string;
+  userPhone: string;
+};
+
 export type MemberError = {
   message: string;
   action: string;
@@ -115,10 +123,12 @@ export function useMembers() {
   }, [mutate, rawMembers]);
 
   // ─── Vacate member with rollback ─────────────────────────────
+  // Returns the people waiting for a seat, so the caller can say so straight
+  // away. A freed seat is the only moment the waitlist is actionable.
   const vacate = useCallback(async (
     seat: number,
     onError?: (msg: string) => void
-  ) => {
+  ): Promise<WaitlistEntry[]> => {
     const previousData = rawMembers ? [...rawMembers] : undefined;
 
     mutate(
@@ -145,13 +155,16 @@ export function useMembers() {
     try {
       const res = await fetchWithRetry(`/api/members/${seat}`, { method: 'DELETE' });
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
+      const body = await res.json().catch(() => null);
       mutate();
+      return Array.isArray(body?.waitlist) ? body.waitlist : [];
     } catch {
       if (previousData) mutate(previousData, false);
 
       const msg = `Failed to vacate Seat ${seat}. Please retry.`;
       setLastError({ message: msg, action: 'vacate', seat, timestamp: Date.now() });
       onError?.(msg);
+      return [];
     }
   }, [mutate, rawMembers]);
 

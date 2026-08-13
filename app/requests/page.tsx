@@ -22,13 +22,14 @@ import {
   Banknote,
   FileText,
   ExternalLink,
+  Hourglass,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 
-type FilterTab = 'pending' | 'approved' | 'rejected' | 'all';
+type FilterTab = 'pending' | 'waitlisted' | 'approved' | 'rejected' | 'all';
 
 export default function RequestsPage() {
   const { requests, approveRequest, rejectRequest, deleteRequest } = useSeatRequests();
@@ -42,13 +43,14 @@ export default function RequestsPage() {
   }, [requests, filter]);
 
   const counts = useMemo(() => {
-    let pending = 0, approved = 0, rejected = 0;
+    let pending = 0, waitlisted = 0, approved = 0, rejected = 0;
     for (const r of requests) {
       if (r.status === 'pending') pending++;
+      else if (r.status === 'waitlisted') waitlisted++;
       else if (r.status === 'approved') approved++;
       else rejected++;
     }
-    return { pending, approved, rejected, all: requests.length };
+    return { pending, waitlisted, approved, rejected, all: requests.length };
   }, [requests]);
 
   // Approval and allotment happen together on the server (PATCH /api/requests),
@@ -88,6 +90,7 @@ export default function RequestsPage() {
 
   const tabs: { key: FilterTab; label: string; icon: React.ReactNode; count: number }[] = [
     { key: 'pending', label: 'Pending', icon: <Clock className="w-3.5 h-3.5" />, count: counts.pending },
+    { key: 'waitlisted', label: 'Waitlist', icon: <Hourglass className="w-3.5 h-3.5" />, count: counts.waitlisted },
     { key: 'approved', label: 'Approved', icon: <CheckCircle className="w-3.5 h-3.5" />, count: counts.approved },
     { key: 'rejected', label: 'Rejected', icon: <XCircle className="w-3.5 h-3.5" />, count: counts.rejected },
     { key: 'all', label: 'All', icon: <Filter className="w-3.5 h-3.5" />, count: counts.all },
@@ -172,6 +175,7 @@ export default function RequestsPage() {
                 req.status === 'pending' && 'border-l border-l-[var(--indigo-500)]',
                 req.status === 'approved' && 'border-l border-l-[var(--emerald-500)]',
                 req.status === 'rejected' && 'border-l border-l-[var(--ruby-500)]',
+                req.status === 'waitlisted' && 'border-l border-l-[var(--marigold-500)]',
               )}
             >
               <div className="p-4">

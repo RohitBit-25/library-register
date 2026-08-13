@@ -24,7 +24,7 @@ writeFileSync(join(out, 'package.json'), '{"type":"module"}');
 // in scripts/), and tsc rewrites those to .js on emit.
 execFileSync('npx', [
   'tsc', 'lib/csv.ts', 'lib/utils.ts', 'lib/types.ts', 'lib/seat-status.ts',
-  'lib/notify.ts', 'lib/pricing.ts',
+  'lib/notify.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts',
   '--outDir', out, '--module', 'esnext', '--target', 'es2020',
   '--moduleResolution', 'bundler', '--skipLibCheck',
   '--allowImportingTsExtensions', '--rewriteRelativeImportExtensions',
@@ -39,6 +39,9 @@ const { buildExpiryMessage, normalisePhone } =
   await import(pathToFileURL(join(out, 'notify.js')).href);
 const { planPrice, monthlyValue, formatINR, formatINRCompact, PLAN_MONTHS, DEFAULT_PLAN_RATES } =
   await import(pathToFileURL(join(out, 'pricing.js')).href);
+
+const { nextSeatInDirection, getSeatPositionConfig } =
+  await import(pathToFileURL(join(out, 'layoutConfig.js')).href);
 
 let n = 0;
 const check = (name, fn) => { fn(); n++; console.log(`  ok  ${name}`); };
@@ -261,6 +264,36 @@ check('firstName truncates long names', () => {
   assert.equal(firstName('Rohit Singh'), 'Rohit');
   assert.equal(firstName('Chandrashekhar Rao'), 'Chandr.');
   assert.equal(firstName(''), '');
+});
+
+// ─── Seat map keyboard navigation ────────────────────────────────
+const ALL_SEATS = Array.from({ length: 95 }, (_, i) => i + 1);
+
+check('arrow nav moves down a run one seat at a time', () => {
+  // Seats 1-10 run down column 1.
+  assert.equal(nextSeatInDirection(1, 'down', ALL_SEATS), 2);
+  assert.equal(nextSeatInDirection(5, 'up', ALL_SEATS), 4);
+});
+
+check('arrow nav crosses to the facing run, not diagonally', () => {
+  // Seat 11 sits at x=3,y=3; the seat to its right at the same row is 23 (x=4).
+  const right = nextSeatInDirection(11, 'right', ALL_SEATS);
+  assert.equal(getSeatPositionConfig(right).x, 4);
+  assert.equal(getSeatPositionConfig(right).y, getSeatPositionConfig(11).y);
+});
+
+check('arrow nav stops at the edge instead of wrapping', () => {
+  // Column 14 is the right wall — nothing further right exists.
+  assert.equal(nextSeatInDirection(90, 'right', ALL_SEATS), null);
+  // Seat 1 is the top of its run and the leftmost column.
+  assert.equal(nextSeatInDirection(1, 'left', ALL_SEATS), null);
+});
+
+check('arrow nav only considers seats that are rendered', () => {
+  // With a filter applied the map renders a subset; nav must not focus a seat
+  // that is not on screen.
+  assert.equal(nextSeatInDirection(1, 'down', [1, 5, 9]), 5);
+  assert.equal(nextSeatInDirection(1, 'down', [1]), null);
 });
 
 console.log(`\n${n} checks passed.\n`);
