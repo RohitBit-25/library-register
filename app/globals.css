@@ -525,3 +525,82 @@
   }
   .animate-slide-up { animation: slide-up 250ms var(--ease-enter); }
   .animate-fade-in { animation: fade-in 200ms var(--ease-enter); }
+
+  /* ═══════════════════════════════════════════════════════════════
+     PREMIUM SURFACE TREATMENTS
+     Token-only, light-theme. Every colour here resolves to a value
+     already checked by scripts/check-contrast.py — these add depth,
+     never a new foreground/background pair.
+     ═══════════════════════════════════════════════════════════════ */
+
+  /* Sheen that sweeps a primary CTA once on hover. Pure transform, so it
+     composites on the GPU and never triggers layout. */
+  .sheen {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .sheen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%) skewX(-18deg);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.28) 50%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+  .sheen:hover::after,
+  .sheen:focus-visible::after {
+    transition: transform 720ms var(--ease-smooth);
+    transform: translateX(120%) skewX(-18deg);
+  }
+
+  /* Hairline top highlight — the cheap trick that reads as "crafted" on a
+     light surface, because real materials catch light on their top edge. */
+  .surface-lift {
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 260ms var(--ease-smooth),
+                transform 260ms var(--ease-smooth),
+                border-color 260ms var(--ease-smooth);
+  }
+  .surface-lift::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.9) 50%,
+      transparent
+    );
+    pointer-events: none;
+  }
+  .surface-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-strong);
+  }
+
+  /* Focus ring that matches the brand without touching the outline used by
+     :focus-visible (which is measured against the page, see above). */
+  .ring-brand:focus-visible {
+    outline: 2px solid var(--saffron-600);
+    outline-offset: 2px;
+  }
+
+  /* Numerals that don't jitter as a counter animates. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sheen::after { display: none; }
+    .surface-lift:hover { transform: none; }
+  }

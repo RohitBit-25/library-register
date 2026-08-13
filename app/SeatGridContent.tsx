@@ -10,6 +10,7 @@ import GlobalSearch from '@/components/ui/GlobalSearch';
 import { SeatSkeleton } from '@/components/ui/Skeleton';
 import { type Duration, type Member } from '@/lib/types';
 import { useAuth } from '@/hooks/useAuth';
+import { useStaggerReveal } from '@/hooks/useStaggerReveal';
 import { getSeatStatus, cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Users, UserPlus, AlertCircle, Clock } from 'lucide-react';
@@ -20,6 +21,7 @@ export default function SeatGridContent() {
   const { isAdmin } = useAuth();
   const { addToast } = useToast();
   const searchParams = useSearchParams();
+  const mapRef = useStaggerReveal<HTMLDivElement>(!isLoading && members.length > 0);
 
   const [selectedSeat, setSelectedSeat] = useState<number | null>(() => {
     const seatParam = searchParams.get('seat');
@@ -244,17 +246,16 @@ export default function SeatGridContent() {
                 ))}
               </div>
             ) : (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              >
+              // anime.js reveals tiles outward from the centre of the room —
+              // see hooks/useStaggerReveal. Replaces a single whole-canvas
+              // fade, which told you nothing about the layout.
+              <div ref={mapRef}>
                 <SeatGrid
                   members={members}
                   onSeatClick={seat => setSelectedSeat(seat)}
                   selectedSeat={selectedSeat}
                 />
-              </motion.div>
+              </div>
             )}
         </section>
       </div>

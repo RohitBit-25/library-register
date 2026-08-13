@@ -15,6 +15,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     // -600 fills, not -500: white on saffron-500 measured 2.68:1; saffron-600 gives 5.43:1.
     const variants = {
       primary: `
+        sheen
         bg-[var(--saffron-600)] text-[var(--text-inverse)]
         font-[var(--font-body)] font-[var(--weight-semibold)] tracking-[var(--tracking-wide)]
         rounded-[var(--radius-sm)] border border-[var(--saffron-700)] shadow-[var(--shadow-sm)]

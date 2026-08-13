@@ -19,21 +19,34 @@ function AnimatedCounter({ value, duration = 800 }: { value: number; duration?: 
   useEffect(() => {
     const start = prevValueRef.current;
     const end = value;
-    if (start === end) {
-      const timer = setTimeout(() => setDisplayValue(end), 0);
-      return () => clearTimeout(timer);
-    }
-    const startTime = Date.now();
-    const step = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      // Ease-out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplayValue(Math.round(start + (end - start) * eased));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
     prevValueRef.current = value;
+
+    // Counting up is decoration. Someone who asked for reduced motion wants
+    // the number, not the performance.
+    const reduced = typeof window !== 'undefined'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let frame = 0;
+
+    if (start === end || reduced) {
+      // Deferred via rAF rather than set synchronously: a setState in the
+      // effect body triggers a cascading render (React Compiler flags it).
+      frame = requestAnimationFrame(() => setDisplayValue(end));
+      return () => cancelAnimationFrame(frame);
+    }
+
+    const startTime = performance.now();
+    const step = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      setDisplayValue(Math.round(start + (end - start) * eased));
+      if (progress < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+
+    // Without this the loop kept running after unmount, and a second value
+    // change started a competing loop that fought the first.
+    return () => cancelAnimationFrame(frame);
   }, [value, duration]);
 
   return <>{displayValue}</>;
@@ -59,13 +72,23 @@ export default function StatCard({ value, label, accent, icon, onClick }: StatCa
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className={cn(
-        'text-left w-full rounded-[var(--radius-lg)] border-[1.5px] border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-[var(--space-5)] shadow-[var(--shadow-sm)] cursor-pointer group transition-all duration-300',
-        'hover:border-[var(--saffron-500)] hover:shadow-[var(--shadow-glow-saffron)]'
+        // `relative` + `overflow-hidden`: the corner overlay below is absolute
+        // and had no positioned ancestor, so it escaped the card entirely.
+        'relative overflow-hidden text-left w-full rounded-[var(--radius-lg)] border-[1.5px] border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-[var(--space-5)] shadow-[var(--shadow-sm)] cursor-pointer group transition-all duration-300',
+        // --shadow-glow-saffron is `none` in this palette, so the old hover
+        // shadow did nothing.
+        'hover:border-[var(--saffron-500)] hover:shadow-[var(--shadow-lg)]'
       )}
     >
-      {/* Decorative corner overlay */}
+      {/* Hairline top highlight — reads as a lit edge on a light surface. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent"
+      />
+
+      {/* Decorative corner wash, revealed on hover */}
       <div className={cn(
-        'absolute top-0 right-0 w-20 h-20 rounded-bl-[60px] opacity-0 pointer-events-none transition-opacity group-hover:opacity-100',
+        'absolute top-0 right-0 w-20 h-20 rounded-bl-[60px] opacity-0 pointer-events-none transition-opacity duration-300 group-hover:opacity-100',
         tokens.bg
       )} />
       
@@ -79,7 +102,8 @@ export default function StatCard({ value, label, accent, icon, onClick }: StatCa
       </div>
 
       {/* Number with animated counter */}
-      <p className="font-display text-3xl font-semibold text-[var(--text-primary)] tracking-[var(--tracking-tight)] relative z-10">
+      {/* `tabular` pins digit width so the number doesn't jitter as it counts */}
+      <p className="tabular font-display text-3xl font-semibold text-[var(--text-primary)] tracking-[var(--tracking-tight)] relative z-10">
         <AnimatedCounter value={value} />
       </p>
       
