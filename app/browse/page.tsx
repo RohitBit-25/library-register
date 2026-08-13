@@ -11,7 +11,7 @@ import UnifiedHeader from '@/components/layout/UnifiedHeader';
 import StudentSidebar from '@/components/layout/StudentSidebar';
 import SeatRequestSheet from '@/components/seat/SeatRequestSheet';
 import { SeatSkeleton } from '@/components/ui/Skeleton';
-import { ArrowRight, MapPin, Check, Armchair } from 'lucide-react';
+import { ArrowLeft, MapPin, Check, Armchair } from 'lucide-react';
 import { seatAmenities } from '@/lib/layoutConfig';
 
 export default function BrowsePage() {
@@ -74,10 +74,19 @@ export default function BrowsePage() {
           {/* Seat Map Area */}
           <div className="flex-1 flex flex-col min-w-0">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 px-2">
-              <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-3">
-                <ArrowRight className="w-5 h-5 text-[var(--text-tertiary)] rotate-180 cursor-pointer hover:text-[var(--text-primary)] transition-colors" onClick={() => router.push('/landing')} />
-                Choose Your Seat
-              </h2>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => router.push('/landing')}
+                  aria-label="Back to home"
+                  className="rounded-lg p-1.5 text-[var(--text-tertiary)] transition-ui hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+                >
+                  <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+                </button>
+                <h1 className="text-xl font-bold tracking-tight text-[var(--text-primary)]">
+                  Choose your seat
+                </h1>
+              </div>
               
               <div className="flex items-center gap-3 text-sm">
                 <select 
@@ -182,12 +191,8 @@ export default function BrowsePage() {
                 <h3 className="text-sm font-bold text-[var(--text-primary)] mb-6">My Booking</h3>
                 
                 <div className="flex-1 flex flex-col items-center justify-center text-center pb-8">
-                  <div className="w-32 h-32 mb-6">
-                    {/* Placeholder for illustration */}
-                    <svg viewBox="0 0 200 200" className="w-full h-full text-[var(--border-default)]">
-                      <path fill="currentColor" d="M100 150c-27.6 0-50-22.4-50-50s22.4-50 50-50 50 22.4 50 50-22.4 50-50 50zm0-95c-24.8 0-45 20.2-45 45s20.2 45 45 45 45-20.2 45-45-20.2-45-45-45z"/>
-                      <path fill="currentColor" opacity="0.5" d="M100 120v-40h-20v40h20zm0-60v20h20V60h-20z"/>
-                    </svg>
+                  <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">
+                    <Armchair className="h-9 w-9 text-[var(--text-tertiary)]" aria-hidden="true" />
                   </div>
                   <div className="text-lg font-bold text-[var(--text-primary)] mb-2">No seat booked yet</div>
                   <div className="text-[13px] text-[var(--text-secondary)] mb-8">Choose your perfect seat and get started.</div>

@@ -55,9 +55,16 @@ export default function AuditLogsPage() {
                 </tr>
               ) : logs.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="p-8 text-center text-[var(--text-tertiary)] flex flex-col items-center">
-                    <Activity className="w-8 h-8 opacity-20 mb-2" />
-                    No activity recorded yet
+                  <td colSpan={4} className="p-10 text-center">
+                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">
+                      <Activity className="h-7 w-7 text-[var(--text-tertiary)]" aria-hidden="true" />
+                    </div>
+                    <p className="text-sm font-semibold text-[var(--text-secondary)]">
+                      No activity recorded yet
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+                      Every allotment, renewal and vacate is logged here with the staff member who did it.
+                    </p>
                   </td>
                 </tr>
               ) : (

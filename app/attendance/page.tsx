@@ -188,7 +188,7 @@ export default function AttendancePage() {
                   size="lg"
                   variant="primary"
                   onClick={() => setConfirmMarkAll(true)}
-                  className="px-[var(--space-6)] py-[var(--space-4)] bg-[var(--saffron-600)] text-[var(--text-inversen-50)] hover:bg-[var(--sapphire-600)]"
+                  className="px-[var(--space-6)] py-[var(--space-4)] bg-[var(--saffron-600)] text-[var(--text-inverse)] hover:bg-[var(--saffron-700)]"
                 >
                   <UserCheck className="w-5 h-5 mr-2" />
                   Mark All Present

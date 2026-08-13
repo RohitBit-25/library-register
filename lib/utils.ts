@@ -67,14 +67,24 @@ export function fmtDate(dateStr: string): string {
 }
 
 /**
- * Format date short: "4 Mar"
+ * Short date, with the year only when it is not the current one: "4 Mar",
+ * "4 Mar 2027".
+ *
+ * The year used to be dropped unconditionally, so a member who joined on
+ * 22 Aug 2026 on a one-year plan showed "Joined 22 Aug · Expiry 22 Aug" —
+ * two identical strings twelve months apart, on the column an admin uses to
+ * decide who to chase. Same-year dates stay short, which is the common case
+ * and the reason the year was dropped in the first place.
  */
 export function fmtDateShort(dateStr: string): string {
   if (!dateStr) return '—';
   const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return '—';
+  const sameYear = d.getFullYear() === new Date().getFullYear();
   return d.toLocaleDateString('en-IN', {
     day: 'numeric',
     month: 'short',
+    ...(sameYear ? {} : { year: 'numeric' }),
   });
 }
 

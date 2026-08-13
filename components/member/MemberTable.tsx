@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { type Member, type SeatStatus } from '@/lib/types';
 import { getSeatStatus, fmtDateShort, firstName, cn } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
-import { Search, MoreVertical, Check, RefreshCw, MessageCircle, Trash2, UserPlus, ChevronUp, ChevronDown, Copy, Pencil } from 'lucide-react';
+import { Search, MoreVertical, Check, RefreshCw, MessageCircle, Trash2, UserPlus, ChevronUp, ChevronDown, Copy, Pencil, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import ConfirmDialog from '../ui/ConfirmDialog';
@@ -364,7 +364,13 @@ export default function MemberTable({
                   <td className="p-3 text-[var(--text-secondary)] font-medium">{fmtDateShort(m.expiry)}</td>
                   <td className="p-3">
                     {m.vacant ? (
-                      <Link href={`/?seat=${m.seat}`} className="text-[var(--sapphire-600)] text-xs font-bold cursor-pointer hover:underline bg-[var(--sapphire-500)]/10 py-1 px-3 rounded-md">+ Add</Link>
+                      <Link
+                        href={`/?seat=${m.seat}`}
+                        aria-label={`Allot seat ${m.seat}`}
+                        className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-2.5 py-1 text-xs font-bold text-[var(--saffron-700)] transition-ui hover:bg-[var(--saffron-100)]"
+                      >
+                        <Plus className="h-3 w-3" aria-hidden="true" /> Add
+                      </Link>
                     ) : (
                       <Badge variant={status} />
                     )}

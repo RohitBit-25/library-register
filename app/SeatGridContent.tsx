@@ -13,7 +13,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useStaggerReveal } from '@/hooks/useStaggerReveal';
 import { getSeatStatus, cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Users, UserPlus, AlertCircle, Clock } from 'lucide-react';
+import { LayoutDashboard, Users, UserPlus, AlertCircle, Clock, IndianRupee } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
 export default function SeatGridContent() {
@@ -170,7 +170,7 @@ export default function SeatGridContent() {
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-3 overflow-x-auto pb-2 no-scrollbar"
+            className="flex flex-wrap items-center gap-2 sm:gap-3 sm:flex-nowrap sm:overflow-x-auto sm:pb-2 sm:no-scrollbar"
           >
             <StatChip 
               label="Total Seats" 
@@ -192,18 +192,26 @@ export default function SeatGridContent() {
             />
             {stats.due > 0 && (
               <StatChip 
-                label="Fee Due" 
-                value={stats.due} 
-                icon={<Clock size={14} />}
-                color="bg-[var(--marigold-50)] text-[var(--marigold-700)] border-[var(--marigold-200)]" 
+                label="Fee Due"
+                value={stats.due}
+                icon={<IndianRupee size={14} />}
+                color="bg-[var(--saffron-50)] text-[var(--saffron-700)] border-[var(--saffron-200)]" 
               />
             )}
-            {(stats.expiring > 0 || stats.expired > 0) && (
-              <StatChip 
-                label="Expiring / Expired" 
-                value={stats.expiring + stats.expired} 
+            {stats.expiring > 0 && (
+              <StatChip
+                label="Expiring"
+                value={stats.expiring}
+                icon={<Clock size={14} />}
+                color="bg-[var(--marigold-50)] text-[var(--marigold-700)] border-[var(--marigold-200)]"
+              />
+            )}
+            {stats.expired > 0 && (
+              <StatChip
+                label="Expired"
+                value={stats.expired}
                 icon={<AlertCircle size={14} />}
-                color="bg-[var(--ruby-50)] text-[var(--ruby-700)] border-[var(--ruby-200)]" 
+                color="bg-[var(--ruby-50)] text-[var(--ruby-700)] border-[var(--ruby-200)]"
               />
             )}
           </motion.div>
@@ -347,7 +355,7 @@ function StatChip({ label, value, color, icon }: { label: string, value: number,
     <div className={cn("flex items-center gap-3 px-4 py-2.5 rounded-xl border whitespace-nowrap font-medium transition-colors duration-200 shrink-0", color)}>
       {icon && <div className="opacity-90">{icon}</div>}
       <div className="flex flex-col">
-        <span className="text-[9px] uppercase tracking-[0.15em] opacity-70 leading-none mb-1.5">{label}</span>
+        <span className="mb-1.5 text-[10px] font-semibold uppercase leading-none tracking-[0.12em]">{label}</span>
         <span className="text-sm font-bold leading-none">{value}</span>
       </div>
     </div>

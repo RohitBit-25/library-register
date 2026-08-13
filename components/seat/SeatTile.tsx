@@ -152,7 +152,7 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
             </div>
           )}
 
-          <div className={cn('flex items-center justify-center w-full gap-0.5 z-10 font-bold opacity-80', compact ? 'text-[8.5px] leading-none mb-0.5' : 'text-[10px] leading-none mb-0.5')}>
+          <div className={cn('flex items-center justify-center w-full gap-0.5 z-10 font-bold', compact ? 'text-[9.5px] leading-none mb-0.5' : 'text-[10px] leading-none mb-0.5')}>
             {member.vacant ? (
               <span className="font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity text-[var(--saffron-600)]">Add</span>
             ) : (

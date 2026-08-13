@@ -426,8 +426,17 @@
     animation: pulse-subtle 1.8s var(--ease-smooth) infinite;
   }
 
+  /* In-page anchors jumped instantly with no sense of where they landed.
+     Honours the reduced-motion override below, which resets it to auto. */
+  html {
+    scroll-behavior: smooth;
+    /* Anchored sections were landing under the sticky header. */
+    scroll-padding-top: 5rem;
+  }
+
   /* Reduced Motion */
   @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;

@@ -31,7 +31,7 @@ execFileSync('npx', [
 ], { cwd: root, stdio: 'inherit' });
 
 const { escapeCsvValue, toCsv } = await import(pathToFileURL(join(out, 'csv.js')).href);
-const { calcExpiry, daysUntilExpiry, firstName, renewalStartDate } =
+const { calcExpiry, daysUntilExpiry, firstName, renewalStartDate, fmtDateShort } =
   await import(pathToFileURL(join(out, 'utils.js')).href);
 const { getSeatState, getSeatStatus, todayLocalISO, addDaysISO } =
   await import(pathToFileURL(join(out, 'seat-status.js')).href);
@@ -300,6 +300,17 @@ check('arrow nav only considers seats that are rendered', () => {
   // that is not on screen.
   assert.equal(nextSeatInDirection(1, 'down', [1, 5, 9]), 5);
   assert.equal(nextSeatInDirection(1, 'down', [1]), null);
+});
+
+check('short dates keep the year when it is not this year', () => {
+  const thisYear = new Date().getFullYear();
+  // Same year: short, no year — the common case on a members table.
+  assert.equal(/\d{4}/.test(fmtDateShort(`${thisYear}-03-04`)), false);
+  // A different year must say so, or a 1Y plan reads as expiring the day it
+  // started.
+  assert.match(fmtDateShort(`${thisYear + 1}-03-04`), new RegExp(String(thisYear + 1)));
+  assert.equal(fmtDateShort(''), '—');
+  assert.equal(fmtDateShort('not-a-date'), '—');
 });
 
 console.log(`\n${n} checks passed.\n`);

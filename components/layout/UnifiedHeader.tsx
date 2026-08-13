@@ -1,11 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Lock } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Lock, Home, Armchair, Wind } from 'lucide-react';
 import AuthModal from '@/components/auth/AuthModal';
 
 export default function UnifiedHeader() {
   const [showStaffLogin, setShowStaffLogin] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
@@ -26,23 +29,36 @@ export default function UnifiedHeader() {
           </div>
         </div>
 
-        {/* Navigation Links - Hidden on small mobile */}
-        <nav className="hidden md:flex items-center gap-6">
-          <a href="#" className="text-sm font-semibold text-[var(--saffron-700)] border-b-2 border-[var(--saffron-600)] pb-1 flex items-center gap-1.5">
-            <span className="text-[14px]">🏠</span> Home
-          </a>
-          <a href="#" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1.5">
-            <span className="text-[14px]">🕒</span> About
-          </a>
-          <a href="#" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1.5">
-            <span className="text-[14px]">🏢</span> Facilities
-          </a>
-          <a href="#" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1.5">
-            <span className="text-[14px]">📋</span> Rules
-          </a>
-          <a href="#" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1.5">
-            <span className="text-[14px]">📞</span> Contact
-          </a>
+        {/*
+          Five links, all `href="#"`, four of them naming sections that were
+          never built — About, Facilities, Rules, Contact. A student clicking
+          any of them stayed exactly where they were.
+
+          What is left points at things that exist. Emoji are gone with them:
+          a screen reader announces "🏠" as "house", and they sat at a
+          different optical weight from every other icon in the product.
+        */}
+        <nav aria-label="Main" className="hidden items-center gap-6 md:flex">
+          <Link
+            href="/landing"
+            aria-current={pathname === '/landing' ? 'page' : undefined}
+            className="flex items-center gap-1.5 border-b-2 border-transparent pb-1 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] aria-[current=page]:border-[var(--saffron-600)] aria-[current=page]:font-semibold aria-[current=page]:text-[var(--saffron-700)]"
+          >
+            <Home className="h-4 w-4" aria-hidden="true" /> Home
+          </Link>
+          <Link
+            href="/browse"
+            aria-current={pathname === '/browse' ? 'page' : undefined}
+            className="flex items-center gap-1.5 border-b-2 border-transparent pb-1 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] aria-[current=page]:border-[var(--saffron-600)] aria-[current=page]:font-semibold aria-[current=page]:text-[var(--saffron-700)]"
+          >
+            <Armchair className="h-4 w-4" aria-hidden="true" /> Seats
+          </Link>
+          <Link
+            href="/landing#facilities"
+            className="flex items-center gap-1.5 border-b-2 border-transparent pb-1 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
+          >
+            <Wind className="h-4 w-4" aria-hidden="true" /> Facilities
+          </Link>
         </nav>
 
         {/* Staff Login Button */}

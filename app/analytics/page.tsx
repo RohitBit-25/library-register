@@ -96,28 +96,28 @@ export default function DashboardPage() {
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-[var(--space-3)] sm:gap-[var(--space-4)] mb-[var(--space-6)]">
         <StatCard
           value={stats.occupied}
-          label="Occupied Seats"
-          accent="blue"
+          label="Occupied seats"
+          accent="gray"
           icon={<Users className="w-5 h-5" />}
           onClick={() => router.push('/members?filter=active')}
         />
         <StatCard
           value={stats.vacant}
-          label="Vacant Seats"
+          label="Vacant seats"
           accent="gray"
           icon={<UserMinus className="w-5 h-5" />}
           onClick={() => router.push('/members?filter=vacant')}
         />
         <StatCard
           value={stats.due}
-          label="Fee Pending"
+          label="Fee pending"
           accent="amber"
           icon={<AlertTriangle className="w-5 h-5" />}
           onClick={() => router.push('/members?filter=due')}
         />
         <StatCard
-          value={stats.expiring + stats.expired}
-          label="Expiring / Expired"
+          value={stats.expired}
+          label="Expired"
           accent="red"
           icon={<CalendarX className="w-5 h-5" />}
           onClick={() => router.push('/members?filter=expired')}
@@ -297,20 +297,20 @@ export default function DashboardPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs text-[var(--text-tertiary)] bg-[var(--bg-muted)] uppercase tracking-wider font-semibold">
-                  <th className="px-[var(--space-5)] py-[var(--space-3)]">#</th>
-                  <th className="px-[var(--space-5)] py-[var(--space-3)]">Name</th>
-                  <th className="px-[var(--space-5)] py-[var(--space-3)] hidden sm:table-cell">Expires</th>
-                  <th className="px-[var(--space-5)] py-[var(--space-3)]">Status</th>
+                  <th scope="col" className="w-16 px-[var(--space-5)] py-[var(--space-3)]">Seat</th>
+                  <th scope="col" className="px-[var(--space-5)] py-[var(--space-3)]">Name</th>
+                  <th scope="col" className="hidden w-32 px-[var(--space-5)] py-[var(--space-3)] sm:table-cell">Expires</th>
+                  <th scope="col" className="w-32 px-[var(--space-5)] py-[var(--space-3)]">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border-subtle)] bg-[var(--bg-elevated)]">
                 {priorityMembers.map(m => (
                   <tr key={m.seat} className="hover:bg-[var(--bg-muted)] transition-colors">
-                    <td className="px-[var(--space-5)] py-[var(--space-3)] font-mono text-[var(--text-secondary)]">
+                    <td className="px-[var(--space-5)] py-[var(--space-3)] tabular text-[var(--text-secondary)]">
                       {m.seat}
                     </td>
-                    <td className="px-[var(--space-5)] py-[var(--space-3)] font-medium text-[var(--text-primary)]">
-                      {m.name.length > 14 ? m.name.slice(0, 12) + '…' : m.name}
+                    <td className="max-w-0 truncate px-[var(--space-5)] py-[var(--space-3)] font-medium text-[var(--text-primary)]">
+                      <span title={m.name}>{m.name}</span>
                     </td>
                     <td className="px-[var(--space-5)] py-[var(--space-3)] text-[var(--text-secondary)] hidden sm:table-cell">
                       {fmtDate(m.expiry)}

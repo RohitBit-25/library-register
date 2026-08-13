@@ -64,8 +64,7 @@ export default function KioskPage() {
       
       {/* Background Decor */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-[var(--sapphire-500)]/5 blur-3xl"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-[var(--amber-500)]/5 blur-3xl"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-[var(--amber-500)]/5 blur-3xl"></div>
       </div>
 
       <div className="absolute top-6 left-6 z-50">
@@ -86,7 +85,7 @@ export default function KioskPage() {
             className="w-full max-w-sm"
           >
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--sapphire-500)] to-purple-600 outline outline-4 outline-[var(--bg-surface)] shadow-xl mb-6">
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--saffron-700)] text-[var(--text-inverse)] shadow-md">
                 <UserCheck className="w-8 h-8 text-[var(--saffron-50)]" />
               </div>
               <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
@@ -134,7 +133,8 @@ export default function KioskPage() {
                 <button
                   onClick={handleEnter}
                   disabled={!seatInput}
-                  className="aspect-square rounded-2xl bg-[var(--saffron-500)] text-[#1a1a16] disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl hover:shadow-[var(--saffron-500)]/20 hover:-translate-y-1 transition-ui flex items-center justify-center cursor-pointer active:scale-95"
+                  aria-label="Confirm seat number"
+                  className="flex aspect-square cursor-pointer items-center justify-center rounded-2xl bg-[var(--saffron-700)] text-[var(--text-inverse)] transition-ui hover:-translate-y-1 hover:bg-[var(--saffron-800)] active:scale-95 disabled:cursor-not-allowed disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)]"
                 >
                   <ArrowRight className="w-8 h-8" />
                 </button>
@@ -159,7 +159,7 @@ export default function KioskPage() {
                 <ArrowLeft className="w-5 h-5" />
               </button>
 
-              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-500 to-[var(--sapphire-500)] rounded-[2rem] rotate-3 mb-6 shadow-xl flex items-center justify-center border-4 border-[var(--bg-surface)]">
+              <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-[2rem] bg-[var(--emerald-600)] text-[var(--text-inverse)] shadow-md">
                 <span className="text-4xl font-black text-[var(--saffron-50)] -rotate-3 font-mono">
                   {String(activeMember.seat).padStart(2, '0')}
                 </span>

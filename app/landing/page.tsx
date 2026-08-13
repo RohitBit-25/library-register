@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useMembers } from '@/hooks/useMembers';
 import UnifiedHeader from '@/components/layout/UnifiedHeader';
 import { 
-  ArrowRight, Play, Sun, Moon, ShieldCheck, Droplets, VolumeX, Wind, Wifi, Armchair, CalendarDays
+  ArrowRight, Sun, Moon, ShieldCheck, Droplets, VolumeX, Wind, Wifi, Armchair, CalendarDays
 } from 'lucide-react';
 
 const AMENITIES = [
@@ -17,10 +17,10 @@ const AMENITIES = [
 ];
 
 const STATS = [
-  { n: '95', l: 'Total Seats', icon: Armchair },
-  { n: '2', l: 'Daily Shifts', icon: CalendarDays },
-  { n: '6:00 AM', l: 'Opens Daily', icon: Sun },
-  { n: '10:00 PM', l: 'Closes Daily', icon: Moon },
+  { n: '95', l: 'Total seats', icon: Armchair, wide: false },
+  { n: '2', l: 'Daily shifts', icon: CalendarDays, wide: false },
+  { n: '6:00 am', l: 'Opens daily', icon: Sun, wide: true },
+  { n: '10:00 pm', l: 'Closes daily', icon: Moon, wide: true },
 ];
 
 export default function LandingPage() {
@@ -50,7 +50,7 @@ export default function LandingPage() {
               Welcome to
             </div>
             
-            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-black text-[var(--text-primary)] leading-[1.1] tracking-tight mb-4" style={{ fontFamily: 'var(--font-display)' }}>
+            <h1 className="text-3xl sm:text-4xl font-black text-[var(--text-primary)] leading-[1.05] tracking-tight text-balance mb-4" style={{ fontFamily: 'var(--font-display)' }}>
               Shree Gangaur<br />
               <span className="text-[var(--saffron-700)]" style={{ fontFamily: 'var(--font-serif-display)' }}>Study Library</span>
             </h1>
@@ -92,20 +92,18 @@ export default function LandingPage() {
             <div className="relative w-full aspect-[16/9] lg:aspect-auto lg:flex-1 rounded-3xl overflow-hidden bg-[var(--bg-muted)] border border-[var(--border-default)] group">
               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center" />
               <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors" />
-              <button className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3 cursor-pointer group-hover:scale-105 transition-transform">
-                <div className="w-16 h-16 rounded-full bg-white text-[var(--saffron-700)] flex items-center justify-center shadow-xl">
-                  <Play className="w-6 h-6 ml-1" fill="currentColor" />
-                </div>
-                <span className="text-white font-semibold text-sm drop-shadow-md">Take a quick tour</span>
-              </button>
             </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {STATS.map((stat, idx) => (
                 <div key={idx} className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm">
-                  <stat.icon className="w-6 h-6 text-[var(--saffron-600)] mb-3" />
-                  <div className="text-2xl font-black text-[var(--text-primary)]">{stat.n}</div>
-                  <div className="text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wider mt-1">{stat.l}</div>
+                  <stat.icon className="w-5 h-5 text-[var(--saffron-600)] mb-2.5" aria-hidden="true" />
+                  <div className={stat.wide
+                    ? 'text-md font-black tabular whitespace-nowrap text-[var(--text-primary)]'
+                    : 'text-2xl font-black tabular text-[var(--text-primary)]'}>
+                    {stat.n}
+                  </div>
+                  <div className="text-xs font-medium text-[var(--text-tertiary)] mt-1">{stat.l}</div>
                 </div>
               ))}
             </div>
@@ -113,7 +111,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Features Footer ── */}
-        <footer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 pt-12 border-t border-[var(--border-default)] pb-12">
+        <section id="facilities" aria-label="Facilities" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 pt-12 border-t border-[var(--border-default)] pb-12">
           {AMENITIES.map(({ name, desc, Icon }) => (
             <div key={name} className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-[var(--bg-muted)] flex items-center justify-center shrink-0 text-[var(--text-tertiary)]">
@@ -125,9 +123,16 @@ export default function LandingPage() {
               </div>
             </div>
           ))}
-        </footer>
+        </section>
 
       </main>
+
+      <footer className="border-t border-[var(--border-default)] bg-[var(--bg-surface)]">
+        <div className="mx-auto flex max-w-[1440px] flex-col gap-2 px-4 py-6 text-xs text-[var(--text-tertiary)] sm:flex-row sm:items-center sm:justify-between md:px-6 lg:px-8">
+          <p>Shree Gangaur Study Library · Rajsamand, Rajasthan</p>
+          <p>Open 6:00 am – 10:00 pm daily</p>
+        </div>
+      </footer>
     </div>
   );
 }
