@@ -195,7 +195,7 @@ export default function DashboardPage() {
               {alerts.map(m => (
                 <div
                   key={`alert-${m.seat}`}
-                  className={`flex items-center justify-between px-[var(--space-5)] py-[var(--space-3)] hover:bg-[var(--bg-muted)] transition-colors border-l-4 ${alertBorderColors[m.alertType]}`}
+                  className={`flex items-center justify-between px-[var(--space-5)] py-[var(--space-3)] hover:bg-[var(--bg-muted)] transition-colors border-l ${alertBorderColors[m.alertType]}`}
                 >
                   <div className="flex items-center gap-[var(--space-3)] min-w-0">
                     <span className="text-xs font-mono font-bold text-[var(--text-tertiary)] shrink-0 w-8 h-8 flex items-center justify-center rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-[var(--shadow-sm)]">

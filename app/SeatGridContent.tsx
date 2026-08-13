@@ -137,17 +137,9 @@ export default function SeatGridContent() {
         
         {/* --- DYNAMIC HEADER --- */}
         <header className="mb-8 flex flex-col gap-5">
+          {/* No eyebrow. "Live Seat Map" sat above "Reading Hall Seats" and
+              said nothing the heading didn't — the heading carries itself. */}
           <div className="space-y-2">
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2 text-[var(--saffron-600)] mb-1"
-            >
-              <LayoutDashboard size={14} />
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--saffron-600)]">
-                Live Seat Map
-              </span>
-            </motion.div>
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div className="space-y-1">
                 <motion.h1 

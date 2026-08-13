@@ -55,7 +55,7 @@ export default function ToastContainer({ toasts, onRemove }: ToastContainerProps
               exit="exit"
               className={cn(
                 'flex items-start gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)]',
-                'rounded-[var(--radius-lg)] border-l-[3px] border-y-[1px] border-r-[1px]',
+                'rounded-[var(--radius-lg)] border-l border-y-[1px] border-r-[1px]',
                 'border-y-[var(--border-subtle)] border-r-[var(--border-subtle)]',
                 'pointer-events-auto overflow-hidden',
                 styleClass

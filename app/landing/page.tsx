@@ -87,13 +87,9 @@ export default function LandingPage() {
 
         {/* ── Hero ── */}
         <main className="flex flex-1 flex-col items-center justify-center py-10 text-center">
-          <div className="mb-6 flex items-center gap-3" aria-hidden="true">
-            <span className="h-px w-10 bg-[var(--border-default)]" />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--saffron-700)]">
-              Est. Rajsamand
-            </span>
-            <span className="h-px w-10 bg-[var(--border-default)]" />
-          </div>
+          {/* The "Est. Rajsamand" eyebrow lived here. The place is already in
+              the header and the footer address; repeating it above the name
+              was decoration pretending to be information. */}
 
           <h1
             className="text-4xl leading-tight text-[var(--text-primary)] sm:text-5xl"

@@ -158,7 +158,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
                           className="w-full text-left px-4 py-3 hover:bg-[var(--bg-base)] rounded-xl transition-ui flex items-center justify-between group cursor-pointer"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-[var(--sapphire-500)]/10 flex items-center justify-center text-[var(--sapphire-600)] font-mono font-bold border border-[var(--sapphire-500)]/20 shadow-[0_0_10px_var(--sapphire-500)] opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-ui">
+                            <div className="w-10 h-10 rounded-xl bg-[var(--sapphire-500)]/10 flex items-center justify-center text-[var(--sapphire-600)] font-mono font-bold border border-[var(--sapphire-500)]/20 shadow-[var(--shadow-sm)] opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-ui">
                               {String(member.seat).padStart(2, '0')}
                             </div>
                             <div>

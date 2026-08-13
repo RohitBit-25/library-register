@@ -210,7 +210,7 @@
     --leading-normal: 1.55;
     --leading-relaxed:1.75;
 
-    --tracking-tight:  -0.03em;
+    --tracking-tight:  -0.04em; /* display floor from the craft standard */
     --tracking-normal:  0em;
     --tracking-wide:    0.06em;
     --tracking-widest:  0.14em;

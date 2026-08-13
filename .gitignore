@@ -46,3 +46,4 @@ next-env.d.ts
 
 # installed agent skills (external, re-installable via npx skills add)
 .agents/
+.claude/

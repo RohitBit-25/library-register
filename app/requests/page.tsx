@@ -169,9 +169,9 @@ export default function RequestsPage() {
               variant="base"
               className={cn(
                 'overflow-hidden shadow-[var(--shadow-sm)]',
-                req.status === 'pending' && 'border-l-[4px] border-l-[var(--indigo-500)]',
-                req.status === 'approved' && 'border-l-[4px] border-l-[var(--emerald-500)]',
-                req.status === 'rejected' && 'border-l-[4px] border-l-[var(--ruby-500)]',
+                req.status === 'pending' && 'border-l border-l-[var(--indigo-500)]',
+                req.status === 'approved' && 'border-l border-l-[var(--emerald-500)]',
+                req.status === 'rejected' && 'border-l border-l-[var(--ruby-500)]',
               )}
             >
               <div className="p-4">
