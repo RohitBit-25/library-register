@@ -84,6 +84,50 @@ Checked and already correct: `useSearchParams` is Suspense-wrapped; no async cli
 | **A second unescaped CSV builder.** `app/members/page.tsx` built its own rows by hand — the same injection bug already fixed in the Export page. Names come from the *public* request form. | Routed through the shared `toCsv()` helper. |
 | **Expired seats had no exit.** Per the product decision they are flagged only and never auto-vacated — but freeing one meant leaving the tracker and finding the seat on the map. | A "Free this seat" action on expired rows, with a confirm naming the member and how long ago they expired. Verified: seat cleared and audit-logged. |
 
+---
+
+## 0c. Third pass — business logic moved to the server
+
+Seat state was derived **only in the browser**. The database had no opinion about whether a seat was expired, so the UI and the data could disagree, and every dashboard counter required shipping all 95 member records to compute five numbers.
+
+### The precedence decision
+
+`getSeatStatus` checked `due` before `expired`, so a member six months past their term who had never paid displayed as merely **"Fee Due"** — hiding that the seat was reclaimable, and counting them in the wrong dashboard tile.
+
+**Expired now outranks due.** The two demand different actions: *due* means collect money from a current member; *expired* means the term is over, so renew or reclaim the seat. The seat being reclaimable is the more urgent fact.
+
+The money signal is not lost, because that would be a bad trade. `status` is one mutually-exclusive value that drives the tile colour; `hasDues` is orthogonal and rides alongside it. `/api/stats` therefore reports both `due` (owing **and** still within term) and `withDues` (owing, full stop). The sidebar badge uses `withDues` — it means "how many owe money".
+
+| Member | Old status | New status | `hasDues` |
+|---|---|---|---|
+| Owes, term ends in 90 days | `due` | `due` | `true` |
+| Paid, expired 5 months ago | `due`→ no, `expired` | `expired` | `false` |
+| **Owes, expired 5 months ago** | **`due`** ← wrong | **`expired`** | **`true`** |
+
+### One source of truth
+
+`lib/seat-status.ts` is now imported by the browser, the API routes, and mirrored by the `/api/stats` aggregation. Two implementations of the same rule is a drift risk, so it is checked rather than assumed — a live cross-check confirmed the TypeScript rules and the MongoDB pipeline agree on every field (`expired`, `due`, `expiring`, `withDues`, `occupied`, `vacant`).
+
+### `GET /api/stats`
+
+Counters and alert lists computed in MongoDB with `$facet`. `AppShell` previously called `useMembers()` + `useStats()` on **every page** — pulling 95 records with names, phones and join dates — purely to render one "N due" badge. Alert lists are capped at 25 and report `truncated` per bucket.
+
+### A timezone bug that affected money and messaging
+
+`todayISO()` was `new Date().toISOString().split('T')[0]` — that is **UTC**. In IST (+5:30) it returns *yesterday's* date every day between 00:00 and 05:30. Overnight signups got a join date one day early, and the reminder cron targeted the wrong cohort. All date keys are local now, with a regression test.
+
+### The reminder cron
+
+It was a `console.log` next to a TODO, with three defects:
+
+| Was | Now |
+|---|---|
+| Re-sent to the same people on every run | **Idempotent** — stamps `reminderSentFor` with the expiry it reminded about; re-running sends nothing. Renewal changes `expiry`, so the member naturally becomes eligible again with no cleanup. |
+| Matched `expiry === today + 3` exactly, so one failed run meant that cohort was **never** reminded — silently | **Self-healing** — matches a 3-day window, so the next successful run catches anyone missed |
+| No way to plug in a provider; no notion of failure | `lib/notify.ts` is the single seam, dry-run by default. A member is stamped **only** on a successful send, so an outage cannot mark people as notified when they were not. Reports `sent` / `failed` / `skippedNoPhone`. |
+
+Verified live: `401` without the secret, run 1 sends 1, run 2 sends 0, renewal re-enables, and a member with no phone is reported rather than silently dropped.
+
 ### Product decisions confirmed with the owner
 
 - **One seat = one member.** The `shift` field is that member's attendance window, not a sellable slot. Seats are *not* shared between a morning and an evening student, so no data-model change was made.
