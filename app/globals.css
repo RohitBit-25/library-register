@@ -675,3 +675,30 @@
   @media (prefers-reduced-motion: reduce) {
     .meter-fill { transition-duration: 0.01ms; }
   }
+
+  /* ═══════════════════════════════════════════════════════════════
+     PRINT — receipts
+     Without this, window.print() emits the whole admin shell: sidebar,
+     nav, the seat map behind the modal. A receipt is the only thing in
+     this app anyone prints, so print resolves to exactly that.
+     ═══════════════════════════════════════════════════════════════ */
+  @media print {
+    /* Hide everything, then walk the receipt's ancestors back into view —
+       `visibility` rather than `display` so layout position is preserved. */
+    body * { visibility: hidden; }
+    #receipt-print-area,
+    #receipt-print-area * { visibility: visible; }
+
+    #receipt-print-area {
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      padding: 0;
+    }
+
+    /* Backdrops and blur cost ink and render unpredictably. */
+    .backdrop-blur-sm,
+    [aria-hidden='true'] { display: none !important; }
+
+    @page { margin: 16mm; }
+  }

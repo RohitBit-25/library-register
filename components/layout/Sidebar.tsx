@@ -13,6 +13,7 @@ import {
   LogOut,
   Shield,
   HardDrive,
+  IndianRupee,
 } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { useRouter } from 'next/navigation';
@@ -48,6 +49,11 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
       label: 'Requests',
       icon: <Inbox className="w-5 h-5" />,
       badge: pendingRequests > 0 ? `${pendingRequests}` : undefined,
+    },
+    {
+      href: '/payments',
+      label: 'Collections',
+      icon: <IndianRupee className="w-5 h-5" />,
     },
     {
       href: '/export',

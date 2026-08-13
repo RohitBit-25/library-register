@@ -18,7 +18,7 @@ import { jwtVerify } from 'jose';
 
 const ADMIN_ROUTES = [
   '/', '/members', '/analytics', '/requests',
-  '/audit', '/export', '/attendance', '/expiry', '/setup',
+  '/audit', '/export', '/attendance', '/expiry', '/setup', '/payments',
 ];
 
 async function isAdmin(token: string | undefined): Promise<boolean> {
