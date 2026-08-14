@@ -117,7 +117,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
   };
 
   return (
-    <div className="px-1 pb-4">
+    <div className="@container px-1 pb-4">
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6" noValidate>
       {/* Seat Selection */}
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-5">
@@ -174,7 +174,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
             {...register('phone')}
           />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+        <div className="mt-4 grid grid-cols-1 gap-5 @md:grid-cols-2">
           <FloatingLabelInput 
             label="Date of Joining" 
             type="date"
