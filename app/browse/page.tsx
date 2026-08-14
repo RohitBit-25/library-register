@@ -20,6 +20,7 @@ import SeatRequestSheet from '@/components/seat/SeatRequestSheet';
 import { SeatSkeleton } from '@/components/ui/Skeleton';
 import { ArrowLeft, MapPin, Check, Armchair } from 'lucide-react';
 import { seatAmenities } from '@/lib/layoutConfig';
+import { cn } from '@/lib/utils';
 
 export default function BrowsePage() {
   const router = useRouter();
@@ -50,6 +51,15 @@ export default function BrowsePage() {
   const selectedMember = selectedSeat !== null
     ? members.find(m => m.seat === selectedSeat) ?? null
     : null;
+
+  // Free seats in the current filter, for the phone list below the map.
+  const availableSeats = useMemo(
+    () => members
+      .filter((m) => m.vacant && inShift.has(m.seat) && !requestedSeats.has(m.seat))
+      .map((m) => m.seat)
+      .sort((a, b) => a - b),
+    [members, inShift, requestedSeats]
+  );
 
   const handleSeatClick = useCallback((seat: number) => {
     const member = members.find(m => m.seat === seat);
@@ -135,6 +145,52 @@ export default function BrowsePage() {
                 )}
               </div>
 
+              {/* The map scales to fit a phone, which puts every seat tile at
+                  16×16 — well under the 24px WCAG 2.5.8 floor, and far under
+                  what a thumb can hit. Rather than fight the map's scaling,
+                  small screens get the same action as a list of full-size
+                  targets; the map stays above it for orientation, which is
+                  what a map is actually good for on a phone.
+
+                  Not shown on `sm` and up, where the tiles are big enough. */}
+              {!isLoading && (
+                <div data-equivalent-for="seat-map" className="border-t border-[var(--border-default)] p-4 sm:hidden">
+                  <h2 className="mb-3 text-xs font-bold uppercase tracking-wide text-[var(--text-secondary)]">
+                    Available seats
+                    <span className="ml-1.5 font-semibold text-[var(--text-tertiary)]">
+                      ({availableSeats.length})
+                    </span>
+                  </h2>
+                  {availableSeats.length === 0 ? (
+                    <p className="text-sm text-[var(--text-secondary)]">
+                      No free seats{shiftFilter === 'all' ? '' : ' in this shift'} right now.
+                      Requests still go on the waitlist.
+                    </p>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {availableSeats.map((seat) => (
+                        <button
+                          key={seat}
+                          type="button"
+                          onClick={() => handleSeatClick(seat)}
+                          aria-label={`Seat ${seat}, available — tap to request`}
+                          aria-pressed={selectedSeat === seat}
+                          className={cn(
+                            'tabular min-h-[44px] min-w-[44px] rounded-xl border px-3 text-sm font-bold transition-ui',
+                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2',
+                            selectedSeat === seat
+                              ? 'border-[var(--saffron-500)] bg-[var(--saffron-500)] text-white'
+                              : 'border-[var(--emerald-200)] bg-[var(--emerald-50)] text-[var(--emerald-700)]'
+                          )}
+                        >
+                          {seat}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Three states, which is all this map has. The old legend also
                   listed "Blocked" and "You" — neither exists in this app. */}
               <div className="mt-auto flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-[var(--border-default)] bg-[var(--bg-surface)] p-4 text-[11px] font-bold text-[var(--text-secondary)]">
@@ -206,7 +262,7 @@ export default function BrowsePage() {
               </div>
             ) : (
               <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-5 shadow-sm h-full flex flex-col">
-                <h3 className="text-sm font-bold text-[var(--text-primary)] mb-6">My Booking</h3>
+                <h2 className="text-sm font-bold text-[var(--text-primary)] mb-6">My Booking</h2>
                 
                 <div className="flex-1 flex flex-col items-center justify-center text-center pb-8">
                   <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">

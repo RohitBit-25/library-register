@@ -1,5 +1,4 @@
 import { randomUUID } from 'crypto';
-import { NextResponse } from 'next/server';
 
 /**
  * Structured logging for the API routes.
@@ -26,6 +25,11 @@ import { NextResponse } from 'next/server';
  * Deliberately not a logging service, not OpenTelemetry, not pino. The need
  * is "grep one id" on a single small server; a dependency for that would cost
  * more than it returns.
+ *
+ * This module imports nothing from `next` on purpose. `apiError` returns a
+ * plain `Response`, which Route Handlers accept and which `NextResponse`
+ * itself extends — and that keeps the file loadable by the self-check
+ * harness, which transpiles `lib/` and runs it under bare Node.
  *
  * **On the id's scope.** The obvious implementation is one id per HTTP
  * request, via React's `cache()`. That does not work here, and it fails
@@ -108,9 +112,9 @@ export function apiError(
   error?: unknown,
   status = 500,
   context?: Context,
-): NextResponse {
+): Response {
   const reqId = logError(route, message, error, context);
-  return NextResponse.json(
+  return Response.json(
     { error: message, reqId },
     { status, headers: { 'x-request-id': reqId } },
   );

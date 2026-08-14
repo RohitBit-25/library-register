@@ -234,6 +234,7 @@ export default function MemberTable({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
         <input
           type="search"
+          aria-label="Search members by name, phone or seat"
           placeholder="Search name, phone, seat... (Press / to focus)"
           value={search}
           onChange={e => setSearch(e.target.value)}

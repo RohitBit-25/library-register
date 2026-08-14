@@ -1,5 +1,5 @@
 import { daysUntil } from './seat-status.ts';
-import { logInfo } from './log';
+import { logInfo } from './log.ts';
 
 // ─── Outbound notifications ─────────────────────────────────────
 // One seam for every message the system sends. The cron previously inlined a

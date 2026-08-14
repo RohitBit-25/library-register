@@ -69,6 +69,7 @@ export default function MyRequestsPage() {
         </div>
         <button
           onClick={() => router.push('/browse')}
+          aria-label="Back to browse seats"
           className="cursor-pointer flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] bg-[var(--bg-surface)] hover:text-[var(--text-primary)] transition-colors border border-[var(--border-default)]"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -78,12 +79,13 @@ export default function MyRequestsPage() {
 
       {/* Phone Search Card */}
       <Card variant="base" className="p-5 mb-6">
-        <label className="text-xs font-bold text-[var(--text-secondary)] mb-2 flex items-center gap-1.5">
+        <label htmlFor="my-requests-phone" className="text-xs font-bold text-[var(--text-secondary)] mb-2 flex items-center gap-1.5">
           <Phone className="w-3.5 h-3.5" />
           Enter your registered phone number
         </label>
         <div className="flex gap-2">
           <input
+            id="my-requests-phone"
             type="tel"
             inputMode="numeric"
             value={phone}
@@ -94,6 +96,7 @@ export default function MyRequestsPage() {
           />
           <button
             onClick={handleSearch}
+            aria-label="Search for my requests"
             disabled={phone.length < 10 || loading}
             className={cn(
               'cursor-pointer px-5 py-2.5 rounded-xl text-sm font-bold transition-ui flex items-center gap-2',
@@ -275,9 +278,9 @@ export default function MyRequestsPage() {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">
                 <Search className="h-8 w-8 text-[var(--text-tertiary)]" aria-hidden="true" />
               </div>
-              <h3 className="text-base font-bold text-[var(--text-primary)] mb-1">
+              <h2 className="text-base font-bold text-[var(--text-primary)] mb-1">
                 Find your requests
-              </h3>
+              </h2>
               <p className="text-sm text-[var(--text-tertiary)] leading-relaxed max-w-xs mx-auto">
                 Enter the phone number you used when submitting your seat request to view its current status.
               </p>

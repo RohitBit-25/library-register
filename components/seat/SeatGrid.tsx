@@ -148,13 +148,13 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
               <div className="p-2 rounded-lg bg-[var(--saffron-50)] border border-[var(--saffron-200)]">
                 <Grid3X3 className="w-4 h-4 text-[var(--saffron-600)]" />
               </div>
-              <h3 className="text-lg font-bold text-[var(--text-primary)]">
+              <h2 className="text-lg font-bold text-[var(--text-primary)]">
                 {mode === 'attendance'
                   ? "Today's Attendance"
                   : shiftFilter === 'all'
                     ? 'Floor Plan'
                     : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift`}
-              </h3>
+              </h2>
               {mode === 'attendance' ? (
                 // Live progress during a check-in pass — the librarian needs to
                 // know how many are left, not how many seats exist.

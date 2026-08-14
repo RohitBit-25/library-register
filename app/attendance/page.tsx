@@ -125,7 +125,7 @@ export default function AttendancePage() {
           <Card variant="base" className="p-[var(--space-4)] relative">
                         <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-3)]">
               <TrendingUp className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />
-              <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">Weekly Summary</h3>
+              <h2 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">Weekly Summary</h2>
             </div>
             <div className="grid grid-cols-3 gap-[var(--space-4)]">
               <div className="text-center">
@@ -204,7 +204,7 @@ export default function AttendancePage() {
             <Card variant="base" className="py-[var(--space-6)] px-[var(--space-4)] sm:px-[var(--space-6)]">
               <div className="mb-[var(--space-6)] flex flex-col sm:flex-row sm:items-end justify-between gap-[var(--space-3)] border-b border-[var(--border-subtle)] pb-[var(--space-4)]">
                 <div>
-                  <h3 className="font-display text-lg font-semibold text-[var(--text-primary)] mb-[var(--space-1)]">Occupied Seats List</h3>
+                  <h2 className="font-display text-lg font-semibold text-[var(--text-primary)] mb-[var(--space-1)]">Occupied Seats List</h2>
                   <p className="text-sm font-medium text-[var(--text-tertiary)]">Tap a seat tile to toggle check-in.</p>
                 </div>
               </div>
@@ -283,7 +283,7 @@ export default function AttendancePage() {
                   <CalendarDays className="w-5 h-5 text-[var(--text-tertiary)]" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 className="font-display text-lg font-semibold text-[var(--text-primary)]">30-Day Contribution Graph</h3>
+                  <h2 className="font-display text-lg font-semibold text-[var(--text-primary)]">30-Day Contribution Graph</h2>
                   <p className="text-xs font-medium text-[var(--text-tertiary)] mt-0.5">Heatmap of member turnout</p>
                 </div>
               </div>

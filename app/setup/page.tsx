@@ -40,9 +40,9 @@ export default function SetupPage() {
       {/* Automation Flow Diagram */}
       <motion.div variants={itemVariants} className="mb-8">
         <div className="card-base rounded-2xl border border-[var(--border-default)] bg-[var(--bg-glass)] p-6 overflow-hidden">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)] mb-5">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)] mb-5">
             How It Works — Zero Manual Work
-          </h3>
+          </h2>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             {[
               { icon: <QrCode className="w-5 h-5" />, label: 'Member scans QR', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },

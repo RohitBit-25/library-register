@@ -275,9 +275,9 @@ export default function SeatGridContent() {
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">
                   <LayoutDashboard className="h-7 w-7 text-[var(--text-tertiary)]" aria-hidden="true" />
                 </div>
-                <h3 className="font-display text-lg font-bold text-[var(--text-primary)]">
+                <h2 className="font-display text-lg font-bold text-[var(--text-primary)]">
                   All {stats.total} seats are free
-                </h3>
+                </h2>
                 <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[var(--text-secondary)]">
                   The floor plan is ready. Allot a seat to your first member and
                   they will appear here, colour-coded by whether their fee is

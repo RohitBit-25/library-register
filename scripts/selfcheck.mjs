@@ -24,7 +24,7 @@ writeFileSync(join(out, 'package.json'), '{"type":"module"}');
 // in scripts/), and tsc rewrites those to .js on emit.
 execFileSync('npx', [
   'tsc', 'lib/csv.ts', 'lib/utils.ts', 'lib/types.ts', 'lib/seat-status.ts',
-  'lib/notify.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts', 'lib/motion.ts',
+  'lib/notify.ts', 'lib/log.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts', 'lib/motion.ts',
   '--outDir', out, '--module', 'esnext', '--target', 'es2020',
   '--moduleResolution', 'bundler', '--skipLibCheck',
   '--allowImportingTsExtensions', '--rewriteRelativeImportExtensions',
@@ -45,6 +45,9 @@ const { nextSeatInDirection, getSeatPositionConfig, SEAT_ROWS, seatRow } =
 
 const { projectMomentum, shouldDismissSheet } =
   await import(pathToFileURL(join(out, 'motion.js')).href);
+
+const { newRequestId, logError, logInfo, apiError } =
+  await import(pathToFileURL(join(out, 'log.js')).href);
 
 let n = 0;
 const check = (name, fn) => { fn(); n++; console.log(`  ok  ${name}`); };
@@ -394,6 +397,96 @@ check('short dates keep the year when it is not this year', () => {
   assert.match(fmtDateShort(`${thisYear + 1}-03-04`), new RegExp(String(thisYear + 1)));
   assert.equal(fmtDateShort(''), '—');
   assert.equal(fmtDateShort('not-a-date'), '—');
+});
+
+
+console.log('\nLogging');
+
+// The logger writes to the console by design, so the checks capture it. Every
+// assertion below is about a promise the rest of the app relies on: that an id
+// is greppable, that it is the SAME id in the log line and the response, and
+// that a caller can tie several lines together.
+function capture(fn) {
+  const lines = [];
+  const realError = console.error, realLog = console.log;
+  console.error = (l) => lines.push(l);
+  console.log = (l) => lines.push(l);
+  try { const value = fn(); return { lines, value }; }
+  finally { console.error = realError; console.log = realLog; }
+}
+
+check('ids are 8 hex chars and do not repeat', () => {
+  const ids = new Set();
+  for (let i = 0; i < 500; i++) {
+    const id = newRequestId();
+    assert.match(id, /^[0-9a-f]{8}$/);
+    ids.add(id);
+  }
+  assert.equal(ids.size, 500);
+});
+
+check('a log line is one parseable JSON object with the grep fields', () => {
+  const { lines, value } = capture(() =>
+    logError('GET /api/x', 'Boom', new Error('underlying')));
+  assert.equal(lines.length, 1);
+  const entry = JSON.parse(lines[0]);
+  assert.equal(entry.level, 'error');
+  assert.equal(entry.route, 'GET /api/x');
+  assert.equal(entry.message, 'Boom');
+  assert.equal(entry.errMessage, 'underlying');
+  assert.equal(entry.reqId, value);         // returned id === logged id
+  assert.ok(entry.stack.includes('Error'));
+  assert.ok(!lines[0].includes('\n'));       // one line, so grep finds it whole
+});
+
+check('a supplied reqId ties several lines to one request', () => {
+  // The reminder cron depends on this: one run, one id, many failures.
+  const reqId = newRequestId();
+  const { lines } = capture(() => {
+    logError('GET /api/cron/reminders', 'Reminder delivery failed', 'no phone', { reqId, seat: 12 });
+    logError('GET /api/cron/reminders', 'Reminder delivery failed', 'no phone', { reqId, seat: 41 });
+  });
+  const ids = lines.map((l) => JSON.parse(l).reqId);
+  assert.deepEqual(ids, [reqId, reqId]);
+  assert.equal(JSON.parse(lines[1]).seat, 41);   // context survives alongside
+});
+
+check('without a supplied reqId each failure gets its own', () => {
+  const { lines } = capture(() => { logError('r', 'a'); logError('r', 'b'); });
+  const [a, b] = lines.map((l) => JSON.parse(l).reqId);
+  assert.notEqual(a, b);
+});
+
+check('a non-Error thrown value is still recorded', () => {
+  // Routes catch `unknown`; a rejected string must not produce an empty log.
+  const { lines } = capture(() => logError('r', 'm', 'plain string failure'));
+  assert.equal(JSON.parse(lines[0]).err, 'plain string failure');
+});
+
+// Read the body up here: `check` is synchronous, so an async callback's
+// assertions would never actually run inside it.
+const errRes = capture(() => apiError('GET /api/x', 'Failed to fetch', new Error('e')));
+const errBody = await errRes.value.json();
+
+check('apiError returns the same id in the log line, the header and the body', () => {
+  const logged = JSON.parse(errRes.lines[0]).reqId;
+  assert.equal(errRes.value.status, 500);
+  assert.equal(errRes.value.headers.get('x-request-id'), logged);
+  assert.equal(errBody.reqId, logged);
+  assert.equal(errBody.error, 'Failed to fetch');   // the honest message, not "Internal error"
+});
+
+check('apiError honours a non-500 status', () => {
+  const { value: res } = capture(() => apiError('GET /api/cron/x', 'Not configured', 'no secret', 503));
+  assert.equal(res.status, 503);
+});
+
+check('logInfo is level info and goes through the same shape', () => {
+  const { lines } = capture(() => logInfo('reminder', 'dry-run', { seat: 7 }));
+  const entry = JSON.parse(lines[0]);
+  assert.equal(entry.level, 'info');
+  assert.equal(entry.seat, 7);
+  assert.match(entry.reqId, /^[0-9a-f]{8}$/);
 });
 
 console.log(`\n${n} checks passed.\n`);
