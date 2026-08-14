@@ -651,6 +651,20 @@
     transition-timing-function: var(--ease-out);
   }
 
+  /* A seat outside the current filter.
+   *
+   * Dims via `filter`, not `opacity`, deliberately: the tiles are inside a
+   * framer-motion tree that writes `opacity: 1` inline on mount, and an
+   * inline style beats a utility class. `filter` is a property motion is not
+   * animating here, so the dim survives.
+   *
+   * Not `display: none` — the plan is a drawing of a real room, and removing
+   * tiles leaves holes in it. */
+  .seat-dimmed {
+    filter: saturate(0.2) opacity(0.28);
+    pointer-events: none;
+  }
+
   /* Secondary row actions — copy buttons and the like.
 
      These were `opacity-0 group-hover:opacity-100`, which on a touch device

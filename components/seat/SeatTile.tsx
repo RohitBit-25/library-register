@@ -87,7 +87,7 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
           tabIndex={dimmed ? -1 : undefined}
           aria-hidden={dimmed || undefined}
           className={cn(
-            dimmed && 'pointer-events-none opacity-25 saturate-50',
+            dimmed && 'seat-dimmed',
             'relative flex flex-col items-center justify-between rounded-lg transition-ui duration-200 cursor-pointer z-10 w-full h-full border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2',
             tileClass[status],
             compact ? 'px-[3px] py-[3px]' : 'p-1.5',
@@ -220,6 +220,15 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
   );
 }
 
+/**
+ * Hand-written comparator, because 95 of these re-render on every map change.
+ *
+ * CAUTION: it lists the props it cares about, so any prop added to
+ * SeatTileProps and not added here is silently ignored — React skips the
+ * render and the new prop appears to do nothing at all. `dimmed` was added
+ * for the shift filter and spent its first outing having no effect for
+ * exactly this reason.
+ */
 const SeatTile = memo(SeatTileInner, (prevProps, nextProps) => {
   const prev = prevProps.member;
   const next = nextProps.member;
@@ -232,7 +241,9 @@ const SeatTile = memo(SeatTileInner, (prevProps, nextProps) => {
     prev.shift === next.shift &&
     prev.phone === next.phone &&
     prevProps.compact === nextProps.compact &&
-    prevProps.selected === nextProps.selected
+    prevProps.selected === nextProps.selected &&
+    prevProps.dimmed === nextProps.dimmed &&
+    prevProps.face === nextProps.face
   );
 });
 
