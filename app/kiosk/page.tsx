@@ -8,6 +8,7 @@ import { LogIn, LogOut, ArrowLeft, ArrowRight, UserCheck, CheckCircle2, XCircle 
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useToast } from '@/hooks/useToast';
+import { springUI } from '@/lib/motion';
 
 export default function KioskPage() {
   const { members } = useMembers();
@@ -81,7 +82,7 @@ export default function KioskPage() {
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 1.05, filter: 'blur(4px)' }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            transition={springUI}
             className="w-full max-w-sm"
           >
             <div className="text-center mb-8">
@@ -147,7 +148,7 @@ export default function KioskPage() {
             initial={{ opacity: 0, scale: 0.95, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 1.05, filter: 'blur(4px)' }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            transition={springUI}
             className="w-full max-w-sm"
           >
             <div className="glass p-8 rounded-[2rem] border border-[var(--border-default)] shadow-2xl relative overflow-hidden text-center">

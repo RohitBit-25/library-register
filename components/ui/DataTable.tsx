@@ -15,6 +15,7 @@ import {
 import { Search, ChevronDown, ChevronUp, ChevronsUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { springUI } from '@/lib/motion';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -76,7 +77,7 @@ function DataTableRow<TData>({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        transition={springUI}
         onClick={() => { if (renderSubComponent) toggleExpand(row.id); }}
         className={cn(
           "transition-colors duration-300 relative",
@@ -99,7 +100,7 @@ function DataTableRow<TData>({
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  transition={springUI}
                   className="overflow-hidden"
                 >
                   <div className="px-6 py-4 border-b border-[var(--border-subtle)] shadow-[inset_0_4px_6px_-6px_rgba(0,0,0,0.1)]">

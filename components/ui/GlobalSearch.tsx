@@ -7,6 +7,7 @@ import { cn, getSeatStatus } from '@/lib/utils';
 import Badge, { type BadgeVariant } from '@/components/ui/Badge';
 import { type Member } from '@/lib/types';
 import { AnimatePresence, m } from 'framer-motion';
+import { springUI } from '@/lib/motion';
 
 interface GlobalSearchProps {
   onSelect: (seat: number) => void;
@@ -101,7 +102,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
               initial={{ opacity: 0, scale: 0.95, y: -20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              transition={springUI}
               role="dialog"
               aria-modal="true"
               aria-label="Search"

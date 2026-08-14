@@ -534,6 +534,44 @@ The middle row is the one that matters: it is the check that would have caught t
 
 ---
 
+## 7j. Tenth pass — shadcn/ui, and the trap in installing it
+
+### The bridge
+
+shadcn components are written against a fixed vocabulary — `bg-background`, `text-muted-foreground`, `border-input`, `ring-ring`. None of those exist here; this project names its palette after what things *are* (`--bg-surface`, `--text-primary`, `--saffron-700`). Dropped in as-is, every component from the registry renders unstyled.
+
+So `@theme inline` now carries a mapping — eighteen `--color-*` names, each pointing at a token that is already contrast-checked. Nothing is duplicated, and anything added from the registry from now on inherits Gangaur's palette instead of shadcn's stone defaults. `--color-primary` is `--saffron-700`, `--color-ring` is `--saffron-500`, and so on.
+
+`check:tokens` already fails the build if a `--color-*` name collides with a built-in utility — the rule that exists because a `--color-base` once turned the stock `text-base` font-size class into a colour. None of shadcn's names are in that reserved set.
+
+### `npx shadcn add` silently overwrote a core component
+
+The CLI reported *"Updated 1 file: components/ui/button.tsx"*. This project's is `components/ui/**B**utton.tsx`, and macOS is case-insensitive — **they are the same file.** The registry's Button replaced one with a `primary` variant and 44px minimum touch targets that the entire app is built on. Every `<Button variant="primary">` in the codebase would have silently fallen back to nothing.
+
+Restored from git. `alert-dialog` and `dialog` both import that Button, so they were rewritten to style their own actions from the palette — which also keeps them on-brand rather than on shadcn's defaults.
+
+A guard now scans for files whose paths differ only in case. It cannot fire on macOS, where the filesystem simply cannot hold both — I proved that by trying, and deleted `Card.tsx` in the process, restoring it from git. TypeScript's `TS1149` is the real catch here and `verify` already runs it; the scan earns its place on case-sensitive CI.
+
+Also allowlisted: `--radix-*` variables, which Radix sets on the element at runtime (measured trigger width, flip origin, available height). They are not ours to define.
+
+### What the components actually bought
+
+Only the ones with a functional win were adopted. The members table's kebab menu is the clearest case — it was hand-rolled, and had five real problems:
+
+| | Before | Now |
+|---|---|---|
+| Position | `rect.right − 192`, hardcoded, no flipping | Collision-aware — verified opening inside the viewport from a row 5258px down the page |
+| Keyboard | none | Enter opens, arrows move, typeahead, Escape closes |
+| Focus | never returned to the trigger | returns, verified |
+| Scroll | a window listener **closed** the menu | repositions |
+| Semantics | plain divs | `role="menu"`, `role="menuitem"`, `aria-expanded` |
+
+The mobile card accordion stays hand-rolled on purpose: it expands in place rather than floating, so none of the above applies to it.
+
+`dialog`, `alert-dialog`, `select` and `popover` are installed and bridged, ready for the hand-rolled `Modal`, `ConfirmDialog` and native `<select>` to migrate onto — worth doing incrementally, with the same verification each time, rather than as one large swap.
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.

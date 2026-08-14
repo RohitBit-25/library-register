@@ -8,6 +8,7 @@ import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 
 import { type FaceDir } from './SeatMap';
 import SeatAvatar from './SeatAvatar';
+import { springUI } from '@/lib/motion';
 
 interface SeatTileProps {
   member: Member;
@@ -189,7 +190,7 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
               initial={{ opacity: 0, y: 15, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              transition={springUI}
               className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-48 p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-lg z-50 pointer-events-none"
             >
               <div className="flex flex-col gap-1.5">

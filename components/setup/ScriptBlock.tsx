@@ -123,7 +123,7 @@ export default function ScriptBlock() {
     <motion.div 
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1, type: "spring", stiffness: 300, damping: 24 }}
+      transition={{ delay: 0.1, type: "spring", bounce: 0 }}
       className="mt-8 bg-[#1a1b26] border border-[#2a2b3d] rounded-2xl overflow-hidden shadow-lg"
     >
       {/* Code editor header */}

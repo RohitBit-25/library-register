@@ -5,6 +5,7 @@ import { ExternalLink, ListChecks, Zap, ArrowRight, QrCode, Mail, FileText } fro
 import QRCodePanel from '@/components/setup/QRCodePanel';
 import ScriptBlock from '@/components/setup/ScriptBlock';
 import PageHeader from '@/components/layout/PageHeader';
+import { springUI } from '@/lib/motion';
 
 const containerVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -17,7 +18,7 @@ const containerVariants: Variants = {
 
 const itemVariants: Variants = {
   initial: { opacity: 0, y: 15 },
-  animate: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  animate: { opacity: 1, y: 0, transition: springUI }
 };
 
 export default function SetupPage() {

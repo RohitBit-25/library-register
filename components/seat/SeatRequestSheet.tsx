@@ -10,6 +10,7 @@ import {
   CheckCircle2, Banknote, Smartphone, FileText, Camera, Upload,
   Trash2, Image as ImageIcon, CalendarDays, Clock,
 } from 'lucide-react';
+import { springUI } from '@/lib/motion';
 
 interface SeatRequestSheetProps {
   member: Member | null;
@@ -204,7 +205,7 @@ export default function SeatRequestSheet({
             initial={{ opacity: 0, scale: 0.92, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 30 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            transition={springUI}
             className="fixed inset-0 z-[101] flex items-center justify-center p-4"
           >
             <div
@@ -244,7 +245,7 @@ export default function SeatRequestSheet({
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 15, delay: 0.1 }}
+                    transition={{ type: 'spring', bounce: 0, delay: 0.1 }}
                     className="w-20 h-20 rounded-full bg-[var(--emerald-50)] flex items-center justify-center mx-auto mb-5"
                   >
                     <CheckCircle2 className="w-10 h-10 text-[var(--emerald-600)]" />

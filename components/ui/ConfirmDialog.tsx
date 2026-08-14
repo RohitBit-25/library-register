@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, X } from 'lucide-react';
 import Portal from './Portal';
 import { useEffect, useId } from 'react';
+import { springUI } from '@/lib/motion';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -67,7 +68,7 @@ export default function ConfirmDialog({
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -10 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              transition={springUI}
               role="alertdialog"
               aria-modal="true"
               aria-labelledby={titleId}

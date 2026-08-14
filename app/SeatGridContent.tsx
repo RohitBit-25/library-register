@@ -15,6 +15,7 @@ import { getSeatStatus, cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Users, UserPlus, AlertCircle, Clock, IndianRupee } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import { springUI } from '@/lib/motion';
 
 export default function SeatGridContent() {
   const { members, update, vacate, renew, add, isLoading } = useMembers();
@@ -300,7 +301,7 @@ export default function SeatGridContent() {
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              transition={springUI}
               className={cn(
                 "fixed top-0 right-0 z-[100] h-screen bg-[var(--bg-surface)] border-l border-[var(--border-default)] shadow-2xl overflow-y-auto",
                 isMobile ? "w-[90vw] max-w-[400px]" : "w-[380px]"

@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/useToast';
+import { springUI } from '@/lib/motion';
 
 interface MemberTableProps {
   members: Member[];
@@ -303,7 +304,7 @@ export default function MemberTable({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    transition={springUI}
                     key={m.seat}
                     className={cn(
                       'border-b border-[var(--border-subtle)] transition-colors',
@@ -444,7 +445,7 @@ export default function MemberTable({
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95, height: 0 }}
-                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                transition={springUI}
                 key={m.seat}
                 className={cn(
                   'rounded-2xl border transition-colors shadow-sm',

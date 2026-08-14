@@ -16,6 +16,7 @@ import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw, TrendingU
 import { useRouter } from 'next/navigation';
 import { motion, Variants } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
+import { springUI } from '@/lib/motion';
 
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -28,7 +29,7 @@ const pageVariants: Variants = {
 
 const itemVariants: Variants = {
   initial: { opacity: 0, y: 15 },
-  animate: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  animate: { opacity: 1, y: 0, transition: springUI }
 };
 
 export default function DashboardPage() {

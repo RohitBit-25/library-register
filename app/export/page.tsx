@@ -23,6 +23,7 @@ import {
   Clock,
 } from 'lucide-react';
 import PageHeader from '@/components/layout/PageHeader';
+import { springUI } from '@/lib/motion';
 
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -38,7 +39,7 @@ const itemVariants: Variants = {
   animate: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring', stiffness: 300, damping: 24 },
+    transition: springUI,
   },
 };
 
