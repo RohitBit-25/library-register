@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError, logError, newRequestId } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
 import AuditLog from '@/models/AuditLog';
@@ -31,12 +32,16 @@ export const REMINDER_WINDOW_DAYS = 3;
 export async function GET(request: Request) {
   const cronSecret = process.env.CRON_SECRET;
   if (!cronSecret) {
-    console.error('CRON_SECRET is not set — refusing to run the reminder job.');
-    return NextResponse.json({ error: 'Not configured' }, { status: 503 });
+    return apiError('GET /api/cron/reminders', 'Not configured', 'CRON_SECRET is not set — refusing to run the reminder job.', 503);
   }
   if (request.headers.get('authorization') !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  // This handler can report many failures in one run — one per member it
+  // could not reach — so unlike every other route it mints the id up front
+  // and threads it through, keeping the whole run greppable as one unit.
+  const reqId = newRequestId();
 
   try {
     await dbConnect();
@@ -67,11 +72,13 @@ export async function GET(request: Request) {
         seat: m.seat,
         expiry: m.expiry,
         today,
-      });
+      }, reqId);
 
       if (!outcome.ok) {
         result.failed++;
-        console.error(`Reminder failed for seat ${m.seat}: ${outcome.error}`);
+        logError('GET /api/cron/reminders', 'Reminder delivery failed', outcome.error, {
+          reqId, seat: m.seat, expiry: m.expiry,
+        });
         continue; // Deliberately not stamped — retried on the next run.
       }
 
@@ -94,7 +101,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ success: true, window: { from: today, to: windowEnd }, ...result });
   } catch (error) {
-    console.error('Cron job error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return apiError('GET /api/cron/reminders', 'Internal Server Error', error, 500, { reqId });
   }
 }

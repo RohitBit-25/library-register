@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
 import { verifyAdmin } from '@/lib/auth-server';
@@ -38,7 +39,6 @@ export async function GET() {
 
     return NextResponse.json(redacted, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
-    console.error('Error fetching members:', error);
-    return NextResponse.json({ error: 'Failed to fetch members' }, { status: 500 });
+    return apiError('GET /api/members', 'Failed to fetch members', error);
   }
 }

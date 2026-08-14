@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/log';
 import { getSession } from '@/lib/auth-server';
 import { checkStaffPin, setStaffPin, isPinTaken, PIN_PATTERN } from '@/lib/pin-store';
 import AuditLog from '@/models/AuditLog';
@@ -65,7 +66,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, message: 'PIN updated successfully' });
   } catch (error) {
-    console.error('PIN change error:', error);
-    return NextResponse.json({ error: 'Failed to update PIN' }, { status: 500 });
+    return apiError('POST /api/auth/pin', 'Failed to update PIN', error);
   }
 }

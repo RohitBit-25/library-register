@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
 import AuditLog from '@/models/AuditLog';
@@ -128,8 +129,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
 
     return NextResponse.json(updatedMember);
   } catch (error) {
-    console.error('Error updating member at seat:', error);
-    return NextResponse.json({ error: 'Failed to update member' }, { status: 500 });
+    return apiError('PATCH /api/members/[seat]', 'Failed to update member', error);
   }
 }
 
@@ -181,7 +181,6 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ s
       waitlist: waitlist.map((w) => ({ ...w, id: String(w._id) })),
     });
   } catch (error) {
-    console.error('Error vacating member:', error);
-    return NextResponse.json({ error: 'Failed to vacate member' }, { status: 500 });
+    return apiError('DELETE /api/members/[seat]', 'Failed to vacate member', error);
   }
 }

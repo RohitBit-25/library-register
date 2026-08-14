@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
 import Attendance from '@/models/Attendance';
 import AuditLog from '@/models/AuditLog';
@@ -19,8 +20,7 @@ export async function GET() {
     const history = await Attendance.find({}).sort({ date: -1 }).limit(365).lean();
     return NextResponse.json(history);
   } catch (error) {
-    console.error('Attendance GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch attendance' }, { status: 500 });
+    return apiError('GET /api/attendance', 'Failed to fetch attendance', error);
   }
 }
 
@@ -81,7 +81,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, seats: updated?.seats ?? [] });
   } catch (error) {
-    console.error('Attendance POST error:', error);
-    return NextResponse.json({ error: 'Failed to update attendance' }, { status: 500 });
+    return apiError('POST /api/attendance', 'Failed to update attendance', error);
   }
 }

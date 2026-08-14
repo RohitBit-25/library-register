@@ -53,6 +53,23 @@ export type MemberError = {
   timestamp: number;
 };
 
+/**
+ * Every failure this app returns carries an `x-request-id` that also appears
+ * in the server's log line (lib/log.ts). Without surfacing it, a report of
+ * "adding a member failed this morning" cannot be matched to a log entry —
+ * so the id rides along on the thrown error and ends up in the toast.
+ */
+function errorRef(res: Response): string {
+  const id = res.headers.get('x-request-id');
+  return id ? ` (ref ${id})` : '';
+}
+
+/** The ref stashed on a thrown error by `errorRef`, or nothing. */
+function refOf(err: unknown): string {
+  const cause = err instanceof Error ? err.cause : undefined;
+  return typeof cause === 'string' ? cause : '';
+}
+
 export function useMembers() {
   const [lastError, setLastError] = useState<MemberError | null>(null);
 
@@ -108,15 +125,15 @@ export function useMembers() {
       });
 
       if (!res.ok) {
-        throw new Error(`Server returned ${res.status}`);
+        throw new Error(`Server returned ${res.status}`, { cause: errorRef(res) });
       }
 
       mutate(); // Revalidate
-    } catch {
+    } catch (err) {
       // Rollback optimistic update
       if (previousData) mutate(previousData, false);
 
-      const msg = `Failed to update Seat ${seat}. Please retry.`;
+      const msg = `Failed to update Seat ${seat}. Please retry.${refOf(err)}`;
       setLastError({ message: msg, action: 'update', seat, timestamp: Date.now() });
       onError?.(msg);
     }
@@ -154,14 +171,14 @@ export function useMembers() {
 
     try {
       const res = await fetchWithRetry(`/api/members/${seat}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error(`Server returned ${res.status}`);
+      if (!res.ok) throw new Error(`Server returned ${res.status}`, { cause: errorRef(res) });
       const body = await res.json().catch(() => null);
       mutate();
       return Array.isArray(body?.waitlist) ? body.waitlist : [];
-    } catch {
+    } catch (err) {
       if (previousData) mutate(previousData, false);
 
-      const msg = `Failed to vacate Seat ${seat}. Please retry.`;
+      const msg = `Failed to vacate Seat ${seat}. Please retry.${refOf(err)}`;
       setLastError({ message: msg, action: 'vacate', seat, timestamp: Date.now() });
       onError?.(msg);
       return [];
@@ -194,13 +211,13 @@ export function useMembers() {
         body: JSON.stringify({ ...data, vacant: false }),
       });
 
-      if (!res.ok) throw new Error(`Server returned ${res.status}`);
+      if (!res.ok) throw new Error(`Server returned ${res.status}`, { cause: errorRef(res) });
       mutate();
       return true;
-    } catch {
+    } catch (err) {
       if (previousData) mutate(previousData, false);
 
-      const msg = `Failed to add member to Seat ${seatNumber}. Please retry.`;
+      const msg = `Failed to add member to Seat ${seatNumber}. Please retry.${refOf(err)}`;
       setLastError({ message: msg, action: 'add', seat: seatNumber, timestamp: Date.now() });
       onError?.(msg);
       return false;

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { logError } from '@/lib/log';
 import { encrypt, SESSION_COOKIE, SESSION_MAX_AGE_SECONDS } from '@/lib/auth-server';
 import { cookies } from 'next/headers';
 import { checkStaffPin } from '@/lib/pin-store';
@@ -104,10 +105,11 @@ export async function POST(request: Request) {
   } catch (error) {
     // Misconfiguration (no ADMIN_SECRET / no staff seeded) must fail loudly in
     // logs but must not leak the reason to the caller.
-    console.error('Sign-in error:', error);
+    // The body keeps `success: false` — the sign-in form reads that field.
+    const reqId = logError('POST /api/auth', 'Sign-in failed', error);
     return NextResponse.json(
-      { success: false, error: 'Sign-in is unavailable. Check server configuration.' },
-      { status: 500 }
+      { success: false, error: 'Sign-in is unavailable. Check server configuration.', reqId },
+      { status: 500, headers: { 'x-request-id': reqId } }
     );
   }
 }

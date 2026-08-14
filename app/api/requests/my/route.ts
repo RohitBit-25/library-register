@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
 import { consumeRateLimit, callerKey } from '@/lib/rate-limit';
+import { apiError } from '@/lib/log';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,10 +60,6 @@ export async function GET(request: NextRequest) {
       { headers: { 'Cache-Control': 'no-store' } }
     );
   } catch (error) {
-    console.error('My requests GET error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch your requests' },
-      { status: 500 }
-    );
+    return apiError('GET /api/requests/my', 'Failed to fetch your requests', error);
   }
 }

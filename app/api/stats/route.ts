@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
 import Member from '@/models/Member';
 import Attendance from '@/models/Attendance';
@@ -283,7 +284,6 @@ export async function GET() {
       { headers: { 'Cache-Control': 'no-store' } }
     );
   } catch (error) {
-    console.error('Stats GET error:', error);
-    return NextResponse.json({ error: 'Failed to compute stats' }, { status: 500 });
+    return apiError('GET /api/stats', 'Failed to compute stats', error);
   }
 }

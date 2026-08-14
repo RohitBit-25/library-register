@@ -30,11 +30,11 @@ interface SeatTileProps {
 
 // Flat, Light-Mode Optimized States
 const tileClass: Record<SeatStatus, string> = {
-  active: 'bg-white border-[var(--border-default)] hover:border-[var(--emerald-400)] hover:bg-[var(--emerald-50)] text-[var(--text-primary)] shadow-sm',
-  expiring: 'bg-[var(--saffron-50)] border-[var(--saffron-200)] hover:border-[var(--saffron-400)] text-[var(--saffron-800)] shadow-sm',
-  expired: 'bg-[var(--ruby-50)] border-[var(--ruby-200)] hover:border-[var(--ruby-400)] text-[var(--ruby-800)] shadow-sm',
-  due: 'bg-[var(--marigold-50)] border-[var(--marigold-200)] hover:border-[var(--marigold-400)] text-[var(--marigold-800)] shadow-sm',
-  vacant: 'bg-[var(--bg-muted)] border-[var(--border-default)] border-dashed opacity-70 hover:opacity-100 hover:bg-[var(--bg-surface)] text-[var(--text-secondary)]',
+  active: 'bg-white/90 backdrop-blur-[2px] border-[var(--border-default)] hover:border-[var(--emerald-400)] hover:bg-white text-[var(--text-primary)] shadow-sm',
+  expiring: 'bg-[var(--saffron-50)]/90 backdrop-blur-[2px] border-[var(--saffron-200)] hover:border-[var(--saffron-400)] text-[var(--saffron-800)] shadow-sm hover:bg-[var(--saffron-50)]',
+  expired: 'bg-[var(--ruby-50)]/90 backdrop-blur-[2px] border-[var(--ruby-200)] hover:border-[var(--ruby-400)] text-[var(--ruby-800)] shadow-sm hover:bg-[var(--ruby-50)]',
+  due: 'bg-[var(--marigold-50)]/90 backdrop-blur-[2px] border-[var(--marigold-200)] hover:border-[var(--marigold-400)] text-[var(--marigold-800)] shadow-sm hover:bg-[var(--marigold-50)]',
+  vacant: 'bg-[var(--bg-muted)]/80 backdrop-blur-[2px] border-[var(--border-default)] border-dashed opacity-80 hover:opacity-100 hover:bg-[var(--bg-surface)]/95 text-[var(--text-secondary)]',
 };
 
 function SeatTileInner({ member, onClick, compact = false, face, selected = false, dimmed = false }: SeatTileProps) {

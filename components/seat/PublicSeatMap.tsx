@@ -53,10 +53,10 @@ function PublicSeatTileInner({
         'relative z-10 flex h-full w-full flex-col items-center justify-center rounded-lg border transition-ui duration-200',
         dimmed && 'seat-dimmed',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2',
-        vacant && !requested && 'cursor-pointer border-[var(--emerald-200)] bg-[var(--emerald-50)] text-[var(--emerald-700)] hover:border-[var(--emerald-500)] hover:bg-[var(--emerald-100)]',
-        requested && 'cursor-not-allowed border-[var(--saffron-200)] bg-[var(--saffron-50)] text-[var(--saffron-700)]',
-        !vacant && 'cursor-not-allowed border-[var(--border-default)] bg-[var(--bg-muted)] text-[var(--text-tertiary)]',
-        selected && 'border-[var(--saffron-500)] bg-[var(--saffron-500)] text-white ring-2 ring-[var(--saffron-500)] ring-offset-2'
+        vacant && !requested && 'cursor-pointer border-[var(--emerald-200)] bg-[var(--emerald-50)]/90 backdrop-blur-[2px] text-[var(--emerald-700)] hover:border-[var(--emerald-500)] hover:bg-[var(--emerald-100)]',
+        requested && 'cursor-not-allowed border-[var(--saffron-200)] bg-[var(--saffron-50)]/90 backdrop-blur-[2px] text-[var(--saffron-700)]',
+        !vacant && 'cursor-not-allowed border-[var(--border-default)] bg-[var(--bg-muted)]/80 backdrop-blur-[2px] text-[var(--text-tertiary)]',
+        selected && 'border-[var(--saffron-500)] bg-[var(--saffron-500)]/95 backdrop-blur-[2px] text-white ring-2 ring-[var(--saffron-500)] ring-offset-2'
       )}
     >
       <span className="tabular text-[11px] font-bold leading-none">{seat}</span>

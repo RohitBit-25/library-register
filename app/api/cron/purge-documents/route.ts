@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
 import AuditLog from '@/models/AuditLog';
@@ -32,8 +33,7 @@ export const RETENTION_DAYS = 30;
 export async function GET(request: Request) {
   const cronSecret = process.env.CRON_SECRET;
   if (!cronSecret) {
-    console.error('CRON_SECRET is not set — refusing to run the purge job.');
-    return NextResponse.json({ error: 'Not configured' }, { status: 503 });
+    return apiError('GET /api/cron/purge-documents', 'Not configured', 'CRON_SECRET is not set — refusing to run the purge job.', 503);
   }
   if (request.headers.get('authorization') !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -82,7 +82,6 @@ export async function GET(request: Request) {
       retentionDays: RETENTION_DAYS,
     });
   } catch (error) {
-    console.error('Document purge error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return apiError('GET /api/cron/purge-documents', 'Internal Server Error', error);
   }
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/log';
 import { z } from 'zod';
 import dbConnect from '@/lib/mongodb';
 import Staff from '@/models/Staff';
@@ -34,8 +35,7 @@ export async function GET() {
       { headers: { 'Cache-Control': 'no-store' } }
     );
   } catch (error) {
-    console.error('Staff GET error:', error);
-    return NextResponse.json({ error: 'Failed to load staff' }, { status: 500 });
+    return apiError('GET /api/staff', 'Failed to load staff', error);
   }
 }
 
@@ -72,8 +72,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(created, { status: 201 });
   } catch (error) {
-    console.error('Staff POST error:', error);
-    return NextResponse.json({ error: 'Failed to add staff' }, { status: 500 });
+    return apiError('POST /api/staff', 'Failed to add staff', error);
   }
 }
 
@@ -134,7 +133,6 @@ export async function PATCH(request: Request) {
       active: updated.active,
     });
   } catch (error) {
-    console.error('Staff PATCH error:', error);
-    return NextResponse.json({ error: 'Failed to update staff' }, { status: 500 });
+    return apiError('PATCH /api/staff', 'Failed to update staff', error);
   }
 }

@@ -1,4 +1,5 @@
 import { daysUntil } from './seat-status.ts';
+import { logInfo } from './log';
 
 // ─── Outbound notifications ─────────────────────────────────────
 // One seam for every message the system sends. The cron previously inlined a
@@ -49,14 +50,21 @@ export function normalisePhone(phone: string, countryCode = '91'): string | null
  * To go live, implement the branch below (Twilio, Meta Cloud API, Gupshup…)
  * and return { ok: false, error } on a non-2xx response.
  */
-export async function sendExpiryReminder(target: ReminderTarget): Promise<SendResult> {
+export async function sendExpiryReminder(
+  target: ReminderTarget,
+  /** The reminder run's id, so a dry-run line greps out with the run's
+   * failures rather than floating unattached in the log. */
+  reqId?: string,
+): Promise<SendResult> {
   const to = normalisePhone(target.phone);
   if (!to) return { ok: false, error: `Unusable phone number: ${target.phone}` };
 
   const body = buildExpiryMessage(target);
 
   if (!process.env.WHATSAPP_API_URL || !process.env.WHATSAPP_API_TOKEN) {
-    console.log(`[reminder:dry-run] -> +${to}: ${body}`);
+    logInfo('reminder', 'dry-run — no WhatsApp provider configured', {
+      reqId, to: `+${to}`, seat: target.seat, body,
+    });
     return { ok: true, via: 'dry-run' };
   }
 

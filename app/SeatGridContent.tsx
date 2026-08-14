@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Users, UserPlus, AlertCircle, Clock, IndianRupee } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { springUI } from '@/lib/motion';
+import Link from 'next/link';
 
 export default function SeatGridContent() {
   const { members, update, vacate, renew, add, isLoading } = useMembers();
@@ -264,6 +265,40 @@ export default function SeatGridContent() {
                 {Array.from({ length: 40 }).map((_, i) => (
                   <SeatSkeleton key={i} />
                 ))}
+              </div>
+            ) : stats.occupied === 0 ? (
+              /* A brand-new library showed 95 dashed squares and no
+                 explanation of what to do with them. This is the state the
+                 real database is in today, so it is the first thing a new
+                 owner sees. */
+              <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-16 text-center">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">
+                  <LayoutDashboard className="h-7 w-7 text-[var(--text-tertiary)]" aria-hidden="true" />
+                </div>
+                <h3 className="font-display text-lg font-bold text-[var(--text-primary)]">
+                  All {stats.total} seats are free
+                </h3>
+                <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[var(--text-secondary)]">
+                  The floor plan is ready. Allot a seat to your first member and
+                  they will appear here, colour-coded by whether their fee is
+                  paid and how long their plan has left.
+                </p>
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSeat(1)}
+                    className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-xl bg-[var(--saffron-700)] px-5 text-sm font-bold text-[var(--text-inverse)] transition-ui hover:bg-[var(--saffron-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2"
+                  >
+                    <UserPlus className="h-4 w-4" aria-hidden="true" />
+                    Add your first member
+                  </button>
+                  <Link
+                    href="/setup"
+                    className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-5 text-sm font-bold text-[var(--text-secondary)] transition-ui hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2"
+                  >
+                    Let students request seats
+                  </Link>
+                </div>
               </div>
             ) : (
               // anime.js reveals tiles outward from the centre of the room —

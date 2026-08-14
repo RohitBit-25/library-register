@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
 import Payment from '@/models/Payment';
 import { verifyAdmin } from '@/lib/auth-server';
@@ -78,7 +79,6 @@ export async function GET(request: NextRequest) {
       { headers: { 'Cache-Control': 'no-store' } }
     );
   } catch (error) {
-    console.error('Payments GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch payments' }, { status: 500 });
+    return apiError('GET /api/payments', 'Failed to fetch payments', error);
   }
 }

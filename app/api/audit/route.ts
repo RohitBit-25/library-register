@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
 import AuditLog from '@/models/AuditLog';
 import { verifyAdmin } from '@/lib/auth-server';
@@ -17,7 +18,6 @@ export async function GET() {
     const logs = await AuditLog.find({}).sort({ timestamp: -1 }).limit(100).lean();
     return NextResponse.json(logs);
   } catch (error) {
-    console.error('AuditLog GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch audit logs' }, { status: 500 });
+    return apiError('GET /api/audit', 'Failed to fetch audit logs', error);
   }
 }

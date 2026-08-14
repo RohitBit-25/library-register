@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
 import Member from '@/models/Member';
@@ -51,8 +52,7 @@ export async function GET() {
       headers: { 'Cache-Control': 'no-store' },
     });
   } catch (error) {
-    console.error('Request GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch requests' }, { status: 500 });
+    return apiError('GET /api/requests', 'Failed to fetch requests', error);
   }
 }
 
@@ -146,8 +146,7 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Request POST error:', error);
-    return NextResponse.json({ error: 'Failed to submit request' }, { status: 500 });
+    return apiError('POST /api/requests', 'Failed to submit request', error);
   }
 }
 
@@ -240,8 +239,7 @@ export async function PATCH(request: Request) {
       allottedMember: allotted,
     });
   } catch (error) {
-    console.error('Request PATCH error:', error);
-    return NextResponse.json({ error: 'Failed to update request' }, { status: 500 });
+    return apiError('PATCH /api/requests', 'Failed to update request', error);
   }
 }
 
@@ -267,7 +265,6 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Request DELETE error:', error);
-    return NextResponse.json({ error: 'Failed to delete request' }, { status: 500 });
+    return apiError('DELETE /api/requests', 'Failed to delete request', error);
   }
 }

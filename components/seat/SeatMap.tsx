@@ -49,65 +49,14 @@ function toPixel(col: number, row: number) {
  * than as squares scattered on a grid.
  */
 const DeskSlab = memo(function DeskSlab({ run }: { run: DeskRun }) {
-  const vertical = run.face === 'left' || run.face === 'right';
-  const dividerCount = Math.max(run.seats.length - 1, 0);
-
   return (
     <div
-      className="absolute z-0 rounded-[3px]"
+      className="absolute z-0"
       style={{ left: run.left, top: run.top, width: run.width, height: run.height }}
       aria-hidden="true"
     >
-      {/* Slab.
-          Warm neutral, not saffron. The desks were `--saffron-100` with a
-          `--saffron-300` edge, which made the furniture both the largest
-          colour mass on the map and a member of the same hue family that
-          means "fee due" on a seat tile. The room ended up louder than the
-          people in it — the eye landed on tables first and had to hunt for
-          the six seats that actually needed attention.
-          Furniture is ground. Status is figure. */}
-      <div className="absolute inset-0 rounded-[3px] bg-[var(--bg-overlay)] border border-[var(--border-default)] shadow-[0_1px_2px_0_rgba(28,25,23,0.08)]" />
-
-      {/* Lit front edge — the side the seats sit against catches light. */}
-      <div
-        className={cnLocal(
-          'absolute bg-white/70',
-          run.face === 'right' && 'left-0 top-0 bottom-0 w-px',
-          run.face === 'left' && 'right-0 top-0 bottom-0 w-px',
-          run.face === 'down' && 'top-0 left-0 right-0 h-px',
-          run.face === 'up' && 'bottom-0 left-0 right-0 h-px',
-        )}
-      />
-
-      {/* Centre spine on a shared table — the line where two facing rows meet,
-          and where a real reading hall puts its divider. */}
-      {run.shared && (
-        <div
-          className={cnLocal(
-            'absolute bg-[var(--border-strong)]/40',
-            vertical ? 'top-0 bottom-0 left-1/2 w-px' : 'left-0 right-0 top-1/2 h-px'
-          )}
-        />
-      )}
-
-      {/* Carrel dividers between neighbouring seats. On a shared table the
-          seats are split across both sides, so step by half. */}
-      {Array.from({ length: dividerCount }, (_, i) => {
-        const perSide = run.shared ? Math.ceil(run.seats.length / 2) : run.seats.length;
-        const pct = (((i % perSide) + 1) / perSide) * 100;
-        if (pct >= 100) return null;
-        return (
-          <div
-            key={i}
-            className="absolute bg-[var(--border-default)]"
-            style={
-              vertical
-                ? { top: `${pct}%`, left: 3, right: 3, height: 1 }
-                : { left: `${pct}%`, top: 3, bottom: 3, width: 1 }
-            }
-          />
-        );
-      })}
+      {/* Desk texture */}
+      <div className="absolute inset-0 shadow-sm bg-[url('/assets/desk.png')] bg-[length:100%_100%] bg-no-repeat" />
     </div>
   );
 });
@@ -120,17 +69,15 @@ function cnLocal(...v: (string | false | undefined)[]) {
 /** Flat, architectural plant marker */
 const Plant = ({ col, row }: { col: number; row: number }) => (
   <div
-    className="absolute flex items-center justify-center opacity-60"
+    className="absolute flex items-center justify-center pointer-events-none drop-shadow-md"
     style={{
-      left: PAD + (col - 1) * CELL + CELL * 0.2,
-      top: PAD + (row - 1) * CELL + CELL * 0.2,
-      width: CELL * 0.6,
-      height: CELL * 0.6,
+      left: PAD + (col - 1) * CELL + CELL * 0.1,
+      top: PAD + (row - 1) * CELL + CELL * 0.1,
+      width: CELL * 0.8,
+      height: CELL * 0.8,
     }}
   >
-    <div className="w-[60%] h-[60%] rounded-full bg-[var(--emerald-50)] border border-[var(--emerald-200)] flex items-center justify-center">
-      <div className="w-[40%] h-[40%] rounded-full bg-[var(--emerald-400)]" />
-    </div>
+    <img src="/assets/plant.png" alt="Plant" className="w-full h-full object-contain" />
   </div>
 );
 
@@ -145,49 +92,48 @@ const Plant = ({ col, row }: { col: number; row: number }) => (
 const FloorSurface = memo(function FloorSurface() {
   return (
     <div
-      className="absolute inset-0 pointer-events-none z-0 bg-[var(--bg-base)]"
+      className="absolute inset-0 pointer-events-none z-0 bg-[#EFECE6]"
       style={{
         backgroundImage: `
-          linear-gradient(rgba(148,140,130,0.055) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(148,140,130,0.055) 1px, transparent 1px)
+          linear-gradient(rgba(148,140,130,0.15) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(148,140,130,0.15) 1px, transparent 1px)
         `,
-        backgroundSize: `${CELL * 2}px ${CELL * 2}px`,
+        backgroundSize: `${CELL}px ${CELL}px`,
         backgroundPosition: `${PAD}px ${PAD}px`,
       }}
     />
   );
 });
 
-/** Wall fixture — windows & ACs embedded in structural rails */
 function WallLabel({ detail }: { detail: WallDetail }) {
-  const { label, start, end, wall, type } = detail;
-  const size = (end - start + 1) * CELL - 12;
-  const offset = PAD + (start - 1) * CELL + 6;
+  const { start, end, wall, type } = detail;
+  const size = (end - start + 1) * CELL;
+  const offset = PAD + (start - 1) * CELL;
   const isVertical = wall === 'left' || wall === 'right';
 
+  const depth = 48; // Thicker so it's visible
   const style: React.CSSProperties = isVertical
-    ? { top: offset, height: size, width: 24, [wall]: 8, position: 'absolute' }
-    : { left: offset, width: size, height: 24, [wall]: 8, position: 'absolute' };
+    ? { top: offset, height: size, width: depth, [wall]: 0, position: 'absolute' }
+    : { left: offset, width: size, height: depth, [wall]: 0, position: 'absolute' };
 
   const isWindow = type === 'window';
+  const imgSrc = isWindow ? '/assets/windows.png' : '/assets/ac.png';
 
   return (
     <div
-      className={`rounded-md border flex items-center justify-center z-10 overflow-hidden bg-[var(--bg-surface)] ${isWindow
-        ? 'border-[var(--sapphire-200)] text-[var(--sapphire-600)]'
-        : 'border-[var(--ruby-200)] text-[var(--ruby-600)]'
-        }`}
+      className="flex items-center justify-center z-10 pointer-events-none drop-shadow-sm"
       style={style}
     >
-      <div
-        className="absolute flex items-center justify-center gap-1.5 bg-[var(--bg-surface)]"
-        style={isVertical ? { transform: wall === 'right' ? 'rotate(90deg)' : 'rotate(-90deg)', width: size } : {}}
-      >
-        {isWindow ? <Wind className="w-3 h-3" /> : <Snowflake className="w-3 h-3" />}
-        <span className="text-[9px] font-bold tracking-widest uppercase whitespace-nowrap">
-          {label}
-        </span>
-      </div>
+      <img 
+        src={imgSrc} 
+        alt="" 
+        className="object-contain" 
+        style={{
+          width: isVertical ? depth : size,
+          height: isVertical ? size : depth,
+          transform: isVertical ? (wall === 'right' ? 'rotate(-90deg)' : 'rotate(90deg)') : (wall === 'top' ? 'rotate(180deg)' : 'rotate(0deg)')
+        }}
+      />
     </div>
   );
 }
@@ -209,15 +155,10 @@ function FloorDecorations() {
 function EntryMarker() {
   return (
     <div
-      className="absolute top-0 -translate-x-1/2 z-20"
-      style={{ left: PAD + 6 * CELL, width: 4 * CELL }}
+      className="absolute top-0 -translate-x-1/2 z-20 pointer-events-none flex items-start justify-center"
+      style={{ left: PAD + 6 * CELL, width: 4 * CELL, height: 96, top: -8 }}
     >
-      <div className="w-full h-9 bg-[var(--bg-surface)] border-x border-b border-[var(--border-default)] rounded-b-xl flex items-end justify-center pb-1.5 relative shadow-sm">
-        <div className="flex items-center gap-2 px-3 py-1 bg-[var(--saffron-50)] rounded-md border border-[var(--saffron-200)]">
-          <DoorOpen className="w-3 h-3 text-[var(--saffron-600)]" />
-          <span className="text-[9px] font-bold text-[var(--saffron-700)] uppercase tracking-[0.2em]">Entrance</span>
-        </div>
-      </div>
+      <img src="/assets/door.png" alt="Entrance" className="h-full object-contain drop-shadow-md" />
     </div>
   );
 }
@@ -235,15 +176,19 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
 }) {
   const { x, y, face } = getSeatPosition(seatNum);
   const { left, top } = toPixel(x, y);
+  const rotation: Record<FaceDir, string> = {
+    up: 'rotate(0deg)',
+    down: 'rotate(180deg)',
+    left: 'rotate(-90deg)',
+    right: 'rotate(90deg)',
+  };
 
-  // The backrest sits OPPOSITE the desk — you face the desk, your back is to
-  // the aisle. It was a 1.5px hairline on all four sides, which read as a UI
-  // chip; a chair needs a visible back with shoulders.
-  const backrestStyles: Record<FaceDir, string> = {
-    up: 'bottom-0 left-1 right-1 h-[5px] rounded-b-[4px]',
-    down: 'top-0    left-1 right-1 h-[5px] rounded-t-[4px]',
-    left: 'right-0  top-1 bottom-1 w-[5px] rounded-r-[4px]',
-    right: 'left-0   top-1 bottom-1 w-[5px] rounded-l-[4px]',
+  // Adjust translation to pull the chair slightly away from the desk so it doesn't clip into the table
+  const chairOffset: Record<FaceDir, string> = {
+    up: 'translateY(16px)',
+    down: 'translateY(-16px)',
+    left: 'translateX(16px)',
+    right: 'translateX(-16px)',
   };
 
   return (
@@ -259,13 +204,17 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
       data-seat={seatNum}
       aria-label={`Seat ${seatNum}`}
     >
-      {/* Chair back — sits behind the seat, opposite the desk. Drawn first so
-          the seat pad and status tile stack on top of it. */}
-      <div className={`absolute bg-[var(--border-strong)]/70 ${backrestStyles[face]}`} />
-      {/* Seat pad, with a soft contact shadow so the chair sits ON the floor
-          rather than floating over it. */}
-      <div className="absolute inset-[5px] rounded-[7px] bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-[0_1px_2px_0_rgba(28,25,23,0.10)]" />
-      {children(face)}
+      {/* Chair graphic underneath the seat tile, kept small and properly oriented */}
+      <img 
+        src="/assets/chair.png" 
+        alt="" 
+        className="absolute w-[36px] h-[36px] object-contain pointer-events-none drop-shadow-sm" 
+        style={{ transform: `${chairOffset[face]} ${rotation[face]}` }} 
+      />
+      {/* Seat pad interactive container */}
+      <div className="relative w-[38px] h-[38px] z-10 m-auto flex items-center justify-center">
+        {children(face)}
+      </div>
     </div>
   );
 });
@@ -362,15 +311,14 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
           </div>
 
           {/* ── Unclipped Elements ── */}
-          {/* Section labels — positions come from SEAT_ROWS so the plan and
-              the list view can never disagree about which run is which. */}
+          {/* Section labels */}
           {SEAT_ROWS.map((row) => (
             <div
               key={row.label}
               className="absolute pointer-events-none z-10"
-              style={{ left: PAD + (row.fromCol - 1) * CELL + 4, top: PAD - 12 }}
+              style={{ left: PAD + (row.fromCol - 1) * CELL + 4, top: PAD - 32 }}
             >
-              <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-[var(--text-tertiary)]">
+              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-white bg-slate-700 px-3 py-1.5 rounded-full shadow-sm">
                 {row.label}
               </span>
             </div>
