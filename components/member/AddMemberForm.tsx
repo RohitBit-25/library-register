@@ -224,7 +224,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
                   </div>
                   <div>
                     <span className="text-[13px] font-bold block text-[var(--saffron-600)] drop-shadow-sm">Add file</span>
-                    <span className="text-[11px] font-medium opacity-80 mt-1 block tracking-wide">Upload 1 supported file. Max 100 MB.</span>
+                    <span className="mt-1 block text-[11px] font-medium tracking-wide text-[var(--text-tertiary)]">JPEG, PNG, WebP or PDF · up to 2 MB</span>
                   </div>
                 </div>
               )}
