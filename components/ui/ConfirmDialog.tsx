@@ -76,7 +76,7 @@ export default function ConfirmDialog({
             >
               <div className="p-5">
                 <div className="flex items-start gap-4">
-                  <div className={`p-2 rounded-full flex-shrink-0 ${variant === 'danger' ? 'bg-[var(--ruby-500)]/20 text-[var(--ruby-600)]' : 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)]'}`}>
+                  <div className={`p-2 rounded-full flex-shrink-0 ${variant === 'danger' ? 'bg-[var(--ruby-50)] text-[var(--ruby-600)]' : 'bg-[var(--sapphire-50)] text-[var(--sapphire-600)]'}`}>
                     <AlertCircle className="w-6 h-6" aria-hidden="true" />
                   </div>
                   <div>

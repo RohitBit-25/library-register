@@ -252,7 +252,7 @@ export default function MemberTable({
           placeholder="Search name, phone, seat... (Press / to focus)"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/30 focus:border-[var(--sapphire-200)] transition-ui shadow-sm"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)] focus:border-[var(--saffron-200)] transition-ui shadow-sm"
         />
       </div>
 

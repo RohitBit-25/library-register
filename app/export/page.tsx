@@ -239,7 +239,7 @@ export default function ExportPage() {
         <Card variant="base" className="overflow-hidden border-l-2 border-l-[var(--saffron-500)]">
           <div className="p-[var(--space-5)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-[var(--space-4)]">
             <div className="flex items-center gap-[var(--space-4)]">
-              <div className="w-12 h-12 rounded-[var(--radius-xl)] bg-[var(--ruby-500)]/10 flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 rounded-[var(--radius-xl)] bg-[var(--saffron-50)] flex items-center justify-center shrink-0">
                 <Database className="w-6 h-6 text-[var(--ruby-600)]" />
               </div>
               <div>
