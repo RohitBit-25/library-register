@@ -284,7 +284,8 @@ export default function MemberTable({
                   type="checkbox"
                   checked={selected.size === filtered.filter(m => !m.vacant).length && selected.size > 0}
                   onChange={toggleSelectAll}
-                  className="w-4 h-4 rounded cursor-pointer accent-[var(--saffron-500)]"
+                  aria-label="Select every member in this list"
+                  className="h-6 w-6 cursor-pointer rounded accent-[var(--saffron-500)]"
                 />
               </th>
               <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-600)] transition-colors" onClick={() => toggleSort('seat')}>
@@ -332,7 +333,8 @@ export default function MemberTable({
                         type="checkbox"
                         checked={selected.has(m.seat)}
                         onChange={() => toggleSelect(m.seat)}
-                        className="w-4 h-4 rounded cursor-pointer accent-[var(--saffron-500)]"
+                        aria-label={`Select ${m.name || `seat ${m.seat}`}`}
+                        className="h-6 w-6 cursor-pointer rounded accent-[var(--saffron-500)]"
                       />
                     )}
                   </td>
@@ -342,7 +344,7 @@ export default function MemberTable({
                       <button
                         onClick={(e) => handleCopy(e, String(m.seat), 'seat')}
                         aria-label={`Copy seat number ${m.seat}`}
-                        className="reveal-on-hover cursor-pointer rounded p-0.5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+                        className="reveal-on-hover flex h-6 w-6 cursor-pointer items-center justify-center rounded text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
                       >
                         <Copy className="h-3 w-3" aria-hidden="true" />
                       </button>
@@ -360,7 +362,7 @@ export default function MemberTable({
                         <button
                           onClick={(e) => handleCopy(e, m.phone, 'phone number')}
                           aria-label={`Copy phone number for ${m.name}`}
-                          className="reveal-on-hover cursor-pointer rounded p-0.5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+                          className="reveal-on-hover flex h-6 w-6 cursor-pointer items-center justify-center rounded text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
                         >
                           <Copy className="h-3 w-3" aria-hidden="true" />
                         </button>
@@ -375,7 +377,7 @@ export default function MemberTable({
                       <Link
                         href={`/?seat=${m.seat}`}
                         aria-label={`Allot seat ${m.seat}`}
-                        className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-2.5 py-1 text-xs font-bold text-[var(--saffron-700)] transition-ui hover:bg-[var(--saffron-100)]"
+                        className="inline-flex min-h-[26px] cursor-pointer items-center gap-1 rounded-md border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-2.5 py-1 text-xs font-bold text-[var(--saffron-700)] transition-ui hover:bg-[var(--saffron-100)]"
                       >
                         <Plus className="h-3 w-3" aria-hidden="true" /> Add
                       </Link>
@@ -499,7 +501,8 @@ export default function MemberTable({
                           type="checkbox"
                           checked={selected.has(m.seat)}
                           onChange={() => toggleSelect(m.seat)}
-                          className="w-[18px] h-[18px] rounded cursor-pointer accent-[var(--saffron-500)]"
+                          aria-label={`Select ${m.name || `seat ${m.seat}`}`}
+                          className="h-6 w-6 cursor-pointer rounded accent-[var(--saffron-500)]"
                         />
                       </div>
                     )}

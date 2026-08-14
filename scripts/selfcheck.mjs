@@ -40,7 +40,7 @@ const { buildExpiryMessage, normalisePhone } =
 const { planPrice, monthlyValue, formatINR, formatINRCompact, PLAN_MONTHS, DEFAULT_PLAN_RATES } =
   await import(pathToFileURL(join(out, 'pricing.js')).href);
 
-const { nextSeatInDirection, getSeatPositionConfig } =
+const { nextSeatInDirection, getSeatPositionConfig, SEAT_ROWS, seatRow } =
   await import(pathToFileURL(join(out, 'layoutConfig.js')).href);
 
 let n = 0;
@@ -269,6 +269,48 @@ check('firstName truncates long names', () => {
   assert.equal(firstName('Rohit Singh'), 'Rohit');
   assert.equal(firstName('Chandrashekhar Rao'), 'Chandr.');
   assert.equal(firstName(''), '');
+});
+
+// ─── Row bands: the plan and the list must agree ─────────────────
+
+check('every seat belongs to exactly one lettered row', () => {
+  const counts = new Map(SEAT_ROWS.map((r) => [r.label, 0]));
+  for (let n = 1; n <= 95; n++) {
+    const label = seatRow(n);
+    assert.ok(counts.has(label), `seat ${n} landed outside the row bands (${label})`);
+    counts.set(label, counts.get(label) + 1);
+  }
+  // Every seat placed, none counted twice.
+  assert.equal([...counts.values()].reduce((a, b) => a + b, 0), 95);
+  // And no band is empty — an empty run means the columns drifted.
+  for (const [label, n] of counts) assert.ok(n > 0, `${label} has no seats`);
+});
+
+check('a row band matches the columns it is drawn at', () => {
+  // seatRow() is derived from the same grid columns the plan draws its labels
+  // from, so a seat in a band must sit inside that band's column range.
+  for (const row of SEAT_ROWS) {
+    for (let n = 1; n <= 95; n++) {
+      if (seatRow(n) !== row.label) continue;
+      const { x } = getSeatPositionConfig(n);
+      assert.ok(
+        x >= row.fromCol && x <= row.toCol,
+        `seat ${n} is labelled ${row.label} but sits at column ${x}`
+      );
+    }
+  }
+});
+
+check('row bands cover the full width of the room with no gaps', () => {
+  const sorted = [...SEAT_ROWS].sort((a, b) => a.fromCol - b.fromCol);
+  assert.equal(sorted[0].fromCol, 1, 'the first band must start at column 1');
+  assert.equal(sorted[sorted.length - 1].toCol, 14, 'the last band must reach column 14');
+  for (let i = 1; i < sorted.length; i++) {
+    assert.equal(
+      sorted[i].fromCol, sorted[i - 1].toCol + 1,
+      `gap or overlap between ${sorted[i - 1].label} and ${sorted[i].label}`
+    );
+  }
 });
 
 // ─── Seat map keyboard navigation ────────────────────────────────

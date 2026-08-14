@@ -4,7 +4,7 @@ import { useMembers } from '@/hooks/useMembers';
 import { useAttendance } from '@/hooks/useAttendance';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarCheck, CheckCircle2, UserCheck, CalendarDays, Loader2, Users, Percent, TrendingUp, Trophy, TrendingDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, firstName } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import { useState, useSyncExternalStore } from 'react';
 import { Tooltip } from '@/components/ui/Tooltip';
@@ -175,15 +175,18 @@ export default function AttendancePage() {
 
               <Card variant="base" className="p-[var(--space-5)] relative">
                                 <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-2)]">
-                  <Percent className="w-4 h-4 text-[var(--emerald-600)]" />
+                  <Percent className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />
                   <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">Turnout</p>
                 </div>
                 <div className="flex items-baseline gap-[var(--space-2)]">
-                  <span className="font-display text-4xl font-semibold text-[var(--emerald-600)] tracking-[var(--tracking-tight)]">{attendanceRateToday}%</span>
+                  <span className={cn(
+                    'font-display text-4xl font-semibold tabular tracking-[var(--tracking-tight)]',
+                    attendanceRateToday >= 60 ? 'text-[var(--emerald-600)]' : 'text-[var(--text-primary)]'
+                  )}>{attendanceRateToday}%</span>
                 </div>
               </Card>
               
-              <div className="col-span-2 flex items-center justify-end">
+              <div className="col-span-2 flex items-center justify-end lg:col-span-2">
                 <Button 
                   size="lg"
                   variant="primary"
@@ -230,7 +233,7 @@ export default function AttendancePage() {
                           className={cn(
                             "relative flex flex-col items-center justify-center aspect-square rounded-[var(--radius-md)] border-[1.5px] transition-ui p-[var(--space-2)] gap-[var(--space-1)] cursor-pointer group",
                             checkedIn 
-                              ? "bg-[var(--emerald-500)]/10 border-[var(--emerald-500)] text-[var(--emerald-600)] shadow-[var(--shadow-glow-emerald)]" 
+                              ? "bg-[var(--emerald-50)] border-[var(--emerald-500)] text-[var(--emerald-600)] shadow-[var(--shadow-sm)]" 
                               : "bg-[var(--bg-elevated)] border-[var(--border-subtle)] hover:border-[var(--saffron-500)] hover:shadow-[var(--shadow-glow-saffron)] text-[var(--text-primary)]"
                           )}
                         >
@@ -239,7 +242,7 @@ export default function AttendancePage() {
                             "text-[11px] font-medium truncate w-full text-center px-1",
                             checkedIn ? "text-[var(--emerald-600)]" : "text-[var(--text-secondary)]"
                           )}>
-                            {member.name.split(' ')[0]}
+                            {firstName(member.name)}
                           </span>
                           
                           <AnimatePresence>
@@ -248,7 +251,7 @@ export default function AttendancePage() {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 exit={{ scale: 0 }}
-                                className="absolute -top-2 -right-2 bg-[var(--emerald-500)] text-[var(--saffron-50)] rounded-full p-0.5 shadow-[var(--shadow-sm)] border-2 border-[var(--bg-elevated)]"
+                                className="absolute right-1 top-1 rounded-full bg-[var(--emerald-600)] text-[var(--text-inverse)] shadow-[var(--shadow-sm)] border-2 border-[var(--bg-elevated)]"
                               >
                                 <CheckCircle2 className="w-4 h-4" />
                               </motion.div>

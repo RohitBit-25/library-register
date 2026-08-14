@@ -28,6 +28,13 @@ export default function BrowsePage() {
     return members.filter(m => m.vacant || m.shift === shiftFilter || m.shift === 'full');
   }, [members, shiftFilter]);
 
+  // Set membership, not `filtered.includes(m)` — the latter is a linear scan
+  // per seat, so 95 tiles cost 95 × 95 comparisons on every render.
+  const inShift = useMemo(
+    () => new Set(filtered.map((m) => m.seat)),
+    [filtered]
+  );
+
   const requestedSeats = useMemo(
     () => new Set(requests.filter((r) => r.status === 'pending').map((r) => r.seat)),
     [requests]
@@ -109,10 +116,11 @@ export default function BrowsePage() {
                   </div>
                 ) : (
                   <PublicSeatMap
-                    members={filtered}
+                    members={members}
                     selectedSeat={selectedSeat}
                     requestedSeats={requestedSeats}
                     onSelect={handleSeatClick}
+                    isDimmed={(m) => !inShift.has(m.seat)}
                   />
                 )}
               </div>

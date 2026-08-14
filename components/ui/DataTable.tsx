@@ -239,18 +239,22 @@ export function DataTable<TData, TValue>({
         </div>
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            aria-label="Previous page"
             className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-ui cursor-pointer border border-transparent hover:border-[var(--border-subtle)]"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           <button
+            type="button"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            aria-label="Next page"
             className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-ui cursor-pointer border border-transparent hover:border-[var(--border-subtle)]"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
       </div>

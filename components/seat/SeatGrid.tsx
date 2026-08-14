@@ -94,13 +94,16 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
 
   const occupiedCount = useMemo(() => members.filter(m => !m.vacant).length, [members]);
 
-  const filtered = useMemo(() => {
-    if (shiftFilter === 'all') return members;
-    return members.filter(m => {
-      if (m.vacant) return true;
-      return m.shift === shiftFilter || m.shift === 'full';
-    });
-  }, [members, shiftFilter]);
+  // One predicate, two presentations. A list is not a spatial reference, so
+  // removing rows there is right; a floor plan is, so removing tiles there
+  // leaves holes in a drawing of a real room. The plan dims instead.
+  const matchesShift = useCallback((m: Member) => {
+    if (shiftFilter === 'all') return true;
+    if (m.vacant) return true;
+    return m.shift === shiftFilter || m.shift === 'full';
+  }, [shiftFilter]);
+
+  const filtered = useMemo(() => members.filter(matchesShift), [members, matchesShift]);
 
   const shifts: { value: Shift | 'all'; label: string; icon: React.ReactNode }[] = [
     { value: 'all', label: 'All', icon: <Layers className="w-3.5 h-3.5" /> },
@@ -235,7 +238,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
           ) : (
           <div onKeyDown={handleMapKeyDown} role="group" aria-label="Seat map — use arrow keys to move between seats">
           <SeatMapContainer>
-            {(mode === 'attendance' || shiftFilter === 'all' ? members : filtered).map(member => (
+            {members.map(member => (
               <SeatMapWrapper key={member.seat} seatNum={member.seat}>
                 {(face: FaceDir) => (
                   <div className="h-full w-full">
@@ -252,6 +255,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
                         compact={true}
                         face={face}
                         selected={selectedSeat === member.seat}
+                        dimmed={mode === 'manage' && !matchesShift(member)}
                       />
                     )}
                   </div>

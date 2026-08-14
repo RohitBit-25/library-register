@@ -24,15 +24,16 @@ import { Check } from 'lucide-react';
  */
 
 function PublicSeatTileInner({
-  seat, vacant, selected, requested, onSelect,
+  seat, vacant, selected, requested, onSelect, dimmed,
 }: {
   seat: number;
   vacant: boolean;
   selected: boolean;
   requested: boolean;
   onSelect: (seat: number) => void;
+  dimmed: boolean;
 }) {
-  const disabled = !vacant || requested;
+  const disabled = !vacant || requested || dimmed;
 
   return (
     <button
@@ -50,6 +51,7 @@ function PublicSeatTileInner({
       aria-pressed={selected}
       className={cn(
         'relative z-10 flex h-full w-full flex-col items-center justify-center rounded-lg border transition-ui duration-200',
+        dimmed && 'pointer-events-none opacity-25 saturate-50',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2',
         vacant && !requested && 'cursor-pointer border-[var(--emerald-200)] bg-[var(--emerald-50)] text-[var(--emerald-700)] hover:border-[var(--emerald-500)] hover:bg-[var(--emerald-100)]',
         requested && 'cursor-not-allowed border-[var(--saffron-200)] bg-[var(--saffron-50)] text-[var(--saffron-700)]',
@@ -66,12 +68,14 @@ function PublicSeatTileInner({
 const PublicSeatTile = memo(PublicSeatTileInner);
 
 export default function PublicSeatMap({
-  members, selectedSeat, requestedSeats, onSelect,
+  members, selectedSeat, requestedSeats, onSelect, isDimmed,
 }: {
   members: Member[];
   selectedSeat: number | null;
   requestedSeats: Set<number>;
   onSelect: (seat: number) => void;
+  /** Outside the current shift filter — shown, but not offered. */
+  isDimmed?: (m: Member) => boolean;
 }) {
   return (
     <SeatMapContainer>
@@ -85,6 +89,7 @@ export default function PublicSeatMap({
                 selected={selectedSeat === m.seat}
                 requested={requestedSeats.has(m.seat)}
                 onSelect={onSelect}
+                dimmed={isDimmed?.(m) ?? false}
               />
             </div>
           )}

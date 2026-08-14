@@ -15,6 +15,16 @@ interface SeatTileProps {
   compact?: boolean;
   face?: FaceDir;
   selected?: boolean;
+  /**
+   * Outside the current filter.
+   *
+   * The shift filter used to drop non-matching members from the array
+   * entirely, which on an absolutely-positioned floor plan punched holes in
+   * the room — a plan you read to find where a seat physically is, with a
+   * third of it missing. Dimming keeps the geometry intact and still answers
+   * "where are the morning seats" by showing them against everything else.
+   */
+  dimmed?: boolean;
 }
 
 // Flat, Light-Mode Optimized States
@@ -26,7 +36,7 @@ const tileClass: Record<SeatStatus, string> = {
   vacant: 'bg-[var(--bg-muted)] border-[var(--border-default)] border-dashed opacity-70 hover:opacity-100 hover:bg-[var(--bg-surface)] text-[var(--text-secondary)]',
 };
 
-function SeatTileInner({ member, onClick, compact = false, face, selected = false }: SeatTileProps) {
+function SeatTileInner({ member, onClick, compact = false, face, selected = false, dimmed = false }: SeatTileProps) {
   const [isHovered, setIsHovered] = useState(false);
   const status = getSeatStatus(member);
   const days = !member.vacant ? daysUntilExpiry(member.expiry) : Infinity;
@@ -72,9 +82,12 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
         onMouseLeave={() => setIsHovered(false)}
       >
         <button
-          onClick={() => onClick(member.seat)}
-          data-seat={member.seat}
+          onClick={() => !dimmed && onClick(member.seat)}
+          data-seat={dimmed ? undefined : member.seat}
+          tabIndex={dimmed ? -1 : undefined}
+          aria-hidden={dimmed || undefined}
           className={cn(
+            dimmed && 'pointer-events-none opacity-25 saturate-50',
             'relative flex flex-col items-center justify-between rounded-lg transition-ui duration-200 cursor-pointer z-10 w-full h-full border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2',
             tileClass[status],
             compact ? 'px-[3px] py-[3px]' : 'p-1.5',

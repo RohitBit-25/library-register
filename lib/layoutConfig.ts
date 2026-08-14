@@ -149,3 +149,35 @@ export function seatAmenities(n: number): string[] {
 
   return out;
 }
+
+/**
+ * The four seat runs the floor plan labels Row A–D, as grid-column ranges.
+ *
+ * These used to exist twice: as four hardcoded `left` offsets in SeatMap's
+ * JSX, and as four hardcoded seat-number ranges in SeatList. They disagreed —
+ * the plan's Row A covers seats 1–32, the list called 1–22 Row A — so a third
+ * of the library had a different row name depending on which view you were
+ * looking at, on a page whose whole job is helping someone find a physical
+ * seat in a physical room.
+ *
+ * One definition, in grid columns, because that is what the room is actually
+ * divided by. Both views derive from it.
+ */
+export const SEAT_ROWS = [
+  { label: 'Row A', fromCol: 1, toCol: 5 },
+  { label: 'Row B', fromCol: 6, toCol: 8 },
+  { label: 'Row C', fromCol: 9, toCol: 12 },
+  { label: 'Row D', fromCol: 13, toCol: 14 },
+] as const;
+
+export type SeatRowLabel = (typeof SEAT_ROWS)[number]['label'];
+
+/** Which lettered run a seat belongs to, from its position on the plan. */
+export function seatRow(n: number): SeatRowLabel {
+  const { x } = getSeatPositionConfig(n);
+  const row = SEAT_ROWS.find((r) => x >= r.fromCol && x <= r.toCol);
+  // Every column 1–14 falls in a band, so this is unreachable for a real
+  // seat; falling back to the first run keeps a bad seat number visible
+  // rather than dropping it out of the list entirely.
+  return (row ?? SEAT_ROWS[0]).label;
+}

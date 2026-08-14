@@ -8,6 +8,7 @@ import {
   type WallDetail,
   type FaceDir,
   type SeatPosition,
+  SEAT_ROWS,
 } from '@/lib/layoutConfig';
 import { deriveDeskRuns, type DeskRun } from '@/lib/deskLayout';
 
@@ -355,19 +356,19 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
           </div>
 
           {/* ── Unclipped Elements ── */}
-          {/* Section labels */}
-          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 0 * CELL + 4, top: PAD - 12 }}>
-            <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-[var(--text-tertiary)]">Row A</span>
-          </div>
-          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 5 * CELL + 4, top: PAD - 12 }}>
-            <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-[var(--text-tertiary)]">Row B</span>
-          </div>
-          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 8 * CELL + 4, top: PAD - 12 }}>
-            <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-[var(--text-tertiary)]">Row C</span>
-          </div>
-          <div className="absolute pointer-events-none z-10" style={{ left: PAD + 12 * CELL + 4, top: PAD - 12 }}>
-            <span className="text-[9px] font-bold tracking-[0.25em] uppercase text-[var(--text-tertiary)]">Row D</span>
-          </div>
+          {/* Section labels — positions come from SEAT_ROWS so the plan and
+              the list view can never disagree about which run is which. */}
+          {SEAT_ROWS.map((row) => (
+            <div
+              key={row.label}
+              className="absolute pointer-events-none z-10"
+              style={{ left: PAD + (row.fromCol - 1) * CELL + 4, top: PAD - 12 }}
+            >
+              <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-[var(--text-tertiary)]">
+                {row.label}
+              </span>
+            </div>
+          ))}
 
           <EntryMarker />
           {WALL_DETAILS.map((d, i) => <WallLabel key={i} detail={d} />)}

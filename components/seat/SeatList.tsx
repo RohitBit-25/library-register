@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { type Member } from '@/lib/types';
 import { cn, firstName } from '@/lib/utils';
 import { getSeatState } from '@/lib/seat-status';
+import { SEAT_ROWS, seatRow } from '@/lib/layoutConfig';
 import { Sun, Moon, SunMoon, Plus } from 'lucide-react';
 
 /**
@@ -15,16 +16,12 @@ import { Sun, Moon, SunMoon, Plus } from 'lucide-react';
  * orientation; this is for getting work done on the device the admin is
  * actually holding while walking the hall.
  *
- * Grouped by the same A–D runs the plan labels, so "row C, seat 58" means the
- * same thing in both views.
+ * Grouped by the same A–D runs the plan labels — and now genuinely so. These
+ * bands were hardcoded here as seat-number ranges (1–22, 23–42, 43–70, 71–95)
+ * while the plan drew its labels from grid columns, and the two disagreed:
+ * the plan's Row A is seats 1–32, not 1–22. Seat 71 was Row C on the map and
+ * Row D in the list. Both now derive from SEAT_ROWS in lib/layoutConfig.
  */
-
-const ROWS: { label: string; from: number; to: number }[] = [
-  { label: 'Row A', from: 1, to: 22 },
-  { label: 'Row B', from: 23, to: 42 },
-  { label: 'Row C', from: 43, to: 70 },
-  { label: 'Row D', from: 71, to: 95 },
-];
 
 const shiftIcon = { morning: Sun, evening: Moon, full: SunMoon } as const;
 
@@ -53,13 +50,13 @@ export default function SeatList({
   selectedSeat?: number | null;
 }) {
   const grouped = useMemo(() => {
-    const bySeat = new Map(members.map((m) => [m.seat, m]));
-    return ROWS.map((row) => ({
-      ...row,
-      seats: Array.from({ length: row.to - row.from + 1 }, (_, i) => row.from + i)
-        .map((n) => bySeat.get(n))
-        .filter((m): m is Member => Boolean(m)),
-    })).filter((r) => r.seats.length > 0);
+    const byRow = new Map(SEAT_ROWS.map((r) => [r.label, [] as Member[]]));
+    for (const m of [...members].sort((a, b) => a.seat - b.seat)) {
+      byRow.get(seatRow(m.seat))?.push(m);
+    }
+    return SEAT_ROWS
+      .map((r) => ({ label: r.label, seats: byRow.get(r.label) ?? [] }))
+      .filter((r) => r.seats.length > 0);
   }, [members]);
 
   return (

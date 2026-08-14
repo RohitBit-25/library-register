@@ -273,6 +273,55 @@ The application code was correct; `daysUntil()` uses `todayLocalISO()` precisely
 
 ---
 
+## 7c. Third pass — accessibility measured, not assumed
+
+Earlier passes fixed accessibility problems as they turned up in screenshots. This one measured every interactive control on all 15 pages: does focusing it visibly change anything, is its hit area at least 24px (WCAG 2.2 §2.5.8), and does it have an accessible name.
+
+**Starting point: 782 controls, 5 with no focus indicator, 264 under 24px, 73 with no name at all.**
+
+### 95 checkboxes that announced nothing
+
+Every row in the members table carries a select checkbox. None had a label, so a screen reader read out ninety-five identical "checkbox"es with no way to tell which member each one selected — on the control whose entire purpose is choosing rows for a bulk action. They were also 16px.
+
+Now labelled with the member's name (`Select Aarav Sharma`) and 24px. The select-all checkbox says what it selects.
+
+### Pagination that said "button, button"
+
+`DataTable`'s previous/next controls were icon-only with no accessible name. Both now labelled, with the chevrons marked `aria-hidden` so they are not announced twice.
+
+### The student rail had no focus indicator at all
+
+The five buttons in `StudentSidebar` — Select Seat, My Booking, History, Profile, Logout — were the only interactive controls in the product where tabbing produced no visible change whatsoever. A keyboard user on `/browse` had no idea where they were. They also now carry `aria-current="page"`.
+
+### Where it landed
+
+| | Before | After |
+|---|---|---|
+| No focus indicator | 5 | **0** |
+| Under 24px | 264 | **2** |
+| No accessible name | 73 | **0** |
+
+The two remaining are inline text links — "Google Forms" inside a sentence on `/setup`, which WCAG 2.5.8 explicitly exempts, and one 23.6px chip that is now padded to 26px.
+
+### Also in this pass
+
+| Item | Was | Now |
+|---|---|---|
+| Turnout on `/attendance` | Hardcoded emerald, so **0% turnout rendered in the colour that means a paid-up membership** | Green only at 60% or above; otherwise neutral |
+| Attendance tile names | `name.split(' ')[0]` kept the whole first word, so "Chandraprakash" hit a 60px tile and was cut mid-word by CSS | `firstName()`, the helper the rest of the app uses — "Chandr." |
+| Attendance check badge | `-top-2 -right-2`, hanging outside the tile: it overlapped the next seat in the grid and was clipped on the last column | Inside the tile it describes |
+| "Reject" on `/requests` | `bg-[var(--ruby-500)]/10 … border-none` — near-white on white, so it read as a text link beside a solid button. Both were always `flex-1` and the same width; only one looked like a control | Solid tint and border. Turning a student away should look like a decision |
+| "Verify & Add" | Named two internal steps | "Approve and allot" — what it does |
+| Dashboard alerts | 280px of scroll happened to fit exactly four whole rows, so a list of 18 looked like a complete list of 4 | Fade over the bottom edge when there are more |
+
+### A note on why the demo data kept disappearing
+
+Twice during this work the review environment silently reverted to the real database. The cause was `pkill -f "next dev"` matching only the launcher process, never the `next-server` child — so servers started against the real `.env` survived every restart and kept answering on port 3000. That is what put `failedAttempts: 2` on your admin record in the first pass.
+
+The screenshot script now refuses to run if the server reports fewer than 10 occupied seats, so a review can no longer be conducted against the wrong database without saying so.
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.
