@@ -304,11 +304,11 @@ export default function RequestsPage() {
                         className="flex-1 text-[0.64rem] h-[36px]"
                         onClick={() => handleApprove(req)}
                       >
-                        <Check className="w-3.5 h-3.5 mr-1" /> Verify & Add
+                        <Check className="w-3.5 h-3.5 mr-1" /> Approve and allot
                       </Button>
                       <Button
                         variant="secondary"
-                        className="flex-1 text-[0.64rem] h-[36px] bg-[var(--ruby-500)]/10 text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/20 border-none"
+                        className="h-[36px] flex-1 border border-[var(--ruby-200)] bg-[var(--ruby-50)] text-[0.64rem] text-[var(--ruby-600)] hover:bg-[var(--ruby-100)]"
                         onClick={() => handleReject(req.id, req.seat)}
                       >
                         <X className="w-3.5 h-3.5 mr-1" /> Reject

@@ -184,12 +184,13 @@ export default function DashboardPage() {
               <h2 className="font-display text-sm font-semibold text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
                 <AlertTriangle className="w-4 h-4 text-[var(--marigold-700)]" />
                 Alerts
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--marigold-500)]/10 text-[var(--marigold-700)]">
+                <span className="tabular rounded-full bg-[var(--marigold-50)] px-2 py-0.5 text-[10px] font-bold text-[var(--marigold-700)]">
                   {alerts.length}
                 </span>
               </h2>
             </div>
-            <div className="divide-y divide-[var(--border-subtle)] max-h-[280px] overflow-y-auto">
+            <div className="relative">
+            <div className="max-h-[280px] divide-y divide-[var(--border-subtle)] overflow-y-auto">
               {alerts.map(m => (
                 <div
                   key={`alert-${m.seat}`}
