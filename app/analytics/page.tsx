@@ -217,7 +217,7 @@ export default function DashboardPage() {
                         variant="primary"
                         size="sm"
                         onClick={() => handleMarkPaid(m.seat)}
-                        className="bg-[var(--emerald-500)] text-[var(--saffron-50)] border-transparent hover:bg-[var(--emerald-600)]"
+                        className="bg-[var(--emerald-600)] text-[var(--text-inverse)] border-transparent hover:bg-[var(--emerald-600)]"
                       >
                         <Check className="w-3.5 h-3.5 mr-1" />
                         Mark paid
@@ -235,6 +235,13 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ))}
+            </div>
+            {alerts.length > 4 && (
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--bg-surface)] to-transparent"
+              />
+            )}
             </div>
           </Card>
         </motion.div>
