@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -8,13 +9,13 @@ import {
   LayoutDashboard,
   Users,
   BarChart3,
-  BookOpen,
   Inbox,
   LogOut,
   Shield,
   HardDrive,
   IndianRupee,
   Users2,
+  ScanLine,
 } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { useRouter } from 'next/navigation';
@@ -67,6 +68,11 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
       icon: <Users2 className="w-5 h-5" />,
     },
     {
+      href: '/kiosk',
+      label: 'Self Check-In',
+      icon: <ScanLine className="w-5 h-5" />,
+    },
+    {
       href: '/audit',
       label: 'Activity Log',
       icon: <Shield className="w-5 h-5" />,
@@ -89,9 +95,14 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--saffron-500)]/5 via-transparent to-transparent pointer-events-none" />
         
         <div className="flex items-center gap-2.5 relative z-10">
-          <div className="w-9 h-9 rounded-xl bg-[var(--saffron-600)] flex items-center justify-center shadow-md">
-            <BookOpen className="w-[18px] h-[18px] text-[var(--text-inverse)]" />
-          </div>
+          <Image
+            src="/logo-mark.png"
+            alt=""
+            aria-hidden="true"
+            width={36}
+            height={36}
+            className="h-9 w-9 shrink-0 object-contain"
+          />
           <div>
             <p className="text-sm font-extrabold text-[var(--text-primary)] leading-tight tracking-tight">
               Library Register

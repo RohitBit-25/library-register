@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Lock, Home, Armchair, Wind } from 'lucide-react';
 
@@ -12,9 +13,18 @@ export default function UnifiedHeader() {
       <header className="flex items-center justify-between gap-4 py-4 px-6 md:px-10 border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
         {/* Logo and Brand */}
         <div className="flex items-center gap-3">
-          <div
+          {/* The library's own mark. This was a rotated square standing in
+              for a logo; the real one exists. Served through next/image so
+              the 1.5MB source is delivered as a resized WebP/AVIF — the file
+              on disk stops mattering for payload. */}
+          <Image
+            src="/logo-mark.png"
+            alt=""
             aria-hidden="true"
-            className="h-8 w-8 rotate-45 rounded-[4px] border-2 border-[var(--saffron-600)] bg-[var(--saffron-50)]"
+            width={40}
+            height={40}
+            priority
+            className="h-10 w-10 shrink-0 object-contain"
           />
           <div className="leading-tight">
             <p className="text-[14px] font-bold tracking-tight text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-devanagari)' }}>

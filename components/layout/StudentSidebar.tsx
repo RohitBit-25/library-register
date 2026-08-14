@@ -44,7 +44,7 @@ export default function StudentSidebar() {
               onClick={() => handleTabClick(item.id)}
               aria-current={isActive ? 'page' : undefined}
               className={cn(
-                "group flex w-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl p-3 transition-all duration-200",
+                "group flex w-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl p-3 transition-[color,background-color,transform] duration-200",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2",
                 isActive 
                   ? "bg-[var(--saffron-50)] text-[var(--saffron-700)]" 

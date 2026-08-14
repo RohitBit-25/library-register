@@ -35,6 +35,19 @@ export default function Modal({
     }
   }, [open]);
 
+  // Native <dialog> + showModal() already gives a focus trap, Escape, an
+  // inert background and focus return — which is why this stayed on the
+  // platform primitive rather than moving to Radix like ConfirmDialog did.
+  //
+  // The one thing it does not do is stop the page behind it scrolling, so a
+  // trackpad swipe over an open modal scrolled the content underneath.
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previous; };
+  }, [open]);
+
   if (!open) return null;
 
   return (

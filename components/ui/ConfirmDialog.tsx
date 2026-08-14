@@ -1,11 +1,47 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, X } from 'lucide-react';
-import Portal from './Portal';
-import { useEffect, useId } from 'react';
-import { springUI } from '@/lib/motion';
+import { useEffect, useRef } from 'react';
+import { AlertCircle } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
+/**
+ * Destructive confirmation.
+ *
+ * The props are unchanged from the hand-rolled version, so all seven call
+ * sites stayed untouched — only the body moved onto Radix's AlertDialog.
+ *
+ * What that buys, none of which the previous implementation had in full:
+ *
+ * - A real focus trap. Before, Tab walked straight out of the dialog and into
+ *   the page behind it, so a keyboard user could focus — and activate — the
+ *   very button they had just been asked to confirm away from.
+ * - Focus returns to whatever opened it on close.
+ * - Scroll lock that survives nested dialogs; the old one wrote
+ *   `document.body.style.overflow` directly, so two dialogs closing in
+ *   sequence left the page unscrollable.
+ * - `role="alertdialog"` with the title and description wired by the
+ *   primitive, rather than by hand-generated ids.
+ * - Escape, outside-click and the animation states handled together, instead
+ *   of a keydown listener bolted on beside an AnimatePresence.
+ *
+ * `AlertDialogAction` deliberately does **not** auto-close: this component's
+ * contract is that confirming runs `onConfirm` and then closes, and callers
+ * rely on that ordering.
+ *
+ * Focus return is handled here rather than by Radix. Radix restores focus to
+ * its `AlertDialogTrigger`, and this dialog has none — every caller opens it
+ * from state, so on close focus fell to `<body>` and a keyboard user was
+ * dropped back at the top of the document. The trigger is captured when the
+ * dialog opens and focused again on the way out.
+ */
 interface ConfirmDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -25,101 +61,63 @@ export default function ConfirmDialog({
   description,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
-  variant = 'danger'
+  variant = 'danger',
 }: ConfirmDialogProps) {
-  const titleId = useId();
-  const descId = useId();
+  const openerRef = useRef<HTMLElement | null>(null);
 
-  // Lock body scroll when open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    if (isOpen) openerRef.current = document.activeElement as HTMLElement | null;
   }, [isOpen]);
 
-  // Escape to dismiss. This is a destructive confirm, so it must be
-  // cancellable from the keyboard without hunting for the close button.
-  useEffect(() => {
-    if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [isOpen, onClose]);
-
   return (
-    <Portal>
-      <AnimatePresence>
-        {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={onClose}
-              className="absolute inset-0 bg-[var(--bg-void)]/60 backdrop-blur-sm"
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -10 }}
-              transition={springUI}
-              role="alertdialog"
-              aria-modal="true"
-              aria-labelledby={titleId}
-              aria-describedby={descId}
-              className="relative w-full max-w-sm bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-[var(--shadow-xl)] overflow-hidden"
-            >
-              <div className="p-5">
-                <div className="flex items-start gap-4">
-                  <div className={`p-2 rounded-full flex-shrink-0 ${variant === 'danger' ? 'bg-[var(--ruby-50)] text-[var(--ruby-600)]' : 'bg-[var(--sapphire-50)] text-[var(--sapphire-600)]'}`}>
-                    <AlertCircle className="w-6 h-6" aria-hidden="true" />
-                  </div>
-                  <div>
-                    <h3 id={titleId} className="text-lg font-bold text-[var(--text-primary)]">
-                      {title}
-                    </h3>
-                    <p id={descId} className="mt-1 text-sm text-[var(--text-secondary)] leading-relaxed">
-                      {description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2 p-4 bg-[var(--bg-base)]/50 border-t border-[var(--border-subtle)] justify-end">
-                <button
-                  onClick={onClose}
-                  className="px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] rounded-lg transition-colors cursor-pointer"
-                >
-                  {cancelText}
-                </button>
-                <button
-                  onClick={() => {
-                    onConfirm();
-                    onClose();
-                  }}
-                  className={`cursor-pointer px-4 py-2 text-sm font-bold rounded-lg transition-colors shadow-sm text-[var(--text-inverse)] ${variant === 'danger' ? 'bg-[var(--ruby-600)] hover:bg-[var(--ruby-700)]' : 'bg-[var(--sapphire-600)] hover:bg-[var(--sapphire-500)]'}`}
-                >
-                  {confirmText}
-                </button>
-              </div>
-
-              <button
-                onClick={onClose}
-                aria-label="Close dialog"
-                className="absolute top-4 right-4 cursor-pointer text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-primary)]"
-              >
-                <X className="w-5 h-5" aria-hidden="true" />
-              </button>
-            </motion.div>
+    <AlertDialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <AlertDialogContent
+        className="max-w-sm"
+        onCloseAutoFocus={(e) => {
+          // Only take over when the opener is still on the page — after a
+          // vacate the row it lived in is gone, and forcing focus onto a
+          // detached node would strand it.
+          const opener = openerRef.current;
+          if (opener && opener.isConnected) {
+            e.preventDefault();
+            opener.focus();
+          }
+        }}
+      >
+        <div className="flex items-start gap-4">
+          <div
+            className={
+              variant === 'danger'
+                ? 'shrink-0 rounded-full bg-[var(--ruby-50)] p-2 text-[var(--ruby-600)]'
+                : 'shrink-0 rounded-full bg-[var(--saffron-50)] p-2 text-[var(--saffron-700)]'
+            }
+          >
+            <AlertCircle className="h-6 w-6" aria-hidden="true" />
           </div>
-        )}
-      </AnimatePresence>
-    </Portal>
+          <div className="min-w-0">
+            <AlertDialogTitle className="text-lg font-bold text-[var(--text-primary)]">
+              {title}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="mt-1 text-sm leading-relaxed text-[var(--text-secondary)]">
+              {description}
+            </AlertDialogDescription>
+          </div>
+        </div>
+
+        <AlertDialogFooter>
+          <AlertDialogCancel>{cancelText}</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => { onConfirm(); onClose(); }}
+            className={
+              variant === 'danger'
+                ? 'bg-[var(--ruby-600)] hover:bg-[var(--ruby-700)]'
+                : undefined
+            }
+          >
+            {confirmText}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

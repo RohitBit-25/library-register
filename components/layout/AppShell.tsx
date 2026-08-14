@@ -11,6 +11,7 @@ import ToastContainer from '@/components/ui/Toast';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { MotionConfig } from 'framer-motion';
 
 // ─── Public routes ──────────────────────────────────────────────
 //
@@ -103,8 +104,24 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
-      <AppShellInner>{children}</AppShellInner>
-    </AuthProvider>
+    /*
+      `reducedMotion="user"` makes every framer-motion component honour the
+      OS setting.
+     
+      globals.css already has a `prefers-reduced-motion` block, but it only
+      zeroes CSS `animation-duration` and `transition-duration`. Framer-motion
+      animates by writing inline styles from JavaScript, so none of the app's
+      springs, slides or scales were covered by it — a user who had asked the
+      system for less motion still got all of them.
+     
+      This is the "gentler, not zero" behaviour: transform and layout
+      animations are dropped, opacity changes are kept, so state changes stay
+      legible without anything flying across the screen.
+    */
+    <MotionConfig reducedMotion="user">
+      <AuthProvider>
+        <AppShellInner>{children}</AppShellInner>
+      </AuthProvider>
+    </MotionConfig>
   );
 }

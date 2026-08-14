@@ -572,6 +572,62 @@ The mobile card accordion stays hand-rolled on purpose: it expands in place rath
 
 ---
 
+## 7k. Eleventh pass — motion, measured
+
+Using the project's own `apple-design` and `animate` skills. Both open with a gate: *should this animate at all?* So this pass added almost no new motion — it fixed what was already there.
+
+### Every spring in the app was under-damped
+
+A spring's overshoot is its damping ratio, and it is computable:
+
+```
+ratio = damping / (2 · √(stiffness · mass))     mass defaults to 1
+```
+
+Measured across all eighteen spring call sites, the ratios came out between **0.38 and 0.80**. Every value below 1.0 overshoots the target and settles back. Nothing in the app was critically damped — so every dialog, dropdown, list row and button press wobbled slightly past where it was going.
+
+The worst was `Button.tsx` at **0.38**: a press bouncing is the opposite of the crisp confirmation a press should give.
+
+Apple's rule is to default to critically damped and spend bounce only where the user's own gesture carried momentum in — a flick, a throw, a drag release. Overshoot on a menu that merely appeared reads as noise; overshoot on a sheet you threw reads as physics. **None** of the eighteen followed a gesture.
+
+`lib/motion.ts` now holds four named presets expressed as `bounce` + `duration` — framer-motion's mapping of Apple's damping + response, and the two numbers a person can actually reason about. `springSheet` is the only one with bounce, reserved for surfaces you can grab.
+
+A detail worth recording: converting to the `bounce` API without an explicit `duration` silently defaults to **0.8s**, well past the 300ms ceiling for UI. Four sites landed there mid-refactor and were caught before they shipped.
+
+### Reduced motion was not reaching any of it
+
+`globals.css` has a `prefers-reduced-motion` block. It zeroes CSS `animation-duration` and `transition-duration` — and framer-motion animates by writing **inline styles from JavaScript**, so none of it applied.
+
+Every spring, slide and scale in the product ignored the setting entirely.
+
+`<MotionConfig reducedMotion="user">` at the app root fixes it in one place. Verified by sampling transforms frame by frame through a mount:
+
+| | distinct transforms | frames actually translating |
+|---|---|---|
+| Motion allowed | 7 | 6 |
+| `prefers-reduced-motion: reduce` | **1** | **0** |
+
+Positional motion is gone; opacity is kept, so state changes stay legible. That is the "gentler, not zero" behaviour both skills ask for, and it was absent for the whole product.
+
+### The seat tile preview appeared on tap and stayed there
+
+The hover card was wired to `onMouseEnter`. Touch synthesises that event, so on a phone tapping a seat popped the preview open **over the seat being opened**, and nothing dismissed it.
+
+Now on `onPointerEnter` with a `pointerType === 'mouse'` check: a mouse gets the preview, a finger goes straight to the detail panel.
+
+Two more things wrong with it, both from the skills' checklists:
+
+- It scaled from its own centre. It grows upward out of a seat, so it scales from `bottom center` — the popover-anchoring rule.
+- It was a full spring with 15px of travel. An admin triggers this dozens of times a session, which is the frequency tier where motion should be near-imperceptible: now `springQuick`, 6px.
+
+### Also
+
+`transition-all` on the student rail, which animates every property including ones that trigger layout, replaced with the three that actually change.
+
+**What I cannot judge from code:** whether `springUI` at 0.35s feels right for the larger surfaces. It is defensible on paper and matches Apple's published response values, but settle time is a feel question. Worth opening a dialog and a sheet, watching them at 3× duration in the DevTools animation inspector, and looking again tomorrow.
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.

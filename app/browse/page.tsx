@@ -7,6 +7,13 @@ import { useSeatRequests } from '@/hooks/useSeatRequests';
 import { useToast } from '@/hooks/useToast';
 import { type Shift, type Duration } from '@/lib/types';
 import PublicSeatMap from '@/components/seat/PublicSeatMap';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import UnifiedHeader from '@/components/layout/UnifiedHeader';
 import StudentSidebar from '@/components/layout/StudentSidebar';
 import SeatRequestSheet from '@/components/seat/SeatRequestSheet';
@@ -96,15 +103,18 @@ export default function BrowsePage() {
               </div>
               
               <div className="flex items-center gap-3 text-sm">
-                <select 
-                  className="bg-[var(--bg-muted)] border border-[var(--border-default)] text-[var(--text-primary)] font-semibold rounded-lg px-3 py-2 outline-none cursor-pointer"
-                  value={shiftFilter}
-                  onChange={(e) => setShiftFilter(e.target.value as Shift | 'all')}
-                >
-                  <option value="all">All Zones</option>
-                  <option value="morning">Morning Shift</option>
-                  <option value="evening">Evening Shift</option>
-                </select>
+                {/* "All Zones" named something this app does not have — the
+                    field filters by shift. */}
+                <Select value={shiftFilter} onValueChange={(v) => setShiftFilter(v as Shift | 'all')}>
+                  <SelectTrigger className="min-h-[40px] w-[168px] font-semibold" aria-label="Filter seats by shift">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All shifts</SelectItem>
+                    <SelectItem value="morning">Morning shift</SelectItem>
+                    <SelectItem value="evening">Evening shift</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

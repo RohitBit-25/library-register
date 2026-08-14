@@ -17,16 +17,23 @@ The app is now correct, secure and honest. What it is not yet is **fast to opera
 
 These pay for themselves in the first week.
 
-### 1. Attendance is the biggest unsolved workflow
-The kiosk exists, but marking 60 people present is still 60 interactions. The seat map already knows who sits where.
+### 1. Attendance — done
+The map has an **Attendance mode** — a toggle turns every tile into a check-in
+target, so a librarian walks the hall tapping seats instead of working a
+separate list of 95 rows. `Mark all present` covers the common full-house day.
+The self check-in kiosk is now reachable from the sidebar (it previously had no
+entry point anywhere in the app).
 
 - **Tap-to-mark directly on the floor plan.** An "Attendance mode" toggle turns the map into a check-in grid — tap a seat, it goes green. One screen, no navigation. The data model (`$addToSet`) already supports it.
 - **A member-facing QR check-in.** Each member gets a QR (the QR panel already exists for the portal); scanning marks them present. This removes the librarian from the loop entirely.
 
 **Why it matters:** attendance is the only task performed ~60× daily. Everything else is performed a handful of times.
 
-### 2. Renewal is a 6-step flow that should be 1
-Today: find member → open panel → Renew → pick date → pick duration → confirm.
+### 2. Renewal — done
+Was: find member → open panel → Renew → pick date → pick duration → confirm.
+Now one click from the Expiry Tracker, defaulting to the member's existing plan
+and the correct start date via `renewalStartDate()` — which preserves paid-for
+days rather than restarting from today.
 
 - **"Renew again" one-click** on expiring/expired rows, defaulting to their previous plan and the correct start date (`renewalStartDate` already computes this). Two clicks, not six.
 - **Bulk renew** from the Expiry Tracker for the common "five people renewed today" case.
@@ -37,8 +44,10 @@ Today: find member → open panel → Renew → pick date → pick duration → 
 - Wire Meta Cloud API or Gupshup (both cheap in India, both take an hour).
 - **Then:** a "Send reminder" button on any expiring row, reusing the same seam.
 
-### 4. Payment receipts
-The ledger records every payment but nothing gives the member proof.
+### 4. Payment receipts — done
+`components/payments/Receipt.tsx` renders a printable receipt from any ledger
+row, with print CSS isolating `#receipt-print-area`. WhatsApp delivery still
+waits on the provider (#3).
 
 - A printable/shareable receipt from any `Payment` row — number, member, plan, amount, date.
 - WhatsApp it on collection, once #3 lands.
@@ -96,9 +105,9 @@ You confirmed one seat = one member. If that ever changes, the model needs `(sea
 |---|---|---|
 | 11 | **Seat tiles are busy at 48px** — avatar, name, shift icon, day count and a progress ring compete inside one small square. The ring duplicates what the tile colour already says. | Legibility at a glance is the map's whole job |
 | 12 | **No empty state on the floor plan** for a brand-new library — 95 dashed squares with no explanation | First-run impression |
-| 13 | **Mobile floor plan** is a pinch-and-pan experience; fit-to-width helps but a list view would serve phones better | Most Indian admins will use a phone |
+| 13 | ~~Mobile floor plan~~ — **done.** `components/seat/SeatList.tsx` gives phones a grouped list with 56px targets; the plan is one tap away. Both views derive their A–D row bands from `SEAT_ROWS`, so a seat has the same row name in each. | Most Indian admins will use a phone |
 | 14 | ~~Keyboard navigation on the map~~ — **done.** Arrow keys move across the floor plan; Enter opens the seat. Tab order follows seat number, which jumps across the room between runs, so reaching seat 90 took 90 presses. Movement is capped at two cells of sideways drift, so Up at seat 1 does nothing rather than teleporting nine columns to seat 80, and an edge press leaves the key unhandled so the page still scrolls. | Speed for a daily operator |
-| 15 | **`icon-512.png` is 319 KB** for a 512px icon; should be ~20 KB | Carried over from the original audit |
+| 15 | ~~`icon-512.png` is 319 KB~~ — **done.** 31.5 KB at the same 512×512; the art is flat colour so quantisation is visually lossless. | Carried over from the original audit |
 
 ---
 
@@ -107,7 +116,7 @@ You confirmed one seat = one member. If that ever changes, the model needs `(sea
 | # | Item | Why |
 |---|---|---|
 | 16 | ~~No rate limit on `POST /api/requests`~~ — **done**, and `POST /api/auth` now has one too. The per-staff lockout cannot tell which account a wrong PIN was meant for, so a failure counted against every account — anyone could lock the whole staff out for 15 minutes, repeatedly, without credentials. A 12-per-15-minutes per-caller limit runs before the PIN is checked. It does not stop a distributed attempt; that is a real residual risk of PIN-only auth. | The last unprotected public write |
-| 17 | **`/api/members` returns all 95 rows** on every page. Fine at 95, wrong at 500. | Pagination before a second branch |
+| 17 | **`/api/members` returns all 95 rows** — *recommended out of scope.* The room has a fixed 95 seats, and the anonymous response is already redacted to `seat`/`vacant`/`shift`. Paging machinery for a number that cannot grow is complexity without benefit; revisit only if a second branch appears. | Pagination before a second branch |
 | 18 | **No structured logging.** `console.error` only — no request IDs, so a user report cannot be traced to a failure. | Debugging production blind |
 | 19 | **Audit log has no UI filter** — 100 rows, no search by seat or action | It exists but is hard to use |
 | 20 | ~~Tests cover pure functions only~~ — **done.** `npm run check:api` runs 29 HTTP contract checks against a live server: auth boundaries on every admin route, PII redaction on the public `/api/members`, page redirects, payload validation, rate limiting, the waitlist branches, and session revocation. Each POST claims its own `x-forwarded-for` so the suite cannot poison its own rate-limit window. The lockout check is opt-in (`CHECK_LOCKOUT=1`) because it locks staff out for 15 minutes. | Those are the parts that carry risk |

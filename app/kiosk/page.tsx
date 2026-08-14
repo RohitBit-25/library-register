@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { useMembers } from '@/hooks/useMembers';
 import { useAttendance } from '@/hooks/useAttendance';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogIn, LogOut, ArrowLeft, ArrowRight, UserCheck, CheckCircle2, XCircle } from 'lucide-react';
+import { LogIn, LogOut, ArrowLeft, ArrowRight, CheckCircle2, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useToast } from '@/hooks/useToast';
 import { springUI } from '@/lib/motion';
+import Image from 'next/image';
 
 export default function KioskPage() {
   const { members } = useMembers();
@@ -86,9 +87,18 @@ export default function KioskPage() {
             className="w-full max-w-sm"
           >
             <div className="text-center mb-8">
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--saffron-700)] text-[var(--text-inverse)] shadow-md">
-                <UserCheck className="w-8 h-8 text-[var(--saffron-50)]" />
-              </div>
+              {/* The kiosk is the one full-screen surface a student stands
+                  in front of, and it carried no branding at all — a generic
+                  icon on an empty page. The library's own banner belongs
+                  here more than anywhere else in the product. */}
+              <Image
+                src="/banner.png"
+                alt="Shree Gangaur Library — knowledge today, success tomorrow"
+                width={520}
+                height={208}
+                priority
+                className="mx-auto mb-8 h-auto w-full max-w-[420px]"
+              />
               <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
                 Self Check-In
               </h1>
