@@ -1,13 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Lock, Home, Armchair, Wind } from 'lucide-react';
-import AuthModal from '@/components/auth/AuthModal';
 
 export default function UnifiedHeader() {
-  const [showStaffLogin, setShowStaffLogin] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -61,18 +58,16 @@ export default function UnifiedHeader() {
           </Link>
         </nav>
 
-        {/* Staff Login Button */}
-        <button
-          type="button"
-          onClick={() => setShowStaffLogin(true)}
+        {/* Staff sign-in lives on its own page rather than a dialog over the
+            public site — see app/admin/login. */}
+        <Link
+          href="/admin/login"
           className="inline-flex min-h-[40px] cursor-pointer items-center gap-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 text-[13px] font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-xs)] transition-colors hover:border-[var(--saffron-600)] hover:text-[var(--saffron-700)]"
         >
           <Lock className="h-4 w-4" aria-hidden="true" />
-          Staff Login
-        </button>
+          Staff login
+        </Link>
       </header>
-
-      <AuthModal open={showStaffLogin} onClose={() => setShowStaffLogin(false)} />
     </>
   );
 }

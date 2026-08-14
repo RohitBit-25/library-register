@@ -56,7 +56,10 @@ export async function proxy(request: NextRequest) {
   }
 
   const url = request.nextUrl.clone();
-  url.pathname = '/landing';
+  // The admin door, not the student-facing landing page. `next` preserves
+  // where they were heading so the sign-in returns them there.
+  url.pathname = '/admin/login';
+  url.searchParams.set('next', pathname);
   url.search = '';
   return NextResponse.redirect(url);
 }

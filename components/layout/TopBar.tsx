@@ -9,7 +9,7 @@ interface TopBarProps {
 }
 
 export default function TopBar({ title = 'Library Register' }: TopBarProps) {
-  const { isAdmin, isAuthenticated, logout } = useAuth();
+  const { isAdmin, logout } = useAuth();
   
   // Admin shows sidebar on desktop (TopBar hidden)
   // User shows TopBar on all screens
@@ -27,28 +27,21 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
         <p className="text-sm font-extrabold text-[var(--text-primary)] tracking-tight">
           {title}
         </p>
-        {isAuthenticated && (
-          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--sapphire-50)] text-[var(--sapphire-600)]">
-            {isAdmin ? (
-              <>
-                <Shield className="w-3 h-3" />
-                Admin
-              </>
-            ) : (
-              <>
-                <Eye className="w-3 h-3" />
-                User
-              </>
-            )}
+        {isAdmin && (
+          <span className="flex items-center gap-1 rounded-full bg-[var(--saffron-50)] px-2 py-0.5 text-[10px] font-bold text-[var(--saffron-700)]">
+            <Shield className="h-3 w-3" aria-hidden="true" />
+            Staff
           </span>
         )}
       </div>
       <div className="relative z-10 flex items-center gap-1">
-        {!isAdmin && isAuthenticated && (
+        {/* The sidebar carries sign-out on desktop, but it is hidden below
+            lg — without this an admin on a phone had no way to sign out. */}
+        {isAdmin && (
            <Tooltip content="Sign out">
              <button
                onClick={logout}
-               className="hidden lg:flex cursor-pointer rounded-xl p-2 text-[var(--text-secondary)] hover:bg-[var(--rose-500)] hover:text-[var(--saffron-50)] active:scale-95 transition-ui group ml-1"
+               className="flex cursor-pointer rounded-xl p-2 text-[var(--text-secondary)] transition-ui hover:bg-[var(--ruby-50)] hover:text-[var(--ruby-600)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] lg:hidden"
                aria-label="Sign out"
              >
                <LogOut className="w-5 h-5" />

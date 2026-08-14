@@ -37,6 +37,13 @@ function useIsPhone() {
 /** A status the counters above the map can filter down to. */
 export type StatusFilter = 'due' | 'expiring' | 'expired' | 'vacant' | null;
 
+const STATUS_FILTER_LABEL: Record<Exclude<StatusFilter, null>, string> = {
+  due: 'with fees due',
+  expiring: 'expiring soon',
+  expired: 'expired',
+  vacant: 'available',
+};
+
 interface SeatGridProps {
   members: Member[];
   onSeatClick: (seat: number) => void;
@@ -157,9 +164,19 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
                 >
                   {presentToday} / {occupiedCount} PRESENT
                 </span>
+              ) : statusFilter ? (
+                // A filtered plan looks like a plan, so it has to say so —
+                // otherwise you scroll away, come back, and read a dimmed map
+                // as the whole library.
+                <span className="tabular flex items-center gap-2 rounded-md border border-[var(--text-primary)] bg-[var(--bg-surface)] px-3 py-1 text-[10px] font-bold tracking-[0.12em] text-[var(--text-primary)] uppercase">
+                  {filtered.length} {STATUS_FILTER_LABEL[statusFilter]}
+                  <span className="font-normal normal-case tracking-normal text-[var(--text-tertiary)]">
+                    of {members.length}
+                  </span>
+                </span>
               ) : (
-                <span className="text-[10px] font-mono tracking-[0.2em] font-bold text-[var(--saffron-700)] bg-[var(--saffron-50)] px-3 py-1 rounded-md border border-[var(--saffron-200)]">
-                  {(shiftFilter === 'all' ? members : filtered).length} SEATS
+                <span className="tabular rounded-md border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-3 py-1 text-[10px] font-bold tracking-[0.2em] text-[var(--saffron-700)]">
+                  {filtered.length} SEATS
                 </span>
               )}
             </div>

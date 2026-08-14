@@ -1,43 +1,46 @@
 'use client';
 
-import { createContext, useContext, useCallback, useMemo, useSyncExternalStore, type ReactNode } from 'react';
+import { createContext, useContext, useCallback, useMemo, type ReactNode } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import {
-  type UserRole,
-  getStoredRole,
-  setStoredRole,
   loginAsAdminService,
-  subscribeToRole,
-  getRoleServerSnapshot,
 } from '@/lib/auth';
 
 // ─── Context Shape ──────────────────────────────────────────────
 
+/**
+ * There is exactly one kind of account in this product: staff.
+ *
+ * A second "user" role used to live here, granted by writing
+ * `library-role=user` into localStorage. Nothing ever called the function
+ * that set it, so `isAuthenticated` was false for every real visitor — and
+ * AppShell required it everywhere except /landing and /kiosk. The result was
+ * that /browse and /my-requests redirected students back to the landing
+ * page, and the landing page's own "Choose Your Seat" button led nowhere.
+ *
+ * The student side needs no account at all: browsing the plan and submitting
+ * a request are public, and the request carries the phone number the admin
+ * needs. So the role is gone rather than fixed, and `isAdmin` — which comes
+ * from the server session, never from localStorage — is the only question
+ * this hook answers.
+ */
 interface AuthContextValue {
-  role: UserRole | null;
   isAdmin: boolean;
   /** Signed-in staff member's name, or null. */
   staffName: string | null;
   /** Owners can manage staff; staff cannot. */
   isOwner: boolean;
-  isUser: boolean;
-  isAuthenticated: boolean;
   isLoading: boolean;
   loginAsAdmin: (pin: string) => Promise<{ ok: boolean; error?: string }>;
-  loginAsUser: () => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue>({
-  role: null,
   isAdmin: false,
   staffName: null,
   isOwner: false,
-  isUser: false,
-  isAuthenticated: false,
   isLoading: true,
   loginAsAdmin: async () => ({ ok: false }),
-  loginAsUser: () => {},
   logout: () => {},
 });
 
@@ -66,16 +69,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const staffName = data?.name ?? null;
   const isOwner = data?.role === 'owner';
 
-  // The "user" role carries no privilege, so localStorage is fine for it.
-  // Read via useSyncExternalStore rather than an effect+setState, which would
-  // cascade an extra render on every mount.
-  const storedRole = useSyncExternalStore(
-    subscribeToRole,
-    getStoredRole,
-    getRoleServerSnapshot
-  );
-  const userOptedIn = storedRole === 'user';
-
   // Every endpoint returns different data per role — /api/members is redacted
   // for anonymous callers, /api/requests 401s. AppShell mounts useMembers()
   // even on /landing, so SWR has already cached the anonymous responses by the
@@ -95,13 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return result;
   }, [mutate, invalidateAll]);
 
-  const loginAsUser = useCallback(() => {
-    setStoredRole('user');
-    invalidateAll();
-  }, [invalidateAll]);
-
   const logout = useCallback(() => {
-    setStoredRole(null);
     fetch('/api/auth/logout', { method: 'POST' })
       .catch(() => {})
       .finally(() => {
@@ -111,20 +98,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
   }, [mutate, invalidateAll]);
 
-  const role: UserRole | null = isAdmin ? 'admin' : userOptedIn ? 'user' : null;
 
   const value = useMemo(() => ({
-    role,
     isAdmin,
     staffName,
     isOwner,
-    isUser: role === 'user',
-    isAuthenticated: role !== null,
     isLoading,
     loginAsAdmin,
-    loginAsUser,
     logout,
-  }), [role, isAdmin, staffName, isOwner, isLoading, loginAsAdmin, loginAsUser, logout]);
+  }), [isAdmin, staffName, isOwner, isLoading, loginAsAdmin, logout]);
 
   return (
     <AuthContext.Provider value={value}>

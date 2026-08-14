@@ -463,6 +463,30 @@ The revision keeps both: colour per member, drawn from hues status never uses. D
 
 ---
 
+## 7h. Eighth pass — making the map do work, not just display
+
+Two changes, both aimed at the map being a tool rather than a picture.
+
+### The furniture was louder than the people
+
+The desks were `--saffron-100` with a `--saffron-300` edge. That made them simultaneously the largest colour mass on the screen and a member of the same hue family that means **fee due** on a seat tile. Figure and ground were inverted: the eye landed on tables, then had to hunt for the six seats that actually needed attention.
+
+Desks are now warm neutral (`--bg-overlay`). Furniture is ground; status is figure. The green, amber and red edge strips are the only warm colour left on the plan, which is why they now find you instead of the other way round.
+
+### The counters were read-only
+
+Above the map sat six chips — Total 95, Occupied 71, Available 24, Fee due 8, Expiring 6, Expired 6. They told you eight members owed money and then left you to find them among ninety-five tiles.
+
+**They are buttons now.** Clicking one dims everything else on the plan and leaves the matching seats in full colour, so the answer to *"who do I need to deal with today, and where are they sitting"* is one click and the room stays intact around them. Click again to clear. Status and shift filters combine, so "morning seats that owe money" is a question the screen can answer — which is how a shift actually gets planned.
+
+Three details that matter more than the feature itself:
+
+- **The filter matches the counter exactly.** The first working version highlighted 12 seats under a chip reading 8, because it used `hasDues` while the chip counts `status === 'due'` — and this app's rule is that expired outranks due, so four of those twelve are counted in the Expired chip instead. A count that does not match the thing it filters to is the defect I spent §2.6 fixing on the dashboard; it would have been careless to reintroduce it here.
+- **The header states the filter** — *"6 EXPIRED of 95"* — because a dimmed plan still looks like a plan, and scrolling away and back must not leave you reading a filtered map as the whole library.
+- **Dimmed seats leave the tab order**, so keyboard navigation moves between the six that matter rather than all ninety-five.
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.

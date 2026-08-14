@@ -10,16 +10,12 @@ interface AdminGuardProps {
 }
 
 export default function AdminGuard({ children }: AdminGuardProps) {
-  const { isAdmin, isAuthenticated } = useAuth();
+  const { isAdmin } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.replace('/landing');
-    } else if (!isAdmin) {
-      router.replace('/browse');
-    }
-  }, [isAuthenticated, isAdmin, router]);
+    if (!isAdmin) router.replace('/admin/login');
+  }, [isAdmin, router]);
 
   // Only render children if admin
   if (!isAdmin) {
