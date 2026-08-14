@@ -89,7 +89,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--saffron-500)]/5 via-transparent to-transparent pointer-events-none" />
         
         <div className="flex items-center gap-2.5 relative z-10">
-          <div className="w-9 h-9 rounded-xl bg-[var(--saffron-600)] flex items-center justify-center shadow-md shadow-[var(--saffron-600)]/20">
+          <div className="w-9 h-9 rounded-xl bg-[var(--saffron-600)] flex items-center justify-center shadow-md">
             <BookOpen className="w-[18px] h-[18px] text-[var(--text-inverse)]" />
           </div>
           <div>
@@ -151,7 +151,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
         <Tooltip content="Sign out of the system" side="right">
           <button
             onClick={handleLogout}
-            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/10 active:scale-[0.98] transition-ui border border-[var(--border-default)] hover:border-[var(--ruby-500)]/20 shadow-sm"
+            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] active:scale-[0.98] transition-ui border border-[var(--border-default)] hover:border-[var(--ruby-200)] shadow-sm"
           >
             <LogOut className="w-4 h-4" />
             Logout

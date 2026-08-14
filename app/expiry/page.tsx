@@ -158,9 +158,9 @@ export default function ExpiryPage() {
             className={cn(
               'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-mono font-bold shrink-0 shadow-sm border',
               isExpired
-                ? 'bg-[var(--ruby-500)]/15 text-[var(--ruby-600)] border-[var(--ruby-500)]/30/50'
+                ? 'bg-[var(--ruby-50)] text-[var(--ruby-600)] border-[var(--ruby-200)]/50'
                 : dLeft <= 7
-                ? 'bg-[var(--saffron-500)]/10 text-[var(--saffron-600)] border-[var(--saffron-500)]/50'
+                ? 'bg-[var(--saffron-50)] text-[var(--saffron-600)] border-[var(--saffron-200)]'
                 : 'bg-[var(--bg-surface)] text-[var(--text-primary)] border-[var(--border-default)]'
             )}
           >

@@ -322,6 +322,89 @@ The screenshot script now refuses to run if the server reports fewer than 10 occ
 
 ---
 
+## 7d. Fourth pass — the logic behind the fixes
+
+Going back over the code I had written rather than the code I had inherited. Three of these were bugs I introduced in this pass.
+
+### The row letters disagreed between the two views
+
+`SeatList` was written with a comment claiming it groups seats "by the same A–D runs the plan labels, so *row C, seat 58* means the same thing in both views." It did not. The list hardcoded seat-number ranges; the plan drew its labels from grid columns, and the two never matched:
+
+| Run | The plan | The list I wrote |
+|---|---|---|
+| Row A | seats 1–32 | 1–22 |
+| Row B | 33–52 | 23–42 |
+| Row C | 53–82 | 43–70 |
+| Row D | 83–95 | 71–95 |
+
+A third of the library had a different row name depending on which view you were looking at — on the one page whose job is helping someone find a physical seat in a physical room.
+
+The bands now live once, in `SEAT_ROWS` in `lib/layoutConfig.ts`, as grid-column ranges — which is what the room is actually divided by. Both the plan's labels and the list's groups derive from it, and three self-checks hold it in place: every seat lands in exactly one band, every seat's band matches its column, and the bands tile the room 1→14 with no gap or overlap.
+
+### Filtering a floor plan by deleting from it
+
+Both maps implemented the shift filter by removing non-matching members from the array. On an absolutely-positioned floor plan that punches holes in the drawing: switch to Morning and a third of the room simply vanishes, including the desks' spatial relationships that are the only reason to draw a plan instead of listing seats.
+
+It now dims. The room stays whole, the filtered seats are still legible as context, and the question the filter actually asks — *where* are the morning seats — becomes answerable. Dimmed tiles drop out of the tab order and lose their `data-seat`, so keyboard navigation skips them rather than landing on something inert.
+
+The list keeps filtering by removal, which is right: a list is not a spatial reference.
+
+### A memo comparator that silently swallowed the new prop
+
+The dim did nothing on its first outing. `SeatTile` is wrapped in `memo` with a hand-written comparator — reasonable, since 95 of them re-render on every map change — but the comparator enumerates the props it cares about, and `dimmed` was not among them. React skipped the render entirely, so a correct prop reaching a correct component produced no effect at all.
+
+Added to the comparator, along with `face`, which had the same latent problem. The comparator now carries a warning about exactly this hazard.
+
+### An inline style beating the class
+
+With the comparator fixed, the dim still did not show: the tiles sit inside a framer-motion tree that writes `opacity: 1` inline on mount, and an inline style beats a utility class. `saturate-50` worked, because motion was not animating `filter`.
+
+Rather than fight over `opacity`, the `.seat-dimmed` utility dims through `filter` — a property nothing else is animating — with a comment recording why, so it does not get "simplified" back into `opacity-25` later.
+
+### And an O(n²) scan
+
+`isDimmed={(m) => !filtered.includes(m)}` is a linear scan per seat: 95 tiles × 95 members on every render. Replaced with a `Set` of seat numbers.
+
+---
+
+## 7e. Fifth pass — the interactive states
+
+Every pass so far reviewed pages as they load. None had opened anything. The seat detail panel — the thing that appears every time an admin clicks a seat, which is the app's most-used interaction — had never been looked at.
+
+### Five actions, five unrelated colours
+
+The panel's action stack was lavender (Edit details), blue (Renew), peach (Mark due), WhatsApp green, and red (Remove member). Nothing read as primary, and the one irreversible action had no more weight than changing a phone number. Two of the tints were ~10% alphas, which measure far below the 3:1 a control boundary needs.
+
+Rebuilt as one hierarchy: **Renew** — the job the panel exists for — is the only filled button; everything else is a quiet outline; **Remove member** sits below a rule because it is the one that cannot be undone. The renewal form and its confirm button carried the same off-palette blue and now match.
+
+### A blank circle in the panel header
+
+The seat number badge used `bg-gradient-to-br from-sapphire-500 to-sapphire-600`. Those are not classes in this project — the palette lives in CSS variables — so Tailwind generated nothing and the badge rendered as an empty grey square. It shows the seat number now.
+
+### Chips clipped once the panel opened
+
+My own mobile fix from §4 wrapped the stat chips only below `sm`; on desktop the row still scrolled with the scrollbar hidden. That was fine at full width, but the panel insets the content by 380px, and six chips no longer fit — so "Expired" was cut off with nothing to indicate it. The row wraps at every width now.
+
+### Also
+
+Five identical blue icons ran down the detail list — Status, Phone, Joined, Duration, Expires — where the label beside each already says what it is. Now tertiary marks, like every other supporting icon.
+
+**Checked and left alone:** the confirmation dialog. *"Free seat 23? Ritika Nagda's membership expired on 18 Jul 2026 (27 days ago). Freeing the seat clears their details and makes it available to request. This cannot be undone."* Specific title, real consequence, correctly weighted actions. It needed nothing.
+
+### Guarding a mistake I kept making
+
+Three times in this work a bulk find-and-replace across a class string truncated an arbitrary value and left something that looks like text but is not a class Tailwind will ever generate:
+
+```
+text-[var(--saffron-700)go-600)]     text-[var(--text-inversen-50)]     bg-[var(--saffhire-500)]
+```
+
+Nothing errors. The style simply never applies — invisible in a diff, easy to miss on screen. The token checker caught two of the three, but only because the mangled name happened to be undefined.
+
+`check:tokens` now also checks the *shape*: any bracketed arbitrary value whose parentheses do not balance fails the build. Verified by reintroducing the bug deliberately and watching it fail.
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.

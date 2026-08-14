@@ -183,8 +183,8 @@ export default function RequestsPage() {
                       className={cn(
                         'w-10 h-10 rounded-[var(--radius-xl)] flex items-center justify-center text-[0.8rem] font-mono font-black',
                         req.status === 'pending' && 'bg-[var(--sapphire-50)] text-[var(--sapphire-600)]',
-                        req.status === 'approved' && 'bg-[var(--emerald-500)]/10 text-[var(--emerald-600)]',
-                        req.status === 'rejected' && 'bg-[var(--ruby-500)]/10 text-[var(--ruby-600)]',
+                        req.status === 'approved' && 'bg-[var(--emerald-50)] text-[var(--emerald-600)]',
+                        req.status === 'rejected' && 'bg-[var(--ruby-50)] text-[var(--ruby-600)]',
                       )}
                     >
                       {req.seat}
@@ -226,7 +226,7 @@ export default function RequestsPage() {
                 <div className="mb-3 px-3 py-2 rounded-[var(--radius-lg)] bg-[var(--bg-muted)] border border-[var(--border-subtle)] flex items-center gap-2">
                   {req.paymentMode === 'cash' ? (
                     <>
-                      <div className="w-7 h-7 rounded-lg bg-[var(--emerald-500)]/15 flex items-center justify-center flex-shrink-0">
+                      <div className="w-7 h-7 rounded-lg bg-[var(--emerald-50)] flex items-center justify-center flex-shrink-0">
                         <Banknote className="w-3.5 h-3.5 text-[var(--emerald-600)]" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -236,7 +236,7 @@ export default function RequestsPage() {
                     </>
                   ) : (
                     <>
-                      <div className="w-7 h-7 rounded-lg bg-[var(--saffron-500)]/15 flex items-center justify-center flex-shrink-0">
+                      <div className="w-7 h-7 rounded-lg bg-[var(--saffron-50)] flex items-center justify-center flex-shrink-0">
                         <Smartphone className="w-3.5 h-3.5 text-[var(--saffron-600)]" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -318,7 +318,7 @@ export default function RequestsPage() {
                   {req.status !== 'pending' && (
                     <Button
                       variant="ghost"
-                      className="px-3 py-2 h-auto text-[0.64rem] text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/10 ml-auto"
+                      className="px-3 py-2 h-auto text-[0.64rem] text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] ml-auto"
                       onClick={() => handleDelete(req.id)}
                     >
                       <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete

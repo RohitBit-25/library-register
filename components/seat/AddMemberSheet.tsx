@@ -64,7 +64,7 @@ export default function AddMemberSheet({
     <div className="h-full flex flex-col bg-transparent text-[var(--text-primary)] min-h-0">
       <div className="flex items-center justify-between p-5 border-b border-[var(--border-subtle)] bg-[var(--bg-base)]/50 backdrop-blur-md sticky top-0 z-10 shrink-0">
         <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
-          <span className="w-8 h-8 bg-[var(--sapphire-600)] rounded-lg flex items-center justify-center text-[var(--saffron-50)] shadow-sm">
+          <span className="w-8 h-8 bg-[var(--saffron-700)] rounded-lg flex items-center justify-center text-[var(--saffron-50)] shadow-sm">
             <UserPlus className="w-4 h-4" />
           </span>
           {seat ? `Assign Seat ${String(seat).padStart(2, '0')}` : 'Registration'}

@@ -197,7 +197,7 @@ export default function MemberTable({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-[var(--sapphire-500)]/10 border border-[var(--sapphire-500)]/20 p-3 shadow-sm"
+            className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-[var(--saffron-50)] border border-[var(--sapphire-200)] p-3 shadow-sm"
           >
             <span className="text-sm font-bold text-[var(--sapphire-600)] drop-shadow-sm px-2">
               {selected.size} selected
@@ -205,7 +205,7 @@ export default function MemberTable({
             <Tooltip content="Mark selected members as paid">
               <button
                 onClick={() => { onBulkMarkPaid(Array.from(selected)); setSelected(new Set()); }}
-                className="cursor-pointer rounded-lg bg-green-500 px-3.5 py-2 text-xs font-bold text-[var(--saffron-50)] hover:bg-green-600 transition-colors shadow-sm"
+                className="cursor-pointer rounded-lg bg-[var(--emerald-600)] px-3.5 py-2 text-xs font-bold text-[var(--text-inverse)] transition-ui hover:bg-[var(--emerald-700)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald-600)] focus-visible:ring-offset-2 shadow-srs shadow-sm"
               >
                 Mark Paid
               </button>
@@ -213,7 +213,7 @@ export default function MemberTable({
             <Tooltip content="Remove selected members from system">
               <button
                 onClick={() => setBulkRemoveConfirm(true)}
-                className="cursor-pointer rounded-lg bg-red-500 px-3.5 py-2 text-xs font-bold text-[var(--saffron-50)] hover:bg-red-600 transition-colors shadow-sm"
+                className="cursor-pointer rounded-lg bg-[var(--ruby-600)] px-3.5 py-2 text-xs font-bold text-[var(--text-inverse)] transition-ui hover:bg-[var(--ruby-700)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ruby-600)] focus-visible:ring-offset-2 shadow-sm"
               >
                 Remove
               </button>
@@ -229,7 +229,7 @@ export default function MemberTable({
             <Tooltip content="Download member data as CSV">
               <button
                 onClick={() => onBulkExport(Array.from(selected))}
-                className="cursor-pointer rounded-lg bg-[var(--emerald-500)]/15 px-3.5 py-2 text-xs font-bold text-[var(--emerald-600)] hover:opacity-80 transition-opacity"
+                className="cursor-pointer rounded-lg bg-[var(--emerald-50)] px-3.5 py-2 text-xs font-bold text-[var(--emerald-600)] hover:opacity-80 transition-opacity"
               >
                 Export CSV
               </button>
@@ -252,7 +252,7 @@ export default function MemberTable({
           placeholder="Search name, phone, seat... (Press / to focus)"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/30 focus:border-[var(--sapphire-500)]/50 transition-ui shadow-sm"
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/30 focus:border-[var(--sapphire-200)] transition-ui shadow-sm"
         />
       </div>
 
@@ -323,7 +323,7 @@ export default function MemberTable({
                     key={m.seat}
                     className={cn(
                       'border-b border-[var(--border-subtle)] transition-colors',
-                      selected.has(m.seat) && 'bg-[var(--sapphire-500)]/5',
+                      selected.has(m.seat) && 'bg-[var(--saffron-50)]',
                       !m.vacant && 'hover:bg-[var(--bg-muted)]',
                     )}
                   >
@@ -489,7 +489,7 @@ export default function MemberTable({
                 className={cn(
                   'rounded-2xl border transition-colors shadow-sm',
                   selected.has(m.seat) 
-                    ? 'border-[var(--sapphire-500)]/50 bg-[var(--sapphire-500)]/5 shadow-[var(--shadow-sm)]'
+                    ? 'border-[var(--saffron-300)] bg-[var(--saffron-50)] shadow-[var(--shadow-sm)]'
                     : 'border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-sm)] hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-md)] hover:-translate-y-[1px]',
                 )}
               >

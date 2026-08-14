@@ -159,7 +159,7 @@ export default function SeatDetailPanel({
             animate={{ opacity: 1, x: 0 }}
             className="space-y-4"
           >
-            <div className="bg-[var(--saffron-700)] rounded-xl p-4 text-[var(--saffron-50)] shadow-lg shadow-[var(--saffron-500)]/20">
+            <div className="bg-[var(--saffron-700)] rounded-xl p-4 text-[var(--saffron-50)] shadow-lg">
               <p className="text-xs font-bold uppercase tracking-wider opacity-80">Editing</p>
               <h4 className="text-lg font-black mt-1 tracking-tight">
                 Seat {member.seat} — {member.name.split(' ')[0]}
@@ -239,7 +239,7 @@ export default function SeatDetailPanel({
               </div>
 
               {editExpiry && (
-                <div className="rounded-xl bg-[var(--emerald-500)]/10 border border-[var(--emerald-500)]/20 p-4 shadow-sm text-center border-dashed">
+                <div className="rounded-xl bg-[var(--emerald-50)] border border-[var(--emerald-200)] p-4 shadow-sm text-center border-dashed">
                   <span className="text-xs font-bold text-[var(--emerald-600)] uppercase tracking-wider">Calculated Expiry</span>
                   <p className="text-lg font-black text-[var(--emerald-600)] mt-1 flex justify-center items-center gap-2">
                     <Calendar className="w-4 h-4 opacity-70" />
@@ -260,7 +260,7 @@ export default function SeatDetailPanel({
               </button>
               <button
                 type="submit"
-                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-[var(--saffron-600)] text-[var(--saffron-50)] hover:brightness-110 transition-ui cursor-pointer shadow-lg shadow-[var(--indigo-500)]/20 active:scale-95 flex items-center justify-center gap-2"
+                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-[var(--saffron-600)] text-[var(--saffron-50)] hover:brightness-110 transition-ui cursor-pointer shadow-lg active:scale-95 flex items-center justify-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 Save Changes
@@ -297,7 +297,7 @@ export default function SeatDetailPanel({
                 <div className="space-y-1 bg-[var(--bg-base)] rounded-xl p-3">
                   {readonly ? (
                     <>
-                      <InfoRow icon={<Calendar className="w-4 h-4 text-[var(--sapphire-500)]" />} label="Status" value="Occupied" />
+                      <InfoRow icon={<Calendar className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />} label="Status" value="Occupied" />
                       <div className="px-1 py-3 text-center">
                         <p className="text-xs text-[var(--text-tertiary)]">Contact the librarian to manage this seat.</p>
                       </div>
@@ -305,18 +305,18 @@ export default function SeatDetailPanel({
                   ) : (
                     <>
                       <InfoRow 
-                        icon={<Phone className="w-4 h-4 text-[var(--sapphire-500)]" />} 
+                        icon={<Phone className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />} 
                         label="Phone" 
                         value={member.phone || '—'}
                         action={member.phone ? (
-                          <button onClick={handleCopyPhone} className="text-[var(--text-tertiary)] hover:text-[var(--sapphire-500)] transition-colors cursor-pointer p-1">
+                          <button onClick={handleCopyPhone} className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer p-1">
                             {copied ? <span className="text-[10px] font-bold text-[var(--emerald-500)]">Copied!</span> : <Copy className="w-3.5 h-3.5" />}
                           </button>
                         ) : undefined}
                       />
-                      <InfoRow icon={<Calendar className="w-4 h-4 text-[var(--sapphire-500)]" />} label="Joined" value={fmtDate(member.joinDate)} />
-                      <InfoRow icon={<Clock className="w-4 h-4 text-[var(--sapphire-500)]" />} label="Duration" value={durationLabel(member.duration as Duration)} />
-                      <InfoRow icon={<Calendar className="w-4 h-4 text-[var(--sapphire-500)]" />} label="Expires" value={fmtDate(member.expiry)} />
+                      <InfoRow icon={<Calendar className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />} label="Joined" value={fmtDate(member.joinDate)} />
+                      <InfoRow icon={<Clock className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />} label="Duration" value={durationLabel(member.duration as Duration)} />
+                      <InfoRow icon={<Calendar className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />} label="Expires" value={fmtDate(member.expiry)} />
                     </>
                   )}
                 </div>
@@ -324,42 +324,58 @@ export default function SeatDetailPanel({
                 {/* Actions — admin only */}
                 {!readonly && (
                 <div className="space-y-2">
-                  {/* Edit button */}
-                  {onUpdate && (
-                    <button
-                      onClick={openEditMode}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-[var(--saffron-700)go-600)] bg-[var(--indigo-500)]/10 border border-[var(--indigo-500)]/20 hover:bg-[var(--indigo-500)]/20 transition-colors cursor-pointer"
-                    >
-                      <Pencil className="w-4 h-4" />
-                      Edit Details
-                    </button>
-                  )}
+                  {/*
+                    One hierarchy, not five colours.
+
+                    These five actions used to be lavender (Edit), blue
+                    (Renew), peach (Mark due), WhatsApp green, and red
+                    (Remove) — every one a different hue, so nothing read as
+                    primary and the destructive action had no more weight
+                    than changing a phone number. Two of the tints were also
+                    ~10% alphas, which measure far below the 3:1 a control
+                    boundary needs.
+
+                    Renew is the job this panel exists for, so it is the only
+                    filled button. Everything else is a quiet outline, and
+                    Remove is separated below a rule because it is the one
+                    that cannot be undone.
+                  */}
+                  <ActionBtn
+                    onClick={() => { renewReset({ renewDate: renewalStartDate(member.expiry), renewDuration: '3M' }); setRenewMode(true); }}
+                    icon={<RefreshCw className="h-4 w-4" />}
+                    className="w-full border-transparent bg-[var(--saffron-700)] text-[var(--text-inverse)] shadow-sm hover:bg-[var(--saffron-800)]"
+                  >
+                    Renew membership
+                  </ActionBtn>
 
                   <div className="grid grid-cols-2 gap-2">
                     {member.fee === 'due' ? (
-                      <ActionBtn 
-                        onClick={() => { onMarkPaid(member.seat); onClose(); }} 
-                        icon={<CreditCard className="w-4 h-4" />}
-                        className="bg-[var(--emerald-600)] text-[var(--saffron-50)] shadow-sm hover:shadow-md hover:bg-[var(--emerald-500)] border-transparent"
+                      <ActionBtn
+                        onClick={() => { onMarkPaid(member.seat); onClose(); }}
+                        icon={<CreditCard className="h-4 w-4" />}
+                        className="border border-[var(--emerald-200)] bg-[var(--emerald-50)] text-[var(--emerald-700)] hover:bg-[var(--emerald-100)]"
                       >
-                        Mark Paid
+                        Mark paid
                       </ActionBtn>
                     ) : (
-                      <ActionBtn 
-                        onClick={() => { onMarkDue(member.seat); onClose(); }} 
-                        icon={<CreditCard className="w-4 h-4" />}
-                        className="bg-[var(--saffron-500)]/10 text-[var(--saffron-600)] border border-[var(--saffron-500)]/30 hover:bg-[var(--saffron-500)]/15"
+                      <ActionBtn
+                        onClick={() => { onMarkDue(member.seat); onClose(); }}
+                        icon={<CreditCard className="h-4 w-4" />}
+                        className="border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]"
                       >
-                        Mark Due
+                        Mark due
                       </ActionBtn>
                     )}
-                    <ActionBtn 
-                      onClick={() => { renewReset({ renewDate: renewalStartDate(member.expiry), renewDuration: '3M' }); setRenewMode(true); }}
-                      icon={<RefreshCw className="w-4 h-4" />}
-                      className="bg-[var(--sapphire-600)] text-[var(--saffron-50)] shadow-sm hover:shadow-md hover:bg-[var(--sapphire-500)] border-transparent"
-                    >
-                      Renew
-                    </ActionBtn>
+
+                    {onUpdate && (
+                      <button
+                        onClick={openEditMode}
+                        className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] py-2.5 text-sm font-bold text-[var(--text-secondary)] transition-ui hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]"
+                      >
+                        <Pencil className="h-4 w-4" aria-hidden="true" />
+                        Edit details
+                      </button>
+                    )}
                   </div>
 
                   {member.phone && (
@@ -367,20 +383,22 @@ export default function SeatDetailPanel({
                       href={`https://wa.me/${member.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hi ' + member.name.split(' ')[0] + ', your library membership for Seat ' + member.seat + ' needs attention.')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-[#25D366] bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-colors cursor-pointer"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] py-2.5 text-sm font-bold text-[var(--text-secondary)] transition-ui hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]"
                     >
-                      <MessageCircle className="w-4 h-4" />
-                      WhatsApp Message
+                      <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                      Send a WhatsApp reminder
                     </a>
                   )}
 
-                  <button
-                    onClick={() => setConfirmRemove(true)}
-                    className="w-full flex items-center justify-center gap-2 text-center text-sm font-bold text-[var(--ruby-600)] py-2.5 rounded-xl border border-[var(--ruby-500)]/20 hover:bg-[var(--ruby-500)]/10 transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Remove Member
-                  </button>
+                  <div className="border-t border-[var(--border-subtle)] pt-2">
+                    <button
+                      onClick={() => setConfirmRemove(true)}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--ruby-200)] py-2.5 text-center text-sm font-bold text-[var(--ruby-600)] transition-ui hover:bg-[var(--ruby-50)]"
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      Remove member
+                    </button>
+                  </div>
                 </div>
                 )}
               </>
@@ -398,7 +416,7 @@ export default function SeatDetailPanel({
             animate={{ opacity: 1, x: 0 }}
             className="space-y-4"
           >
-            <div className="bg-[var(--sapphire-600)] rounded-xl p-4 text-[var(--saffron-50)] shadow-lg shadow-[var(--sapphire-500)]/20">
+            <div className="rounded-xl bg-[var(--saffron-700)] p-4 text-[var(--text-inverse)] shadow-sm">
               <p className="text-xs font-bold uppercase tracking-wider opacity-80">Renewal</p>
               <h4 className="text-lg font-black mt-1 tracking-tight">
                 Seat {member.seat} — {member.name.split(' ')[0]}
@@ -432,7 +450,7 @@ export default function SeatDetailPanel({
                           className={cn(
                             'flex-1 py-3 rounded-lg text-[13px] font-bold transition-ui duration-300 cursor-pointer relative overflow-hidden',
                             field.value === d
-                              ? 'bg-[var(--sapphire-600)] text-[var(--saffron-50)] shadow-md scale-100 ring-1 ring-[var(--sapphire-500)]/50 z-10'
+                              ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-sm z-10'
                               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] scale-[0.98] hover:scale-100 z-0',
                           )}
                         >
@@ -444,7 +462,7 @@ export default function SeatDetailPanel({
                 />
               </div>
 
-              <div className="rounded-xl bg-[var(--emerald-500)]/10 border border-[var(--emerald-500)]/20 p-4 shadow-sm text-center border-dashed">
+              <div className="rounded-xl bg-[var(--emerald-50)] border border-[var(--emerald-200)] p-4 shadow-sm text-center border-dashed">
                 <span className="text-xs font-bold text-[var(--emerald-600)] uppercase tracking-wider">New expiry date</span>
                 <p className="text-lg font-black text-[var(--emerald-600)] mt-1 flex justify-center items-center gap-2">
                   <Calendar className="w-4 h-4 opacity-70" />
@@ -463,7 +481,7 @@ export default function SeatDetailPanel({
               </button>
               <button
                 type="submit"
-                className="flex-[1.5] py-3.5 rounded-xl text-xs font-black uppercase tracking-widest bg-[var(--sapphire-600)] text-[var(--saffron-50)] hover:bg-[var(--sapphire-500)] transition-ui cursor-pointer shadow-lg shadow-[var(--sapphire-500)]/20 hover:shadow-xl hover:shadow-[var(--sapphire-500)]/30 active:scale-95"
+                className="flex-[1.5] rounded-xl py-3.5 text-xs font-black uppercase tracking-widest bg-[var(--saffron-700)] text-[var(--text-inverse)] hover:bg-[var(--saffron-800)] transition-ui cursor-pointer shadow-lg hover:shadow-xl hover: active:scale-95"
               >
                 Confirm Renewal
               </button>
@@ -506,7 +524,7 @@ export default function SeatDetailPanel({
     <div className="h-full flex flex-col bg-transparent text-[var(--text-primary)] min-h-0">
       <div className="flex items-center justify-between p-5 sm:px-6 border-b border-[var(--border-subtle)] bg-[var(--bg-base)]/50 backdrop-blur-md sticky top-0 z-10 shrink-0">
         <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
-          <span className="w-8 h-8 bg-gradient-to-br from-sapphire-500 to-sapphire-600 rounded-lg flex items-center justify-center text-[var(--saffron-50)] text-xs font-black shadow-sm">
+          <span className="tabular flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--saffron-700)] text-xs font-black text-[var(--text-inverse)] shadow-sm">
             {String(member.seat).padStart(2, '0')}
           </span>
           Seat Details

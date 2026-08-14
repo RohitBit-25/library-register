@@ -60,7 +60,7 @@ export default function KioskPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center p-4 selection:bg-[var(--saffron-500)]/30">
+    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center p-4 selection:bg-[var(--saffron-50)]">
       
       {/* Background Decor */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -120,7 +120,7 @@ export default function KioskPage() {
                 ))}
                 <button
                   onClick={handleDelete}
-                  className="aspect-square rounded-2xl bg-[var(--ruby-500)]/10 border border-[var(--ruby-500)]/30 text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/20 transition-ui flex items-center justify-center font-bold uppercase text-[11px] tracking-wider hover:-translate-y-1 active:scale-95 shadow-sm cursor-pointer"
+                  className="aspect-square rounded-2xl bg-[var(--ruby-50)] border border-[var(--ruby-200)] text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] transition-ui flex items-center justify-center font-bold uppercase text-[11px] tracking-wider hover:-translate-y-1 active:scale-95 shadow-sm cursor-pointer"
                 >
                   Clear
                 </button>
@@ -180,7 +180,7 @@ export default function KioskPage() {
                 <button
                   onClick={() => handleCheckAction('in')}
                   disabled={isPresent(todayStr, activeMember.seat)}
-                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--emerald-500)]/10 border-2 border-[var(--emerald-500)]/30 text-[var(--emerald-600)] hover:bg-[var(--emerald-500)]/20 hover:-translate-y-1 transition-ui disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
+                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--emerald-50)] border-2 border-[var(--emerald-200)] text-[var(--emerald-600)] hover:bg-[var(--emerald-50)] hover:-translate-y-1 transition-ui disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
                 >
                   <LogIn className="w-8 h-8 mb-2" />
                   <span className="font-extrabold uppercase tracking-widest text-[11px]">Check In</span>

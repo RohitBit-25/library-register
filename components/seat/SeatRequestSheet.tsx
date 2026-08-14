@@ -183,7 +183,7 @@ export default function SeatRequestSheet({
 
   // Shared input classes
   const inputCls =
-    'w-full px-4 py-3 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 focus:border-[var(--saffron-500)]/50 transition-ui duration-200';
+    'w-full px-4 py-3 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 focus:border-[var(--saffron-200)] transition-ui duration-200';
 
   return (
     <AnimatePresence>
@@ -215,7 +215,7 @@ export default function SeatRequestSheet({
               {!member.vacant ? (
                 /* ── Occupied State ──────────────────── */
                 <div className="p-6 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-[var(--ruby-500)]/10 flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 rounded-2xl bg-[var(--ruby-50)] flex items-center justify-center mx-auto mb-4">
                     <Armchair className="w-8 h-8 text-[var(--ruby-600)]" />
                   </div>
                   <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">
@@ -245,7 +245,7 @@ export default function SeatRequestSheet({
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 15, delay: 0.1 }}
-                    className="w-20 h-20 rounded-full bg-[var(--emerald-500)]/15 flex items-center justify-center mx-auto mb-5"
+                    className="w-20 h-20 rounded-full bg-[var(--emerald-50)] flex items-center justify-center mx-auto mb-5"
                   >
                     <CheckCircle2 className="w-10 h-10 text-[var(--emerald-600)]" />
                   </motion.div>
@@ -266,7 +266,7 @@ export default function SeatRequestSheet({
                     
                     <div className="relative flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--saffron-500)] to-[var(--saffron-600,var(--saffron-500))] flex items-center justify-center shadow-lg shadow-[var(--saffron-500)]/20">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--saffron-500)] to-[var(--saffron-600,var(--saffron-500))] flex items-center justify-center shadow-lg">
                           <span className="text-lg font-black text-[#1a1a16] font-mono">
                             {String(member.seat).padStart(2, '0')}
                           </span>
@@ -306,7 +306,7 @@ export default function SeatRequestSheet({
                           className={cn(
                             'cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-ui duration-300',
                             paymentMode === 'cash'
-                              ? 'bg-[var(--emerald-500)] text-[#1a1a16] shadow-lg shadow-[var(--emerald-500)]/25'
+                              ? 'bg-[var(--emerald-500)] text-[#1a1a16] shadow-lg'
                               : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]',
                           )}
                         >
@@ -321,7 +321,7 @@ export default function SeatRequestSheet({
                           className={cn(
                             'cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-ui duration-300',
                             paymentMode === 'upi'
-                              ? 'bg-[var(--sapphire-500)] text-white shadow-lg shadow-[var(--sapphire-500)]/25'
+                              ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-sm'
                               : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]',
                           )}
                         >
@@ -333,8 +333,8 @@ export default function SeatRequestSheet({
 
                     {/* ─── Info Banner ──────────────────────── */}
                     {paymentMode === 'cash' ? (
-                      <div className="p-4 rounded-xl border bg-[var(--emerald-500)]/5 border-[var(--emerald-500)]/20 flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-[var(--emerald-500)]/15 flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="p-4 rounded-xl border bg-[var(--emerald-50)] border-[var(--emerald-200)] flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-[var(--emerald-50)] flex items-center justify-center shrink-0 mt-0.5">
                           <Banknote className="w-4 h-4 text-[var(--emerald-600)]" />
                         </div>
                         <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
@@ -342,13 +342,13 @@ export default function SeatRequestSheet({
                         </p>
                       </div>
                     ) : (
-                      <div className="rounded-xl border border-[var(--sapphire-500)]/20 bg-gradient-to-b from-[var(--sapphire-500)]/8 to-transparent overflow-hidden">
+                      <div className="rounded-xl border border-[var(--sapphire-200)] bg-gradient-to-b from-[var(--sapphire-500)]/8 to-transparent overflow-hidden">
                         <div className="flex flex-col items-center py-5 px-4">
                           <p className="text-[10px] font-black text-[var(--sapphire-600)] mb-3 uppercase tracking-[0.2em] flex items-center gap-2">
                             <Smartphone className="w-3.5 h-3.5" />
                             Scan & Pay via UPI
                           </p>
-                          <div className="p-2.5 bg-white rounded-xl shadow-lg shadow-[var(--sapphire-500)]/10 ring-4 ring-white/5 mb-3">
+                          <div className="p-2.5 bg-white rounded-xl shadow-lg ring-4 ring-white/5 mb-3">
                             <QRCodeSVG
                               value="upi://pay?pa=gangaur.972327@sbi&pn=Gangaur%20Library&cu=INR"
                               size={110}
@@ -470,7 +470,7 @@ export default function SeatRequestSheet({
                             className={cn(
                               'cursor-pointer rounded-xl border px-2 py-2.5 text-xs font-bold transition-colors',
                               shift === option.value
-                                ? 'border-[var(--sapphire-500)] bg-[var(--sapphire-500)] text-white'
+                                ? 'border-[var(--saffron-600)] bg-[var(--saffron-600)] text-[var(--text-inverse)]'
                                 : 'border-[var(--border-default)] bg-[var(--bg-base)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                             )}
                           >
@@ -522,14 +522,14 @@ export default function SeatRequestSheet({
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
-                          className="cursor-pointer w-full py-5 rounded-xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--bg-base)] text-[var(--text-tertiary)] hover:border-[var(--saffron-500)]/40 hover:bg-[var(--saffron-500)]/5 transition-ui duration-200 flex flex-col items-center gap-2.5"
+                          className="cursor-pointer w-full py-5 rounded-xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--bg-base)] text-[var(--text-tertiary)] hover:border-[var(--saffron-200)] hover:bg-[var(--saffron-50)] transition-ui duration-200 flex flex-col items-center gap-2.5"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-xl bg-[var(--saffron-500)]/10 flex items-center justify-center">
+                            <div className="w-9 h-9 rounded-xl bg-[var(--saffron-50)] flex items-center justify-center">
                               <Camera className="w-4 h-4 text-[var(--saffron-600)]" />
                             </div>
-                            <div className="w-9 h-9 rounded-xl bg-[var(--sapphire-500)]/10 flex items-center justify-center">
-                              <Upload className="w-4 h-4 text-[var(--sapphire-600)]" />
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--bg-muted)]">
+                              <Upload className="h-4 w-4 text-[var(--text-secondary)]" aria-hidden="true" />
                             </div>
                           </div>
                           <span className="text-xs font-medium">
@@ -540,8 +540,8 @@ export default function SeatRequestSheet({
                           </span>
                         </button>
                       ) : (
-                        <div className="rounded-xl border border-[var(--emerald-500)]/30 bg-[var(--emerald-500)]/5 p-3 flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-[var(--emerald-500)]/15 flex items-center justify-center shrink-0">
+                        <div className="rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] p-3 flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-[var(--emerald-50)] flex items-center justify-center shrink-0">
                             {documentUrl.startsWith('data:image') ? (
                               <ImageIcon className="w-5 h-5 text-[var(--emerald-600)]" />
                             ) : (
@@ -558,7 +558,7 @@ export default function SeatRequestSheet({
                             type="button"
                             onClick={removeDocument}
                             aria-label="Remove uploaded document"
-                            className="cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/10 transition-ui"
+                            className="cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] transition-ui"
                           >
                             <Trash2 className="w-4 h-4" aria-hidden="true" />
                           </button>
@@ -586,7 +586,7 @@ export default function SeatRequestSheet({
                       <motion.div
                         initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-3 rounded-xl bg-[var(--ruby-500)]/10 border border-[var(--ruby-500)]/20 text-[var(--ruby-600)] text-sm text-center font-medium"
+                        className="p-3 rounded-xl bg-[var(--ruby-50)] border border-[var(--ruby-200)] text-[var(--ruby-600)] text-sm text-center font-medium"
                       >
                         {errorMsg}
                       </motion.div>
@@ -601,7 +601,7 @@ export default function SeatRequestSheet({
                       className={cn(
                         'cursor-pointer w-full py-3.5 rounded-2xl text-sm font-bold transition-ui duration-300 flex items-center justify-center gap-2.5 shadow-lg',
                         isValid && !loading
-                          ? 'bg-gradient-to-r from-[var(--saffron-500)] to-[var(--saffron-600,var(--saffron-500))] text-[#1a1a16] hover:shadow-[var(--saffron-500)]/30 hover:shadow-xl active:scale-[0.98]'
+                          ? 'bg-gradient-to-r from-[var(--saffron-500)] to-[var(--saffron-600,var(--saffron-500))] text-[#1a1a16] hover: hover:shadow-xl active:scale-[0.98]'
                           : 'bg-[var(--bg-muted)] text-[var(--text-tertiary)] cursor-not-allowed shadow-none',
                       )}
                     >

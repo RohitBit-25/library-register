@@ -170,7 +170,7 @@ export default function SeatGridContent() {
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex flex-wrap items-center gap-2 sm:gap-3 sm:flex-nowrap sm:overflow-x-auto sm:pb-2 sm:no-scrollbar"
+            className="flex flex-wrap items-center gap-2 sm:gap-3"
           >
             <StatChip 
               label="Total Seats" 

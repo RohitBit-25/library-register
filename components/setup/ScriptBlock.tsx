@@ -130,9 +130,9 @@ export default function ScriptBlock() {
       <div className="flex items-center justify-between px-4 py-3 border-b border-[#2a2b3d] bg-[#13141f]">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors" />
-            <div className="w-3 h-3 rounded-full bg-amber-500/80 hover:bg-amber-500 transition-colors" />
-            <div className="w-3 h-3 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors" />
+            <div className="h-3 w-3 rounded-full bg-[var(--ruby-500)]" />
+            <div className="h-3 w-3 rounded-full bg-[var(--marigold-500)]" />
+            <div className="h-3 w-3 rounded-full bg-[var(--emerald-500)]" />
           </div>
           <span className="ml-3 text-xs font-mono text-[var(--text-tertiary)] flex items-center gap-1.5">
             <Shield className="w-3 h-3" />

@@ -73,7 +73,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "relative flex items-center bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-sm transition-ui hover:border-[var(--sapphire-500)]/50 group h-[46px] px-4 w-full text-left cursor-pointer",
+          "relative flex items-center bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-sm transition-ui hover:border-[var(--sapphire-200)] group h-[46px] px-4 w-full text-left cursor-pointer",
           className
         )}
       >
@@ -134,7 +134,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
               <div className="max-h-[60vh] overflow-y-auto">
                 {query.trim() === '' ? (
                   <div className="p-8 pb-10 text-center flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full bg-[var(--sapphire-500)]/10 flex items-center justify-center text-[var(--sapphire-600)] mb-4">
+                    <div className="w-12 h-12 rounded-full bg-[var(--sapphire-50)] flex items-center justify-center text-[var(--sapphire-600)] mb-4">
                       <Command className="w-6 h-6" />
                     </div>
                     <p className="text-sm font-medium text-[var(--text-primary)]">Tip: Navigate faster</p>
@@ -158,7 +158,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
                           className="w-full text-left px-4 py-3 hover:bg-[var(--bg-base)] rounded-xl transition-ui flex items-center justify-between group cursor-pointer"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-[var(--sapphire-500)]/10 flex items-center justify-center text-[var(--sapphire-600)] font-mono font-bold border border-[var(--sapphire-500)]/20 shadow-[var(--shadow-sm)] opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-ui">
+                            <div className="w-10 h-10 rounded-xl bg-[var(--sapphire-50)] flex items-center justify-center text-[var(--sapphire-600)] font-mono font-bold border border-[var(--sapphire-200)] shadow-[var(--shadow-sm)] opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-ui">
                               {String(member.seat).padStart(2, '0')}
                             </div>
                             <div>

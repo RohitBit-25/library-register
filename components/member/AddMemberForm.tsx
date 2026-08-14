@@ -125,7 +125,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-wide">
             Seat Allotment
           </h3>
-          <span className="flex items-center gap-1.5 rounded-lg bg-[var(--sapphire-500)]/10 px-3 py-1.5 text-xs font-bold text-[var(--sapphire-600)] hover:bg-[var(--sapphire-500)]/20 transition-colors">
+          <span className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-muted)] px-3 py-1.5 text-xs font-bold text-[var(--text-secondary)]">
             <Zap className="w-3.5 h-3.5" />
             {vacantSeats.length} Available
           </span>
@@ -134,7 +134,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <FieldGroup label="Seat Number" required error={errors.seat?.message}>
           <select
             {...register('seat', { valueAsNumber: true })}
-            className="w-full cursor-pointer rounded-xl border border-[var(--border-default)] px-4 py-3.5 text-sm font-mono font-bold bg-[var(--bg-surface)]/50 text-[var(--text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--saffron-500)]/10 focus:border-[var(--saffron-500)]/50 backdrop-blur-md transition-ui duration-300"
+            className="w-full cursor-pointer rounded-xl border border-[var(--border-default)] px-4 py-3.5 text-sm font-mono font-bold bg-[var(--bg-surface)]/50 text-[var(--text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--saffron-500)]/10 focus:border-[var(--saffron-200)] backdrop-blur-md transition-ui duration-300"
           >
             {vacantSeats.length === 0 ? (
               <option value="-1">No seats available</option>
@@ -277,7 +277,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-4">
         <h3 className="text-[13px] font-black text-[var(--ruby-600)] uppercase tracking-wide border-b border-[var(--border-default)] pb-4 mb-5 flex items-center gap-2">
           Declaration & Terms and Condition 
-          <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block animate-pulse"></span>
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--ruby-500)]" />
         </h3>
         
         <label className="flex items-start gap-4 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-[var(--bg-base)] transition-colors">
@@ -328,7 +328,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <button
           type="submit"
           disabled={vacantSeats.length === 0 || !isValid}
-          className="flex-1 rounded-xl bg-[var(--saffron-500)] py-4 text-[13px] font-black tracking-widest uppercase text-[#1a1a16] hover:brightness-110 transition-ui duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[var(--saffron-500)]/20 hover:shadow-xl hover:shadow-[var(--saffron-500)]/30 active:scale-[0.98]"
+          className="flex-1 rounded-xl bg-[var(--saffron-500)] py-4 text-[13px] font-black tracking-widest uppercase text-[#1a1a16] hover:brightness-110 transition-ui duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover: active:scale-[0.98]"
         >
           Submit Form
         </button>
@@ -367,7 +367,7 @@ function FieldGroup({
       {children}
       {error && (
         <p className="mt-2 ml-1 text-[11px] font-bold text-[var(--ruby-600)] flex items-center gap-1.5 tracking-wide">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block shadow-sm"></span>
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--ruby-500)]" />
           {error}
         </p>
       )}

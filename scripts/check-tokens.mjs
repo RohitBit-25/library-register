@@ -8,7 +8,7 @@
  * so it fails silently — nothing in the build complains.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, dirname, extname } from 'node:path';
+import { join, dirname, extname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -93,4 +93,37 @@ if (missing.length) {
   process.exit(1);
 }
 
-console.log(`All ${used.size} referenced CSS tokens are defined.`);
+// ─── Structurally broken arbitrary values ────────────────────────
+//
+// A bulk find-and-replace across class strings can truncate an arbitrary
+// value and leave something that is still valid-looking text but is not a
+// class Tailwind will ever generate — `text-[var(--saffron-700)go-600)]`,
+// `bg-[var(--saffhire-500)]`, `text-[var(--text-inversen-50)]`. Nothing
+// errors; the style simply never applies, which is invisible in a diff and
+// easy to miss on screen.
+//
+// The token check above catches these only when the mangled name is also
+// undefined. This catches the shape: a bracketed value whose parentheses do
+// not balance, or which contains a stray `)` after the closing one.
+const broken = [];
+for (const file of SOURCE_DIRS.flatMap((d) => walk(join(root, d)))) {
+  if (extname(file) === '.css') continue;
+  const text = readFileSync(file, 'utf8');
+  for (const m of text.matchAll(/(?:^|[\s"'`])((?:[a-z-]+:)*[a-z-]+-\[)([^\]\s]*)\]/g)) {
+    const value = m[2];
+    const opens = (value.match(/\(/g) || []).length;
+    const closes = (value.match(/\)/g) || []).length;
+    if (opens !== closes) {
+      broken.push([`${m[1]}${value}]`, relative(root, file)]);
+    }
+  }
+}
+
+if (broken.length) {
+  console.error(`\n${broken.length} malformed arbitrary value(s) — these never compile to a style:\n`);
+  for (const [cls, file] of broken) console.error(`  ${cls}  (${file})`);
+  console.error('\nUsually the result of a truncated find-and-replace across a class string.\n');
+  process.exit(1);
+}
+
+console.log(`All ${used.size} referenced CSS tokens are defined; no malformed arbitrary values.`);

@@ -278,7 +278,7 @@ export default function AttendancePage() {
             {/* Heatmap Section */}
             <Card variant="base" className="p-[var(--space-6)] sm:p-[var(--space-8)]">
               <div className="flex items-center gap-[var(--space-3)] mb-[var(--space-6)]">
-                <div className="w-10 h-10 rounded-xl bg-[var(--sapphire-500)]/10 flex items-center justify-center border border-[var(--sapphire-500)]/20 shadow-[var(--shadow-sm)]">
+                <div className="w-10 h-10 rounded-xl bg-[var(--sapphire-50)] flex items-center justify-center border border-[var(--sapphire-200)] shadow-[var(--shadow-sm)]">
                   <CalendarDays className="w-5 h-5 text-[var(--text-tertiary)]" aria-hidden="true" />
                 </div>
                 <div>
@@ -290,8 +290,8 @@ export default function AttendancePage() {
               <div className="grid grid-cols-7 sm:grid-cols-10 gap-2.5">
                 {thirtyDayData.map((d, i) => {
                   let colorClass = "bg-[var(--bg-muted)] border-[1.5px] border-[var(--border-subtle)] text-[var(--text-tertiary)]";
-                  if (d.rate > 0) colorClass = "bg-[var(--emerald-500)]/10 border-[var(--emerald-500)]/30 text-[var(--text-primary)]";
-                  if (d.rate >= 40) colorClass = "bg-[var(--emerald-500)]/30 border-[var(--emerald-500)]/50 text-[var(--text-primary)]";
+                  if (d.rate > 0) colorClass = "bg-[var(--emerald-50)] border-[var(--emerald-200)] text-[var(--text-primary)]";
+                  if (d.rate >= 40) colorClass = "bg-[var(--emerald-50)] border-[var(--emerald-200)] text-[var(--text-primary)]";
                   if (d.rate >= 80) colorClass = "bg-[var(--emerald-500)] border-[var(--emerald-500)] text-[var(--saffron-50)] shadow-[var(--shadow-sm)] drop-shadow-sm font-semibold";
 
                   const isToday = i === thirtyDayData.length - 1;

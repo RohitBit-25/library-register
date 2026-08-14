@@ -125,15 +125,15 @@ export default function MyRequestsPage() {
             {/* Summary chips */}
             {displayResults.length > 0 && (
               <div className="flex flex-wrap items-center gap-2 mb-4">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--saffron-500)]/10 text-[var(--saffron-600)] border-[var(--saffron-500)]/20">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--saffron-50)] text-[var(--saffron-600)] border-[var(--saffron-200)]">
                   <Clock className="w-3 h-3" />
                   {pendingCount} Pending
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--emerald-500)]/10 text-[var(--emerald-600)] border-[var(--emerald-500)]/20">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--emerald-50)] text-[var(--emerald-600)] border-[var(--emerald-200)]">
                   <CheckCircle className="w-3 h-3" />
                   {approvedCount} Approved
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--ruby-500)]/10 text-[var(--ruby-600)] border-[var(--ruby-500)]/20">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--ruby-50)] text-[var(--ruby-600)] border-[var(--ruby-200)]">
                   <XCircle className="w-3 h-3" />
                   {rejectedCount} Rejected
                 </span>
@@ -180,9 +180,9 @@ export default function MyRequestsPage() {
                             <div
                               className={cn(
                                 'w-10 h-10 rounded-xl flex items-center justify-center text-sm font-mono font-black',
-                                req.status === 'pending' && 'bg-[var(--saffron-500)]/10 text-[var(--saffron-600)]',
-                                req.status === 'approved' && 'bg-[var(--emerald-500)]/10 text-[var(--emerald-600)]',
-                                req.status === 'rejected' && 'bg-[var(--ruby-500)]/10 text-[var(--ruby-600)]',
+                                req.status === 'pending' && 'bg-[var(--saffron-50)] text-[var(--saffron-600)]',
+                                req.status === 'approved' && 'bg-[var(--emerald-50)] text-[var(--emerald-600)]',
+                                req.status === 'rejected' && 'bg-[var(--ruby-50)] text-[var(--ruby-600)]',
                               )}
                             >
                               {String(req.seat).padStart(2, '0')}
