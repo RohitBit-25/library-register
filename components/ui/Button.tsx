@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 import { motion, HTMLMotionProps } from 'framer-motion';
+import { springQuick } from '@/lib/motion';
 
 export interface ButtonProps extends HTMLMotionProps<"button"> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'icon';
@@ -65,7 +66,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         className={cn(baseClasses, variants[variant], appliedSize, className)}
         whileTap={{ scale: 0.96 }}
-        transition={{ type: "spring", bounce: 0, mass: 0.8 }}
+        transition={springQuick}
         {...props}
       >
         {children}

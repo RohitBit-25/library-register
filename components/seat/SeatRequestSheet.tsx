@@ -245,7 +245,7 @@ export default function SeatRequestSheet({
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    transition={{ type: 'spring', bounce: 0, delay: 0.1 }}
+                    transition={{ ...springUI, delay: 0.1 }}
                     className="w-20 h-20 rounded-full bg-[var(--emerald-50)] flex items-center justify-center mx-auto mb-5"
                   >
                     <CheckCircle2 className="w-10 h-10 text-[var(--emerald-600)]" />

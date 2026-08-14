@@ -13,6 +13,7 @@ import { AttendanceLogTable } from '@/components/attendance/AttendanceLogTable';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import PageHeader from '@/components/layout/PageHeader';
+import { springUI } from '@/lib/motion';
 
 const containerVariants = {
   initial: { opacity: 0, y: 10 },
@@ -24,7 +25,7 @@ const containerVariants = {
 
 const itemVariants = {
   initial: { opacity: 0, scale: 0.95 },
-  animate: { opacity: 1, scale: 1, transition: { type: "spring" as const, bounce: 0 } }
+  animate: { opacity: 1, scale: 1, transition: springUI }
 };
 
 const emptySubscribe = () => () => {};

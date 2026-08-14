@@ -8,7 +8,7 @@ import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 
 import { type FaceDir } from './SeatMap';
 import SeatAvatar from './SeatAvatar';
-import { springUI } from '@/lib/motion';
+import { springQuick } from '@/lib/motion';
 
 interface SeatTileProps {
   member: Member;
@@ -79,8 +79,12 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
     <LazyMotion features={domAnimation}>
       <div 
         className="relative group w-full h-full"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        // A tap on a touch screen synthesises mouseenter, so this popover
+        // used to appear on tap and stay there, covering the seat the user
+        // was opening. `pointerenter` carries the pointer type, so a mouse
+        // gets the preview and a finger goes straight to the detail panel.
+        onPointerEnter={(e) => { if (e.pointerType === 'mouse') setIsHovered(true); }}
+        onPointerLeave={() => setIsHovered(false)}
       >
         <button
           onClick={() => !dimmed && onClick(member.seat)}
@@ -187,10 +191,11 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
         <AnimatePresence>
           {isHovered && !member.vacant && (
             <m.div
-              initial={{ opacity: 0, y: 15, scale: 0.95 }}
+              initial={{ opacity: 0, y: 6, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              transition={springUI}
+              exit={{ opacity: 0, y: 4, scale: 0.98 }}
+              transition={springQuick}
+              style={{ transformOrigin: 'bottom center' }}
               className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-48 p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-lg z-50 pointer-events-none"
             >
               <div className="flex flex-col gap-1.5">

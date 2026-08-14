@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Copy, Check, Info, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import { motion } from 'framer-motion';
+import { springUI } from '@/lib/motion';
 
 const APPS_SCRIPT_TEMPLATE = `// -----------------------------------------------------
 // Gangaur Library Seat Management - v2.0
@@ -123,7 +124,7 @@ export default function ScriptBlock() {
     <motion.div 
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1, type: "spring", bounce: 0 }}
+      transition={{ ...springUI, delay: 0.1 }}
       className="mt-8 bg-[#1a1b26] border border-[#2a2b3d] rounded-2xl overflow-hidden shadow-lg"
     >
       {/* Code editor header */}
