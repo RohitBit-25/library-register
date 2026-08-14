@@ -58,3 +58,43 @@ export const springThrow = (velocity = 0): Transition => ({
  * beyond that the last row is visibly waiting its turn.
  */
 export const STAGGER_SECONDS = 0.045;
+
+/**
+ * Where a flick would come to rest, if you let it decelerate.
+ *
+ * Apple's projection function from *Designing Fluid Interfaces*. A gesture
+ * should be resolved against where it was **going**, not where the finger
+ * happened to lift: releasing a sheet at 40% travel but moving fast downward
+ * means dismiss, and snapping to the nearer of the two edges from the release
+ * point alone gets that backwards.
+ *
+ * Deliberately not the textbook `v²/(2·a)` — that is a different curve and
+ * does not match the deceleration users have learned from every native
+ * scroll view.
+ *
+ * @param velocity   px per second at release
+ * @param deceleration 0.998 is the normal scroll feel; 0.99 is snappier
+ * @returns distance in px the motion would still travel
+ */
+export function projectMomentum(velocity: number, deceleration = 0.998): number {
+  return (velocity / 1000) * deceleration / (1 - deceleration);
+}
+
+/**
+ * Should a dragged sheet close?
+ *
+ * Combines position and velocity the way a physical object behaves: a slow
+ * drag past the midpoint closes, and so does a fast flick from anywhere —
+ * because the flick's projected endpoint is past the threshold even though
+ * the finger let go early.
+ *
+ * @param offset    px dragged down from the open position
+ * @param velocity  px/s at release (positive = downward)
+ * @param height    sheet height in px
+ */
+export function shouldDismissSheet(offset: number, velocity: number, height: number): boolean {
+  // An upward flick always means "keep it", whatever the offset.
+  if (velocity < -300) return false;
+  const projected = offset + projectMomentum(velocity);
+  return projected > height / 2;
+}

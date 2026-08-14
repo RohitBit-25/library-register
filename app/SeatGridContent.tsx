@@ -297,19 +297,23 @@ export default function SeatGridContent() {
               />
             )}
             
+            {/* Desktop only. On a phone the BottomSheet inside these
+                components is the whole presentation; wrapping it here made
+                two nested modals, the outer one claiming `aria-modal` while
+                managing no focus at all. */}
             <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
+              initial={isMobile ? false : { transform: 'translateX(100%)' }}
+              animate={isMobile ? {} : { transform: 'translateX(0%)' }}
+              exit={isMobile ? {} : { transform: 'translateX(100%)' }}
               transition={springUI}
               className={cn(
-                "fixed top-0 right-0 z-[100] h-screen bg-[var(--bg-surface)] border-l border-[var(--border-default)] shadow-2xl overflow-y-auto",
-                isMobile ? "w-[90vw] max-w-[400px]" : "w-[380px]"
+                isMobile
+                  ? 'contents'
+                  : "fixed top-0 right-0 z-[100] h-screen w-[380px] overflow-y-auto border-l border-[var(--border-default)] bg-[var(--bg-surface)] shadow-2xl"
               )}
-              role="dialog"
-              aria-modal="true"
+              {...(isMobile ? {} : { role: 'dialog' as const, 'aria-modal': true })}
             >
-              <div className="h-full flex flex-col pt-14 lg:pt-0">
+              <div className={isMobile ? 'contents' : 'h-full flex flex-col pt-14 lg:pt-0'}>
                 {!isAdmin ? (
                   selectedMember?.vacant ? (
                     <AddMemberSheet

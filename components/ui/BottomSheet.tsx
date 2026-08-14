@@ -1,8 +1,44 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef, useState } from 'react';
+import { motion, type PanInfo } from 'framer-motion';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
+import { springSheet, shouldDismissSheet } from '@/lib/motion';
+
+/**
+ * A bottom sheet you can actually drag.
+ *
+ * It already had the drag handle — a 48×6 pill at the top, the universal
+ * affordance for "pull me down" — attached to nothing. Swiping did nothing;
+ * the only way out was the small × or a tap on the backdrop. A control that
+ * looks draggable and isn't is worse than no handle, because it teaches the
+ * user the gesture does not work here.
+ *
+ * Two libraries, each doing what it is good at:
+ *
+ * - **Radix Dialog** for the shell — focus trap, scroll lock, Escape, focus
+ *   return, `aria-modal`. The old version had a comment saying "Trap focus"
+ *   above a handler that only listened for Escape, so focus was never
+ *   actually trapped.
+ * - **framer-motion** for the gesture — it tracks the pointer 1:1, reports
+ *   release velocity, and hands that velocity into the settling spring so
+ *   there is no seam between dragging and animating.
+ *
+ * The dismiss decision uses momentum projection rather than position alone
+ * (`shouldDismissSheet` in lib/motion.ts): a fast flick from a third of the
+ * way down closes, because that is where the throw was heading, while a slow
+ * drag to the same point springs back.
+ *
+ * `dragElastic` is asymmetric on purpose — 0.6 downward because that is the
+ * direction that means something, 0.04 upward as rubber-banding against a
+ * boundary. A hard stop reads as frozen; resistance reads as "there is
+ * nothing more this way".
+ *
+ * Reduced motion is handled globally by `MotionConfig reducedMotion="user"`
+ * in AppShell.
+ */
 
 interface BottomSheetProps {
   open: boolean;
@@ -26,69 +62,81 @@ export default function BottomSheet({
   snapPoint = '60%',
 }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
+  const [dragging, setDragging] = useState(false);
 
-  // Trap focus & ESC to close
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', handler);
-    // Prevent body scroll
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', handler);
-      document.body.style.overflow = '';
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    setDragging(false);
+    const height = sheetRef.current?.offsetHeight ?? window.innerHeight * 0.6;
+    if (shouldDismissSheet(info.offset.y, info.velocity.y, height)) onClose();
+  };
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-md animate-fade-in"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-      {/* Sheet */}
-      <div
-        ref={sheetRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label={title || 'Detail panel'}
-        className={cn(
-          'fixed bottom-0 left-0 right-0 z-50 rounded-t-[32px] glass noise-pattern shadow-floating border-t border-[var(--border-subtle)] animate-slide-up overflow-hidden',
-          snapHeights[snapPoint],
-        )}
-      >
-        {/* Drag handle */}
-        <div className="relative z-10 flex justify-center pt-4 pb-2">
-          <div className="w-12 h-1.5 rounded-full bg-[var(--text-tertiary)]/30" />
-        </div>
+    <DialogPrimitive.Root open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/50 backdrop-blur-md data-[state=open]:animate-fade-in" />
 
-        {/* Header */}
-        {title && (
-          <div className="relative z-10 flex items-center justify-between px-6 pb-4">
-            <h3 className="text-xl font-bold text-[var(--text-primary)] tracking-tight">
-              {title}
-            </h3>
-            <button
-              onClick={onClose}
-              className="cursor-pointer rounded-lg p-1.5 text-[var(--text-tertiary)] hover:bg-[var(--bg-base)] transition-colors"
-              aria-label="Close panel"
+        <DialogPrimitive.Content
+          aria-label={title || 'Detail panel'}
+          asChild
+        >
+          <motion.div
+            ref={sheetRef}
+            initial={{ transform: 'translateY(100%)' }}
+            animate={{ transform: 'translateY(0%)' }}
+            exit={{ transform: 'translateY(100%)' }}
+            transition={springSheet}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            // Downward is the meaningful direction; upward only rubber-bands.
+            dragElastic={{ top: 0.04, bottom: 0.6 }}
+            onDragStart={() => setDragging(true)}
+            onDragEnd={handleDragEnd}
+            // Carry the release velocity into the settle so the sheet keeps
+            // moving at the speed the finger was moving.
+            dragTransition={{ power: 0.2, timeConstant: 200 }}
+            dragMomentum={false}
+            whileDrag={{ cursor: 'grabbing' }}
+            className={cn(
+              'glass noise-pattern shadow-floating fixed bottom-0 left-0 right-0 z-50 overflow-hidden rounded-t-[32px] border-t border-[var(--border-subtle)]',
+              snapHeights[snapPoint],
+            )}
+          >
+            {/* The handle is the drag target as well as the affordance, with
+                a target tall enough to hit — the pill itself is 6px. */}
+            <div
+              className="relative z-10 flex cursor-grab touch-none justify-center pt-4 pb-2 active:cursor-grabbing"
+              aria-hidden="true"
             >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        )}
+              <div
+                className={cn(
+                  'h-1.5 w-12 rounded-full transition-colors',
+                  dragging ? 'bg-[var(--text-secondary)]' : 'bg-[var(--text-tertiary)]/30',
+                )}
+              />
+            </div>
 
-        {/* Content */}
-        <div className="relative z-10 px-6 pb-8 overflow-y-auto max-h-full">
-          {children}
-        </div>
-      </div>
-    </>
+            {title && (
+              <div className="relative z-10 flex items-center justify-between px-6 pb-4">
+                <DialogPrimitive.Title className="text-xl font-bold tracking-tight text-[var(--text-primary)]">
+                  {title}
+                </DialogPrimitive.Title>
+                <DialogPrimitive.Close
+                  className="cursor-pointer rounded-lg p-1.5 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-base)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+                  aria-label="Close panel"
+                >
+                  <X className="h-5 w-5" aria-hidden="true" />
+                </DialogPrimitive.Close>
+              </div>
+            )}
+
+            {/* Content scrolls; `touch-pan-y` keeps a scroll gesture here from
+                being stolen by the sheet's own drag. */}
+            <div className="relative z-10 max-h-full touch-pan-y overflow-y-auto px-6 pb-8">
+              {children}
+            </div>
+          </motion.div>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }

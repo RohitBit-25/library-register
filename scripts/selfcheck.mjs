@@ -24,7 +24,7 @@ writeFileSync(join(out, 'package.json'), '{"type":"module"}');
 // in scripts/), and tsc rewrites those to .js on emit.
 execFileSync('npx', [
   'tsc', 'lib/csv.ts', 'lib/utils.ts', 'lib/types.ts', 'lib/seat-status.ts',
-  'lib/notify.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts',
+  'lib/notify.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts', 'lib/motion.ts',
   '--outDir', out, '--module', 'esnext', '--target', 'es2020',
   '--moduleResolution', 'bundler', '--skipLibCheck',
   '--allowImportingTsExtensions', '--rewriteRelativeImportExtensions',
@@ -42,6 +42,9 @@ const { planPrice, monthlyValue, formatINR, formatINRCompact, PLAN_MONTHS, DEFAU
 
 const { nextSeatInDirection, getSeatPositionConfig, SEAT_ROWS, seatRow } =
   await import(pathToFileURL(join(out, 'layoutConfig.js')).href);
+
+const { projectMomentum, shouldDismissSheet } =
+  await import(pathToFileURL(join(out, 'motion.js')).href);
 
 let n = 0;
 const check = (name, fn) => { fn(); n++; console.log(`  ok  ${name}`); };
@@ -269,6 +272,39 @@ check('firstName truncates long names', () => {
   assert.equal(firstName('Rohit Singh'), 'Rohit');
   assert.equal(firstName('Chandrashekhar Rao'), 'Chandr.');
   assert.equal(firstName(''), '');
+});
+
+// ─── Sheet gesture: where a flick is going ───────────────────────
+
+check('a flick projects further than a slow drag', () => {
+  // Apple's deceleration curve: the faster you let go, the further it coasts.
+  assert.ok(projectMomentum(2000) > projectMomentum(500));
+  assert.ok(projectMomentum(500) > projectMomentum(0));
+  assert.equal(projectMomentum(0), 0);
+});
+
+check('projection is signed — an upward flick projects upward', () => {
+  assert.ok(projectMomentum(-1200) < 0);
+});
+
+check('a slow drag past halfway dismisses, a slow drag short of it does not', () => {
+  const H = 600;
+  assert.equal(shouldDismissSheet(400, 0, H), true);
+  assert.equal(shouldDismissSheet(100, 0, H), false);
+});
+
+check('a fast flick dismisses from well short of halfway', () => {
+  // The whole point of projecting: released at a sixth of the way down but
+  // moving fast, the throw was heading past the threshold.
+  const H = 600;
+  assert.equal(shouldDismissSheet(100, 0, H), false, 'same offset, no velocity, stays');
+  assert.equal(shouldDismissSheet(100, 900, H), true, 'same offset, thrown, dismisses');
+});
+
+check('an upward flick keeps the sheet even from far down', () => {
+  // Reverse on the velocity sign, not the position — a user who dragged low
+  // and flicked back up is asking to keep it.
+  assert.equal(shouldDismissSheet(500, -800, 600), false);
 });
 
 // ─── Row bands: the plan and the list must agree ─────────────────
