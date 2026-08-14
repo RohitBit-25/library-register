@@ -58,9 +58,15 @@ const DeskSlab = memo(function DeskSlab({ run }: { run: DeskRun }) {
       style={{ left: run.left, top: run.top, width: run.width, height: run.height }}
       aria-hidden="true"
     >
-      {/* Slab. Warm wood tone with a real edge — saffron-50 was so close to
-          white that the desks read as faint smudges rather than furniture. */}
-      <div className="absolute inset-0 rounded-[3px] bg-[var(--saffron-100)] border border-[var(--saffron-300)] shadow-[0_1px_2px_0_rgba(28,25,23,0.08)]" />
+      {/* Slab.
+          Warm neutral, not saffron. The desks were `--saffron-100` with a
+          `--saffron-300` edge, which made the furniture both the largest
+          colour mass on the map and a member of the same hue family that
+          means "fee due" on a seat tile. The room ended up louder than the
+          people in it — the eye landed on tables first and had to hunt for
+          the six seats that actually needed attention.
+          Furniture is ground. Status is figure. */}
+      <div className="absolute inset-0 rounded-[3px] bg-[var(--bg-overlay)] border border-[var(--border-default)] shadow-[0_1px_2px_0_rgba(28,25,23,0.08)]" />
 
       {/* Lit front edge — the side the seats sit against catches light. */}
       <div
@@ -78,7 +84,7 @@ const DeskSlab = memo(function DeskSlab({ run }: { run: DeskRun }) {
       {run.shared && (
         <div
           className={cnLocal(
-            'absolute bg-[var(--saffron-300)]',
+            'absolute bg-[var(--border-strong)]/40',
             vertical ? 'top-0 bottom-0 left-1/2 w-px' : 'left-0 right-0 top-1/2 h-px'
           )}
         />
@@ -93,7 +99,7 @@ const DeskSlab = memo(function DeskSlab({ run }: { run: DeskRun }) {
         return (
           <div
             key={i}
-            className="absolute bg-[var(--saffron-200)]"
+            className="absolute bg-[var(--border-default)]"
             style={
               vertical
                 ? { top: `${pct}%`, left: 3, right: 3, height: 1 }

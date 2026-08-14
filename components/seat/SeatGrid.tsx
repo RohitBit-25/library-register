@@ -11,6 +11,7 @@ import { useAttendance } from '@/hooks/useAttendance';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import { Sun, Moon, Layers, Grid3X3, ClipboardCheck, Settings2, CheckCheck, Map as MapIcon, List } from 'lucide-react';
 import SeatList from './SeatList';
+import { getSeatState } from '@/lib/seat-status';
 import { useSyncExternalStore } from 'react';
 
 type MapMode = 'manage' | 'attendance';
@@ -33,13 +34,18 @@ function useIsPhone() {
   );
 }
 
+/** A status the counters above the map can filter down to. */
+export type StatusFilter = 'due' | 'expiring' | 'expired' | 'vacant' | null;
+
 interface SeatGridProps {
   members: Member[];
   onSeatClick: (seat: number) => void;
   selectedSeat?: number | null;
+  /** Set by the counters above the map; null means show everything. */
+  statusFilter?: StatusFilter;
 }
 
-export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGridProps) {
+export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFilter = null }: SeatGridProps) {
   const [shiftFilter, setShiftFilter] = useState<Shift | 'all'>('all');
   const [mode, setMode] = useState<MapMode>('manage');
   const isPhone = useIsPhone();
@@ -97,13 +103,26 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
   // One predicate, two presentations. A list is not a spatial reference, so
   // removing rows there is right; a floor plan is, so removing tiles there
   // leaves holes in a drawing of a real room. The plan dims instead.
-  const matchesShift = useCallback((m: Member) => {
-    if (shiftFilter === 'all') return true;
-    if (m.vacant) return true;
-    return m.shift === shiftFilter || m.shift === 'full';
-  }, [shiftFilter]);
+  //
+  // Shift and status are separate questions and combine — "morning seats that
+  // owe money" is a real thing to want, and is how an admin plans a shift.
+  const matchesFilters = useCallback((m: Member) => {
+    const shiftOk = shiftFilter === 'all' || m.vacant
+      || m.shift === shiftFilter || m.shift === 'full';
+    if (!shiftOk) return false;
 
-  const filtered = useMemo(() => members.filter(matchesShift), [members, matchesShift]);
+    if (!statusFilter) return true;
+    if (statusFilter === 'vacant') return m.vacant;
+    if (m.vacant) return false;
+    // Match the counter exactly. `status` applies the app's precedence —
+    // expired outranks due — which is what the "Fee Due" chip counts. Using
+    // `hasDues` here instead would highlight 12 seats under a chip reading 8,
+    // because four of them are expired and counted in that chip instead.
+    const { status } = getSeatState(m);
+    return status === statusFilter;
+  }, [shiftFilter, statusFilter]);
+
+  const filtered = useMemo(() => members.filter(matchesFilters), [members, matchesFilters]);
 
   const shifts: { value: Shift | 'all'; label: string; icon: React.ReactNode }[] = [
     { value: 'all', label: 'All', icon: <Layers className="w-3.5 h-3.5" /> },
@@ -255,7 +274,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat }: SeatGri
                         compact={true}
                         face={face}
                         selected={selectedSeat === member.seat}
-                        dimmed={mode === 'manage' && !matchesShift(member)}
+                        dimmed={mode === 'manage' && !matchesFilters(member)}
                       />
                     )}
                   </div>

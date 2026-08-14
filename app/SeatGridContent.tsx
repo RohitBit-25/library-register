@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
-import SeatGrid from '@/components/seat/SeatGrid';
+import SeatGrid, { type StatusFilter } from '@/components/seat/SeatGrid';
 import SeatDetailPanel from '@/components/seat/SeatDetailPanel';
 import AddMemberSheet from '@/components/seat/AddMemberSheet';
 import GlobalSearch from '@/components/ui/GlobalSearch';
@@ -22,6 +22,13 @@ export default function SeatGridContent() {
   const { addToast } = useToast();
   const searchParams = useSearchParams();
   const mapRef = useStaggerReveal<HTMLDivElement>(!isLoading && members.length > 0);
+
+  // Which counter is currently narrowing the map. Null = show everything.
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(null);
+  const toggleStatus = useCallback(
+    (k: Exclude<StatusFilter, null>) => setStatusFilter((cur) => (cur === k ? null : k)),
+    []
+  );
 
   const [selectedSeat, setSelectedSeat] = useState<number | null>(() => {
     const seatParam = searchParams.get('seat');
@@ -184,18 +191,22 @@ export default function SeatGridContent() {
               icon={<Users size={14} />}
               color="bg-[var(--saffron-50)] text-[var(--saffron-700)] border-[var(--saffron-200)]" 
             />
-            <StatChip 
-              label="Available" 
-              value={stats.vacant} 
+            <StatChip
+              label="Available"
+              value={stats.vacant}
               icon={<UserPlus size={14} />}
-              color="bg-[var(--emerald-50)] text-[var(--emerald-700)] border-[var(--emerald-200)]" 
+              color="bg-[var(--emerald-50)] text-[var(--emerald-700)] border-[var(--emerald-200)]"
+              active={statusFilter === 'vacant'}
+              onToggle={() => toggleStatus('vacant')}
             />
             {stats.due > 0 && (
               <StatChip 
                 label="Fee Due"
                 value={stats.due}
                 icon={<IndianRupee size={14} />}
-                color="bg-[var(--saffron-50)] text-[var(--saffron-700)] border-[var(--saffron-200)]" 
+                color="bg-[var(--saffron-50)] text-[var(--saffron-700)] border-[var(--saffron-200)]"
+                active={statusFilter === 'due'}
+                onToggle={() => toggleStatus('due')}
               />
             )}
             {stats.expiring > 0 && (
@@ -204,6 +215,8 @@ export default function SeatGridContent() {
                 value={stats.expiring}
                 icon={<Clock size={14} />}
                 color="bg-[var(--marigold-50)] text-[var(--marigold-700)] border-[var(--marigold-200)]"
+                active={statusFilter === 'expiring'}
+                onToggle={() => toggleStatus('expiring')}
               />
             )}
             {stats.expired > 0 && (
@@ -212,6 +225,8 @@ export default function SeatGridContent() {
                 value={stats.expired}
                 icon={<AlertCircle size={14} />}
                 color="bg-[var(--ruby-50)] text-[var(--ruby-700)] border-[var(--ruby-200)]"
+                active={statusFilter === 'expired'}
+                onToggle={() => toggleStatus('expired')}
               />
             )}
           </motion.div>
@@ -258,6 +273,7 @@ export default function SeatGridContent() {
                   members={members}
                   onSeatClick={seat => setSelectedSeat(seat)}
                   selectedSeat={selectedSeat}
+                  statusFilter={statusFilter}
                 />
               </div>
             )}
@@ -350,14 +366,56 @@ export default function SeatGridContent() {
 }
 
 // Sub-component for clean stats
-function StatChip({ label, value, color, icon }: { label: string, value: number, color: string, icon?: React.ReactNode }) {
-  return (
-    <div className={cn("flex items-center gap-3 px-4 py-2.5 rounded-xl border whitespace-nowrap font-medium transition-colors duration-200 shrink-0", color)}>
+/**
+ * A counter that does something.
+ *
+ * These were read-only chips: the map told you eight members owed money and
+ * then left you to find them among ninety-five tiles. Clicking one now dims
+ * everything else on the plan, which is the question an admin actually opens
+ * this screen to ask — "who do I need to deal with today, and where are they
+ * sitting". Chips without a filter (Total, Occupied) stay plain text.
+ */
+function StatChip({ label, value, color, icon, active, onToggle }: {
+  label: string;
+  value: number;
+  color: string;
+  icon?: React.ReactNode;
+  active?: boolean;
+  onToggle?: () => void;
+}) {
+  const inner = (
+    <>
       {icon && <div className="opacity-90">{icon}</div>}
-      <div className="flex flex-col">
+      <div className="flex flex-col items-start">
         <span className="mb-1.5 text-[10px] font-semibold uppercase leading-none tracking-[0.12em]">{label}</span>
-        <span className="text-sm font-bold leading-none">{value}</span>
+        <span className="tabular text-sm font-bold leading-none">{value}</span>
       </div>
-    </div>
+    </>
+  );
+
+  const shared = "flex items-center gap-3 px-4 py-2.5 rounded-xl border whitespace-nowrap font-medium transition-ui";
+
+  if (!onToggle) {
+    return <div className={cn(shared, color)}>{inner}</div>;
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={active}
+      aria-label={`${label}: ${value}. ${active ? 'Showing only these seats' : 'Show only these seats'}`}
+      className={cn(
+        shared,
+        'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2',
+        color,
+        active
+          ? 'ring-2 ring-offset-1 ring-[var(--text-primary)]'
+          : 'hover:brightness-[0.97]'
+      )}
+    >
+      {inner}
+    </button>
   );
 }
+

@@ -9,25 +9,31 @@ import { memo } from 'react';
  * external host. Nothing leaves the browser now.
  */
 
-// Warm neutrals only, varying in weight rather than hue.
+  // Identity colours — cool and violet only, never a status hue.
 //
-// This palette used to be the six status colours — saffron, emerald,
-// sapphire, indigo, marigold, ruby — assigned by hashing the member's name.
-// On the floor plan that put a green chip on an expired member and a red chip
-// on a paid-up one, directly contradicting the status ring drawn around it.
-// Ninety-five of them turned the map into confetti and buried the six seats
-// that actually needed attention.
+// This palette was originally the six status colours (saffron, emerald,
+// sapphire, indigo, marigold, ruby) assigned by hashing the member's name.
+// On the floor plan that put a green chip on an expired member and a red one
+// on a paid-up member, directly contradicting the status ring around it, and
+// ninety-five of them buried the handful of seats that needed attention.
 //
-// An avatar answers "who is this", never "how are they doing". The variation
-// is kept because it helps recognise a regular at a glance; the hues are gone
-// because only status may use hue. White on every value clears 4.5:1.
+// Per-member colour is genuinely useful — it is how you recognise a regular
+// at a glance — so it is back, drawn from hues that status never uses. Status
+// on this map is warm: emerald 147deg, marigold 42deg, saffron 29deg, ruby
+// 0deg. Every colour below sits at least 45deg away from all four, so a chip
+// can never be mistaken for a state.
+//
+// White text on each clears 4.5:1, and scripts/check-contrast.py holds both
+// rules on every build. A seventh colour (mulberry, 325deg) was dropped when
+// that check pointed out it sits 35deg from ruby — close enough to read as
+// an expired seat.
 const PALETTE = [
-  { bg: '#57534E', fg: '#FFFFFF' }, //  7.63:1
-  { bg: '#4A443F', fg: '#FFFFFF' }, //  9.59:1
-  { bg: '#6B6660', fg: '#FFFFFF' }, //  5.68:1
-  { bg: '#78716C', fg: '#FFFFFF' }, //  4.80:1
-  { bg: '#5F544B', fg: '#FFFFFF' }, //  7.35:1
-  { bg: '#413B36', fg: '#FFFFFF' }, // 11.03:1
+  { bg: '#0E6FA8', fg: '#FFFFFF' }, // ocean     202deg   5.44:1
+  { bg: '#155E75', fg: '#FFFFFF' }, // pine      194deg   7.27:1
+  { bg: '#3F4C63', fg: '#FFFFFF' }, // slate     218deg   8.66:1
+  { bg: '#4338CA', fg: '#FFFFFF' }, // indigo    245deg   7.90:1
+  { bg: '#6D28D9', fg: '#FFFFFF' }, // violet    263deg   7.10:1
+  { bg: '#86198F', fg: '#FFFFFF' }, // plum      295deg   8.24:1
 ];
 
 /** Stable, order-independent hash so colours don't shuffle between renders. */

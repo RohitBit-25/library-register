@@ -132,7 +132,7 @@ On the members table a payment problem and a time of day were the same chip. Not
 
 **Colour is now reserved for status.** Shift chips are neutral and read through their sun / moon / sun-moon icon. Each colour means exactly one thing.
 
-### 3.2 Member avatars used the status palette
+### 3.2 Member avatars used the status palette — and how they came back
 
 `SeatAvatar` assigned each member a colour by hashing their name — from a palette of the six **status** colours. So a member with an emerald avatar looked active and one with a ruby avatar looked expired, regardless of their real state, directly contradicting the status ring drawn around the same tile.
 
@@ -140,7 +140,13 @@ Ninety-five of them turned the floor plan into confetti and buried the handful o
 
 The palette is now six warm neutrals varying in weight rather than hue — enough to recognise a regular at a glance, never enough to be mistaken for a status. All clear 4.5:1 with white.
 
-*This is the single biggest visible improvement in the pass. The map went from decorative to readable.*
+*This was the single biggest visible improvement in the pass. The map went from decorative to readable.*
+
+**Later revised at your request.** Per-member colour is genuinely useful — it is how you recognise a regular at a glance — so it is back, drawn from a palette that status can never use. Status on this map is warm (emerald 147°, marigold 42°, saffron 29°, ruby 0°); the avatars are cool and violet (ocean 202°, pine 194°, slate 218°, indigo 245°, violet 263°, plum 295°), every one at least 45° from all four. A chip can vary by person without ever being mistakable for a state.
+
+`scripts/check-contrast.py` now enforces both rules on every build: white initials must clear 4.5:1 on each swatch, **and** no swatch may sit within 45° of a status hue. That check earned its place immediately — it rejected a seventh colour (mulberry, 325°) that my own arithmetic had cleared, because 325° is 35° from ruby once you wrap correctly.
+
+Measured on rendered tiles: 5.44:1 to 8.66:1. The lowest is better than the old palette's lowest.
 
 ### 3.3 Selected states and primary actions had drifted off-brand
 
@@ -402,6 +408,58 @@ text-[var(--saffron-700)go-600)]     text-[var(--text-inversen-50)]     bg-[var(
 Nothing errors. The style simply never applies — invisible in a diff, easy to miss on screen. The token checker caught two of the three, but only because the mangled name happened to be undefined.
 
 `check:tokens` now also checks the *shape*: any bracketed arbitrary value whose parentheses do not balance fails the build. Verified by reintroducing the bug deliberately and watching it fail.
+
+---
+
+## 7f. Sixth pass — sweeping the categories to zero
+
+Rather than reviewing more screens, this pass grepped for every pattern the earlier passes had been fixing one at a time, and cleared each category out.
+
+### Stock Tailwind colours: 12 → 0
+
+`bg-red-500`, `bg-green-500`, `bg-amber-500` — twelve uses sitting outside the token system entirely, in the bulk-action bar on the members table, two validation dots in the add-member form, and the macOS traffic lights on the setup page's code panel. The traffic lights keep their meaning; they just take it from `--ruby-500` / `--marigold-500` / `--emerald-500` now, so they live in the same colour space as everything else.
+
+### Alpha fills on colour tokens: ~120 → 22
+
+`bg-[var(--saffron-500)]/10` and friends. An alpha of a mid-tone on white lands around 2–2.5:1, which this codebase's own `StatCard` comment already documents as failing — the `-50` shades exist for exactly this and are contrast-checked. Converted mechanically: `/N` fills to `-50`, alpha borders to `-200`, alpha *text* removed outright (there is no upside to a translucent label).
+
+The 22 that remain are focus rings and background gradients, where partial alpha is doing legitimate work.
+
+### Selected states still on the informational colour
+
+The seat-request sheet's payment-mode and shift choices, the members table's selected-row highlight and bulk bar, the add-member seat badge, and the search focus rings in two tables. All brand now, matching every other chosen option in the product.
+
+### Two real bugs in the add-member sheet
+
+Neither is cosmetic:
+
+**The form advertised "Max 100 MB."** `lib/schemas.ts` rejects anything over 2 MB and the API returns `413` above that — so a member handing over a 5 MB photo was told it was fine and then silently refused. It now reads *"JPEG, PNG, WebP or PDF · up to 2 MB"*, which is what the endpoint actually accepts.
+
+**The date field clipped its own year**, showing `14/08/202`. The row used `sm:grid-cols-2` — a *viewport* breakpoint — while the form renders inside a 380px side sheet. On a 1440px screen the breakpoint fired and put a native date input and a duration selector side by side in 380px. Changed to a container query (`@container` / `@md:grid-cols-2`), which asks the right question: how wide is the space this form is actually in. Same class of mistake as the seat map measuring itself against the viewport.
+
+### And three more mangled classes, caught by the new check
+
+The find-and-replace hazard from §7e bit three more times in this pass — `--saffrire-500`, `--bg-mutre-500`, `--saffhire-500`. Every one was caught by `check:tokens` immediately rather than shipping as a silently-missing style. I have stopped doing partial-string replacements on class attributes; the whole attribute gets replaced now.
+
+---
+
+## 7g. Seventh pass — restoring colour without restoring the confusion
+
+You asked for the seating to look like it did before. The physical arrangement had not in fact changed — `getSeatPositionConfig` and `deriveDeskRuns` were untouched throughout, so every seat, desk, aisle and wall is exactly where it was. What had changed was the tiles: §3.2 had stripped the colour out of the member avatars.
+
+That fix was solving a real problem — the avatar palette *was* the status palette, so a green chip sat on expired members — but it solved it by removing something worth keeping.
+
+The revision keeps both: colour per member, drawn from hues status never uses. Details and the new build-time guard are in §3.2 above.
+
+**On the "does not affect text visibility" part**, which was the right thing to be careful about:
+
+| | |
+|---|---|
+| Avatar initials | white on all six swatches, **5.44:1 – 8.66:1** measured on rendered tiles (AA needs 4.5) |
+| Day-count text on tiles | 9.5px, **7.6:1** |
+| Status edge strips | unchanged — still the only warm hues on the map, so they remain the thing the eye finds first |
+| Contrast suite | 23 token pairs + 6 avatar swatches, all passing |
+| Everything else | `verify` 37 checks, build clean, page sweep clean at 1440px and 390px |
 
 ---
 

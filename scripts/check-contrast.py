@@ -8,7 +8,8 @@ import re
 import sys
 from pathlib import Path
 
-CSS = Path(__file__).resolve().parent.parent / "app" / "globals.css"
+ROOT = Path(__file__).resolve().parent.parent
+CSS = ROOT / "app" / "globals.css"
 
 
 def _lin(c: float) -> float:
@@ -82,6 +83,16 @@ def main() -> int:
         if r < need:
             failures.append((fg, bg, r, need))
 
+    # ── Seat avatar palette ──────────────────────────────────────
+    #
+    # These are literal hexes in components/seat/SeatAvatar.tsx rather than
+    # tokens, because they are identity colours rather than part of the
+    # semantic palette. Two things must stay true and neither is obvious from
+    # reading the file: white initials must be legible on every swatch, and no
+    # swatch may drift close enough to a status hue to be mistaken for one.
+    avatar_failures = avatar_checks()
+    failures.extend(avatar_failures)
+
     if missing:
         print(f"\nUndefined tokens referenced by this check: {sorted(set(missing))}")
     if failures:
@@ -91,6 +102,41 @@ def main() -> int:
 
     print(f"\nAll {len(CHECKS)} pairs pass WCAG AA.")
     return 0
+
+
+# Hues the seat map already uses to mean something. An avatar sitting within
+# MIN_HUE_GAP of any of these can be read as a status by mistake.
+STATUS_HUES = {"emerald": 147, "ruby": 0, "marigold": 42, "saffron": 29}
+MIN_HUE_GAP = 45
+
+
+def hue_of(hex_colour: str) -> float:
+    import colorsys
+    h = hex_colour.lstrip("#")
+    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
+    return colorsys.rgb_to_hsv(r, g, b)[0] * 360
+
+
+def avatar_checks():
+    """White initials legible, and no swatch near a status hue."""
+    src = (ROOT / "components" / "seat" / "SeatAvatar.tsx").read_text()
+    swatches = re.findall(r"\{ bg: '(#[0-9A-Fa-f]{6})', fg: '(#[0-9A-Fa-f]{6})' \}", src)
+    if not swatches:
+        print("\nFAIL  could not find the seat avatar palette")
+        return [("SeatAvatar", "palette", 0.0, 4.5)]
+
+    print()
+    out = []
+    for bg, fg in swatches:
+        r = ratio(fg, bg)
+        h = hue_of(bg)
+        gap = min(min(abs(h - s), 360 - abs(h - s)) for s in STATUS_HUES.values())
+        ok = r >= 4.5 and gap >= MIN_HUE_GAP
+        print(f"{'ok  ' if ok else 'FAIL'} {r:5.2f}:1 (need 4.5)  avatar {bg}"
+              f"  hue {h:>5.0f}deg, {gap:>3.0f}deg from nearest status")
+        if not ok:
+            out.append((f"avatar {bg}", "white text / status hue", r, 4.5))
+    return out
 
 
 if __name__ == "__main__":
