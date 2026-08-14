@@ -22,6 +22,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import UnifiedHeader from '@/components/layout/UnifiedHeader';
 
 export default function MyRequestsPage() {
   const { lookupByPhone, storedUserPhone, requests: autoRequests } = useSeatRequests();
@@ -51,13 +52,16 @@ export default function MyRequestsPage() {
   const rejectedCount = displayResults?.filter(r => r.status === 'rejected').length ?? 0;
 
   return (
-    <div className="animate-fade-in">
+    <div className="flex min-h-screen flex-col bg-[var(--bg-void)]">
+      <UnifiedHeader />
+
+      <main className="animate-fade-in mx-auto w-full max-w-[900px] flex-1 p-4 md:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-6 flex items-start justify-between">
+      <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-            <Inbox className="w-6 h-6 text-[var(--sapphire-600)]" />
-            My Requests
+          <h1 className="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-[var(--text-primary)] sm:text-xl">
+            <Inbox className="h-5 w-5 text-[var(--text-tertiary)]" aria-hidden="true" />
+            My requests
           </h1>
           <p className="text-sm text-[var(--text-secondary)] mt-0.5">
             Track the status of your seat requests
@@ -94,7 +98,7 @@ export default function MyRequestsPage() {
             className={cn(
               'cursor-pointer px-5 py-2.5 rounded-xl text-sm font-bold transition-ui flex items-center gap-2',
               phone.length >= 10 && !loading
-                ? 'bg-[var(--sapphire-500)] text-[var(--text-inverse)] hover:shadow-lg active:scale-[0.98]'
+                ? 'bg-[var(--saffron-700)] text-[var(--text-inverse)] hover:bg-[var(--saffron-800)] active:scale-[0.98]'
                 : 'bg-[var(--bg-muted)] text-[var(--text-tertiary)] cursor-not-allowed'
             )}
           >
@@ -268,11 +272,11 @@ export default function MyRequestsPage() {
             animate={{ opacity: 1 }}
           >
             <Card variant="base" className="p-10 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-[var(--sapphire-500)]/10 flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-[var(--sapphire-600)]" />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">
+                <Search className="h-8 w-8 text-[var(--text-tertiary)]" aria-hidden="true" />
               </div>
               <h3 className="text-base font-bold text-[var(--text-primary)] mb-1">
-                Find Your Requests
+                Find your requests
               </h3>
               <p className="text-sm text-[var(--text-tertiary)] leading-relaxed max-w-xs mx-auto">
                 Enter the phone number you used when submitting your seat request to view its current status.
@@ -281,6 +285,7 @@ export default function MyRequestsPage() {
           </motion.div>
         )}
       </AnimatePresence>
+      </main>
     </div>
   );
 }

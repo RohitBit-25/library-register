@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
-import { Download, Share2, Copy, Check, ExternalLink, QrCode, Sparkles } from 'lucide-react';
+import { Download, Share2, Copy, Check, ExternalLink, QrCode } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 import { motion } from 'framer-motion';
 
@@ -57,12 +57,11 @@ export default function QRCodePanel() {
       className="card-base rounded-2xl border border-[var(--border-default)] bg-[var(--bg-glass)] overflow-hidden shadow-sm"
     >
       {/* Status Bar */}
-      <div className="flex items-center gap-2 px-6 py-3 border-b border-[var(--border-subtle)] bg-[rgba(34,195,106,0.15)]">
+      <div className="flex items-center gap-2 px-6 py-3 border-b border-[var(--border-subtle)] bg-[var(--emerald-50)]">
         <div className="w-2.5 h-2.5 rounded-full bg-[var(--emerald-400)] animate-pulse-subtle" />
         <span className="text-xs font-bold text-[var(--emerald-600)]">
-          ✓ App Portal Active
+          Portal active
         </span>
-        <Sparkles className="w-3.5 h-3.5 text-[var(--emerald-600)] ml-auto" />
       </div>
 
       <div className="flex flex-col md:flex-row">

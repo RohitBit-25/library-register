@@ -1,6 +1,6 @@
 # UI/UX pass — Gangaur Library
 
-**Date:** 13 August 2026
+**Date:** 13–14 August 2026
 **Scope:** all 15 pages, both admin and public, at 1440px and 390px
 **Method:** the app was run against a seeded database of 71 occupied seats, 60 payments and 45 days of attendance, then every page was screenshotted, measured in the browser, and re-checked after each change. Findings below are things that were observed on screen or measured in the DOM, not read off the source.
 
@@ -212,6 +212,67 @@ Being explicit about these, since some look like bugs in a screenshot:
 
 ---
 
+## 7b. Second pass — the pages I had not looked at closely
+
+The first pass reviewed screenshots of about half the pages in detail. Going back through the rest turned up a further set, including one regression of my own.
+
+### A meter that measured the wrong thing
+
+The Expiry Tracker's urgency bar filled by `100 - (daysLeft / 365)`. Inside a month that puts every bar between 97% and 99%; every expired member was pinned at exactly 100% however far past their date they were. Six overdue members ranging from 9 to 27 days all drew an identical full red bar.
+
+It looked like a precise measurement and carried no information in the only range the page is about. It now measures urgency across the 30-day window either side of the expiry date, so a longer bar genuinely means act sooner — in both directions. The bar also gained `role="img"` with the days as its label, since it was previously invisible to a screen reader.
+
+Ten hardcoded stock hex gradients went with it (`#2563EB`, `#639922`, `#DC2626` and friends), including a blue that means "information" everywhere else in the product.
+
+### A page that showed four times what it claimed
+
+The Expiry Tracker's four summary cards count the next thirty days — 6 expired, 0 today, 8 this week, 19 this month. The table beneath listed **all 71 occupied seats**. Past the first page that meant members with three months left, in a tracker whose heading reads "memberships ending soon".
+
+Now scoped to its own claim — 33 entries, matching the cards — with a *"Show all 71 members"* toggle so nothing is hidden.
+
+### Actions that were invisible on the device they are used on
+
+The Expiry Tracker's row actions sat at `opacity-40` until the row was hovered. On a phone or tablet there is no hover, so **Renew — the entire point of the page — was permanently faded and read as disabled.**
+
+Same pattern in the members table, worse: the copy-to-clipboard buttons beside each seat number and phone number were `opacity-0` until hover, so on touch they did not exist at all, and a keyboard user could tab into a control they could not see.
+
+Fixed with a `.reveal-on-hover` utility that is visible by default and only goes quiet on devices that genuinely have a pointer, with focus always bringing it back. Both copy buttons also gained the accessible labels they were missing.
+
+### `/my-requests` had lost its header — my regression
+
+Excluding the student pages from the admin shell (§5) was right for `/browse`, which brings its own header. `/my-requests` did not: it had been relying on the shell for both its chrome and its page padding. After the change the title printed flush against the top-left corner of the viewport with no header at all.
+
+It now carries the same public header and container as `/browse`, which is what the two student pages should have shared in the first place.
+
+### Sequences coloured as if they were categories
+
+Three more places used unrelated hues for steps on a single scale:
+
+- **Setup** — the four numbered integration steps were blue, green, amber and brown, and the flow diagram above them repeated the same four. The number already carries the order.
+- **Export** — three category cards in blue, green and saffron, and a "Quick Summary" printing four unrelated counts in four colours, so "71 active members" wore the information blue and "45 attendance days" wore the green that means a paid-up membership.
+- **Expiry** — the four urgency cards ran red, red, amber, **blue**, where blue was the third rung of an escalating ladder.
+
+All three now use one ramp, or neutral where the item carries no state. A full database backup also stopped being outlined in the red this app reserves for expired memberships and destructive actions.
+
+### Smaller items in this pass
+
+| Item | Was | Now |
+|---|---|---|
+| Two more ✨ icons | Beside the QR panel status and the "Request Seat" heading | Removed |
+| `bg-[rgba(34,195,106,0.15)]` | A raw rgba fill where everything else is a token | `--emerald-50` |
+| `--amber-500` | Referenced in `setup`, defined nowhere | Gone with the recolour |
+| "✓ App Portal Active" | A literal tick character in the string | "Portal active" |
+| Titles | "4-Step Integration Guide", "Find Your Requests", "Request Seat #12" | Sentence case |
+| `/my-requests` search | Primary action in the information blue | Brand |
+
+### A timezone bug inside the timezone test
+
+`npm run verify` failed during this pass at 00:50 IST. The failing check builds its dates with `new Date().toISOString()` — which is UTC, so between midnight and 05:30 IST it generates *yesterday*, and `daysUntilExpiry(today)` returned `-1` instead of `0`.
+
+The application code was correct; `daysUntil()` uses `todayLocalISO()` precisely to avoid this. The check had reproduced the exact bug it exists to guard against, and would have failed every night in that window. Its helper now builds dates from local parts.
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.
@@ -229,6 +290,6 @@ npm run build      # compiled, 18/18 static pages                       ✅
 npm run check:api  # 29 HTTP contract checks against a live server      ✅
 ```
 
-Browser sweep, all 15 pages × {1440px, 390px}: no crashes, no horizontal page overflow, exactly one `<h1>` per page, no console errors.
+Browser sweep, all 15 pages × {1440px, 390px}: no crashes, no horizontal page overflow, exactly one `<h1>` per page, no console errors. Re-run after the second pass with the same result.
 
 **One note on process.** During this pass the dev server reverted to the real database while scripted logins were still sending the demo PIN. That left `failedAttempts: 2` on your admin record — below the 5 that trigger a lockout, so nothing was locked, and no other data was touched. I reset the counter and cleared the rate-limit row. All subsequent work ran against `gangaur_demo`, and the review scripts now reuse one saved session instead of logging in repeatedly.

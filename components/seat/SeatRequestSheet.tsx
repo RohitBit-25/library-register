@@ -8,7 +8,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import {
   X, Send, User, Phone, MessageSquare, Armchair,
   CheckCircle2, Banknote, Smartphone, FileText, Camera, Upload,
-  Trash2, Image as ImageIcon, CalendarDays, Clock, Sparkles,
+  Trash2, Image as ImageIcon, CalendarDays, Clock,
 } from 'lucide-react';
 
 interface SeatRequestSheetProps {
@@ -273,8 +273,7 @@ export default function SeatRequestSheet({
                         </div>
                         <div>
                           <h3 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
-                            Request Seat #{member.seat}
-                            <Sparkles className="w-4 h-4 text-[var(--saffron-600)]" />
+                            Request seat {member.seat}
                           </h3>
                           <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
                             Fill details below to reserve this seat

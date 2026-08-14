@@ -190,24 +190,24 @@ export default function ExportPage() {
       title: 'Members',
       description: `${stats.occupied} active members • ${stats.vacant} vacant seats`,
       icon: <FileSpreadsheet className="w-5 h-5" />,
-      iconBg: 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)]',
-      accentBorder: 'border-l-[var(--sapphire-500)]',
+      iconBg: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]',
+      accentBorder: 'border-l-[var(--border-default)]',
       onExport: exportMembers,
     },
     {
       title: 'Attendance',
       description: `${stats.attendanceDays} days of records • Last 30 days`,
       icon: <CalendarCheck className="w-5 h-5" />,
-      iconBg: 'bg-[var(--emerald-500)]/10 text-[var(--emerald-600)]',
-      accentBorder: 'border-l-[var(--emerald-500)]',
+      iconBg: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]',
+      accentBorder: 'border-l-[var(--border-default)]',
       onExport: exportAttendance,
     },
     {
       title: 'Seat Requests',
       description: `${requests.length} total • ${stats.pendingRequests} pending`,
       icon: <Inbox className="w-5 h-5" />,
-      iconBg: 'bg-[var(--saffron-500)]/10 text-[var(--saffron-600)]',
-      accentBorder: 'border-l-[var(--saffron-500)]',
+      iconBg: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]',
+      accentBorder: 'border-l-[var(--border-default)]',
       onExport: exportRequests,
     },
   ];
@@ -236,7 +236,7 @@ export default function ExportPage() {
 
       {/* Full Backup Card */}
       <motion.div variants={itemVariants} className="mb-[var(--space-6)]">
-        <Card variant="base" className="overflow-hidden border-l border-l-[var(--ruby-500)]">
+        <Card variant="base" className="overflow-hidden border-l-2 border-l-[var(--saffron-500)]">
           <div className="p-[var(--space-5)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-[var(--space-4)]">
             <div className="flex items-center gap-[var(--space-4)]">
               <div className="w-12 h-12 rounded-[var(--radius-xl)] bg-[var(--ruby-500)]/10 flex items-center justify-center shrink-0">
@@ -339,13 +339,13 @@ export default function ExportPage() {
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-[var(--space-4)]">
             {[
-              { label: 'Active Members', value: stats.occupied, color: 'text-[var(--sapphire-600)]' },
-              { label: 'Vacant Seats', value: stats.vacant, color: 'text-[var(--text-tertiary)]' },
-              { label: 'Pending Requests', value: stats.pendingRequests, color: 'text-[var(--saffron-600)]' },
-              { label: 'Attendance Days', value: stats.attendanceDays, color: 'text-[var(--emerald-600)]' },
+              { label: 'Active members', value: stats.occupied },
+              { label: 'Vacant seats', value: stats.vacant },
+              { label: 'Pending requests', value: stats.pendingRequests },
+              { label: 'Attendance days', value: stats.attendanceDays },
             ].map(s => (
               <div key={s.label} className="text-center">
-                <p className={`font-display text-2xl font-semibold ${s.color}`}>{s.value}</p>
+                <p className="tabular font-display text-2xl font-semibold text-[var(--text-primary)]">{s.value}</p>
                 <p className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">
                   {s.label}
                 </p>

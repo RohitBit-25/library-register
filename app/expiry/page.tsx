@@ -66,17 +66,31 @@ export default function ExpiryPage() {
   const [confirmVacate, setConfirmVacate] = useState<ExpiryMember | null>(null);
   const [confirmRenew, setConfirmRenew] = useState<ExpiryMember | null>(null);
 
-  const occupiedMembers = useMemo(() => {
+  /** Days ahead this page considers "ending soon" — matches the last summary card. */
+  const HORIZON_DAYS = 30;
+
+  const allOccupied = useMemo(() => {
     return members
       .filter((m) => !m.vacant && m.expiry)
       .map((m) => ({ ...m, daysLeft: daysUntilExpiry(m.expiry) }))
       .sort((a, b) => a.daysLeft - b.daysLeft); // Urgent first
   }, [members]);
 
-  const totalExpired = occupiedMembers.filter(m => m.daysLeft < 0).length;
-  const totalToday = occupiedMembers.filter(m => m.daysLeft === 0).length;
-  const totalWeek = occupiedMembers.filter(m => m.daysLeft > 0 && m.daysLeft <= 7).length;
-  const totalMonth = occupiedMembers.filter(m => m.daysLeft > 7 && m.daysLeft <= 30).length;
+  // The table listed every occupied seat — all 71 — under a heading that says
+  // "memberships ending soon". Past the first page that meant members with
+  // three months left, sitting in a tracker whose four summary cards only
+  // count the next thirty days. `showAll` keeps the full roster one click
+  // away rather than removing it.
+  const [showAll, setShowAll] = useState(false);
+  const occupiedMembers = useMemo(
+    () => (showAll ? allOccupied : allOccupied.filter((m) => m.daysLeft <= HORIZON_DAYS)),
+    [allOccupied, showAll]
+  );
+
+  const totalExpired = allOccupied.filter(m => m.daysLeft < 0).length;
+  const totalToday = allOccupied.filter(m => m.daysLeft === 0).length;
+  const totalWeek = allOccupied.filter(m => m.daysLeft > 0 && m.daysLeft <= 7).length;
+  const totalMonth = allOccupied.filter(m => m.daysLeft > 7 && m.daysLeft <= 30).length;
 
   // Renewal was six steps: find member, open panel, Renew, pick date, pick
   // duration, confirm. The common case is "same plan again", and both inputs
@@ -176,8 +190,19 @@ export default function ExpiryPage() {
         const dLeft = row.original.daysLeft;
         const isExpired = dLeft < 0;
         const absDays = Math.abs(dLeft);
-        const maxDays = 365;
-        const fillPct = isExpired ? 100 : Math.max(2, 100 - (dLeft / maxDays) * 100);
+
+        // The bar used to fill by `100 - daysLeft/365`, so everything inside a
+        // month sat at 97–99% and every expired member was pinned at exactly
+        // 100 however far past their date they were. It looked like a precise
+        // measurement and carried no information in the only range this page
+        // is about.
+        //
+        // It now measures urgency across the 30-day window either side of the
+        // expiry date: longer bar means act sooner, in both directions.
+        const URGENCY_WINDOW = 30;
+        const fillPct = isExpired
+          ? Math.min(100, 40 + (absDays / URGENCY_WINDOW) * 60)
+          : Math.max(4, ((URGENCY_WINDOW - Math.min(dLeft, URGENCY_WINDOW)) / URGENCY_WINDOW) * 100);
 
         const daysText = isExpired
           ? `${absDays}d overdue`
@@ -185,33 +210,34 @@ export default function ExpiryPage() {
           ? 'Today!'
           : `${dLeft}d left`;
 
-        let barColor = 'bg-gradient-to-r from-[#639922] to-[#A3E635]'; // Safe
-        if (isExpired) barColor = 'bg-gradient-to-r from-[#E24B4A] to-[#F87171]';
-        else if (dLeft === 0) barColor = 'bg-gradient-to-r from-[#DC2626] to-[#EF4444]';
-        else if (dLeft <= 7) barColor = 'bg-gradient-to-r from-[#EF9F27] to-[#FBBF24]';
-        else if (dLeft <= 30) barColor = 'bg-gradient-to-r from-[#2563EB] to-[#60A5FA]';
+        let barColor = 'bg-[var(--emerald-500)]';
+        if (isExpired || dLeft === 0) barColor = 'bg-[var(--ruby-500)]';
+        else if (dLeft <= 7) barColor = 'bg-[var(--saffron-500)]';
+        else if (dLeft <= 30) barColor = 'bg-[var(--marigold-500)]';
 
         return (
           <div className="w-full max-w-[140px]">
             <span
               className={cn(
                 'text-[10px] uppercase font-black px-1.5 py-0.5 rounded-md whitespace-nowrap inline-block mb-1.5 tracking-wider',
-                isExpired
-                  ? 'bg-[var(--ruby-500)]/15 text-[var(--ruby-600)]'
-                  : dLeft === 0
-                  ? 'bg-[#DC2626]/10 text-[#DC2626]'
+                isExpired || dLeft === 0
+                  ? 'bg-[var(--ruby-50)] text-[var(--ruby-600)]'
                   : dLeft <= 7
-                  ? 'bg-[var(--saffron-500)]/10 text-[var(--saffron-600)]'
+                  ? 'bg-[var(--saffron-50)] text-[var(--saffron-700)]'
                   : dLeft <= 30
-                  ? 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)]'
-                  : 'bg-[var(--emerald-500)]/15 text-[var(--emerald-600)]'
+                  ? 'bg-[var(--marigold-50)] text-[var(--marigold-700)]'
+                  : 'bg-[var(--emerald-50)] text-[var(--emerald-600)]'
               )}
             >
               {daysText}
             </span>
-            <div className="flex-1 h-1.5 rounded-full bg-[var(--bg-base)] overflow-hidden border border-[var(--border-default)]/50 shadow-inner">
+            <div
+              role="img"
+              aria-label={`Urgency: ${daysText}`}
+              className="h-1.5 flex-1 overflow-hidden rounded-full border border-[var(--border-default)]/50 bg-[var(--bg-base)]"
+            >
               <div
-                className={cn('meter-fill h-full w-full rounded-full shadow-sm', barColor)}
+                className={cn('meter-fill h-full w-full rounded-full', barColor)}
                 style={{ ['--fill' as string]: fillPct / 100 }}
               />
             </div>
@@ -232,11 +258,12 @@ export default function ExpiryPage() {
       id: 'actions',
       header: 'Actions',
       cell: ({ row }) => (
-        <div className="flex items-center justify-end gap-1.5 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity">
+        <div className="flex shrink-0 items-center justify-end gap-1.5">
           <Tooltip content="Send WhatsApp Reminder">
             <button
               onClick={() => handleWhatsApp(row.original)}
-              className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--emerald-500)]/10 text-[var(--emerald-600)] hover:bg-[var(--emerald-500)]/20 shadow-sm hover:scale-105 transition-ui active:scale-95 border border-[var(--emerald-500)]/20"
+              aria-label={`Send a WhatsApp reminder to ${row.original.name}`}
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] text-[var(--emerald-600)] shadow-sm transition-ui hover:bg-[var(--emerald-100)] active:scale-95"
             >
               <MessageCircle className="w-4 h-4" />
             </button>
@@ -255,7 +282,7 @@ export default function ExpiryPage() {
             <button
               onClick={() => handleOpenSeat(row.original.seat)}
               aria-label={`Open seat ${row.original.seat} to change the plan`}
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--sapphire-500)]/20 bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)] shadow-sm transition-ui hover:bg-[var(--sapphire-500)]/20 active:scale-95"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] text-[var(--text-secondary)] shadow-sm transition-ui hover:bg-[var(--bg-overlay)] hover:text-[var(--text-primary)] active:scale-95"
             >
               <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -268,7 +295,7 @@ export default function ExpiryPage() {
               <button
                 onClick={() => setConfirmVacate(row.original)}
                 aria-label={`Vacate seat ${row.original.seat} — membership expired`}
-                className="cursor-pointer w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--ruby-500)]/10 text-[var(--ruby-600)] hover:bg-[var(--ruby-500)]/20 shadow-sm hover:scale-105 transition-ui active:scale-95 border border-[var(--ruby-500)]/20"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--ruby-200)] bg-[var(--ruby-50)] text-[var(--ruby-600)] shadow-sm transition-ui hover:bg-[var(--ruby-100)] active:scale-95"
               >
                 <Trash2 className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -285,7 +312,20 @@ export default function ExpiryPage() {
       <PageHeader
         title="Expiry Tracker"
         icon={<CalendarSearch className="h-5 w-5" />}
-        subtitle="Memberships ending soon, and the ones already past their date."
+        subtitle={
+          showAll
+            ? `All ${allOccupied.length} active memberships, soonest first.`
+            : `${occupiedMembers.length} ending within ${HORIZON_DAYS} days, or already past.`
+        }
+        actions={
+          <button
+            type="button"
+            onClick={() => setShowAll((v) => !v)}
+            className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-xs font-bold text-[var(--text-secondary)] transition-ui hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+          >
+            {showAll ? `Show only the next ${HORIZON_DAYS} days` : `Show all ${allOccupied.length} members`}
+          </button>
+        }
       />
 
       {/* ── Urgency Summary Bar ──────────────────────────────────── */}
@@ -293,29 +333,29 @@ export default function ExpiryPage() {
         <UrgencyStat
           count={totalExpired}
           label="Expired"
-          gradient="from-[#E24B4A] to-[#F87171]"
-          iconBg="bg-[var(--ruby-500)]/15 text-[var(--ruby-600)]"
+          gradient="from-[var(--ruby-500)] to-[var(--ruby-400)]"
+          iconBg="bg-[var(--ruby-50)] text-[var(--ruby-600)]"
           icon={<Flame className="w-4 h-4" />}
         />
         <UrgencyStat
           count={totalToday}
           label="Today"
-          gradient="from-[#DC2626] to-[#EF4444]"
-          iconBg="bg-[var(--ruby-500)]/15 text-[#DC2626]"
+          gradient="from-[var(--ruby-500)] to-[var(--ruby-400)]"
+          iconBg="bg-[var(--ruby-50)] text-[var(--ruby-600)]"
           icon={<AlertTriangle className="w-4 h-4" />}
         />
         <UrgencyStat
           count={totalWeek}
           label="This Week"
-          gradient="from-[#EF9F27] to-[#FBBF24]"
-          iconBg="bg-[var(--saffron-500)]/10 text-[var(--saffron-600)]"
+          gradient="from-[var(--saffron-500)] to-[var(--saffron-400)]"
+          iconBg="bg-[var(--saffron-50)] text-[var(--saffron-700)]"
           icon={<Clock className="w-4 h-4" />}
         />
         <UrgencyStat
           count={totalMonth}
           label="This Month"
-          gradient="from-[#2563EB] to-[#60A5FA]"
-          iconBg="bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)]"
+          gradient="from-[var(--marigold-500)] to-[var(--marigold-400)]"
+          iconBg="bg-[var(--marigold-50)] text-[var(--marigold-700)]"
           icon={<CalendarDays className="w-4 h-4" />}
         />
       </div>

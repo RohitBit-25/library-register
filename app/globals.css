@@ -651,6 +651,20 @@
     transition-timing-function: var(--ease-out);
   }
 
+  /* Secondary row actions — copy buttons and the like.
+
+     These were `opacity-0 group-hover:opacity-100`, which on a touch device
+     means never visible: there is no hover, so the control simply does not
+     exist for the phone the admin is holding. They also stayed focusable
+     while invisible, so a keyboard user tabbed into nothing.
+
+     Visible by default. Only a device that genuinely has a pointer gets the
+     quiet-until-hover treatment, and focus always brings it back. */
+  .reveal-on-hover {
+    opacity: 1;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+
   /* Hover motion must not fire on touch: tapping synthesises a hover, so an
      ungated :hover transform sticks after the finger lifts. Anything that
      MOVES on hover belongs behind this; colour-only hovers are fine ungated. */
@@ -661,6 +675,13 @@
     }
     .hover-press:active {
       transform: translateY(0) scale(0.99);
+    }
+    .reveal-on-hover {
+      opacity: 0;
+    }
+    .group:hover .reveal-on-hover,
+    .reveal-on-hover:focus-visible {
+      opacity: 1;
     }
   }
 

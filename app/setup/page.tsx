@@ -44,10 +44,10 @@ export default function SetupPage() {
           </h3>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             {[
-              { icon: <QrCode className="w-5 h-5" />, label: 'Member Scans QR', color: 'bg-[var(--sapphire-500)]/10 text-[var(--sapphire-600)]' },
-              { icon: <FileText className="w-5 h-5" />, label: 'Fills Google Form', color: 'bg-[var(--emerald-500)]/10 text-[var(--emerald-600)]' },
-              { icon: <Zap className="w-5 h-5" />, label: 'Script Runs Auto', color: 'bg-[var(--amber-500)]/10 text-[var(--marigold-700)]' },
-              { icon: <Mail className="w-5 h-5" />, label: 'You Get Email', color: 'bg-[var(--ruby-500)]/10 text-[var(--ruby-600)]' },
+              { icon: <QrCode className="w-5 h-5" />, label: 'Member scans QR', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
+              { icon: <FileText className="w-5 h-5" />, label: 'Fills the form', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
+              { icon: <Zap className="w-5 h-5" />, label: 'Script runs', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
+              { icon: <Mail className="w-5 h-5" />, label: 'You get an email', color: 'bg-[var(--saffron-50)] text-[var(--saffron-700)]' },
             ].map((step, i) => (
               <div key={i} className="flex items-center gap-3 sm:gap-4">
                 <div className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl ${step.color} border border-current/10`}>
@@ -72,15 +72,15 @@ export default function SetupPage() {
       <motion.div variants={itemVariants} className="mt-8">
         <h2 className="text-lg font-extrabold text-[var(--text-primary)] mb-4 flex items-center gap-2">
           <ListChecks className="w-5 h-5 text-[var(--sapphire-600)]" />
-          4-Step Integration Guide
+          Integration guide
         </h2>
 
         <div className="space-y-4">
           
           {/* Step 1 */}
-          <div className="card-base p-5 rounded-xl shadow-sm" style={{borderLeft: '3px solid var(--sapphire-500)'}}>
+          <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--sapphire-500)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 1
               </div>
               <div>
@@ -101,9 +101,9 @@ export default function SetupPage() {
           </div>
 
           {/* Step 2 */}
-          <div className="card-base p-5 rounded-xl shadow-sm" style={{borderLeft: '3px solid var(--emerald-500)'}}>
+          <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--emerald-500)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 2
               </div>
               <div>
@@ -116,9 +116,9 @@ export default function SetupPage() {
           </div>
 
           {/* Step 3 */}
-          <div className="card-base p-5 rounded-xl shadow-sm" style={{borderLeft: '3px solid var(--amber-500)'}}>
+          <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--amber-500)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 3
               </div>
               <div className="w-full">
@@ -133,7 +133,7 @@ export default function SetupPage() {
           </div>
 
           {/* Step 4 */}
-          <div className="card-base p-5 rounded-xl shadow-sm" style={{borderLeft: '3px solid var(--saffron-500)'}}>
+          <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 4

@@ -97,10 +97,15 @@ check('calcExpiry returns empty for missing input', () => {
 });
 
 check('daysUntilExpiry sign is correct either side of today', () => {
+  // Local date parts, not toISOString(). This helper used to build its dates
+  // in UTC, so between midnight and 05:30 IST it generated *yesterday* and
+  // the check failed with -1 !== 0 — the very timezone bug todayLocalISO()
+  // exists to prevent, reproduced inside its own test.
   const iso = (offset) => {
     const d = new Date();
     d.setDate(d.getDate() + offset);
-    return d.toISOString().split('T')[0];
+    const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
   };
   assert.equal(daysUntilExpiry(iso(0)), 0);
   assert.ok(daysUntilExpiry(iso(10)) > 0);

@@ -339,8 +339,12 @@ export default function MemberTable({
                   <td className="p-3 font-mono font-bold text-[var(--text-primary)]">
                     <div className="flex items-center gap-2 group">
                       {m.seat}
-                      <button onClick={(e) => handleCopy(e, String(m.seat), 'seat')} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Copy className="w-3 h-3 text-[var(--text-tertiary)] hover:text-[var(--sapphire-600)] cursor-pointer" />
+                      <button
+                        onClick={(e) => handleCopy(e, String(m.seat), 'seat')}
+                        aria-label={`Copy seat number ${m.seat}`}
+                        className="reveal-on-hover cursor-pointer rounded p-0.5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+                      >
+                        <Copy className="h-3 w-3" aria-hidden="true" />
                       </button>
                     </div>
                   </td>
@@ -353,8 +357,12 @@ export default function MemberTable({
                     {m.phone ? (
                       <div className="flex items-center gap-2 group">
                         {m.phone}
-                        <button onClick={(e) => handleCopy(e, m.phone, 'phone number')} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Copy className="w-3 h-3 text-[var(--text-tertiary)] hover:text-[var(--sapphire-600)] cursor-pointer" />
+                        <button
+                          onClick={(e) => handleCopy(e, m.phone, 'phone number')}
+                          aria-label={`Copy phone number for ${m.name}`}
+                          className="reveal-on-hover cursor-pointer rounded p-0.5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+                        >
+                          <Copy className="h-3 w-3" aria-hidden="true" />
                         </button>
                       </div>
                     ) : '—'}
