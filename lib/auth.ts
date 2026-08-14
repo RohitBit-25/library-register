@@ -1,47 +1,12 @@
-// ─── Role-Based Access Types & Helpers ──────────────────────────
-
-export type UserRole = 'admin' | 'user';
-
-// Only the privilege-free "user" opt-in is persisted here. Admin status comes
-// from the httpOnly session cookie via /api/auth/check — see hooks/useAuth.tsx.
-const ROLE_KEY = 'library-role';
-
-const ROLE_EVENT = 'library-role-change';
-
-export function getStoredRole(): UserRole | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(ROLE_KEY) === 'user' ? 'user' : null;
-}
-
-export function setStoredRole(role: UserRole | null): void {
-  if (typeof window === 'undefined') return;
-  if (role === 'user') {
-    localStorage.setItem(ROLE_KEY, role);
-  } else {
-    localStorage.removeItem(ROLE_KEY);
-  }
-  // `storage` only fires in *other* tabs, so notify this one explicitly.
-  window.dispatchEvent(new Event(ROLE_EVENT));
-}
-
-// ─── useSyncExternalStore adapter ───────────────────────────────
-// localStorage is an external store; reading it in an effect and calling
-// setState causes a cascading render (and the React Compiler flags it).
-
-export function subscribeToRole(onChange: () => void): () => void {
-  window.addEventListener(ROLE_EVENT, onChange);
-  window.addEventListener('storage', onChange);
-  return () => {
-    window.removeEventListener(ROLE_EVENT, onChange);
-    window.removeEventListener('storage', onChange);
-  };
-}
-
-/** Server render has no localStorage — must return a stable value. */
-export function getRoleServerSnapshot(): UserRole | null {
-  return null;
-}
-
+/**
+ * Client-side auth helpers.
+ *
+ * This file used to also hold a localStorage-backed "role" store, so a
+ * visitor could mark themselves a `user` in the browser. Nothing granted
+ * privilege from it — admin status has always come from the server session —
+ * and nothing ever set it, so it only served to make /browse unreachable.
+ * Removed with the role itself; see hooks/useAuth.tsx.
+ */
 export async function loginAsAdminService(
   pin: string
 ): Promise<{ ok: boolean; error?: string }> {

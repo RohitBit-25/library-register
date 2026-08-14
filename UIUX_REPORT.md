@@ -487,6 +487,53 @@ Three details that matter more than the feature itself:
 
 ---
 
+## 7i. Ninth pass — splitting the two sides of the product
+
+### The student side did not work at all
+
+`AppShell` required authentication for every route except `/landing` and `/kiosk`. Authentication meant `isAdmin || userOptedIn`, where `userOptedIn` came from a `library-role=user` entry in localStorage — set only by `loginAsUser()`, **which nothing in the app ever called.**
+
+So for anyone who was not staff:
+
+- `/browse` redirected to `/landing`
+- `/my-requests` redirected to `/landing`
+- and the landing page's own **"Choose Your Seat"** button pointed at `/browse`
+
+The entire public flow — the reason the seat map, the request sheet, the QR code at the front desk and the waitlist exist — was unreachable. It only looked fine in earlier passes because every screenshot was taken with an admin cookie.
+
+Students now need no account. Browsing the plan and submitting a request are public; the request carries the phone number the admin needs; status lookup already returns status fields only, rate-limited, with no names, documents or transaction IDs. Putting a registration wall in front of the one thing the public side exists to do would have been a barrier with nothing behind it.
+
+The dead role went with it — `UserRole`, `getStoredRole`, `setStoredRole`, `subscribeToRole`, `loginAsUser`, `isUser`, `isAuthenticated`. `isAdmin`, which has always come from the server session and never from localStorage, is the only question the auth hook answers now.
+
+### Staff sign-in is its own page
+
+`/admin/login`, instead of a dialog opening over whatever public page you happened to be on. Three practical gains:
+
+- An admin bounced out of a protected route lands somewhere that explains itself.
+- The server's real message has room — *"Invalid PIN. 4 attempts left"*, or how long a lockout has to run. A toast could carry neither.
+- The student-facing site and the tool that manages it stop overlapping.
+
+**The security is unchanged**, because it was already the strong part: scrypt-hashed per-staff PINs, lockout after 5 failures, a per-caller rate limit checked *before* the PIN is, an httpOnly `SameSite=Lax` session cookie, and `jti` revocation on sign-out. The page is only the door.
+
+Two things the split made possible:
+
+- **Return-to-page.** `proxy.ts` and `AppShell` both send you to `/admin/login?next=<path>`, so signing in from `/members` returns you to `/members`. A pre-existing `url.search = ''` in the proxy ran *after* the parameter was set and silently discarded it — caught because the contract check asserts the `next` value, not just the redirect.
+- **No open redirect.** `next` is honoured only when it is a same-site path: `https://example.com` and `//example.com` both fall back to `/`. Verified in a browser, not just asserted — a login page that forwards off-site is how a link that looks like the library ends up landing staff somewhere else with a fresh session in mind.
+
+### What the contract now guarantees
+
+`npm run check:api` grew from 29 to 34 checks:
+
+| | |
+|---|---|
+| `/`, `/members`, `/analytics`, `/payments`, `/staff` | redirect anonymous callers to `/admin/login`, carrying `next` |
+| `/landing`, `/browse`, `/my-requests`, `/kiosk`, `/admin/login` | return 200 with no session |
+| `/admin/login?next=<off-site>` | never turns the value into a navigation target |
+
+The middle row is the one that matters: it is the check that would have caught this bug the day it was introduced.
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.

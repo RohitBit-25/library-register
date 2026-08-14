@@ -33,6 +33,49 @@
     /* ease-out, not ease-in: an exit that starts slow holds the user's
        attention on the thing they just dismissed. */
     --animate-fade-out: fade-out 150ms cubic-bezier(0.23, 1, 0.32, 1);
+
+    /* ═══════════════════════════════════════════════════════════
+       shadcn/ui bridge
+       ═══════════════════════════════════════════════════════════
+       shadcn components are written against a fixed set of names —
+       `bg-background`, `text-muted-foreground`, `border-input`,
+       `ring-ring`. None of them exist in this project, which names its
+       palette after what things ARE (`--bg-surface`, `--text-primary`,
+       `--saffron-700`). Dropped in without this, every shadcn component
+       renders unstyled.
+
+       So: one mapping, defined in terms of the palette that is already
+       contrast-checked, and every component added from the registry
+       inherits Gangaur's colours instead of shadcn's stone defaults.
+       Nothing is duplicated — each line points at an existing token.
+
+       These are `--color-*`, which means Tailwind generates utilities from
+       them (`bg-primary`, `text-muted-foreground`). scripts/check-tokens.mjs
+       fails the build if any such name collides with a built-in utility —
+       the reason this file has otherwise avoided `--color-*` since a
+       `--color-base` once turned the stock `text-base` font-size class into
+       a colour. None of the names below are in that reserved list. */
+    --color-background:          var(--bg-void);
+    --color-foreground:          var(--text-primary);
+    --color-card:                var(--bg-surface);
+    --color-card-foreground:     var(--text-primary);
+    --color-popover:             var(--bg-elevated);
+    --color-popover-foreground:  var(--text-primary);
+    /* Brand. Every filled primary control in the app is saffron-700. */
+    --color-primary:             var(--saffron-700);
+    --color-primary-foreground:  var(--text-inverse);
+    --color-secondary:           var(--bg-muted);
+    --color-secondary-foreground: var(--text-primary);
+    --color-muted:               var(--bg-muted);
+    --color-muted-foreground:    var(--text-secondary);
+    --color-accent:              var(--saffron-50);
+    --color-accent-foreground:   var(--saffron-700);
+    --color-destructive:         var(--ruby-600);
+    --color-destructive-foreground: var(--text-inverse);
+    --color-border:              var(--border-default);
+    --color-input:               var(--border-strong);
+    /* The focus ring, which is saffron everywhere else in the product. */
+    --color-ring:                var(--saffron-500);
   }
 
   /* ═══════════════════════════════════════════════════════════════

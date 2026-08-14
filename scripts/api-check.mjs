@@ -104,16 +104,49 @@ await check('GET /api/members redacts member PII for anonymous callers', async (
   }
 });
 
+// ─── The two sides of the product ────────────────────────────────
+//
+// Admin pages require a session. Student pages must not — /browse and
+// /my-requests once required one and bounced every real visitor back to the
+// landing page, which broke the entire public seat-request flow.
+
 for (const path of ['/', '/members', '/analytics', '/payments', '/staff']) {
-  await check(`page ${path} redirects anonymous callers away`, async () => {
+  await check(`admin page ${path} sends anonymous callers to the staff door`, async () => {
     const res = await req(path);
     assert.ok(
       [302, 307, 308].includes(res.status),
       `expected a redirect, got ${res.status}`
     );
-    assert.match(res.headers.get('location') || '', /landing/);
+    const location = res.headers.get('location') || '';
+    assert.match(location, /\/admin\/login/);
+    // And it remembers where they were going.
+    assert.match(location, new RegExp(`next=${encodeURIComponent(path).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
   });
 }
+
+for (const path of ['/landing', '/browse', '/my-requests', '/kiosk', '/admin/login']) {
+  await check(`public page ${path} is reachable without a session`, async () => {
+    const res = await req(path);
+    assert.equal(res.status, 200, `expected 200, got ${res.status}`);
+  });
+}
+
+await check('the staff door does not forward to another site', async () => {
+  // An open redirect on a login page turns a link that looks like the library
+  // into a way to land staff somewhere else with a fresh session in mind.
+  for (const evil of ['https://example.com', '//example.com', 'javascript:alert(1)']) {
+    const res = await req(`/admin/login?next=${encodeURIComponent(evil)}`);
+    assert.equal(res.status, 200, 'the login page itself must still render');
+    const html = await res.text();
+    // Next serialises the query into the flight payload, so the raw string
+    // being present proves nothing. What must never happen is the value
+    // reaching a navigation target.
+    assert.ok(
+      !new RegExp(`(href|action|url)=["']${evil.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(html),
+      `login page turned an off-site next value into a link: ${evil}`
+    );
+  }
+});
 
 await check('cron snapshot refuses a caller without the secret', async () => {
   const res = await req('/api/cron/snapshot');

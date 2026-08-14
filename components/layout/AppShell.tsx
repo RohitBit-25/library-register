@@ -47,7 +47,12 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   // admin got bounced on first paint, before the session check came back.
   useEffect(() => {
     if (isLoading || isPublic) return;
-    if (!isAdmin) router.replace('/admin/login');
+    if (!isAdmin) {
+      // Carry where they were going, the same way proxy.ts does — otherwise
+      // whichever redirect wins the race decides whether sign-in returns you
+      // to the page you asked for or dumps you on the seat map.
+      router.replace(`/admin/login?next=${encodeURIComponent(pathname)}`);
+    }
   }, [isAdmin, isLoading, pathname, router, isPublic]);
 
   if (isPublic) {

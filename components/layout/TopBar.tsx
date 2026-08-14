@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { BookOpen, Shield, Eye, LogOut } from 'lucide-react';
+import { BookOpen, Shield, LogOut } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 
 interface TopBarProps {

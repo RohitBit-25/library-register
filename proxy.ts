@@ -56,11 +56,14 @@ export async function proxy(request: NextRequest) {
   }
 
   const url = request.nextUrl.clone();
-  // The admin door, not the student-facing landing page. `next` preserves
-  // where they were heading so the sign-in returns them there.
+  // The admin door, not the student-facing landing page.
   url.pathname = '/admin/login';
-  url.searchParams.set('next', pathname);
+  // Drop whatever query the original request carried BEFORE adding our own —
+  // clearing it afterwards silently threw `next` away.
   url.search = '';
+  // Preserve where they were heading so sign-in returns them there. The login
+  // page only honours same-site paths, so this cannot become an open redirect.
+  url.searchParams.set('next', pathname);
   return NextResponse.redirect(url);
 }
 
