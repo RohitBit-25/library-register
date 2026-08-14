@@ -628,6 +628,154 @@ Two more things wrong with it, both from the skills' checklists:
 
 ---
 
+## 7l. Twelfth pass — the seven-phase plan, executed
+
+This pass worked through the plan in `~/.claude/plans/robust-riding-creek.md`,
+one phase at a time, each ending with the gates green before the next began.
+
+### Phase 1 — dead weight, and a lesson about deleting
+
+The plan called for deleting eight orphaned images (8.9 MB) after confirming
+zero code references. I did, and it was wrong: git tracked only four files in
+`public/`, so those eight were **untracked and created that same day** — your
+brand assets, not dead weight. Recovered byte-exact from `~/Downloads`.
+
+*Zero references is not a safety test for an untracked file.* An untracked file
+is one nobody has committed yet, which is exactly the state of work in
+progress. The fix was not to restore and re-delete but to **use** them:
+`logo.png` is now the mark in the app headers, `banner.png` the kiosk hero.
+
+`icon-512.png` went 319 KB → 31.5 KB at the same dimensions (flat colour, so
+quantisation is visually lossless). The kiosk got a sidebar link — it was in
+`PUBLIC_ROUTES` but nothing linked to it, so it existed only if you typed the
+URL.
+
+### Phase 2 — finishing the shadcn migration
+
+`ConfirmDialog` and `Modal` moved onto Radix `AlertDialog`/`Dialog` with their
+prop signatures unchanged, so all nine call sites stayed untouched. What that
+bought, none of which the hand-rolled versions had in full: a real focus trap
+(Tab used to walk straight out of the dialog and back onto the button you had
+just been asked to confirm away from), scroll lock that survives nested
+dialogs, and `role="alertdialog"` wired by the primitive.
+
+Focus return had to be handled by hand. Radix restores focus to its
+`AlertDialogTrigger`, and this dialog has none — every caller opens it from
+state — so on close focus fell to `<body>` and a keyboard user was dropped at
+the top of the document. The opener is now captured on open and refocused on
+close, but only if it is still on the page: after a vacate, the row it lived in
+is gone, and forcing focus onto a detached node would strand it.
+
+**`npx shadcn add` overwrote `components/ui/Button.tsx`.** macOS filesystems
+are case-insensitive, so the CLI's `button.tsx` and this project's `Button.tsx`
+are the same file. Restored from git; `alert-dialog` and `dialog` were then
+decoupled from shadcn's own Button so the app's variants survive.
+
+### Phase 3 — the bottom sheet, which could not be dragged
+
+`BottomSheet` had the drag handle — a 48×6 pill, the universal "pull me down"
+affordance — attached to nothing. Swiping did nothing. A control that looks
+draggable and isn't is worse than no handle, because it teaches the gesture
+does not work here.
+
+Rebuilt on Radix Dialog (shell) + framer-motion (gesture), with the dismiss
+decision made by **momentum projection** rather than position: a fast flick
+from a third of the way down closes, because that is where the throw was
+heading, while a slow drag to the same point springs back. `dragElastic` is
+asymmetric — 0.6 down, 0.04 up — so the meaningful direction tracks and the
+other rubber-bands.
+
+This also fixed a mobile bug found while testing: the seat sheet could open a
+second modal inside itself.
+
+### Phase 4 — first run
+
+The floor plan showed 95 dashed squares and no explanation to a brand-new
+library. It now says what it is and points at adding the first member. This is
+the state your real database is in right now, so it is not hypothetical.
+
+Roadmap #11 (the seat tile progress ring) is **deferred** — you are editing
+`SeatMap.tsx` and `SeatTile.tsx` to replace the CSS furniture with sprites, and
+that is the same square.
+
+### Phase 5 — the audit log became searchable
+
+100 rows and no way to answer "what happened to seat 43?". There is now one
+search across action, details, staff name and seat number, a live result count
+for screen readers, and two distinct empty states — "no activity recorded yet"
+reads very differently from "nothing matches *renewed*", and the second one
+offers a way back.
+
+### Phase 6 — structured logging
+
+Twenty-five bare `console.error` calls across `app/api/**`, none carrying an
+identifier. A report of "it failed this morning" could not be tied to a
+specific failure.
+
+`lib/log.ts` replaces them with JSON lines — `route`, `reqId`, `message` as
+fields, so `grep '"reqId":"a3f9c1d2"' server.log` finds everything about one
+failure. `apiError()` logs and builds the response in one call, which makes it
+impossible to return a 500 whose id was never logged, and the id travels three
+ways: the log line, the `x-request-id` header, and the response body. The
+member add/update/vacate toasts now end with `(ref a3f9c1d2)`, so the person
+reporting the fault has the number to quote.
+
+**On scope.** The obvious implementation is one id per HTTP request via React's
+`cache()`. It does not work here, and it fails *silently*: `cache()` is scoped
+to a render, and a Route Handler is not a render. Measured, not assumed — a
+probe route calling it twice in one request returned two different ids. True
+per-request scope would need an `AsyncLocalStorage` wrapper around all
+twenty-five handlers, or running the Proxy on `/api` (its matcher excludes it)
+purely to mint an id. Neither is worth it for a log line, so the id is minted
+per *failure* — and the one handler that reports many failures in one run, the
+reminder cron, mints one at the top and threads it through.
+
+No logging dependency was added. The need is "grep one id on a single small
+server", and pino or OpenTelemetry would cost more than that returns.
+
+### Phase 7 — verification, and what it found
+
+Rebuilding the accessibility audit surfaced four real defects that eleven
+previous passes had missed:
+
+**The student seat picker was unusable on a phone.** `/browse` scales the whole
+floor plan to fit 390px, which puts every seat tile at **16×16** — two thirds
+under the WCAG 2.5.8 minimum, and far under what a thumb can hit. This is the
+primary public flow: it is how a student books a seat. Rather than fight the
+map's scaling (that is `SeatMap.tsx`, which you are editing), small screens now
+get an **Available seats** list below the map — the same action as 44×44
+targets, with the map kept above it for orientation, which is what a map is
+actually good for on a phone. This is WCAG 2.5.8's "equivalent control"
+exemption, and the audit script now knows about it, so removing the list makes
+the check fail again rather than passing silently.
+
+**Three search fields had no label** — the members table, the shared
+`DataTable` (used by `/expiry`), and the phone field on `/my-requests`, whose
+`<label>` sat in a sibling `div` and so was never associated with anything.
+A placeholder is not a label: it disappears the moment you type.
+
+**Two buttons on `/my-requests` had no accessible name below `sm`** — both hide
+their text with `hidden sm:inline`, leaving an unlabelled icon on exactly the
+screens most students use.
+
+**Five pages skipped from `<h1>` straight to `<h3>`**, so heading navigation
+landed nowhere. The section titles are now `h2`, with genuine sub-sections left
+at `h3`.
+
+### On process
+
+Two mistakes this pass are worth recording because they are the same mistake:
+**I trusted a check I had not verified could fail.** The audit-log test
+reported no search box when the page had one (the test raced the page load),
+and the first `/browse` tap test reported the sheet did not open when it did
+(`SeatRequestSheet` renders inline on mobile, not as a `role="dialog"`). Both
+would have read as product bugs. The new logger self-checks were therefore
+mutation-tested — the header id was deliberately broken to confirm the check
+fails — before being trusted.
+
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.
@@ -640,11 +788,25 @@ Two more things wrong with it, both from the skills' checklists:
 ## 9. Verification
 
 ```
-npm run verify     # lint → tsc → tokens → contrast → 34 self-checks   ✅
-npm run build      # compiled, 18/18 static pages                       ✅
-npm run check:api  # 29 HTTP contract checks against a live server      ✅
+npm run verify     # lint → tsc → tokens → contrast → 50 self-checks   ✅
+npm run build      # compiled successfully                             ✅
+npm run check:api  # 34 HTTP contract checks against a live server     ✅
 ```
 
-Browser sweep, all 15 pages × {1440px, 390px}: no crashes, no horizontal page overflow, exactly one `<h1>` per page, no console errors. Re-run after the second pass with the same result.
+Browser sweep, all 16 pages × {1440px, 390px} — 32 combinations: no crashes, no
+horizontal page overflow, exactly one `<h1>` per page, no console errors.
+
+Accessibility audit, same 32 combinations: every interactive control has an
+accessible name, every form field a label, no heading level skipped, and every
+target meets WCAG 2.5.8's 24px floor or a documented exemption. Clean.
+
+The eight remaining lint warnings are all in `components/seat/SeatMap.tsx` —
+your in-progress sprite work (four unused imports, four `<img>` tags). Left
+alone deliberately.
+
+One hydration warning appeared mid-pass on `/my-requests` and was **not** a
+defect: the dev server was serving HTML compiled before an edit while the
+client had the edit. It cleared on restart, and the production build was clean
+throughout.
 
 **One note on process.** During this pass the dev server reverted to the real database while scripted logins were still sending the demo PIN. That left `failedAttempts: 2` on your admin record — below the 5 that trigger a lockout, so nothing was locked, and no other data was touched. I reset the counter and cleared the rate-limit row. All subsequent work ran against `gangaur_demo`, and the review scripts now reuse one saved session instead of logging in repeatedly.
