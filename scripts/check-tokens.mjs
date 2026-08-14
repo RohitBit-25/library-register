@@ -82,8 +82,15 @@ if (collisions.length) {
 }
 
 const runtime = runtimeFontVars(root);
+
+// Radix sets these on the element at runtime — the trigger's measured width,
+// the transform origin a popover flipped to, the available height before the
+// viewport edge. They are not ours to define, and a component that uses one
+// is doing the right thing.
+const isRuntimeInjected = (token) => token.startsWith('--radix-');
+
 const missing = [...used.entries()].filter(
-  ([token]) => !defined.has(token) && !runtime.has(token)
+  ([token]) => !defined.has(token) && !runtime.has(token) && !isRuntimeInjected(token)
 );
 
 if (missing.length) {
@@ -124,6 +131,29 @@ if (broken.length) {
   for (const [cls, file] of broken) console.error(`  ${cls}  (${file})`);
   console.error('\nUsually the result of a truncated find-and-replace across a class string.\n');
   process.exit(1);
+}
+
+// ─── Case-colliding component files ─────────────────────────────
+//
+// macOS is case-insensitive: `components/ui/button.tsx` and
+// `components/ui/Button.tsx` are the same file. `npx shadcn add` writes
+// lowercase names, so adding any component that depends on shadcn's Button
+// silently OVERWRITES this project's Button — which has a `primary` variant
+// and 44px minimum targets that the whole app is built on. It reports the
+// damage as "Updated 1 file" and TypeScript only notices later, via a
+// confusing casing error.
+//
+// Two files whose names differ only in case is always a mistake here.
+const byLower = new Map();
+for (const file of SOURCE_DIRS.flatMap((d) => walk(join(root, d)))) {
+  const rel = relative(root, file);
+  const key = rel.toLowerCase();
+  if (byLower.has(key) && byLower.get(key) !== rel) {
+    console.error(`\nTwo files differ only in case — on macOS these are the same file:\n`);
+    console.error(`  ${byLower.get(key)}\n  ${rel}\n`);
+    process.exit(1);
+  }
+  byLower.set(key, rel);
 }
 
 console.log(`All ${used.size} referenced CSS tokens are defined; no malformed arbitrary values.`);

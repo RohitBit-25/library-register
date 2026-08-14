@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { type Member, type SeatStatus } from '@/lib/types';
 import { getSeatStatus, fmtDateShort, firstName, cn } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
@@ -8,8 +8,14 @@ import { Search, MoreVertical, Check, RefreshCw, MessageCircle, Trash2, UserPlus
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import ConfirmDialog from '../ui/ConfirmDialog';
-import Portal from '../ui/Portal';
 import { Tooltip } from '../ui/Tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/useToast';
 
 interface MemberTableProps {
@@ -52,36 +58,14 @@ export default function MemberTable({
   const [sortAsc, setSortAsc] = useState(true);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   
-  // Action state
-  const [openActions, setOpenActions] = useState<number | null>(null);
-  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const [seatToRemove, setSeatToRemove] = useState<number | null>(null);
   const [bulkRemoveConfirm, setBulkRemoveConfirm] = useState(false);
 
-  // Close dropdown on outside click or scroll
-  useEffect(() => {
-    const handleOutsideClick = () => setOpenActions(null);
-    window.addEventListener('click', handleOutsideClick);
-    window.addEventListener('scroll', handleOutsideClick, { passive: true });
-    return () => {
-      window.removeEventListener('click', handleOutsideClick);
-      window.removeEventListener('scroll', handleOutsideClick);
-    };
-  }, []);
-
-  const handleActionClick = (e: React.MouseEvent, seat: number) => {
-    e.stopPropagation();
-    if (openActions === seat) {
-      setOpenActions(null);
-      return;
-    }
-    const rect = e.currentTarget.getBoundingClientRect();
-    setDropdownPos({
-      top: rect.bottom + window.scrollY + 8,
-      left: rect.right + window.scrollX - 192, // 192px is w-48
-    });
-    setOpenActions(seat);
-  };
+  // Which mobile card has its action drawer expanded. The desktop table uses
+  // a Radix dropdown, which owns its own open state, positioning, outside
+  // click and scroll behaviour — this is only the phone accordion, which is a
+  // section that expands in place rather than a floating menu.
+  const [openActions, setOpenActions] = useState<number | null>(null);
 
   const handleCopy = (e: React.MouseEvent, text: string, type: string) => {
     e.stopPropagation();
@@ -199,7 +183,7 @@ export default function MemberTable({
             exit={{ opacity: 0, y: -10 }}
             className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-[var(--saffron-50)] border border-[var(--sapphire-200)] p-3 shadow-sm"
           >
-            <span className="text-sm font-bold text-[var(--sapphire-600)] drop-shadow-sm px-2">
+            <span className="px-2 text-sm font-bold text-[var(--saffron-700)]">
               {selected.size} selected
             </span>
             <Tooltip content="Mark selected members as paid">
@@ -288,18 +272,18 @@ export default function MemberTable({
                   className="h-6 w-6 cursor-pointer rounded accent-[var(--saffron-500)]"
                 />
               </th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-600)] transition-colors" onClick={() => toggleSort('seat')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--saffron-700)] transition-colors" onClick={() => toggleSort('seat')}>
                 <span className="flex items-center gap-1">Seat <SortIcon field="seat" currentField={sortField} asc={sortAsc} /></span>
               </th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-600)] transition-colors" onClick={() => toggleSort('name')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--saffron-700)] transition-colors" onClick={() => toggleSort('name')}>
                 <span className="flex items-center gap-1">Name <SortIcon field="name" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-bold">Phone</th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-600)] transition-colors" onClick={() => toggleSort('joinDate')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--saffron-700)] transition-colors" onClick={() => toggleSort('joinDate')}>
                 <span className="flex items-center gap-1">Joined <SortIcon field="joinDate" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-bold">Dur.</th>
-              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--sapphire-600)] transition-colors" onClick={() => toggleSort('expiry')}>
+              <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--saffron-700)] transition-colors" onClick={() => toggleSort('expiry')}>
                 <span className="flex items-center gap-1">Expiry <SortIcon field="expiry" currentField={sortField} asc={sortAsc} /></span>
               </th>
               <th className="text-left p-3 font-bold">Status</th>
@@ -385,17 +369,56 @@ export default function MemberTable({
                       <Badge variant={status} />
                     )}
                   </td>
-                  <td className="p-3 relative">
+                  <td className="p-3">
                     {!m.vacant && (
-                    <Tooltip content={`Manage ${m.name}`} side="left">
-                      <button
-                        onClick={(e) => handleActionClick(e, m.seat)}
-                        className="cursor-pointer p-1.5 rounded-lg hover:bg-[var(--bg-base)] transition-colors"
-                        aria-label={`Actions for ${m.name}`}
-                      >
-                        <MoreVertical className="w-4 h-4 text-[var(--text-tertiary)]" />
-                      </button>
-                    </Tooltip>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          aria-label={`Actions for ${m.name}`}
+                          className="cursor-pointer rounded-lg p-1.5 text-[var(--text-tertiary)] transition-ui hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] data-[state=open]:bg-[var(--bg-muted)]"
+                        >
+                          <MoreVertical className="h-4 w-4" aria-hidden="true" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-52">
+                          {onEdit && (
+                            <DropdownMenuItem onSelect={() => onEdit(m.seat)} className="flex cursor-pointer items-center gap-2.5 px-3 py-2 text-sm font-semibold">
+                              <Pencil className="h-4 w-4" aria-hidden="true" />
+                              Edit details
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem
+                            onSelect={() => (m.fee === 'due' ? onMarkPaid(m.seat) : onMarkDue(m.seat))}
+                            className="flex cursor-pointer items-center gap-2.5 px-3 py-2 text-sm font-semibold"
+                          >
+                            <Check className="h-4 w-4" aria-hidden="true" />
+                            {m.fee === 'due' ? 'Mark fee paid' : 'Mark fee due'}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onSelect={() => onRenew(m.seat)} className="flex cursor-pointer items-center gap-2.5 px-3 py-2 text-sm font-semibold">
+                            <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                            Renew membership
+                          </DropdownMenuItem>
+                          {m.phone && (
+                            <DropdownMenuItem asChild className="flex cursor-pointer items-center gap-2.5 px-3 py-2 text-sm font-semibold">
+                              <a
+                                href={`https://wa.me/${m.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hi ' + firstName(m.name) + ', your library fee for Seat ' + m.seat + ' is due.')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                                Send a WhatsApp reminder
+                              </a>
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onSelect={() => setSeatToRemove(m.seat)}
+                            variant="destructive"
+                            className="flex cursor-pointer items-center gap-2.5 px-3 py-2 text-sm font-semibold"
+                          >
+                            <Trash2 className="h-4 w-4" aria-hidden="true" />
+                            Remove member
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     )}
                   </td>
                 </motion.tr>
@@ -406,69 +429,6 @@ export default function MemberTable({
         </table>
       </div>
 
-      {/* Desktop Portal Action Dropdown */}
-      <Portal>
-        <AnimatePresence>
-          {openActions !== null && (
-            <motion.div 
-              style={{ top: dropdownPos.top, left: dropdownPos.left }}
-              initial={{ opacity: 0, scale: 0.95, y: -5 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -5 }}
-              transition={{ duration: 0.15 }}
-              className="absolute z-50 w-48 rounded-[var(--radius-xl)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-xl)] p-1"
-            >
-              {members.filter(m => m.seat === openActions).map(m => (
-                <div key={m.seat}>
-                  {onEdit && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); onEdit(m.seat); setOpenActions(null); }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--saffron-700)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
-                    >
-                      <Pencil className="w-4 h-4" />
-                      Edit details
-                    </button>
-                  )}
-                  <button
-                    onClick={(e) => { e.stopPropagation(); if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
-                  >
-                    <Check className="w-4 h-4" />
-                    {m.fee === 'due' ? 'Mark fee paid' : 'Mark fee due'}
-                  </button>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onRenew(m.seat); setOpenActions(null); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    Renew membership
-                  </button>
-                  {m.phone && (
-                    <a
-                      href={`https://wa.me/${m.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hi ' + firstName(m.name) + ', your library fee for Seat ' + m.seat + ' is due.')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-base)] transition-colors cursor-pointer rounded-lg"
-                      onClick={(e) => { e.stopPropagation(); setOpenActions(null); }}
-                    >
-                      <MessageCircle className="w-4 h-4 text-[#25D366]" />
-                      WhatsApp
-                    </a>
-                  )}
-                  <div className="h-px bg-[var(--border-subtle)] my-1 mx-2" />
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setSeatToRemove(m.seat); setOpenActions(null); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-[var(--ruby-600)] hover:bg-[rgba(232,66,66,0.08)] transition-colors cursor-pointer rounded-lg"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Remove member
-                  </button>
-                </div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </Portal>
 
       {/* Mobile card list */}
       <motion.div 
@@ -530,7 +490,7 @@ export default function MemberTable({
                   {m.vacant ? (
                     <Link
                       href={`/?seat=${m.seat}`}
-                      className="flex items-center gap-1 text-xs font-bold text-[#1a1a16] bg-[var(--sapphire-500)] px-3 py-1.5 rounded-lg shadow-sm"
+                      className="inline-flex min-h-[26px] cursor-pointer items-center gap-1 rounded-lg border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-3 py-1.5 text-xs font-bold text-[var(--saffron-700)] transition-ui hover:bg-[var(--saffron-100)]"
                     >
                       <UserPlus className="w-4 h-4" />
                       Add
@@ -563,14 +523,14 @@ export default function MemberTable({
                           onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
                           className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-ui"
                         >
-                          <Check className="w-4 h-4 text-[var(--sapphire-600)]" />
+                          <Check className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
                           <span className="text-[11px] mt-0.5">{m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}</span>
                         </button>
                         <button
                           onClick={() => { onRenew(m.seat); setOpenActions(null); }}
                           className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-ui"
                         >
-                          <RefreshCw className="w-4 h-4 text-[var(--sapphire-600)]" />
+                          <RefreshCw className="h-4 w-4 text-[var(--saffron-700)]" aria-hidden="true" />
                           <span className="text-[11px] mt-0.5">Renew</span>
                         </button>
                         {m.phone && (
