@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useMembers } from '@/hooks/useMembers';
 import UnifiedHeader from '@/components/layout/UnifiedHeader';
 import { 
-  ArrowRight, Sun, Moon, ShieldCheck, Droplets, VolumeX, Wind, Wifi, Armchair, CalendarDays, CheckCircle2
+  ArrowRight, Sun, ShieldCheck, Droplets, VolumeX, Wind, Wifi, Armchair, CalendarDays
 } from 'lucide-react';
 
 /**
@@ -37,16 +37,27 @@ function Reveal({ children, delay = 0, className = '' }: {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    // Already on screen at mount (the hero): show immediately, no observer.
-    if (el.getBoundingClientRect().top < window.innerHeight) { setShown(true); return; }
 
+    // No "already visible at mount" short-circuit: IntersectionObserver
+    // already invokes its callback once on observe with the current state, so
+    // anything on screen reveals on the next frame anyway. Setting state
+    // synchronously here instead is what the React Compiler flags as a
+    // cascading render, and it would be duplicating the observer's own job.
     const io = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return;
       setShown(true);
       io.unobserve(el);
     }, { rootMargin: '0px 0px -12% 0px' });
     io.observe(el);
-    return () => io.disconnect();
+
+    // Safety net. Hiding content until an observer says otherwise means that
+    // if the observer never fires, the section is invisible rather than
+    // merely un-animated — and "the page is blank below the hero" is a far
+    // worse failure than "the animation did not play". Caught in review by a
+    // full-page screenshot, which renders without scrolling and came out
+    // empty. After a second, show it regardless.
+    const failsafe = setTimeout(() => setShown(true), 1000);
+    return () => { io.disconnect(); clearTimeout(failsafe); };
   }, []);
 
   return (
