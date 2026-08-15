@@ -10,7 +10,7 @@ export function Skeleton({ className, variant = 'rectangular' }: SkeletonProps) 
     <div
       className={cn(
         'animate-pulse bg-[var(--bg-muted)]',
-        variant === 'text' && 'h-3 w-3/4 rounded-[var(--radius-sm)]',
+        variant === 'text' && 'h-4 w-4/4 rounded-[var(--radius-sm)]',
         variant === 'circular' && 'rounded-[var(--radius-full)]',
         variant === 'rectangular' && 'rounded-[var(--radius-md)]',
         className

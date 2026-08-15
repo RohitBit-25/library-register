@@ -86,7 +86,7 @@ export default function DashboardPage() {
           subtitle={dateStr}
           actions={
             <div className="hidden items-center gap-2 rounded-lg bg-[var(--bg-muted)] px-3 py-1.5 text-xs font-semibold tabular text-[var(--text-secondary)] sm:flex">
-              <TrendingUp className="h-3.5 w-3.5 text-[var(--emerald-600)]" aria-hidden="true" />
+              <TrendingUp className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
               {Math.round((stats.occupied / 95) * 100)}% occupied
             </div>
           }
@@ -220,7 +220,7 @@ export default function DashboardPage() {
                         onClick={() => handleMarkPaid(m.seat)}
                         className="bg-[var(--emerald-600)] text-[var(--text-inverse)] border-transparent hover:bg-[var(--emerald-600)]"
                       >
-                        <Check className="w-3.5 h-3.5 mr-1" />
+                        <Check className="w-4 h-4 mr-1" />
                         Mark paid
                       </Button>
                     ) : (
@@ -229,7 +229,7 @@ export default function DashboardPage() {
                         size="sm"
                         onClick={() => router.push(`/?seat=${m.seat}`)}
                       >
-                        <RefreshCw className="w-3.5 h-3.5 mr-1" />
+                        <RefreshCw className="w-4 h-4 mr-1" />
                         Renew
                       </Button>
                     )}

@@ -10,7 +10,7 @@ import {
   type SeatPosition,
   SEAT_ROWS,
 } from '@/lib/layoutConfig';
-import { deriveDeskRuns, type DeskRun } from '@/lib/deskLayout';
+import { deriveDeskRuns, type DeskRun, seatPixel } from '@/lib/deskLayout';
 
 // Types now live in lib/layoutConfig (the data layer). Re-exported here
 // because ~10 components already import them from this module.
@@ -29,14 +29,7 @@ export function getSeatPosition(n: number): SeatPosition {
   return getSeatPositionConfig(n);
 }
 
-function toPixel(col: number, row: number) {
-  const SIZE = 60;
-  const jitter = (col % 2 === 0) ? 2 : -2;
-  return {
-    left: PAD + (col - 1) * CELL + (CELL - SIZE) / 2,
-    top: PAD + (row - 1) * CELL + (CELL - SIZE) / 2 + jitter,
-  };
-}
+// Removed duplicate toPixel: it conflicted with deskLayout.ts sizing. We now use seatPixel directly.
 
 // ─── Visual Components ────────────────────────────────────────────────────────
 
@@ -48,15 +41,58 @@ function toPixel(col: number, row: number) {
  * between neighbours — which is what makes the floor read as furniture rather
  * than as squares scattered on a grid.
  */
+// desk.png is 2073×758: a top-down table with a moulded cap at each end and a
+// run of power sockets along the middle.
+const DESK_SRC_W = 2073;
+const DESK_SRC_H = 758;
+/** Fraction of the sprite taken by one end cap. */
+const DESK_CAP = 0.12;
+
 const DeskSlab = memo(function DeskSlab({ run }: { run: DeskRun }) {
+  const isVertical = run.face === 'left' || run.face === 'right';
+
+  // Drawn along its length, then rotated for runs that travel down a column.
+  const length = isVertical ? run.height : run.width;
+  const depth = isVertical ? run.width : run.height;
+
+  // Three ways to fill a 950px table from a 2073px sprite, and only one of
+  // them looks like furniture:
+  //
+  //   stretch — what this did before. A 3.3× horizontal smear: the grain
+  //             turns to streaks and each socket becomes a pale slab.
+  //   repeat  — tiles the whole sprite, so the moulded end caps reappear
+  //             every 280px down the middle of the table.
+  //   round   — border-image keeps the two caps at the two ends and tiles
+  //             only the middle, rounding the tile so a whole number fits.
+  //
+  // `round` is the one that reads as a single long desk with sockets spaced
+  // along it, which is what a reading hall actually has.
+  const cap = Math.round(depth * (DESK_SRC_W / DESK_SRC_H) * DESK_CAP);
+
   return (
     <div
       className="absolute z-0"
       style={{ left: run.left, top: run.top, width: run.width, height: run.height }}
       aria-hidden="true"
     >
-      {/* Desk texture */}
-      <div className="absolute inset-0 shadow-sm bg-[url('/assets/desk.png')] bg-[length:100%_100%] bg-no-repeat" />
+      <div
+        className="absolute drop-shadow-md"
+        style={{
+          width: length,
+          height: depth,
+          top: '50%',
+          left: '50%',
+          transform: isVertical
+            ? 'translate(-50%, -50%) rotate(90deg)'
+            : 'translate(-50%, -50%)',
+          borderImageSource: "url('/assets/desk.png')",
+          borderImageSlice: `0 ${DESK_CAP * 100}% 0 ${DESK_CAP * 100}% fill`,
+          borderImageWidth: `0 ${cap}px 0 ${cap}px`,
+          borderImageRepeat: 'round round',
+          borderStyle: 'solid',
+          borderColor: 'transparent',
+        }}
+      />
     </div>
   );
 });
@@ -175,20 +211,24 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
   className?: string;
 }) {
   const { x, y, face } = getSeatPosition(seatNum);
-  const { left, top } = toPixel(x, y);
+  const { left, top: baseTop } = seatPixel(x, y);
+  const jitter = (x % 2 === 0) ? 2 : -2;
+  const top = baseTop + jitter;
+
+  // The new chair asset has its backrest at the top, so it naturally faces DOWN.
   const rotation: Record<FaceDir, string> = {
-    up: 'rotate(0deg)',
-    down: 'rotate(180deg)',
-    left: 'rotate(-90deg)',
-    right: 'rotate(90deg)',
+    up: 'rotate(180deg)',
+    down: 'rotate(0deg)',
+    left: 'rotate(90deg)',
+    right: 'rotate(-90deg)',
   };
 
   // Adjust translation to pull the chair slightly away from the desk so it doesn't clip into the table
   const chairOffset: Record<FaceDir, string> = {
-    up: 'translateY(16px)',
-    down: 'translateY(-16px)',
-    left: 'translateX(16px)',
-    right: 'translateX(-16px)',
+    up: 'translateY(14px)',
+    down: 'translateY(-14px)',
+    left: 'translateX(14px)',
+    right: 'translateX(-14px)',
   };
 
   return (
@@ -200,7 +240,7 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
         focus-within:ring-2 focus-within:ring-[var(--saffron-500)] focus-within:z-30
         ${className}
       `}
-      style={{ left, top, width: 58, height: 58 }}
+      style={{ left, top, width: 60, height: 60 }}
       data-seat={seatNum}
       aria-label={`Seat ${seatNum}`}
     >
@@ -212,7 +252,7 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
         style={{ transform: `${chairOffset[face]} ${rotation[face]}` }} 
       />
       {/* Seat pad interactive container */}
-      <div className="relative w-[54px] h-[54px] z-10 m-auto flex items-center justify-center">
+      <div className="relative w-[56px] h-[56px] z-10 m-auto flex items-center justify-center">
         {children(face)}
       </div>
     </div>
@@ -234,7 +274,15 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
  */
 const MIN_SCALE = 0.42;
 
-function useFitToWidth() {
+/**
+ * `width` fits the room across the container and lets it run off the bottom —
+ * right for a card embedded in a scrolling page. `both` fits the whole room
+ * inside the container, which is what a floor plan is for: seeing the entire
+ * hall at once rather than scrolling a picture of it.
+ */
+type FitMode = 'width' | 'both';
+
+function useFitToWidth(mode: FitMode = 'width') {
   const outerRef = React.useRef<HTMLDivElement>(null);
   const [scale, setScale] = React.useState(1);
   /** True when the room is wider than the screen even at MIN_SCALE. */
@@ -247,7 +295,10 @@ function useFitToWidth() {
     const measure = () => {
       // Padding is part of the visual frame, so measure against content width.
       const available = el.clientWidth - 32;
-      const exact = available / CANVAS_W;
+      const byWidth = available / CANVAS_W;
+      const exact = mode === 'both'
+        ? Math.min(byWidth, (el.clientHeight - 32) / CANVAS_H)
+        : byWidth;
       setScale(Math.min(1, Math.max(MIN_SCALE, exact)));
       setOverflows(exact < MIN_SCALE);
     };
@@ -256,19 +307,37 @@ function useFitToWidth() {
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [mode]);
 
   return { outerRef, scale, overflows };
 }
 
-export function SeatMapContainer({ children }: { children: ReactNode }) {
-  const { outerRef, scale, overflows } = useFitToWidth();
+export function SeatMapContainer({
+  children,
+  fit = 'width',
+  zoom = 1,
+  frameless = false,
+}: {
+  children: ReactNode;
+  /** See FitMode. Defaults to the embedded-card behaviour. */
+  fit?: FitMode;
+  /** User zoom on top of the fitted scale, for the dedicated plan page. */
+  zoom?: number;
+  /** Drop the card chrome when the page already provides a frame. */
+  frameless?: boolean;
+}) {
+  const { outerRef, scale: fitted, overflows } = useFitToWidth(fit);
+  const scale = fitted * zoom;
 
   return (
     <div
       ref={outerRef}
-      className="w-full relative group rounded-xl overflow-auto custom-scrollbar bg-[var(--bg-surface)] border border-[var(--border-default)]"
-      style={{ minHeight: scale < 1 ? undefined : '600px' }}
+      className={cnLocal(
+        'w-full relative group overflow-auto custom-scrollbar',
+        !frameless && 'rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)]',
+        frameless && 'h-full',
+      )}
+      style={{ minHeight: frameless ? undefined : (scale < 1 ? undefined : '600px') }}
     >
       {/*
         Scaling from `top center` inside a `w-max` box meant the untransformed
@@ -280,7 +349,7 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
         then centre that box. The plan now always starts at the left edge.
       */}
       <div
-        className="mx-auto"
+        className={frameless ? 'mx-auto my-auto' : 'mx-auto'}
         style={{
           width: CANVAS_W * scale,
           height: CANVAS_H * scale,

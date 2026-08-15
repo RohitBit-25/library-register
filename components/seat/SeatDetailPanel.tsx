@@ -310,7 +310,7 @@ export default function SeatDetailPanel({
                         value={member.phone || '—'}
                         action={member.phone ? (
                           <button onClick={handleCopyPhone} className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer p-1">
-                            {copied ? <span className="text-xs font-bold text-[var(--emerald-500)]">Copied!</span> : <Copy className="w-3.5 h-3.5" />}
+                            {copied ? <span className="text-xs font-bold text-[var(--emerald-500)]">Copied!</span> : <Copy className="w-4 h-4" />}
                           </button>
                         ) : undefined}
                       />

@@ -189,10 +189,10 @@ export function DataTable<TData, TValue>({
                           {header.column.getCanSort() && (
                             <span className="text-[var(--text-tertiary)]">
                               {{
-                                asc: <ChevronUp className="w-3.5 h-3.5" />,
-                                desc: <ChevronDown className="w-3.5 h-3.5" />,
+                                asc: <ChevronUp className="w-4 h-4" />,
+                                desc: <ChevronDown className="w-4 h-4" />,
                               }[header.column.getIsSorted() as string] ?? (
-                                <ChevronsUpDown className="w-3.5 h-3.5" />
+                                <ChevronsUpDown className="w-4 h-4" />
                               )}
                             </span>
                           )}

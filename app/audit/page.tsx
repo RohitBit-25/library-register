@@ -168,7 +168,7 @@ export default function AuditLogsPage() {
                     </td>
                     <td className="p-4 text-[var(--text-tertiary)] whitespace-nowrap text-xs">
                       <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5" />
+                        <Clock className="w-4 h-4" />
                         {new Date(log.timestamp).toLocaleString()}
                       </div>
                     </td>

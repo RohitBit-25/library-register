@@ -184,19 +184,19 @@ export default function SeatGridContent() {
             <StatChip 
               label="Total Seats" 
               value={stats.total} 
-              icon={<LayoutDashboard size={14} />}
+              icon={<LayoutDashboard size={16} />}
               color="bg-[var(--bg-muted)] text-[var(--text-primary)] border-[var(--border-default)]" 
             />
             <StatChip 
               label="Occupied" 
               value={stats.occupied} 
-              icon={<Users size={14} />}
+              icon={<Users size={16} />}
               color="bg-[var(--saffron-50)] text-[var(--saffron-700)] border-[var(--saffron-200)]" 
             />
             <StatChip
               label="Available"
               value={stats.vacant}
-              icon={<UserPlus size={14} />}
+              icon={<UserPlus size={16} />}
               color="bg-[var(--emerald-50)] text-[var(--emerald-700)] border-[var(--emerald-200)]"
               active={statusFilter === 'vacant'}
               onToggle={() => toggleStatus('vacant')}
@@ -205,7 +205,7 @@ export default function SeatGridContent() {
               <StatChip 
                 label="Fee Due"
                 value={stats.due}
-                icon={<IndianRupee size={14} />}
+                icon={<IndianRupee size={16} />}
                 color="bg-[var(--saffron-50)] text-[var(--saffron-700)] border-[var(--saffron-200)]"
                 active={statusFilter === 'due'}
                 onToggle={() => toggleStatus('due')}
@@ -215,7 +215,7 @@ export default function SeatGridContent() {
               <StatChip
                 label="Expiring"
                 value={stats.expiring}
-                icon={<Clock size={14} />}
+                icon={<Clock size={16} />}
                 color="bg-[var(--marigold-50)] text-[var(--marigold-700)] border-[var(--marigold-200)]"
                 active={statusFilter === 'expiring'}
                 onToggle={() => toggleStatus('expiring')}
@@ -225,7 +225,7 @@ export default function SeatGridContent() {
               <StatChip
                 label="Expired"
                 value={stats.expired}
-                icon={<AlertCircle size={14} />}
+                icon={<AlertCircle size={16} />}
                 color="bg-[var(--ruby-50)] text-[var(--ruby-700)] border-[var(--ruby-200)]"
                 active={statusFilter === 'expired'}
                 onToggle={() => toggleStatus('expired')}
@@ -427,8 +427,8 @@ function StatChip({ label, value, color, icon, active, onToggle }: {
     <>
       {icon && <div className="opacity-90">{icon}</div>}
       <div className="flex flex-col items-start">
-        <span className="mb-1.5 text-xs font-semibold uppercase leading-none tracking-[0.12em]">{label}</span>
-        <span className="tabular text-sm font-bold leading-none">{value}</span>
+        <span className="mb-1 text-xs font-semibold uppercase leading-none tracking-[0.08em] opacity-75">{label}</span>
+        <span className="tabular text-md font-bold leading-none">{value}</span>
       </div>
     </>
   );

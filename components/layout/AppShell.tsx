@@ -42,6 +42,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const isPublic = PUBLIC_ROUTES.includes(pathname);
+  const isFullScreenMap = pathname === '/floorplan';
 
   // Everything that is not public is the admin tool. `isLoading` matters now
   // that admin status is resolved by a server round-trip — without it every
@@ -82,21 +83,21 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
       {/* withDues, not due: the badge means "how many owe money", and `due`
           now excludes members who are also expired (expired outranks it). */}
-      {isAdmin && <Sidebar dueCount={stats.withDues} pendingRequests={pendingCount} />}
-      <TopBar />
+      {isAdmin && !isFullScreenMap && <Sidebar dueCount={stats.withDues} pendingRequests={pendingCount} />}
+      {!isFullScreenMap && <TopBar />}
       <main 
         className={cn(
           "min-h-screen transition-ui flex flex-col bg-[var(--bg-void)]",
-          isAdmin 
+          isAdmin && !isFullScreenMap
             ? "pt-14 pb-16 lg:pb-0 lg:pt-0 lg:ml-[240px]" 
-            : "pt-14 pb-16 lg:pb-0 lg:pt-14" 
+            : !isFullScreenMap ? "pt-14 pb-16 lg:pb-0 lg:pt-14" : ""
         )}
       >
-        <div className="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+        <div className={cn("flex-1 w-full mx-auto", isFullScreenMap ? "p-0" : "max-w-[1600px] px-4 sm:px-6 lg:px-8 py-6 lg:py-8")}>
           {children}
         </div>
       </main>
-      <BottomNav />
+      {!isFullScreenMap && <BottomNav />}
       <ToastContainer toasts={toasts} onRemove={removeToast} />
     </ToastContext.Provider>
   );

@@ -228,7 +228,7 @@ export default function ExportPage() {
           subtitle="Download members, attendance, and request data."
           actions={lastExport ? (
             <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-muted)] px-3 py-1.5 text-xs font-semibold tabular text-[var(--text-secondary)]">
-              <CheckCircle className="h-3.5 w-3.5 text-[var(--emerald-600)]" aria-hidden="true" />
+              <CheckCircle className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
               Last export: {lastExport}
             </div>
           ) : undefined}
@@ -314,7 +314,7 @@ export default function ExportPage() {
                   onClick={() => card.onExport('csv')}
                   className="flex-1 sm:flex-initial"
                 >
-                  <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
+                  <FileSpreadsheet className="w-4 h-4 mr-1.5" />
                   CSV
                 </Button>
                 <Button
@@ -323,7 +323,7 @@ export default function ExportPage() {
                   onClick={() => card.onExport('json')}
                   className="flex-1 sm:flex-initial"
                 >
-                  <FileJson className="w-3.5 h-3.5 mr-1.5" />
+                  <FileJson className="w-4 h-4 mr-1.5" />
                   JSON
                 </Button>
               </div>

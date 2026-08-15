@@ -134,14 +134,14 @@ export default function AttendancePage() {
               </div>
               <div className="text-center border-x border-[var(--border-subtle)]">
                 <div className="flex items-center justify-center gap-1">
-                  <Trophy className="w-3.5 h-3.5 text-[var(--text-tertiary)]" aria-hidden="true" />
+                  <Trophy className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />
                   <p className="font-display text-2xl font-semibold text-[var(--text-secondary)]">{weeklySummary.bestRate}%</p>
                 </div>
                 <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Best · {weeklySummary.bestDayName}</p>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1">
-                  <TrendingDown className="w-3.5 h-3.5 text-[var(--text-tertiary)]" aria-hidden="true" />
+                  <TrendingDown className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />
                   <p className="font-display text-2xl font-semibold text-[var(--text-secondary)]">{weeklySummary.worstRate}%</p>
                 </div>
                 <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Low · {weeklySummary.worstDayName}</p>

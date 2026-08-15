@@ -37,7 +37,7 @@ type FilterType = 'all' | SeatStatus | 'morning' | 'evening';
 
 function SortIcon({ field, currentField, asc }: { field: SortField; currentField: SortField; asc: boolean }) {
   if (field !== currentField) return null;
-  return asc ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />;
+  return asc ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />;
 }
 
 export default function MemberTable({
@@ -332,7 +332,7 @@ export default function MemberTable({
                         aria-label={`Copy seat number ${m.seat}`}
                         className="reveal-on-hover flex h-6 w-6 cursor-pointer items-center justify-center rounded text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
                       >
-                        <Copy className="h-3 w-3" aria-hidden="true" />
+                        <Copy className="h-4 w-4" aria-hidden="true" />
                       </button>
                     </div>
                   </td>
@@ -350,7 +350,7 @@ export default function MemberTable({
                           aria-label={`Copy phone number for ${m.name}`}
                           className="reveal-on-hover flex h-6 w-6 cursor-pointer items-center justify-center rounded text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
                         >
-                          <Copy className="h-3 w-3" aria-hidden="true" />
+                          <Copy className="h-4 w-4" aria-hidden="true" />
                         </button>
                       </div>
                     ) : '—'}
@@ -365,7 +365,7 @@ export default function MemberTable({
                         aria-label={`Allot seat ${m.seat}`}
                         className="inline-flex min-h-[26px] cursor-pointer items-center gap-1 rounded-md border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-2.5 py-1 text-xs font-bold text-[var(--saffron-700)] transition-ui hover:bg-[var(--saffron-100)]"
                       >
-                        <Plus className="h-3 w-3" aria-hidden="true" /> Add
+                        <Plus className="h-4 w-4" aria-hidden="true" /> Add
                       </Link>
                     ) : (
                       <Badge variant={status} />

@@ -90,11 +90,11 @@ export default function RequestsPage() {
   };
 
   const tabs: { key: FilterTab; label: string; icon: React.ReactNode; count: number }[] = [
-    { key: 'pending', label: 'Pending', icon: <Clock className="w-3.5 h-3.5" />, count: counts.pending },
-    { key: 'waitlisted', label: 'Waitlist', icon: <Hourglass className="w-3.5 h-3.5" />, count: counts.waitlisted },
-    { key: 'approved', label: 'Approved', icon: <CheckCircle className="w-3.5 h-3.5" />, count: counts.approved },
-    { key: 'rejected', label: 'Rejected', icon: <XCircle className="w-3.5 h-3.5" />, count: counts.rejected },
-    { key: 'all', label: 'All', icon: <Filter className="w-3.5 h-3.5" />, count: counts.all },
+    { key: 'pending', label: 'Pending', icon: <Clock className="w-4 h-4" />, count: counts.pending },
+    { key: 'waitlisted', label: 'Waitlist', icon: <Hourglass className="w-4 h-4" />, count: counts.waitlisted },
+    { key: 'approved', label: 'Approved', icon: <CheckCircle className="w-4 h-4" />, count: counts.approved },
+    { key: 'rejected', label: 'Rejected', icon: <XCircle className="w-4 h-4" />, count: counts.rejected },
+    { key: 'all', label: 'All', icon: <Filter className="w-4 h-4" />, count: counts.all },
   ];
 
   return (
@@ -198,19 +198,19 @@ export default function RequestsPage() {
                       </div>
                       <div className="flex items-center gap-3 mt-0.5 flex-wrap">
                         <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1">
-                          <Armchair className="w-3 h-3" />
+                          <Armchair className="w-4 h-4" />
                           Seat #{req.seat}
                         </span>
                         <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1">
-                          <Phone className="w-3 h-3" />
+                          <Phone className="w-4 h-4" />
                           {req.userPhone}
                         </span>
                         <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1">
-                          <CalendarDays className="w-3 h-3" />
+                          <CalendarDays className="w-4 h-4" />
                           {fmtDate(req.joinDate || todayISO())}
                         </span>
                         <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1 capitalize">
-                          <Clock className="w-3 h-3" />
+                          <Clock className="w-4 h-4" />
                           {durationLabel(req.duration || '3M')} · {shiftLabel(req.shift || 'full')}
                         </span>
                       </div>
@@ -227,7 +227,7 @@ export default function RequestsPage() {
                   {req.paymentMode === 'cash' ? (
                     <>
                       <div className="w-7 h-7 rounded-lg bg-[var(--emerald-50)] flex items-center justify-center flex-shrink-0">
-                        <Banknote className="w-3.5 h-3.5 text-[var(--emerald-600)]" />
+                        <Banknote className="w-4 h-4 text-[var(--emerald-600)]" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <span className="text-xs font-bold text-[var(--emerald-600)] block">Cash Payment</span>
@@ -237,7 +237,7 @@ export default function RequestsPage() {
                   ) : (
                     <>
                       <div className="w-7 h-7 rounded-lg bg-[var(--saffron-50)] flex items-center justify-center flex-shrink-0">
-                        <Smartphone className="w-3.5 h-3.5 text-[var(--saffron-600)]" />
+                        <Smartphone className="w-4 h-4 text-[var(--saffron-600)]" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <span className="text-xs font-bold text-[var(--emerald-600)] block">UPI Payment</span>
@@ -253,7 +253,7 @@ export default function RequestsPage() {
                 {req.documentUrl && (
                   <div className="mb-3 px-3 py-2 rounded-[var(--radius-lg)] bg-[var(--sapphire-50)] border border-[var(--sapphire-200)]">
                     <span className="text-xs font-bold text-[var(--sapphire-600)] flex items-center gap-1.5 mb-2">
-                      <FileText className="w-3 h-3" /> ID Document Submitted
+                      <FileText className="w-4 h-4" /> ID Document Submitted
                     </span>
                     {req.documentUrl.startsWith('data:image') ? (
                       <div className="relative group">
@@ -269,7 +269,7 @@ export default function RequestsPage() {
                           rel="noopener noreferrer"
                           className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-black/60 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                          <ExternalLink className="w-3.5 h-3.5" />
+                          <ExternalLink className="w-4 h-4" />
                         </a>
                       </div>
                     ) : (
@@ -279,7 +279,7 @@ export default function RequestsPage() {
                         rel="noopener noreferrer"
                         className="text-xs text-[var(--text-link)] underline flex items-center gap-1"
                       >
-                        <ExternalLink className="w-3 h-3" /> View Document
+                        <ExternalLink className="w-4 h-4" /> View Document
                       </a>
                     )}
                   </div>
@@ -289,7 +289,7 @@ export default function RequestsPage() {
                 {req.message && (
                   <div className="mb-3 px-3 py-2 rounded-[var(--radius-lg)] bg-[var(--bg-muted)] border border-[var(--border-subtle)]">
                     <span className="text-xs text-[var(--text-secondary)] flex items-start gap-1.5">
-                      <MessageSquare className="w-3 h-3 mt-0.5 shrink-0 text-[var(--text-tertiary)]" />
+                      <MessageSquare className="w-4 h-4 mt-0.5 shrink-0 text-[var(--text-tertiary)]" />
                       {req.message}
                     </span>
                   </div>
@@ -304,14 +304,14 @@ export default function RequestsPage() {
                         className="flex-1 text-xs h-[36px]"
                         onClick={() => handleApprove(req)}
                       >
-                        <Check className="w-3.5 h-3.5 mr-1" /> Approve and allot
+                        <Check className="w-4 h-4 mr-1" /> Approve and allot
                       </Button>
                       <Button
                         variant="secondary"
                         className="h-[36px] flex-1 border border-[var(--ruby-200)] bg-[var(--ruby-50)] text-xs text-[var(--ruby-600)] hover:bg-[var(--ruby-100)]"
                         onClick={() => handleReject(req.id, req.seat)}
                       >
-                        <X className="w-3.5 h-3.5 mr-1" /> Reject
+                        <X className="w-4 h-4 mr-1" /> Reject
                       </Button>
                     </>
                   )}
@@ -321,7 +321,7 @@ export default function RequestsPage() {
                       className="px-3 py-2 h-auto text-xs text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] ml-auto"
                       onClick={() => handleDelete(req.id)}
                     >
-                      <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
+                      <Trash2 className="w-4 h-4 mr-1" /> Delete
                     </Button>
                   )}
                 </div>

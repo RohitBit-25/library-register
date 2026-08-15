@@ -80,7 +80,7 @@ export default function MyRequestsPage() {
       {/* Phone Search Card */}
       <Card variant="base" className="p-5 mb-6">
         <label htmlFor="my-requests-phone" className="text-xs font-bold text-[var(--text-secondary)] mb-2 flex items-center gap-1.5">
-          <Phone className="w-3.5 h-3.5" />
+          <Phone className="w-4 h-4" />
           Enter your registered phone number
         </label>
         <div className="flex gap-2">
@@ -129,15 +129,15 @@ export default function MyRequestsPage() {
             {displayResults.length > 0 && (
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold bg-[var(--saffron-50)] text-[var(--saffron-600)] border-[var(--saffron-200)]">
-                  <Clock className="w-3 h-3" />
+                  <Clock className="w-4 h-4" />
                   {pendingCount} Pending
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold bg-[var(--emerald-50)] text-[var(--emerald-600)] border-[var(--emerald-200)]">
-                  <CheckCircle className="w-3 h-3" />
+                  <CheckCircle className="w-4 h-4" />
                   {approvedCount} Approved
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold bg-[var(--ruby-50)] text-[var(--ruby-600)] border-[var(--ruby-200)]">
-                  <XCircle className="w-3 h-3" />
+                  <XCircle className="w-4 h-4" />
                   {rejectedCount} Rejected
                 </span>
               </div>
@@ -198,7 +198,7 @@ export default function MyRequestsPage() {
                                 <Badge variant={req.status === 'approved' ? 'active' : (req.status === 'rejected' ? 'expired' : 'pending')} />
                               </div>
                               <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1 mt-0.5">
-                                <Armchair className="w-3 h-3" />
+                                <Armchair className="w-4 h-4" />
                                 Requested by {req.userName}
                               </span>
                             </div>
@@ -211,9 +211,9 @@ export default function MyRequestsPage() {
                         {/* Transaction ID */}
                         <div className="px-3 py-2 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)] mb-2">
                           <span className="text-xs text-[var(--text-secondary)] flex items-center gap-1.5">
-                            <CalendarDays className="w-3 h-3 text-[var(--text-tertiary)]" />
+                            <CalendarDays className="w-4 h-4 text-[var(--text-tertiary)]" />
                             Joining {fmtDate(req.joinDate || todayISO())}
-                            <Clock className="w-3 h-3 text-[var(--text-tertiary)] ml-2" />
+                            <Clock className="w-4 h-4 text-[var(--text-tertiary)] ml-2" />
                             {durationLabel(req.duration || '3M')} · {shiftLabel(req.shift || 'full')}
                           </span>
                         </div>
@@ -221,7 +221,7 @@ export default function MyRequestsPage() {
                         {req.transactionId && (
                           <div className="px-3 py-2 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)] mb-2">
                             <span className="text-xs text-[var(--text-secondary)] flex items-center gap-1.5">
-                              <Receipt className="w-3 h-3 text-[var(--text-tertiary)]" />
+                              <Receipt className="w-4 h-4 text-[var(--text-tertiary)]" />
                               UPI Ref: <span className="font-mono">{req.transactionId}</span>
                             </span>
                           </div>
@@ -231,7 +231,7 @@ export default function MyRequestsPage() {
                         {req.message && (
                           <div className="px-3 py-2 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)]">
                             <span className="text-xs text-[var(--text-secondary)] flex items-start gap-1.5">
-                              <MessageSquare className="w-3 h-3 mt-0.5 shrink-0 text-[var(--text-tertiary)]" />
+                              <MessageSquare className="w-4 h-4 mt-0.5 shrink-0 text-[var(--text-tertiary)]" />
                               {req.message}
                             </span>
                           </div>
@@ -241,19 +241,19 @@ export default function MyRequestsPage() {
                         <div className="mt-3 text-xs">
                           {req.status === 'pending' && (
                             <p className="text-[var(--saffron-600)] font-medium flex items-center gap-1.5">
-                              <Clock className="w-3.5 h-3.5" />
+                              <Clock className="w-4 h-4" />
                               Awaiting admin verification of your payment
                             </p>
                           )}
                           {req.status === 'approved' && (
                             <p className="text-[var(--emerald-600)] font-medium flex items-center gap-1.5">
-                              <CheckCircle className="w-3.5 h-3.5" />
+                              <CheckCircle className="w-4 h-4" />
                               Payment verified! Your seat has been allotted.
                             </p>
                           )}
                           {req.status === 'rejected' && (
                             <p className="text-[var(--ruby-600)] font-medium flex items-center gap-1.5">
-                              <XCircle className="w-3.5 h-3.5" />
+                              <XCircle className="w-4 h-4" />
                               Request was not approved. Please contact the library.
                             </p>
                           )}

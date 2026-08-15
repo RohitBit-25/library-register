@@ -126,7 +126,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
             Seat Allotment
           </h3>
           <span className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-muted)] px-3 py-1.5 text-xs font-bold text-[var(--text-secondary)]">
-            <Zap className="w-3.5 h-3.5" />
+            <Zap className="w-4 h-4" />
             {vacantSeats.length} Available
           </span>
         </div>

@@ -17,7 +17,7 @@ import { jwtVerify } from 'jose';
  */
 
 const ADMIN_ROUTES = [
-  '/', '/members', '/analytics', '/requests',
+  '/', '/members', '/analytics', '/requests', '/floorplan',
   '/audit', '/export', '/attendance', '/expiry', '/setup', '/payments', '/staff',
 ];
 

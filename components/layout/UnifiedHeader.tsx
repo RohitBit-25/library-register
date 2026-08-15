@@ -21,16 +21,16 @@ export default function UnifiedHeader() {
             src="/logo-mark.png"
             alt=""
             aria-hidden="true"
-            width={56}
-            height={56}
+            width={80}
+            height={80}
             priority
-            className="h-12 w-12 shrink-0 object-contain sm:h-14 sm:w-14"
+            className="h-16 w-16 shrink-0 object-contain sm:h-20 sm:w-20 drop-shadow-sm"
           />
           <div className="leading-tight">
-            <p className="text-base font-bold tracking-tight text-[var(--text-primary)] sm:text-md" style={{ fontFamily: 'var(--font-devanagari)' }}>
+            <p className="text-2xl font-black tracking-tight text-[var(--text-primary)] sm:text-3xl" style={{ fontFamily: 'var(--font-devanagari)' }}>
               श्री गणगौर
             </p>
-            <p className="text-sm font-medium text-[var(--text-tertiary)]">
+            <p className="text-sm font-bold text-[var(--text-secondary)] sm:text-base">
               Shree Gangaur Study Library
             </p>
           </div>

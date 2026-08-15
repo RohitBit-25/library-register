@@ -274,7 +274,7 @@ export default function ExpiryPage() {
               aria-label={`Renew seat ${row.original.seat} for another ${durationLabel((row.original.duration || '3M') as never)}`}
               className="flex h-8 cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2.5 text-xs font-bold text-[var(--emerald-600)] shadow-sm transition-ui hover:bg-[var(--emerald-100)] active:scale-95"
             >
-              <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+              <RefreshCw className="h-4 w-4" aria-hidden="true" />
               Renew
             </button>
           </Tooltip>

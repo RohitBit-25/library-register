@@ -98,7 +98,7 @@ export default function PaymentsPage() {
           disabled={data.payments.length === 0}
           className="flex min-h-[36px] cursor-pointer items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 text-xs font-bold text-[var(--text-secondary)] shadow-sm transition-ui hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <Download className="h-3.5 w-3.5" aria-hidden="true" />
+          <Download className="h-4 w-4" aria-hidden="true" />
           Export CSV
         </button>
       </div>
@@ -155,7 +155,7 @@ export default function PaymentsPage() {
                   aria-label={`Receipt for ${p.memberName}, seat ${p.seat}`}
                   className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-2.5 text-xs font-bold text-[var(--text-secondary)] transition-ui hover:border-[var(--saffron-600)] hover:text-[var(--saffron-700)]"
                 >
-                  <ReceiptIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                  <ReceiptIcon className="h-4 w-4" aria-hidden="true" />
                   Receipt
                 </button>
               </li>

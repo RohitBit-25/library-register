@@ -80,7 +80,7 @@ export default function DurationDonut({ data }: DurationDonutProps) {
       <div className="flex flex-col gap-3">
         {categories.map(cat => (
           <div key={cat.key} className="flex items-center gap-3">
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: cat.color }} />
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: cat.color }} />
             <div className="flex flex-col">
               <span className="text-sm font-bold text-[var(--text-primary)] leading-none">{cat.label}</span>
               <span className="text-xs text-[var(--text-secondary)] mt-1">{data[cat.key] || 0} members</span>

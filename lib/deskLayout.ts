@@ -14,12 +14,12 @@ import type { FaceDir } from './layoutConfig.ts';
 
 const { CELL, PAD } = LAYOUT_CONFIG;
 export const TOTAL_SEATS = 95;
-export const SEAT_SIZE = 48;
+export const SEAT_SIZE = 60;
 
 /** Desk depth in px — how far the slab extends from the seat. */
-const DESK_DEPTH = Math.round(CELL * 0.42);
+const DESK_DEPTH = Math.round(CELL * 0.48);
 /** Gap between the chair and the desk edge, so they don't visually fuse. */
-const CHAIR_GAP = 4;
+const CHAIR_GAP = 6;
 
 export interface SeatSlot {
   seat: number;

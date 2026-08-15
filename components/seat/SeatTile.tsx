@@ -42,15 +42,18 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
   const status = getSeatStatus(member);
   const days = !member.vacant ? daysUntilExpiry(member.expiry) : Infinity;
 
+  // The shift glyph is the only thing distinguishing a morning seat from an
+  // evening one at a glance, so it is sized to be read, not decorated. The
+  // full-day pair drops a step because two glyphs share the width one takes.
   const shiftIcon = member.shift === 'evening' ? (
-    <Moon className={cn(compact ? 'w-3 h-3' : 'w-3.5 h-3.5')} />
+    <Moon className={cn(compact ? 'w-3.5 h-3.5' : 'w-4 h-4')} />
   ) : member.shift === 'full' ? (
     <span className="flex items-center gap-0.5">
-      <Sun className={cn(compact ? 'w-2.5 h-2.5' : 'w-3 h-3')} />
-      <Moon className={cn(compact ? 'w-2.5 h-2.5' : 'w-3 h-3')} />
+      <Sun className={cn(compact ? 'w-3 h-3' : 'w-3.5 h-3.5')} />
+      <Moon className={cn(compact ? 'w-3 h-3' : 'w-3.5 h-3.5')} />
     </span>
   ) : (
-    <Sun className={cn(compact ? 'w-3 h-3' : 'w-3.5 h-3.5')} />
+    <Sun className={cn(compact ? 'w-3.5 h-3.5' : 'w-4 h-4')} />
   );
 
   const ariaLabel = member.vacant

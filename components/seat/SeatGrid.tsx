@@ -132,9 +132,9 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
   const filtered = useMemo(() => members.filter(matchesFilters), [members, matchesFilters]);
 
   const shifts: { value: Shift | 'all'; label: string; icon: React.ReactNode }[] = [
-    { value: 'all', label: 'All', icon: <Layers className="w-3.5 h-3.5" /> },
-    { value: 'morning', label: 'Morning', icon: <Sun className="w-3.5 h-3.5" /> },
-    { value: 'evening', label: 'Evening', icon: <Moon className="w-3.5 h-3.5" /> },
+    { value: 'all', label: 'All', icon: <Layers className="w-4 h-4" /> },
+    { value: 'morning', label: 'Morning', icon: <Sun className="w-4 h-4" /> },
+    { value: 'evening', label: 'Evening', icon: <Moon className="w-4 h-4" /> },
   ];
 
   return (
@@ -187,8 +187,8 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
                   so the list is the working view there. */}
               <div className="flex shrink-0 items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-1 shadow-sm sm:hidden">
                 {([
-                  { value: 'plan' as const, label: 'Plan', icon: <MapIcon className="h-3.5 w-3.5" /> },
-                  { value: 'list' as const, label: 'List', icon: <List className="h-3.5 w-3.5" /> },
+                  { value: 'plan' as const, label: 'Plan', icon: <MapIcon className="h-4 w-4" /> },
+                  { value: 'list' as const, label: 'List', icon: <List className="h-4 w-4" /> },
                 ]).map(v => (
                   <button
                     key={v.value}
@@ -212,8 +212,8 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
                   than more controls crowded into the seat panel. */}
               <div className="flex shrink-0 items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-1 shadow-sm">
                 {([
-                  { value: 'manage' as const, label: 'Manage', icon: <Settings2 className="h-3.5 w-3.5" /> },
-                  { value: 'attendance' as const, label: 'Attendance', icon: <ClipboardCheck className="h-3.5 w-3.5" /> },
+                  { value: 'manage' as const, label: 'Manage', icon: <Settings2 className="h-4 w-4" /> },
+                  { value: 'attendance' as const, label: 'Attendance', icon: <ClipboardCheck className="h-4 w-4" /> },
                 ]).map(m => (
                   <button
                     key={m.value}
@@ -258,7 +258,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
                   onClick={() => markAllPresent(todayStr)}
                   className="flex min-h-[36px] shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-3.5 text-xs font-bold text-[var(--emerald-600)] transition-ui hover:bg-[var(--emerald-100)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald-600)]"
                 >
-                  <CheckCheck className="h-3.5 w-3.5" aria-hidden="true" />
+                  <CheckCheck className="h-4 w-4" aria-hidden="true" />
                   Mark all present
                 </button>
               )}

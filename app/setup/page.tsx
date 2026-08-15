@@ -87,7 +87,7 @@ export default function SetupPage() {
               <div>
                 <h3 className="text-sm font-bold text-[var(--text-primary)]">Create your Google Form</h3>
                 <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-[var(--sapphire-600)] hover:underline inline-flex items-center gap-1">Google Forms <ExternalLink className="w-3 h-3" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
+                  Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-[var(--sapphire-600)] hover:underline inline-flex items-center gap-1">Google Forms <ExternalLink className="w-4 h-4" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
                 </p>
                 <ol className="list-decimal list-inside mt-2 text-xs font-mono bg-[var(--bg-base)] border border-[var(--border-default)] p-3 rounded-lg text-[var(--text-tertiary)]">
                   <li>Full Name</li>

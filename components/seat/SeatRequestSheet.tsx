@@ -346,7 +346,7 @@ export default function SeatRequestSheet({
                       <div className="rounded-xl border border-[var(--sapphire-200)] bg-gradient-to-b from-[var(--sapphire-500)]/8 to-transparent overflow-hidden">
                         <div className="flex flex-col items-center py-5 px-4">
                           <p className="text-xs font-black text-[var(--sapphire-600)] mb-3 uppercase tracking-[0.2em] flex items-center gap-2">
-                            <Smartphone className="w-3.5 h-3.5" />
+                            <Smartphone className="w-4 h-4" />
                             Scan & Pay via UPI
                           </p>
                           <div className="p-2.5 bg-white rounded-xl shadow-lg ring-4 ring-white/5 mb-3">
@@ -367,7 +367,7 @@ export default function SeatRequestSheet({
                     {/* ─── Name ─────────────────────────────── */}
                     <div>
                       <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <User className="w-3.5 h-3.5" />
+                        <User className="w-4 h-4" />
                         Full Name <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div className="relative">
@@ -388,7 +388,7 @@ export default function SeatRequestSheet({
                     {/* ─── Phone ────────────────────────────── */}
                     <div>
                       <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <Phone className="w-3.5 h-3.5" />
+                        <Phone className="w-4 h-4" />
                         Phone Number <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div className="relative">
@@ -415,7 +415,7 @@ export default function SeatRequestSheet({
                     {/* ─── Date of Joining ──────────────────── */}
                     <div>
                       <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <CalendarDays className="w-3.5 h-3.5" />
+                        <CalendarDays className="w-4 h-4" />
                         Date of Joining <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <input
@@ -430,7 +430,7 @@ export default function SeatRequestSheet({
                     {/* ─── Duration ─────────────────────────── */}
                     <div>
                       <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <CalendarDays className="w-3.5 h-3.5" />
+                        <CalendarDays className="w-4 h-4" />
                         Membership Duration <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div role="radiogroup" aria-label="Membership Duration" className="grid grid-cols-2 gap-2">
@@ -457,7 +457,7 @@ export default function SeatRequestSheet({
                     {/* ─── Preferred Shift ───────────────────── */}
                     <div>
                       <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5" />
+                        <Clock className="w-4 h-4" />
                         Preferred Shift <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div role="radiogroup" aria-label="Preferred Shift" className="grid grid-cols-3 gap-2">
@@ -485,7 +485,7 @@ export default function SeatRequestSheet({
                     {paymentMode === 'upi' && (
                       <div>
                         <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                          <Smartphone className="w-3.5 h-3.5" />
+                          <Smartphone className="w-4 h-4" />
                           UPI Reference <span className="text-[var(--ruby-600)]">*</span>
                         </label>
                         <input
@@ -506,7 +506,7 @@ export default function SeatRequestSheet({
                     {/* ─── ID Document Upload ───────────────── */}
                     <div>
                       <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <FileText className="w-3.5 h-3.5" />
+                        <FileText className="w-4 h-4" />
                         ID Document
                         <span className="font-normal normal-case tracking-normal text-[var(--text-tertiary)]">(Aadhaar / College ID)</span>
                       </label>
@@ -552,7 +552,7 @@ export default function SeatRequestSheet({
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-bold text-[var(--text-primary)] truncate">{documentName}</p>
                             <p className="text-xs text-[var(--emerald-600)] flex items-center gap-1 mt-0.5">
-                              <CheckCircle2 className="w-3 h-3" /> Uploaded successfully
+                              <CheckCircle2 className="w-4 h-4" /> Uploaded successfully
                             </p>
                           </div>
                           <button
@@ -570,7 +570,7 @@ export default function SeatRequestSheet({
                     {/* ─── Message ──────────────────────────── */}
                     <div>
                       <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <MessageSquare className="w-3.5 h-3.5" />
+                        <MessageSquare className="w-4 h-4" />
                         Message <span className="font-normal normal-case tracking-normal">(optional)</span>
                       </label>
                       <textarea

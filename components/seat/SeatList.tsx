@@ -103,7 +103,7 @@ export default function SeatList({
                       </span>
                       {m.vacant ? (
                         <span className="flex items-center gap-1.5 text-xs font-semibold text-[var(--text-tertiary)]">
-                          <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+                          <Plus className="h-4 w-4" aria-hidden="true" />
                           Vacant
                         </span>
                       ) : (
@@ -113,7 +113,7 @@ export default function SeatList({
                           </span>
                           <span className="mt-0.5 flex items-center gap-1 text-xs font-medium text-[var(--text-secondary)]">
                             <span className={cn('h-1.5 w-1.5 rounded-full', stateDot[status])} />
-                            {Icon && <Icon className="h-3 w-3" aria-hidden="true" />}
+                            {Icon && <Icon className="h-4 w-4" aria-hidden="true" />}
                             {status === 'active' ? 'Active'
                               : status === 'expiring' ? 'Expiring'
                               : status === 'due' ? 'Fee due'

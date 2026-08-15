@@ -201,7 +201,7 @@ export default function StaffPage() {
                       onClick={() => setConfirmRevoke(s)}
                       className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--ruby-200)] bg-[var(--ruby-50)] px-2.5 text-xs font-bold text-[var(--ruby-600)] transition-ui hover:bg-[var(--ruby-100)]"
                     >
-                      <Ban className="h-3.5 w-3.5" aria-hidden="true" />
+                      <Ban className="h-4 w-4" aria-hidden="true" />
                       Revoke
                     </button>
                   ) : (
@@ -209,7 +209,7 @@ export default function StaffPage() {
                       onClick={() => setActive(s, true)}
                       className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2.5 text-xs font-bold text-[var(--emerald-600)] transition-ui hover:bg-[var(--emerald-100)]"
                     >
-                      <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+                      <RotateCcw className="h-4 w-4" aria-hidden="true" />
                       Restore
                     </button>
                   )

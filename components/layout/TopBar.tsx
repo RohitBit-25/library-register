@@ -22,14 +22,14 @@ export default function TopBar({ title = 'Library Register' }: TopBarProps) {
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
       <div className="relative z-10 flex items-center gap-2.5">
         <div className="w-7 h-7 rounded-lg bg-[var(--saffron-600)] flex items-center justify-center shadow-sm shadow-[var(--saffron-600)]/20">
-          <BookOpen className="w-3.5 h-3.5 text-[var(--text-inverse)]" />
+          <BookOpen className="w-4 h-4 text-[var(--text-inverse)]" />
         </div>
         <p className="text-sm font-extrabold text-[var(--text-primary)] tracking-tight">
           {title}
         </p>
         {isAdmin && (
           <span className="flex items-center gap-1 rounded-full bg-[var(--saffron-50)] px-2 py-0.5 text-xs font-bold text-[var(--saffron-700)]">
-            <Shield className="h-3 w-3" aria-hidden="true" />
+            <Shield className="h-4 w-4" aria-hidden="true" />
             Staff
           </span>
         )}

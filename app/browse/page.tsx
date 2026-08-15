@@ -195,21 +195,21 @@ export default function BrowsePage() {
                   listed "Blocked" and "You" — neither exists in this app. */}
               <div className="mt-auto flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-[var(--border-default)] bg-[var(--bg-surface)] p-4 text-xs font-bold text-[var(--text-secondary)]">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-3.5 w-3.5 items-center justify-center rounded-[4px] border border-[var(--emerald-200)] bg-[var(--emerald-50)]">
+                  <span className="flex h-4 w-4 items-center justify-center rounded-[4px] border border-[var(--emerald-200)] bg-[var(--emerald-50)]">
                     <Armchair className="h-2 w-2 text-[var(--emerald-600)]" aria-hidden="true" />
                   </span>
                   Available
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="h-3.5 w-3.5 rounded-[4px] bg-[var(--saffron-500)]" />
+                  <span className="h-4 w-4 rounded-[4px] bg-[var(--saffron-500)]" />
                   Your pick
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="h-3.5 w-3.5 rounded-[4px] border border-[var(--saffron-200)] bg-[var(--saffron-50)]" />
+                  <span className="h-4 w-4 rounded-[4px] border border-[var(--saffron-200)] bg-[var(--saffron-50)]" />
                   Requested
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="h-3.5 w-3.5 rounded-[4px] border border-[var(--border-default)] bg-[var(--bg-muted)]" />
+                  <span className="h-4 w-4 rounded-[4px] border border-[var(--border-default)] bg-[var(--bg-muted)]" />
                   Taken
                 </div>
               </div>
@@ -232,13 +232,13 @@ export default function BrowsePage() {
                     Every seat used to advertise the same seven amenities,
                     window included, whichever corner it was in. */}
                 <div className="mb-6 flex items-center gap-1.5 text-xs font-semibold text-[var(--text-tertiary)]">
-                  <MapPin className="h-3 w-3" aria-hidden="true" /> Reading hall · seat {selectedSeat}
+                  <MapPin className="h-4 w-4" aria-hidden="true" /> Reading hall · seat {selectedSeat}
                 </div>
 
                 <ul className="mb-6 space-y-2 text-sm font-medium text-[var(--text-secondary)]">
                   {seatAmenities(selectedSeat!).map((a) => (
                     <li key={a} className="flex items-center gap-2">
-                      <Check className="h-3.5 w-3.5 shrink-0 text-[var(--emerald-600)]" aria-hidden="true" />
+                      <Check className="h-4 w-4 shrink-0 text-[var(--emerald-600)]" aria-hidden="true" />
                       {a}
                     </li>
                   ))}

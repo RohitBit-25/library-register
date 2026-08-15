@@ -55,7 +55,7 @@ export function Badge({ variant, className, children, ...props }: BadgeProps) {
       )}
       {...props}
     >
-      {Icon && <Icon className="w-3 h-3 shrink-0" aria-hidden="true" />}
+      {Icon && <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />}
       {children || c.defaultLabel}
     </motion.span>
   );

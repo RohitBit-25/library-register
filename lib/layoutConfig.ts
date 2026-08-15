@@ -21,8 +21,8 @@ export interface WallDetail {
 export const LAYOUT_CONFIG = {
   COLS: 14,
   ROWS: 12,
-  CELL: 76,
-  PAD: 48,
+  CELL: 88,
+  PAD: 64,
   WALL_DETAILS: [
     { label: 'Window', start: 1, end: 1, wall: 'bottom', type: 'window' },
     { label: 'AC', start: 3, end: 4, wall: 'bottom', type: 'ac' },

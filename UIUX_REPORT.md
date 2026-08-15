@@ -850,6 +850,58 @@ here more than usual — it found nothing.
 
 ---
 
+## 7n. Fourteenth pass — visibility beyond type size
+
+Raising the type scale fixed *size*. This pass covered the rest of being
+legible: icon scale, and whether the important number on a screen is the thing
+your eye lands on.
+
+### Icons were still sized for the old, smaller text
+
+Measuring every rendered `<svg>` found **416 icons under 16px** at 1440px —
+210 at 12px and 99 at 14px — sitting beside text that is now 14px. A 12px
+glyph is hard to identify at a glance whatever it is next to, and next to
+larger text it also reads as an accident.
+
+91 class-sized icons (`w-3`/`w-3.5`) and 6 prop-sized ones (`size={14}`, which
+the class pass could not see) moved to 16px. `w-2`/`w-2.5` were deliberately
+left: those are status dots, and a dot is supposed to be small.
+
+| Icons under 16px | Before | After |
+|---|---|---|
+| 1440px | 416 | 107 — all seat-map internals or 16px glyphs inside the map's 0.95 scale |
+| 390px | 228 | **8** |
+
+The seat tile's shift glyph got the same treatment, now that the pad is 54px
+rather than 38px: it is the only thing distinguishing a morning seat from an
+evening one on the map, so it is sized to be read. The full-day pair stays one
+step smaller because two glyphs share the width one occupies.
+
+### The dashboard stat chips had their hierarchy inverted
+
+`TOTAL SEATS` was 12px semibold uppercase with `0.12em` tracking; the number it
+described was 14px. Wide-tracked uppercase reads loud, so the caption was
+beating the datum — on six chips that carry the whole state of the library at a
+glance. The value is now 20px and the label is quieter. Nothing else changed.
+
+### On the contrast numbers
+
+A per-element contrast pass reported ~290 elements under WCAG AA, but most of
+that is the measurement, not the interface: a cluster reported exactly
+`1.00:1`, which is impossible for text you can see, because the walker resolves
+backgrounds up the ancestor chain and the seat tiles are painted by
+absolutely-positioned siblings. The avatars are white-on-colour and legible in
+every screenshot. `npm run check:contrast` validates the actual token pairs the
+design uses and passes 23/23, so the reliable signal says the palette is fine.
+Recorded here rather than silently dropped, because a future pass will
+rediscover those numbers and should know they were investigated.
+
+Gates: `verify` 50 checks, `build`, `check:api` 34, sweep clean across 32
+page/width combinations, accessibility clean.
+
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.

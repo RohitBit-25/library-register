@@ -136,7 +136,7 @@ export default function ScriptBlock() {
             <div className="h-3 w-3 rounded-full bg-[var(--emerald-500)]" />
           </div>
           <span className="ml-3 text-xs font-mono text-[var(--text-tertiary)] flex items-center gap-1.5">
-            <Shield className="w-3 h-3" />
+            <Shield className="w-4 h-4" />
             Code.gs
           </span>
         </div>
@@ -145,8 +145,8 @@ export default function ScriptBlock() {
           className="flex cursor-pointer items-center gap-2 rounded-lg border border-transparent px-3.5 py-1.5 text-xs font-bold text-[var(--text-secondary)] transition-ui hover:border-[var(--border-default)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]"
         >
           {copied
-            ? <Check className="h-3.5 w-3.5 text-[var(--emerald-600)]" aria-hidden="true" />
-            : <Copy className="h-3.5 w-3.5" aria-hidden="true" />}
+            ? <Check className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
+            : <Copy className="h-4 w-4" aria-hidden="true" />}
           {copied ? 'Copied!' : 'Copy Code'}
         </button>
       </div>
