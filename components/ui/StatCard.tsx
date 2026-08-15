@@ -69,7 +69,7 @@ export default function StatCard({ value, label, accent, icon, onClick }: StatCa
   return (
     <motion.button
       whileHover={{ y: -3, scale: 1.01 }}
-      whileTap={{ scale: 0.98 }}
+      whileTap={{ transform: 'scale(0.98)' }}
       onClick={onClick}
       className={cn(
         // `relative` + `overflow-hidden`: the corner overlay below is absolute

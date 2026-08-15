@@ -560,8 +560,8 @@ function InfoRow({ icon, label, value, action }: { icon: React.ReactNode; label:
 function ActionBtn({ onClick, icon, className, children }: { onClick: () => void; icon: React.ReactNode; className: string; children: React.ReactNode }) {
   return (
     <m.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ transform: 'scale(1.02)' }}
+      whileTap={{ transform: 'scale(0.95)' }}
       onClick={onClick}
       className={cn(
         'flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-colors cursor-pointer',

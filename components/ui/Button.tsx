@@ -65,7 +65,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <motion.button
         ref={ref}
         className={cn(baseClasses, variants[variant], appliedSize, className)}
-        whileTap={{ scale: 0.96 }}
+        whileTap={{ transform: 'scale(0.96)' }}
         transition={springQuick}
         {...props}
       >

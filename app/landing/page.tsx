@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMembers } from '@/hooks/useMembers';
 import UnifiedHeader from '@/components/layout/UnifiedHeader';
+import { Button } from '@/components/ui/Button';
 import { 
   ArrowRight, Sun, ShieldCheck, Droplets, VolumeX, Wind, Wifi, Armchair, CalendarDays
 } from 'lucide-react';
@@ -50,13 +51,18 @@ function Reveal({ children, delay = 0, className = '' }: {
     }, { rootMargin: '0px 0px -12% 0px' });
     io.observe(el);
 
-    // Safety net. Hiding content until an observer says otherwise means that
-    // if the observer never fires, the section is invisible rather than
-    // merely un-animated — and "the page is blank below the hero" is a far
-    // worse failure than "the animation did not play". Caught in review by a
-    // full-page screenshot, which renders without scrolling and came out
-    // empty. After a second, show it regardless.
-    const failsafe = setTimeout(() => setShown(true), 1000);
+    // Safety net, and the timing is the whole point of it. Hiding content
+    // until an observer says otherwise means that if the observer never
+    // fires, the section is invisible rather than merely un-animated — and
+    // "the page is blank below the hero" is a far worse failure than "the
+    // animation did not play". Caught in review by a full-page screenshot,
+    // which renders without scrolling and came out empty.
+    //
+    // Four seconds, not one: a short timer defeats the very reveal it is
+    // protecting, firing before anyone has scrolled and putting the motion
+    // back on an empty viewport. Long enough that ordinary scrolling wins the
+    // race, short enough that a genuinely broken observer self-corrects.
+    const failsafe = setTimeout(() => setShown(true), 4000);
     return () => { io.disconnect(); clearTimeout(failsafe); };
   }, []);
 
@@ -108,10 +114,11 @@ export default function LandingPage() {
         <section className="max-w-4xl mx-auto w-full px-4 pt-10 md:pt-14 lg:pt-16 pb-10 flex flex-col items-center text-center">
           <div className="animate-slide-up" style={{ animationFillMode: 'both' }}>
             <div className="inline-flex items-center gap-2 bg-[var(--saffron-50)] text-[var(--saffron-700)] text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-8 border border-[var(--saffron-200)] shadow-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--saffron-400)] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--saffron-500)]"></span>
-              </span>
+              {/* A static dot. This pulsed forever beside the words "Premium
+                  Study Space" — a live indicator on a label that never
+                  changes. The pulse is reserved for the free-seat count, where
+                  it means something. */}
+              <span className="inline-flex h-2 w-2 rounded-full bg-[var(--saffron-500)]" aria-hidden="true" />
               Premium Study Space
             </div>
           </div>
@@ -125,19 +132,29 @@ export default function LandingPage() {
           </p>
           
           <div className="animate-slide-up flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto" style={{ animationDelay: '300ms', animationFillMode: 'both' }}>
-            <button 
+            {/* These were raw <button>s: `transition-all` (which animates every
+                property, including ones that trigger layout) and no press
+                state at all — the two most important controls on the public
+                site did not acknowledge being pressed. Routed through the
+                shared Button, which carries `whileTap`, the 44px minimum
+                target and the focus ring. The overrides keep the hero's own
+                scale and weight; only the behaviour changed. */}
+            <Button
               onClick={() => router.push('/browse')}
-              className="bg-[var(--saffron-700)] hover:bg-[var(--saffron-800)] text-white text-lg font-bold px-8 py-4 rounded-xl flex items-center justify-center gap-3 w-full sm:w-auto transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 cursor-pointer"
+              size="lg"
+              className="w-full gap-3 rounded-xl border-[var(--saffron-800)] bg-[var(--saffron-700)] text-lg font-bold shadow-lg hover:bg-[var(--saffron-800)] hover:shadow-xl sm:w-auto"
             >
               Check Seat Availability
-              <ArrowRight className="w-5 h-5" />
-            </button>
-            <button 
+              <ArrowRight className="h-5 w-5" aria-hidden="true" />
+            </Button>
+            <Button
+              variant="secondary"
               onClick={() => document.getElementById('facilities')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-white hover:bg-[var(--bg-muted)] text-[var(--text-primary)] border border-[var(--border-default)] text-lg font-bold px-8 py-4 rounded-xl flex items-center justify-center w-full sm:w-auto transition-all shadow-sm hover:shadow-md cursor-pointer"
+              size="lg"
+              className="w-full rounded-xl border-[var(--border-default)] bg-white text-lg font-bold text-[var(--text-primary)] shadow-sm hover:bg-[var(--bg-muted)] hover:shadow-md sm:w-auto"
             >
               Explore Facilities
-            </button>
+            </Button>
           </div>
 
           {/* The single most useful fact on the page, and it was buried two
@@ -194,10 +211,10 @@ export default function LandingPage() {
               <div>
                 <div className="flex items-center gap-3">
                   <div className="text-3xl font-black text-[var(--emerald-700)] mb-1">{stats.vacant || '--'}</div>
-                  <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--emerald-400)] opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--emerald-500)]"></span>
-                  </span>
+                  {/* Static: the hero already carries the live pulse for this
+                      exact number, and two of them competing reads as decoration
+                      rather than signal. */}
+                  <span className="inline-flex h-3 w-3 rounded-full bg-[var(--emerald-500)]" aria-hidden="true" />
                 </div>
                 <div className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Available Now</div>
               </div>

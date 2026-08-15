@@ -13,7 +13,7 @@ import { AttendanceLogTable } from '@/components/attendance/AttendanceLogTable';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import PageHeader from '@/components/layout/PageHeader';
-import { springUI } from '@/lib/motion';
+import { springUI, springQuick } from '@/lib/motion';
 
 const containerVariants = {
   initial: { opacity: 0, y: 10 },
@@ -227,8 +227,8 @@ export default function AttendancePage() {
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: i * 0.015 }}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.9 }}
+                          whileHover={{ transform: 'scale(1.05)' }}
+                          whileTap={{ transform: 'scale(0.9)' }}
                           key={member.seat}
                           onClick={() => handleToggle(member.seat, checkedIn)}
                           className={cn(
@@ -249,9 +249,10 @@ export default function AttendancePage() {
                           <AnimatePresence>
                             {checkedIn && (
                               <motion.div 
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                exit={{ scale: 0 }}
+                                initial={{ transform: 'scale(0.9)', opacity: 0 }}
+                                animate={{ transform: 'scale(1)', opacity: 1 }}
+                                exit={{ transform: 'scale(0.9)', opacity: 0 }}
+                                transition={springQuick}
                                 className="absolute right-1 top-1 rounded-full bg-[var(--emerald-600)] text-[var(--text-inverse)] shadow-[var(--shadow-sm)] border-2 border-[var(--bg-elevated)]"
                               >
                                 <CheckCircle2 className="w-4 h-4" />

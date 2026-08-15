@@ -243,8 +243,8 @@ export default function SeatRequestSheet({
                   className="p-10 text-center"
                 >
                   <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
+                    initial={{ transform: 'scale(0.92)', opacity: 0 }}
+                    animate={{ transform: 'scale(1)', opacity: 1 }}
                     transition={{ ...springUI, delay: 0.1 }}
                     className="w-20 h-20 rounded-full bg-[var(--emerald-50)] flex items-center justify-center mx-auto mb-5"
                   >

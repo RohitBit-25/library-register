@@ -973,6 +973,80 @@ accessibility clean.
 
 ---
 
+## 7p. Sixteenth pass — the student map, and the landing page
+
+### The student floor map was the smallest map in the app
+
+`/browse` rendered seats at **33×33px** — smaller than the staff map, on the
+one page the public actually uses. Two causes, and the layout one was worse
+than the sizing one:
+
+The page gave 180px to a nav rail and **320px to a "My Booking" panel whose
+empty state was an armchair icon, two lines of prose, and a "Choose Seat"
+button wired to `setSelectedSeat(null)`** — already null, so the button did
+nothing at all. That column now renders only when there is a booking to show,
+and the room takes the width back.
+
+A first attempt at fitting both axes made it *worse* — 27px. The fit measures
+the container's height, and on `/browse` that box is content-sized, so the
+measurement chases its own tail and converges below fit-to-width. The container
+now gets a real height, and — more importantly — **width is the right default
+here**. The room is 1360×1184, nearly square; a laptop viewport is wide and
+short; fitting both axes into ~550px of height costs more than half the seat
+size. A student picking a seat needs to read the number and hit the target far
+more than they need the whole room in one glance. Whole-room is one click away,
+and `/floorplan` still defaults the other way because there the map owns the
+viewport and surveying the hall is the point.
+
+**33px → 49px**, full width, with the same zoom controls as the staff plan.
+
+### The landing page
+
+**It made a third-party request.** The opening-hours card pulled its texture
+from `transparenttextures.com` — on the first page a visitor sees, so a slow or
+unreachable host degrades the first impression, and the visit leaks to another
+domain. The app has its own `noise-pattern`. The page now loads with **zero
+external hosts**, verified by recording every request.
+
+**The emphasis was backwards.** "Open Daily" was the loud brown card; "Available
+Now" was plain. Opening hours never change; the free-seat count is the reason
+anyone clicks anything. The green card is now the emphasised one — and the
+count also appears in the hero, under the CTA, because "can I get a seat today"
+is the question that brought the visitor and it was two screens down.
+
+**The motion was spent on an empty viewport.** Every section fired
+`animate-slide-up` on load with hardcoded delays up to 600ms, so the amenities
+grid — a full screen below the fold — finished animating about half a second
+after load, long before anyone scrolled to it. A `Reveal` wrapper now triggers
+on intersection, one-shot, with the amenity cards staggered 45ms apart (inside
+the 30–80ms band where a row reads as one movement rather than five things
+taking turns). Reduced motion needs no branch: `globals.css` already collapses
+every animation to 0.01ms.
+
+The hero also lost ~90px of dead top padding, so the banner — the one real
+picture of the place — now peeks above the fold instead of sitting entirely
+below it.
+
+### Two things this pass got wrong first
+
+Hiding content until an observer says otherwise means a failed observer leaves
+the page *blank*, not merely un-animated. A full-page screenshot — which
+renders without scrolling — came out empty and caught it. The fix is a
+failsafe timer, and its duration is the whole point: the first attempt used one
+second, which fires before anyone scrolls and defeats the reveal it was
+protecting. Four seconds lets ordinary scrolling win the race.
+
+The React Compiler also rejected the first `Reveal`, correctly: it called
+`setState` synchronously in an effect to short-circuit elements already on
+screen. `IntersectionObserver` invokes its callback once on observe with the
+current state, so that branch was duplicating the observer's own job.
+
+Gates: `verify` 50 checks, `build`, sweep clean across 17 pages × 2 widths,
+accessibility clean.
+
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.
