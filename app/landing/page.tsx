@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useMembers } from '@/hooks/useMembers';
 import UnifiedHeader from '@/components/layout/UnifiedHeader';
 import { Button } from '@/components/ui/Button';
+import { formatINR, monthlyValue, planPrice, PLAN_MONTHS } from '@/lib/pricing';
+import { cn } from '@/lib/utils';
 import { 
   ArrowRight, Sun, ShieldCheck, Droplets, VolumeX, Wind, Wifi, Armchair, CalendarDays
 } from 'lucide-react';
@@ -76,6 +78,29 @@ function Reveal({ children, delay = 0, className = '' }: {
     </div>
   );
 }
+
+/**
+ * Plans, in the order a visitor compares them.
+ *
+ * Every figure comes from `lib/pricing.ts` — no rupee amount is written here.
+ * That module reads `NEXT_PUBLIC_PLAN_RATES`, so a library that sets its own
+ * prices gets them on this page too; hardcoding would silently show the wrong
+ * numbers to exactly the people deciding whether to walk in.
+ */
+const PLANS = [
+  { duration: '1M', label: '1 month' },
+  { duration: '3M', label: '3 months' },
+  { duration: '6M', label: '6 months' },
+  { duration: '1Y', label: '1 year' },
+] as const;
+
+/**
+ * Derived, not declared: whichever plan has the lowest cost per month. If the
+ * rates are overridden and a different plan becomes the best deal, the badge
+ * follows — a hardcoded '1Y' would keep pointing at the old winner.
+ */
+const BEST_VALUE = (Object.keys(PLAN_MONTHS) as (keyof typeof PLAN_MONTHS)[])
+  .reduce((best, d) => (monthlyValue(d) < monthlyValue(best) ? d : best));
 
 const AMENITIES = [
   { name: 'Air Conditioned', desc: 'Optimal temperature', Icon: Wind },
@@ -236,6 +261,75 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+        </section>
+        </Reveal>
+
+        {/* ── Plans ── */}
+        <Reveal className="max-w-[1440px] mx-auto w-full px-4 md:px-6 lg:px-8 mb-24">
+        <section id="plans">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-black text-[var(--text-primary)] mb-4" style={{ fontFamily: 'var(--font-display)' }}>
+              Simple, honest pricing
+            </h2>
+            <p className="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
+              One seat, yours for as long as you book it. Longer plans cost less per month.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {PLANS.map(({ duration, label }, i) => {
+              const best = duration === BEST_VALUE;
+              return (
+                <div
+                  key={duration}
+                  className={cn(
+                    'relative flex flex-col rounded-2xl border bg-white p-6 shadow-sm animate-slide-up',
+                    best
+                      ? 'border-[var(--saffron-300)] ring-1 ring-[var(--saffron-200)]'
+                      : 'border-[var(--border-default)]'
+                  )}
+                  style={{ animationDelay: `${i * 45}ms`, animationFillMode: 'both' }}
+                >
+                  {best && (
+                    // A badge, not a colour swap: the green emphasis on this
+                    // page already means "seats free right now" and should keep
+                    // meaning only that. This also reads without relying on
+                    // colour at all.
+                    <span className="absolute -top-3 left-6 rounded-full border border-[var(--saffron-300)] bg-[var(--saffron-50)] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[var(--saffron-700)]">
+                      Best value
+                    </span>
+                  )}
+
+                  <div className="text-sm font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                    {label}
+                  </div>
+
+                  <div className="tabular mt-3 text-3xl font-black text-[var(--text-primary)]">
+                    {formatINR(planPrice(duration))}
+                  </div>
+
+                  <div className="tabular mt-1 text-sm font-medium text-[var(--text-secondary)]">
+                    {formatINR(monthlyValue(duration))} per month
+                  </div>
+
+                  <Button
+                    variant={best ? 'primary' : 'secondary'}
+                    onClick={() => router.push('/browse')}
+                    className="mt-6 w-full"
+                    aria-label={`Choose the ${label} plan and pick a seat`}
+                  >
+                    Pick a seat
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+
+          <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
+            Fees are confirmed at the desk — nothing is charged online. Submit a
+            seat request and the librarian will verify your payment before
+            allotting it.
+          </p>
         </section>
         </Reveal>
 
