@@ -1,12 +1,64 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMembers } from '@/hooks/useMembers';
 import UnifiedHeader from '@/components/layout/UnifiedHeader';
 import { 
   ArrowRight, Sun, Moon, ShieldCheck, Droplets, VolumeX, Wind, Wifi, Armchair, CalendarDays, CheckCircle2
 } from 'lucide-react';
+
+/**
+ * Reveals its children the first time they scroll into view.
+ *
+ * The page previously fired every section's `animate-slide-up` on load with
+ * hardcoded delays up to 600ms. On a 900px viewport that means the amenities
+ * grid — a full screen below the fold — finishes animating about half a second
+ * after load, long before anyone scrolls to it. The motion was spent on an
+ * empty viewport, so the section a visitor actually arrives at simply sits
+ * there. Reveal on intersection instead, which is what the delays were reaching
+ * for.
+ *
+ * One-shot: `unobserve` after the first trigger, so scrolling back up does not
+ * replay it. Re-animating content someone has already read is noise.
+ *
+ * No reduced-motion branch here — globals.css collapses every animation to
+ * 0.01ms under `prefers-reduced-motion`, so the class still applies and the
+ * content simply appears.
+ */
+function Reveal({ children, delay = 0, className = '' }: {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    // Already on screen at mount (the hero): show immediately, no observer.
+    if (el.getBoundingClientRect().top < window.innerHeight) { setShown(true); return; }
+
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setShown(true);
+      io.unobserve(el);
+    }, { rootMargin: '0px 0px -12% 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`${className} ${shown ? 'animate-slide-up' : 'opacity-0'}`}
+      style={shown ? { animationDelay: `${delay}ms`, animationFillMode: 'both' } : undefined}
+    >
+      {children}
+    </div>
+  );
+}
 
 const AMENITIES = [
   { name: 'Air Conditioned', desc: 'Optimal temperature', Icon: Wind },
@@ -39,7 +91,10 @@ export default function LandingPage() {
       <main className="flex-1 flex flex-col w-full relative z-10 pb-20">
         
         {/* ── Centered Hero Text ── */}
-        <section className="max-w-4xl mx-auto w-full px-4 pt-16 md:pt-24 lg:pt-32 pb-12 flex flex-col items-center text-center">
+        {/* Was pt-32 on a large screen, which pushed the CTA to ~740px and the
+            banner — the one real photograph of the place — entirely below the
+            fold. Tightened so the banner peeks above it and invites the scroll. */}
+        <section className="max-w-4xl mx-auto w-full px-4 pt-10 md:pt-14 lg:pt-16 pb-10 flex flex-col items-center text-center">
           <div className="animate-slide-up" style={{ animationFillMode: 'both' }}>
             <div className="inline-flex items-center gap-2 bg-[var(--saffron-50)] text-[var(--saffron-700)] text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-8 border border-[var(--saffron-200)] shadow-sm">
               <span className="relative flex h-2 w-2">
@@ -73,10 +128,30 @@ export default function LandingPage() {
               Explore Facilities
             </button>
           </div>
+
+          {/* The single most useful fact on the page, and it was buried two
+              screens down in a stats card. Someone landing here wants to know
+              whether they can get a seat today. */}
+          <p
+            className="animate-slide-up mt-6 flex items-center gap-2 text-sm font-semibold text-[var(--text-secondary)]"
+            style={{ animationDelay: '380ms', animationFillMode: 'both' }}
+            aria-live="polite"
+          >
+            <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--emerald-400)] opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--emerald-500)]" />
+            </span>
+            {stats.total === 0
+              ? 'Checking seat availability…'
+              : stats.vacant > 0
+                ? <><span className="tabular font-bold text-[var(--emerald-700)]">{stats.vacant}</span> of {stats.total} seats free right now</>
+                : <>All {stats.total} seats are taken — join the waitlist</>}
+          </p>
         </section>
 
         {/* ── Banner Image Showcase ── */}
-        <section className="max-w-[1440px] mx-auto w-full px-4 md:px-6 lg:px-8 mb-20 animate-slide-up" style={{ animationDelay: '400ms', animationFillMode: 'both' }}>
+        <Reveal className="max-w-[1440px] mx-auto w-full px-4 md:px-6 lg:px-8 mb-20">
+        <section>
           <div className="w-full relative rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-[var(--border-default)] bg-[var(--bg-muted)] flex items-center justify-center">
             <img 
               src="/banner.png" 
@@ -85,9 +160,11 @@ export default function LandingPage() {
             />
           </div>
         </section>
+        </Reveal>
 
         {/* ── Quick Stats Grid ── */}
-        <section className="max-w-[1440px] mx-auto w-full px-4 md:px-6 lg:px-8 mb-24 animate-slide-up" style={{ animationDelay: '500ms', animationFillMode: 'both' }}>
+        <Reveal className="max-w-[1440px] mx-auto w-full px-4 md:px-6 lg:px-8 mb-24">
+        <section>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white border border-[var(--border-default)] rounded-2xl p-8 flex items-center gap-6 shadow-sm">
               <div className="w-14 h-14 rounded-xl bg-[var(--sapphire-50)] flex items-center justify-center shrink-0">
@@ -99,13 +176,13 @@ export default function LandingPage() {
               </div>
             </div>
             
-            <div className="bg-white border border-[var(--border-default)] rounded-2xl p-8 flex items-center gap-6 shadow-sm">
-              <div className="w-14 h-14 rounded-xl bg-[var(--emerald-50)] flex items-center justify-center shrink-0">
+            <div className="bg-[var(--emerald-50)] border-2 border-[var(--emerald-200)] rounded-2xl p-8 flex items-center gap-6 shadow-sm">
+              <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center shrink-0 border border-[var(--emerald-200)]">
                 <Armchair className="w-7 h-7 text-[var(--emerald-600)]" />
               </div>
               <div>
                 <div className="flex items-center gap-3">
-                  <div className="text-3xl font-black text-[var(--text-primary)] mb-1">{stats.vacant || '--'}</div>
+                  <div className="text-3xl font-black text-[var(--emerald-700)] mb-1">{stats.vacant || '--'}</div>
                   <span className="relative flex h-3 w-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--emerald-400)] opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--emerald-500)]"></span>
@@ -115,38 +192,52 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="bg-[var(--saffron-700)] text-white rounded-2xl p-8 flex items-center gap-6 shadow-md relative overflow-hidden">
-              <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/noise-lines.png')] pointer-events-none"></div>
-              <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center shrink-0 border border-white/10 backdrop-blur-sm z-10">
-                <Sun className="w-7 h-7 text-white" />
+            {/* This card used to be the loud brown one, and it fetched its
+                texture from transparenttextures.com — a third-party request on
+                the first page a visitor sees, which can hang or fail and leaks
+                the visit to another host. The app has its own `noise-pattern`.
+                Opening hours also never change, so the emphasis moved to the
+                free-seat count, which is the reason anyone clicks anything. */}
+            <div className="bg-white border border-[var(--border-default)] rounded-2xl p-8 flex items-center gap-6 shadow-sm">
+              <div className="w-14 h-14 rounded-xl bg-[var(--saffron-50)] flex items-center justify-center shrink-0">
+                <Sun className="w-7 h-7 text-[var(--saffron-700)]" />
               </div>
-              <div className="z-10">
-                <div className="text-3xl font-black mb-1">6<span className="text-xl font-bold opacity-80">am</span>-10<span className="text-xl font-bold opacity-80">pm</span></div>
-                <div className="text-sm font-semibold text-white/90 uppercase tracking-wider">Open Daily</div>
+              <div>
+                <div className="text-3xl font-black text-[var(--text-primary)] mb-1">6<span className="text-xl font-bold text-[var(--text-secondary)]">am</span>–10<span className="text-xl font-bold text-[var(--text-secondary)]">pm</span></div>
+                <div className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Open Daily</div>
               </div>
             </div>
           </div>
         </section>
+        </Reveal>
 
         {/* ── Facilities ── */}
-        <section id="facilities" className="max-w-[1440px] mx-auto w-full px-4 md:px-6 lg:px-8 animate-slide-up" style={{ animationDelay: '600ms', animationFillMode: 'both' }}>
+        <Reveal className="max-w-[1440px] mx-auto w-full px-4 md:px-6 lg:px-8">
+        <section id="facilities">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-black text-[var(--text-primary)] mb-4" style={{ fontFamily: 'var(--font-display)' }}>Premium Amenities</h2>
             <p className="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">Everything you need for an uninterrupted and highly productive study session.</p>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
-            {AMENITIES.map(({ name, desc, Icon }) => (
-              <div key={name} className="group bg-white border border-[var(--border-default)] rounded-2xl p-6 flex flex-col items-center text-center shadow-sm">
+            {AMENITIES.map(({ name, desc, Icon }, i) => (
+              <div
+                key={name}
+                /* 45ms apart: inside the 30–80ms band where a row still reads
+                   as one movement rather than five things taking turns. */
+                className="group bg-white border border-[var(--border-default)] rounded-2xl p-6 flex flex-col items-center text-center shadow-sm animate-slide-up"
+                style={{ animationDelay: `${i * 45}ms`, animationFillMode: 'both' }}
+              >
                 <div className="w-16 h-16 rounded-2xl bg-[var(--bg-muted)] flex items-center justify-center text-[var(--text-secondary)] mb-5 group-hover:bg-[var(--saffron-50)] group-hover:text-[var(--saffron-600)] transition-colors duration-300">
                   <Icon className="w-8 h-8" />
                 </div>
                 <div className="text-base font-bold text-[var(--text-primary)] mb-1">{name}</div>
-                <div className="text-sm font-medium text-[var(--text-tertiary)]">{desc}</div>
+                <div className="text-sm font-medium text-[var(--text-secondary)]">{desc}</div>
               </div>
             ))}
           </div>
         </section>
+        </Reveal>
 
       </main>
 

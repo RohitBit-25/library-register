@@ -18,7 +18,7 @@ import UnifiedHeader from '@/components/layout/UnifiedHeader';
 import StudentSidebar from '@/components/layout/StudentSidebar';
 import SeatRequestSheet from '@/components/seat/SeatRequestSheet';
 import { SeatSkeleton } from '@/components/ui/Skeleton';
-import { ArrowLeft, MapPin, Check, Armchair } from 'lucide-react';
+import { ArrowLeft, MapPin, Check, Armchair, Minus, Plus as PlusIcon, Maximize2 } from 'lucide-react';
 import { seatAmenities } from '@/lib/layoutConfig';
 import { cn } from '@/lib/utils';
 
@@ -30,6 +30,23 @@ export default function BrowsePage() {
 
   const [shiftFilter, setShiftFilter] = useState<Shift | 'all'>('all');
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
+  /**
+   * How the room is sized. Three states, and the default matters:
+   *
+   *   null   — fill the width, scroll for the rest. Seats land at ~50px.
+   *   'room' — the whole hall on screen. Seats land at ~27px.
+   *   number — an explicit scale.
+   *
+   * The room is 1360×1184, close to square, and a laptop viewport is wide and
+   * short. Fitting *both* axes into ~550px of height therefore costs more than
+   * half the seat size, and a student picking a seat needs to read the number
+   * and hit the target far more than they need the whole room in one glance.
+   * So width is the default here, and the whole room is one click away.
+   *
+   * The staff plan at /floorplan defaults the other way, because there the map
+   * owns the entire viewport and surveying the hall is the point of the page.
+   */
+  const [zoom, setZoom] = useState<number | 'room' | null>(null);
 
   const filtered = useMemo(() => {
     if (shiftFilter === 'all') return members;
@@ -125,17 +142,47 @@ export default function BrowsePage() {
                     <SelectItem value="evening">Evening shift</SelectItem>
                   </SelectContent>
                 </Select>
+
+                {/* The room was rendering at 33px a seat here. Fitting both
+                    axes shows the whole hall; zoom is for reading a number. */}
+                <div className="hidden items-center gap-1 sm:flex" role="group" aria-label="Zoom">
+                  {([
+                    ['Zoom out', <Minus key="o" className="h-4 w-4" aria-hidden="true" />, () => setZoom((z) => typeof z === 'number' ? Math.max(0.5, z - 0.25) : 0.75)],
+                    ['Fit the whole room on screen', <Maximize2 key="f" className="h-4 w-4" aria-hidden="true" />, () => setZoom((z) => (z === 'room' ? null : 'room'))],
+                    ['Zoom in', <PlusIcon key="i" className="h-4 w-4" aria-hidden="true" />, () => setZoom((z) => typeof z === 'number' ? Math.min(2, z + 0.25) : 1.25)],
+                  ] as const).map(([label, icon, onClick]) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={onClick}
+                      aria-label={label}
+                      aria-pressed={label.startsWith('Fit') ? zoom === 'room' : undefined}
+                      className={cn(
+                        'flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] transition-ui hover:border-[var(--saffron-300)] hover:bg-[var(--saffron-50)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]',
+                        label.startsWith('Fit') && zoom === 'room' && 'border-[var(--saffron-500)] bg-[var(--saffron-50)]',
+                      )}
+                    >
+                      {icon}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--border-default)] bg-[var(--bg-muted)]/30">
-              <div className="flex-1 p-2 sm:p-4">
+            {/* Fitting both axes needs a container with a real height —
+                otherwise the fit measures a content-driven box, picks a tiny
+                scale, and the room comes out *smaller* than fitting width
+                alone. This reserves the viewport minus the page chrome. */}
+            <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--border-default)] bg-[var(--bg-muted)]/30 min-h-[64vh] lg:min-h-[calc(100dvh-260px)]">
+              <div className="flex min-h-0 flex-1 p-2 sm:p-4">
                 {isLoading ? (
                   <div className="grid w-full grid-cols-6 gap-2 p-4 sm:grid-cols-8 md:grid-cols-10">
                     {Array.from({ length: 40 }, (_, i) => <SeatSkeleton key={i} />)}
                   </div>
                 ) : (
                   <PublicSeatMap
+                    fit={zoom === 'room' ? 'both' : 'width'}
+                    scale={typeof zoom === 'number' ? zoom : undefined}
                     members={members}
                     selectedSeat={selectedSeat}
                     requestedSeats={requestedSeats}
@@ -216,7 +263,8 @@ export default function BrowsePage() {
             </div>
           </div>
 
-          {/* Right Detail Sidebar */}
+          {/* Right Detail Sidebar — only when it has something to say. */}
+          {selectedMember && (
           <aside className="w-full lg:w-[280px] xl:w-[320px] shrink-0 flex flex-col gap-6">
             
             {selectedMember?.vacant ? (
@@ -279,7 +327,8 @@ export default function BrowsePage() {
             )}
             
           </aside>
-          
+          )}
+
         </section>
 
       </main>

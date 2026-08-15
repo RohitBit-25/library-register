@@ -340,7 +340,11 @@ export function SeatMapContainer({
       className={cnLocal(
         'w-full relative group overflow-auto custom-scrollbar',
         !frameless && 'rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)]',
-        frameless && 'h-full',
+        // Fitting both axes measures this element's height, so it has to have
+        // one. Without it the box is content-sized, the measured height is
+        // whatever the last scale produced, and the fit converges on a scale
+        // *smaller* than fitting width alone.
+        (frameless || fit === 'both') && 'h-full',
       )}
       style={{ minHeight: frameless ? undefined : (scale < 1 ? undefined : '600px') }}
     >

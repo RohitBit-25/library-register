@@ -68,7 +68,7 @@ function PublicSeatTileInner({
 const PublicSeatTile = memo(PublicSeatTileInner);
 
 export default function PublicSeatMap({
-  members, selectedSeat, requestedSeats, onSelect, isDimmed,
+  members, selectedSeat, requestedSeats, onSelect, isDimmed, fit = 'width', scale,
 }: {
   members: Member[];
   selectedSeat: number | null;
@@ -76,9 +76,13 @@ export default function PublicSeatMap({
   onSelect: (seat: number) => void;
   /** Outside the current shift filter — shown, but not offered. */
   isDimmed?: (m: Member) => boolean;
+  /** See SeatMapContainer — `both` fits the whole room on screen. */
+  fit?: 'width' | 'both';
+  /** Absolute scale from the page's zoom control, if any. */
+  scale?: number;
 }) {
   return (
-    <SeatMapContainer>
+    <SeatMapContainer fit={fit} scale={scale}>
       {members.map((m) => (
         <SeatMapWrapper key={m.seat} seatNum={m.seat}>
           {() => (
