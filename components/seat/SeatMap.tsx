@@ -315,19 +315,24 @@ function useFitToWidth(mode: FitMode = 'width') {
 export function SeatMapContainer({
   children,
   fit = 'width',
-  zoom = 1,
+  scale: scaleProp,
   frameless = false,
 }: {
   children: ReactNode;
   /** See FitMode. Defaults to the embedded-card behaviour. */
   fit?: FitMode;
-  /** User zoom on top of the fitted scale, for the dedicated plan page. */
-  zoom?: number;
+  /**
+   * An absolute scale that replaces the fitted one, for the dedicated plan
+   * page's zoom control. Absolute rather than a multiplier of the fit, so
+   * "100%" means 100% everywhere — as a multiplier it happened to be right on
+   * a desktop, where fit-to-width lands near 1, and meant 42% on a phone.
+   */
+  scale?: number;
   /** Drop the card chrome when the page already provides a frame. */
   frameless?: boolean;
 }) {
   const { outerRef, scale: fitted, overflows } = useFitToWidth(fit);
-  const scale = fitted * zoom;
+  const scale = scaleProp ?? fitted;
 
   return (
     <div

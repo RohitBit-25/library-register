@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Minus, Plus, Maximize2, Percent } from 'lucide-react';
 import { useMembers } from '@/hooks/useMembers';
@@ -65,19 +65,20 @@ export default function FloorPlanPage() {
   const isPhone = useIsPhone();
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [shiftFilter, setShiftFilter] = useState<Shift | 'all'>('all');
-  // `null` means "fitted to the viewport"; a number is an explicit user zoom.
-  const [zoom, setZoom] = useState<number | null>(null);
-
-  // Fitting a 14×12 room into a 390px screen puts each seat at 24px — the
-  // floor of what a thumb can hit, and too small to read the number on. Phones
-  // therefore open at full size and pan, the way every map application on a
-  // phone behaves; Fit is still one tap away for the overview.
-  const setInitialZoom = useRef(false);
-  useEffect(() => {
-    if (setInitialZoom.current) return;
-    setInitialZoom.current = true;
-    if (isPhone) setZoom(1);
-  }, [isPhone]);
+  // `undefined` means the user has not chosen yet, so the default applies;
+  // `null` means fitted to the viewport; a number is an explicit zoom.
+  //
+  // Derived rather than set from an effect: `useSyncExternalStore` resolves
+  // the media query *after* the first client render, so an effect that reads
+  // `isPhone` on mount sees `false` and latches the desktop default on a
+  // phone. Deriving it has no such window.
+  //
+  // Why phones differ: fitting a 14×12 room into 390px puts each seat at 24px
+  // — the floor of what a thumb can hit and too small to read a number on. So
+  // phones open at full size and pan, the way every map application on a phone
+  // behaves, with Fit one tap away for the overview.
+  const [chosenZoom, setChosenZoom] = useState<number | null | undefined>(undefined);
+  const zoom = chosenZoom === undefined ? (isPhone ? 1 : null) : chosenZoom;
 
   const inShift = useMemo(() => {
     if (shiftFilter === 'all') return null;
@@ -138,13 +139,11 @@ export default function FloorPlanPage() {
   };
 
   const stepZoom = useCallback((dir: 1 | -1) => {
-    setZoom((z) => {
-      const current = z ?? 1;
-      const i = ZOOM_STEPS.findIndex((v) => v >= current - 0.001);
-      const next = ZOOM_STEPS[Math.min(ZOOM_STEPS.length - 1, Math.max(0, i + dir))];
-      return next ?? current;
-    });
-  }, []);
+    const current = zoom ?? 1;
+    const i = ZOOM_STEPS.findIndex((v) => v >= current - 0.001);
+    const next = ZOOM_STEPS[Math.min(ZOOM_STEPS.length - 1, Math.max(0, i + dir))];
+    setChosenZoom(next ?? current);
+  }, [zoom]);
 
   const btn = 'flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-xl border '
     + 'border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm font-semibold '
@@ -199,13 +198,13 @@ export default function FloorPlanPage() {
               disabled={zoom !== null && zoom <= ZOOM_STEPS[0]} aria-label="Zoom out">
               <Minus className="h-4 w-4" aria-hidden="true" />
             </button>
-            <button type="button" onClick={() => setZoom(null)}
+            <button type="button" onClick={() => setChosenZoom(null)}
               className={cn(btn, zoom === null && 'border-[var(--saffron-500)] bg-[var(--saffron-50)]')}
               aria-label="Fit the whole room on screen" aria-pressed={zoom === null}>
               <Maximize2 className="h-4 w-4" aria-hidden="true" />
               <span className="hidden lg:inline">Fit</span>
             </button>
-            <button type="button" onClick={() => setZoom(1)}
+            <button type="button" onClick={() => setChosenZoom(1)}
               className={cn(btn, zoom === 1 && 'border-[var(--saffron-500)] bg-[var(--saffron-50)]')}
               aria-label="Show the plan at full size" aria-pressed={zoom === 1}>
               <Percent className="h-4 w-4" aria-hidden="true" />
@@ -222,7 +221,7 @@ export default function FloorPlanPage() {
       {/* ── The room ─────────────────────────────────────────────── */}
       <main className="relative min-h-0 flex-1 p-3 sm:p-5">
         <div className="flex h-full w-full items-center justify-center">
-          <SeatMapContainer fit={zoom === null ? 'both' : 'width'} zoom={zoom ?? 1} frameless>
+          <SeatMapContainer fit="both" scale={zoom ?? undefined} frameless>
             {/* `compact` is not optional despite the extra room here: the full
                 tile draws a 44px avatar plus a name into a 54px pad, which
                 clips the avatar to a bowl. Same layout as the dashboard map,

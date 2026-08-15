@@ -902,6 +902,77 @@ page/width combinations, accessibility clean.
 
 ---
 
+## 7o. Fifteenth pass — the floor plan, analysed and given its own page
+
+### What was wrong with the plan
+
+Three separate faults, all visible in the screenshot you sent:
+
+**1. The desks were smeared, not drawn.** `desk.png` is 2073×758 — a top-down
+table with a moulded cap at each end and power sockets along the middle. It was
+being painted with `border-image … stretch` across runs up to 950px long: a
+3.3× horizontal smear that turned the grain into streaks and each socket into a
+pale slab. That is why the tables read as wooden pillars with brackets rather
+than furniture.
+
+Tiling the whole sprite is no better — the end caps then reappear every 280px
+down the middle of the table. The fix is `border-image-repeat: round`, which
+holds one cap at each end and tiles *only* the middle, rounding the tile so a
+whole number fits. The result reads as one long desk with sockets spaced along
+it, which is what a reading hall actually has.
+
+**2. The plan only ever fitted to width.** The canvas is 1360×1184. Fitting the
+width on a 1130px column gives scale 0.83 — so the room renders 983px tall and
+the bottom runs off the screen. **You could never see the whole hall at once**,
+which is the single thing a floor plan is for.
+
+**3. It was competing for space.** On `/browse` the plan shares the width with
+a nav rail, a header, a booking panel and a legend. On `/floorplan` it rendered
+the *entire dashboard* — stat chips, search, filter pills, card header — with a
+back button on top.
+
+### The dedicated page
+
+`/floorplan` is now a purpose-built page rather than the dashboard in a
+wrapper. `AppShell` already had `isFullScreenMap` for this route, so the
+sidebar, top bar and bottom nav step aside and the room gets the viewport.
+
+- **Fits both axes by default**, so the whole room is visible at once.
+- **Zoom** — fit / 100% / ± across six steps. Absolute, not a multiplier of the
+  fitted scale: as a multiplier "100%" happened to be right on a desktop, where
+  fit-to-width lands near 1, and meant 42% on a phone.
+- **Phones open at 100% and pan.** Fitting a 14×12 room into 390px puts each
+  seat at 24px — the floor of what a thumb can hit and too small to read a
+  number on. Every map application on a phone behaves this way; Fit is one tap
+  away for the overview.
+- **Seats are fully workable** — clicking one opens the same detail panel and
+  add-member sheet as the dashboard, with the same handlers. `readonly` was not
+  an option: that is the *student* view, and it hides the phone number, the
+  dates and every action.
+- No stat chips, no search, no mode toggles. Those belong on a page you work
+  *through*; this is one you look at, and everything that is not the room is
+  chrome competing with it.
+
+Measured: seats render 36px fitted, 60px at 100%, 75px zoomed in, back to 36px
+on Fit — and the room fits the screen at every step.
+
+### Two mistakes worth recording
+
+`app/floorplan/` already existed, so `mv app/floor-plan app/floorplan` nested
+the new page *inside* it rather than replacing it — the route silently kept
+serving the old page. Moving a directory onto an existing name is a rename only
+when the target does not exist.
+
+And the first version rendered seats without `compact`, which draws a 44px
+avatar plus a name into a 54px pad and clips the avatar to a bowl. The tile has
+one correct layout at this size and both maps now use it.
+
+Gates: `verify` 50 checks, `build`, sweep clean across 17 pages × 2 widths,
+accessibility clean.
+
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.
