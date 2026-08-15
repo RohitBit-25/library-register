@@ -46,7 +46,7 @@ function UrgencyStat({
         <div className="text-lg font-extrabold text-[var(--text-primary)] leading-none truncate">
           {count}
         </div>
-        <div className="text-[11px] font-medium text-[var(--text-tertiary)] mt-0.5 truncate">
+        <div className="text-xs font-medium text-[var(--text-tertiary)] mt-0.5 truncate">
           {label}
         </div>
       </div>
@@ -176,7 +176,7 @@ export default function ExpiryPage() {
         <div>
           <div className="font-bold text-[var(--text-primary)] text-sm tracking-tight">{row.original.name}</div>
           {row.original.phone && (
-            <div className="text-[11px] font-mono text-[var(--text-tertiary)] font-medium mt-0.5">
+            <div className="text-xs font-mono text-[var(--text-tertiary)] font-medium mt-0.5">
               {row.original.phone}
             </div>
           )}
@@ -219,7 +219,7 @@ export default function ExpiryPage() {
           <div className="w-full max-w-[140px]">
             <span
               className={cn(
-                'text-[10px] uppercase font-black px-1.5 py-0.5 rounded-md whitespace-nowrap inline-block mb-1.5 tracking-wider',
+                'text-xs uppercase font-black px-1.5 py-0.5 rounded-md whitespace-nowrap inline-block mb-1.5 tracking-wider',
                 isExpired || dLeft === 0
                   ? 'bg-[var(--ruby-50)] text-[var(--ruby-600)]'
                   : dLeft <= 7
@@ -272,7 +272,7 @@ export default function ExpiryPage() {
             <button
               onClick={() => handleQuickRenew(row.original)}
               aria-label={`Renew seat ${row.original.seat} for another ${durationLabel((row.original.duration || '3M') as never)}`}
-              className="flex h-8 cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2.5 text-[11px] font-bold text-[var(--emerald-600)] shadow-sm transition-ui hover:bg-[var(--emerald-100)] active:scale-95"
+              className="flex h-8 cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2.5 text-xs font-bold text-[var(--emerald-600)] shadow-sm transition-ui hover:bg-[var(--emerald-100)] active:scale-95"
             >
               <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
               Renew
@@ -368,17 +368,17 @@ export default function ExpiryPage() {
         renderSubComponent={(member) => (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
             <div className="flex flex-col">
-              <span className="text-[var(--text-tertiary)] text-[10px] uppercase font-bold tracking-widest mb-1 shadow-sm">Fee Status</span>
+              <span className="text-[var(--text-tertiary)] text-xs uppercase font-bold tracking-widest mb-1 shadow-sm">Fee Status</span>
               <span className={cn("font-medium", member.fee === 'due' ? 'text-[var(--ruby-600)]' : 'text-[var(--saffron-600)]')}>
                 {member.fee === 'due' ? 'Pending Payment' : 'Fully Paid'}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[var(--text-tertiary)] text-[10px] uppercase font-bold tracking-widest mb-1 shadow-sm">Contact Info</span>
+              <span className="text-[var(--text-tertiary)] text-xs uppercase font-bold tracking-widest mb-1 shadow-sm">Contact Info</span>
               <span className="font-mono text-[var(--text-primary)]">{member.phone || 'N/A'}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[var(--text-tertiary)] text-[10px] uppercase font-bold tracking-widest mb-1 shadow-sm">Joined</span>
+              <span className="text-[var(--text-tertiary)] text-xs uppercase font-bold tracking-widest mb-1 shadow-sm">Joined</span>
               <span className="font-mono text-[var(--text-secondary)]">{fmtDate(member.joinDate)}</span>
             </div>
           </div>

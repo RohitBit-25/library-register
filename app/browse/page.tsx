@@ -193,7 +193,7 @@ export default function BrowsePage() {
 
               {/* Three states, which is all this map has. The old legend also
                   listed "Blocked" and "You" — neither exists in this app. */}
-              <div className="mt-auto flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-[var(--border-default)] bg-[var(--bg-surface)] p-4 text-[11px] font-bold text-[var(--text-secondary)]">
+              <div className="mt-auto flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-[var(--border-default)] bg-[var(--bg-surface)] p-4 text-xs font-bold text-[var(--text-secondary)]">
                 <div className="flex items-center gap-2">
                   <span className="flex h-3.5 w-3.5 items-center justify-center rounded-[4px] border border-[var(--emerald-200)] bg-[var(--emerald-50)]">
                     <Armchair className="h-2 w-2 text-[var(--emerald-600)]" aria-hidden="true" />
@@ -223,7 +223,7 @@ export default function BrowsePage() {
               <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-5 shadow-sm flex flex-col">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-lg font-bold text-[var(--text-primary)]">Seat {selectedMember.seat}</h3>
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--emerald-600)] bg-[var(--emerald-50)] border border-[var(--emerald-200)] px-2 py-1 rounded-full">
+                  <span className="text-xs uppercase font-bold tracking-wider text-[var(--emerald-600)] bg-[var(--emerald-50)] border border-[var(--emerald-200)] px-2 py-1 rounded-full">
                     Available
                   </span>
                 </div>
@@ -231,11 +231,11 @@ export default function BrowsePage() {
                 {/* Derived from where this seat actually sits in the hall.
                     Every seat used to advertise the same seven amenities,
                     window included, whichever corner it was in. */}
-                <div className="mb-6 flex items-center gap-1.5 text-[11px] font-semibold text-[var(--text-tertiary)]">
+                <div className="mb-6 flex items-center gap-1.5 text-xs font-semibold text-[var(--text-tertiary)]">
                   <MapPin className="h-3 w-3" aria-hidden="true" /> Reading hall · seat {selectedSeat}
                 </div>
 
-                <ul className="mb-6 space-y-2 text-[13px] font-medium text-[var(--text-secondary)]">
+                <ul className="mb-6 space-y-2 text-sm font-medium text-[var(--text-secondary)]">
                   {seatAmenities(selectedSeat!).map((a) => (
                     <li key={a} className="flex items-center gap-2">
                       <Check className="h-3.5 w-3.5 shrink-0 text-[var(--emerald-600)]" aria-hidden="true" />
@@ -245,8 +245,8 @@ export default function BrowsePage() {
                 </ul>
                 
                 <div className="mb-8">
-                  <div className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-primary)] mb-2">Best for</div>
-                  <span className="inline-block bg-[var(--saffron-50)] text-[var(--saffron-700)] text-[11px] font-bold px-3 py-1 rounded-full border border-[var(--saffron-200)]">
+                  <div className="text-xs font-bold uppercase tracking-wider text-[var(--text-primary)] mb-2">Best for</div>
+                  <span className="inline-block bg-[var(--saffron-50)] text-[var(--saffron-700)] text-xs font-bold px-3 py-1 rounded-full border border-[var(--saffron-200)]">
                     Focused Study
                   </span>
                 </div>
@@ -269,7 +269,7 @@ export default function BrowsePage() {
                     <Armchair className="h-9 w-9 text-[var(--text-tertiary)]" aria-hidden="true" />
                   </div>
                   <div className="text-lg font-bold text-[var(--text-primary)] mb-2">No seat booked yet</div>
-                  <div className="text-[13px] text-[var(--text-secondary)] mb-8">Choose your perfect seat and get started.</div>
+                  <div className="text-sm text-[var(--text-secondary)] mb-8">Choose your perfect seat and get started.</div>
                   
                   <button onClick={() => setSelectedSeat(null)} className="px-6 py-2.5 rounded-xl bg-[var(--bg-surface)] hover:bg-[var(--bg-muted)] border border-[var(--border-default)] text-[var(--saffron-700)] font-bold text-sm transition-colors">
                     Choose Seat

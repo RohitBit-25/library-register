@@ -138,7 +138,7 @@ export default function QRCodePanel() {
             <Download className="w-4 h-4" />
             Download PNG
           </button>
-          <p className="text-[10px] text-[var(--text-tertiary)] mt-3 text-center max-w-[200px]">
+          <p className="text-xs text-[var(--text-tertiary)] mt-3 text-center max-w-[200px]">
             Print and place at the front desk. Users scan to request a seat.
           </p>
         </div>

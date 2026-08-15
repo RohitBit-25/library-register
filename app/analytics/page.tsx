@@ -136,7 +136,7 @@ export default function DashboardPage() {
               <IndianRupee className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
               Fees
             </h2>
-            <span className="text-[11px] font-medium text-[var(--text-tertiary)]">
+            <span className="text-xs font-medium text-[var(--text-tertiary)]">
               at {getPlanRates()['1M']}/mo base rate
             </span>
           </div>
@@ -185,7 +185,7 @@ export default function DashboardPage() {
               <h2 className="font-display text-sm font-semibold text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
                 <AlertTriangle className="w-4 h-4 text-[var(--marigold-700)]" />
                 Alerts
-                <span className="tabular rounded-full bg-[var(--marigold-50)] px-2 py-0.5 text-[10px] font-bold text-[var(--marigold-700)]">
+                <span className="tabular rounded-full bg-[var(--marigold-50)] px-2 py-0.5 text-xs font-bold text-[var(--marigold-700)]">
                   {alerts.length}
                 </span>
               </h2>
@@ -265,7 +265,7 @@ export default function DashboardPage() {
             <h3 className="font-display text-sm font-semibold text-[var(--text-primary)]">
               Daily Attendance
             </h3>
-            <span className="text-[11px] font-medium text-[var(--text-tertiary)]">
+            <span className="text-xs font-medium text-[var(--text-tertiary)]">
               last 30 days
             </span>
           </div>
@@ -277,7 +277,7 @@ export default function DashboardPage() {
               <p className="text-sm font-semibold text-[var(--text-secondary)]">
                 No attendance recorded yet
               </p>
-              <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">
+              <p className="mt-1 text-xs text-[var(--text-tertiary)]">
                 Mark attendance to start building this trend
               </p>
             </div>
@@ -287,7 +287,7 @@ export default function DashboardPage() {
                 data={stats.trend.map((d) => d.present)}
                 startLabel={formatShortDate(stats.trend[0]?.date)}
               />
-              <p className="mt-2 text-[11px] text-[var(--text-tertiary)]">
+              <p className="mt-2 text-xs text-[var(--text-tertiary)]">
                 {stats.trendDaysWithData} of 30 days have records
                 {stats.trendDaysWithData < 30 && ' — gaps show as zero'}
               </p>
@@ -439,7 +439,7 @@ function Sparkline({ data, startLabel }: { data: number[]; startLabel: string })
         </linearGradient>
       </defs>
     </svg>
-    <div className="flex items-center justify-between px-1 pt-1 text-[11px] font-medium tabular text-[var(--text-tertiary)]">
+    <div className="flex items-center justify-between px-1 pt-1 text-xs font-medium tabular text-[var(--text-tertiary)]">
       <span>{startLabel}</span>
       <span>Today</span>
     </div>
@@ -481,7 +481,7 @@ function MoneyStat({
         onClick && 'cursor-pointer transition-colors hover:bg-[var(--bg-muted)]'
       )}
     >
-      <dt className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
+      <dt className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
         {label}
       </dt>
       <dd>
@@ -489,7 +489,7 @@ function MoneyStat({
           {value}
         </span>
         {hint && (
-          <span className="mt-0.5 block text-[11px] text-[var(--text-tertiary)]">{hint}</span>
+          <span className="mt-0.5 block text-xs text-[var(--text-tertiary)]">{hint}</span>
         )}
       </dd>
     </Wrapper>

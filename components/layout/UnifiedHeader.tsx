@@ -21,16 +21,16 @@ export default function UnifiedHeader() {
             src="/logo-mark.png"
             alt=""
             aria-hidden="true"
-            width={40}
-            height={40}
+            width={56}
+            height={56}
             priority
-            className="h-10 w-10 shrink-0 object-contain"
+            className="h-12 w-12 shrink-0 object-contain sm:h-14 sm:w-14"
           />
           <div className="leading-tight">
-            <p className="text-[14px] font-bold tracking-tight text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-devanagari)' }}>
+            <p className="text-base font-bold tracking-tight text-[var(--text-primary)] sm:text-md" style={{ fontFamily: 'var(--font-devanagari)' }}>
               श्री गणगौर
             </p>
-            <p className="text-[11px] font-medium text-[var(--text-tertiary)]">
+            <p className="text-sm font-medium text-[var(--text-tertiary)]">
               Shree Gangaur Study Library
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function UnifiedHeader() {
             public site — see app/admin/login. */}
         <Link
           href="/admin/login"
-          className="inline-flex min-h-[40px] cursor-pointer items-center gap-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 text-[13px] font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-xs)] transition-colors hover:border-[var(--saffron-600)] hover:text-[var(--saffron-700)]"
+          className="inline-flex min-h-[40px] cursor-pointer items-center gap-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 text-sm font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-xs)] transition-colors hover:border-[var(--saffron-600)] hover:text-[var(--saffron-700)]"
         >
           <Lock className="h-4 w-4" aria-hidden="true" />
           Staff login

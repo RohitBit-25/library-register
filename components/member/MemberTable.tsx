@@ -526,14 +526,14 @@ export default function MemberTable({
                           className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-ui"
                         >
                           <Check className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
-                          <span className="text-[11px] mt-0.5">{m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}</span>
+                          <span className="text-xs mt-0.5">{m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}</span>
                         </button>
                         <button
                           onClick={() => { onRenew(m.seat); setOpenActions(null); }}
                           className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-ui"
                         >
                           <RefreshCw className="h-4 w-4 text-[var(--saffron-700)]" aria-hidden="true" />
-                          <span className="text-[11px] mt-0.5">Renew</span>
+                          <span className="text-xs mt-0.5">Renew</span>
                         </button>
                         {m.phone && (
                           <a

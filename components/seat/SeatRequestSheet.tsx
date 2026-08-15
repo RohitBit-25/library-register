@@ -295,7 +295,7 @@ export default function SeatRequestSheet({
 
                     {/* ─── Payment Mode Toggle ─────────────── */}
                     <div>
-                      <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 block">
+                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 block">
                         Payment Mode
                       </label>
                       <div role="radiogroup" aria-label="Payment Mode" className="grid grid-cols-2 gap-2 p-1 bg-[var(--bg-base)] rounded-2xl border border-[var(--border-default)]">
@@ -345,7 +345,7 @@ export default function SeatRequestSheet({
                     ) : (
                       <div className="rounded-xl border border-[var(--sapphire-200)] bg-gradient-to-b from-[var(--sapphire-500)]/8 to-transparent overflow-hidden">
                         <div className="flex flex-col items-center py-5 px-4">
-                          <p className="text-[10px] font-black text-[var(--sapphire-600)] mb-3 uppercase tracking-[0.2em] flex items-center gap-2">
+                          <p className="text-xs font-black text-[var(--sapphire-600)] mb-3 uppercase tracking-[0.2em] flex items-center gap-2">
                             <Smartphone className="w-3.5 h-3.5" />
                             Scan & Pay via UPI
                           </p>
@@ -357,7 +357,7 @@ export default function SeatRequestSheet({
                               className="rounded-lg"
                             />
                           </div>
-                          <p className="text-[11px] text-[var(--text-secondary)] text-center leading-relaxed max-w-[220px]">
+                          <p className="text-xs text-[var(--text-secondary)] text-center leading-relaxed max-w-[220px]">
                             Scan with <span className="text-[var(--text-primary)] font-semibold">GPay, PhonePe or Paytm</span>
                           </p>
                         </div>
@@ -366,7 +366,7 @@ export default function SeatRequestSheet({
 
                     {/* ─── Name ─────────────────────────────── */}
                     <div>
-                      <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <User className="w-3.5 h-3.5" />
                         Full Name <span className="text-[var(--ruby-600)]">*</span>
                       </label>
@@ -387,7 +387,7 @@ export default function SeatRequestSheet({
 
                     {/* ─── Phone ────────────────────────────── */}
                     <div>
-                      <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <Phone className="w-3.5 h-3.5" />
                         Phone Number <span className="text-[var(--ruby-600)]">*</span>
                       </label>
@@ -414,7 +414,7 @@ export default function SeatRequestSheet({
 
                     {/* ─── Date of Joining ──────────────────── */}
                     <div>
-                      <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <CalendarDays className="w-3.5 h-3.5" />
                         Date of Joining <span className="text-[var(--ruby-600)]">*</span>
                       </label>
@@ -429,7 +429,7 @@ export default function SeatRequestSheet({
 
                     {/* ─── Duration ─────────────────────────── */}
                     <div>
-                      <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <CalendarDays className="w-3.5 h-3.5" />
                         Membership Duration <span className="text-[var(--ruby-600)]">*</span>
                       </label>
@@ -456,7 +456,7 @@ export default function SeatRequestSheet({
 
                     {/* ─── Preferred Shift ───────────────────── */}
                     <div>
-                      <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5" />
                         Preferred Shift <span className="text-[var(--ruby-600)]">*</span>
                       </label>
@@ -484,7 +484,7 @@ export default function SeatRequestSheet({
                     {/* ─── UPI Reference ─────────────────────── */}
                     {paymentMode === 'upi' && (
                       <div>
-                        <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                        <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                           <Smartphone className="w-3.5 h-3.5" />
                           UPI Reference <span className="text-[var(--ruby-600)]">*</span>
                         </label>
@@ -496,7 +496,7 @@ export default function SeatRequestSheet({
                           className={cn(inputCls, 'font-mono uppercase')}
                         />
                         {!paymentValid && (
-                          <p className="mt-2 text-[11px] font-semibold text-[var(--ruby-600)]">
+                          <p className="mt-2 text-xs font-semibold text-[var(--ruby-600)]">
                             Add the payment reference so admin can verify it.
                           </p>
                         )}
@@ -505,7 +505,7 @@ export default function SeatRequestSheet({
 
                     {/* ─── ID Document Upload ───────────────── */}
                     <div>
-                      <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <FileText className="w-3.5 h-3.5" />
                         ID Document
                         <span className="font-normal normal-case tracking-normal text-[var(--text-tertiary)]">(Aadhaar / College ID)</span>
@@ -536,7 +536,7 @@ export default function SeatRequestSheet({
                           <span className="text-xs font-medium">
                             Tap to capture or upload ID
                           </span>
-                          <span className="text-[9px] text-[var(--text-tertiary)]">
+                          <span className="text-xs text-[var(--text-tertiary)]">
                             JPG, PNG, WebP or PDF · Max 2MB
                           </span>
                         </button>
@@ -551,7 +551,7 @@ export default function SeatRequestSheet({
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-bold text-[var(--text-primary)] truncate">{documentName}</p>
-                            <p className="text-[10px] text-[var(--emerald-600)] flex items-center gap-1 mt-0.5">
+                            <p className="text-xs text-[var(--emerald-600)] flex items-center gap-1 mt-0.5">
                               <CheckCircle2 className="w-3 h-3" /> Uploaded successfully
                             </p>
                           </div>
@@ -569,7 +569,7 @@ export default function SeatRequestSheet({
 
                     {/* ─── Message ──────────────────────────── */}
                     <div>
-                      <label className="text-[11px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                         <MessageSquare className="w-3.5 h-3.5" />
                         Message <span className="font-normal normal-case tracking-normal">(optional)</span>
                       </label>
@@ -613,7 +613,7 @@ export default function SeatRequestSheet({
                       )}
                       {loading ? 'Submitting...' : 'Submit Request'}
                     </button>
-                    <p className="text-center text-[10px] text-[var(--text-tertiary)] mt-2.5">
+                    <p className="text-center text-xs text-[var(--text-tertiary)] mt-2.5">
                       Admin will verify and allot your seat after {paymentMode === 'upi' ? 'payment' : 'fee'} confirmation
                     </p>
                   </div>

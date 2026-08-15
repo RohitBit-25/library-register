@@ -776,6 +776,80 @@ fails — before being trusted.
 
 ---
 
+## 7m. Thirteenth pass — type and logo sizing
+
+You said text and the logo were too small across the whole site. Measuring
+every text element on fifteen pages at two widths said the same thing, harder:
+
+| | 1440px | 390px |
+|---|---|---|
+| Text under 14px | **1820 / 2035 (89%)** | 1371 / 1610 (85%) |
+| Elements at a normal 14px | **3** | 3 |
+| Smallest text | **9px** (member names) | 10px |
+| Logo mark | 36×36 | 40×40 |
+
+### The type scale collapsed at the bottom
+
+`--text-*` is a 1.25 ratio anchored at 1rem. Upward that is fine. Downward it
+gives `xs = 0.64rem` (**10.24px**) and `sm = 0.80rem` (**12.8px**) — and those
+two carried nearly the whole interface, 938 elements at 12.8px alone.
+
+A geometric ratio is the wrong tool at the small end: steps shrink faster than
+legibility allows. That is why type designers cut separate optical sizes rather
+than scaling one drawing. The bottom two steps are now set to the practical
+floors — **12px** for incidental labels, **14px** for body — and everything
+from `base` up is untouched.
+
+### 155 sizes bypassed the scale entirely
+
+`text-[9px]`, `text-[10px]`, `text-[11px]`, `text-[13px]`, and — the sneaky
+ones — `text-[0.64rem]` and `text-[0.8rem]`, which are the *old scale values
+written as raw rem*, so they kept the old sizes even after the tokens were
+raised. All 145 outside the seat map now use `text-xs`/`text-sm`.
+
+`npm run check:tokens` fails on any hardcoded size below 12px, with the seat
+map listed as an explicit file exemption rather than a waved-through pattern.
+Verified by introducing a `text-[10px]` and watching it fail.
+
+### The seat tile: the name was never visible at any size
+
+The map showed member names at 9px. Enlarging them changed nothing, and
+measuring showed why: the name span rendered **2px tall**. It sat in a
+fixed-height flex column with `overflow-hidden`, where a text span is
+shrinkable by default, so it was being squeezed to nothing. `shrink-0` gave it
+its height back — and then the real constraint appeared. The tile stacks seat
+number + avatar + name + shift row ≈ 70px of content; the interactive pad was
+**38px**. The avatar was being clipped to a semicircle and the name cut off
+entirely.
+
+The wrapper was 48px inside a 76px cell, so most of that gutter was empty. It
+is now 58px with a 54px pad (the tile is centred in its cell, so nothing moved
+— the canvas, the furniture and the fit-to-width scale are unchanged), and the
+name is **dropped from the compact tile**, which is what roadmap #11 concluded
+independently. It cost nothing that was visible, and bought a complete avatar
+whose initials identify the member at a glance. The name, phone, due date and
+shift all live in the hover card, which was itself at 10px and is now 12px.
+
+### Result
+
+| | Before | After |
+|---|---|---|
+| Text under 14px (1440px) | 1820 (89%) | 804 (41%) |
+| Smallest text anywhere | 9px | **11px** — and only seat numbers inside the map's fit-to-width scale |
+| Body text | 12.8px | **14px** (935 elements) |
+| Logo mark | 36×36 | **44×44** sidebar, **56×56** header, 48 on phone |
+
+The 12px bucket is `text-xs` doing its intended job on captions, table headers
+and pills. Nothing renders below the floor any more.
+
+Gates after the change: `verify` 50 checks, `build`, `check:api` 34, sweep
+clean across 32 page/width combinations, accessibility clean. Larger text is
+exactly the change most likely to overflow a tight row, so the sweep matters
+here more than usual — it found nothing.
+
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.
@@ -809,4 +883,27 @@ defect: the dev server was serving HTML compiled before an edit while the
 client had the edit. It cleared on restart, and the production build was clean
 throughout.
 
-**One note on process.** During this pass the dev server reverted to the real database while scripted logins were still sending the demo PIN. That left `failedAttempts: 2` on your admin record — below the 5 that trigger a lockout, so nothing was locked, and no other data was touched. I reset the counter and cleared the rate-limit row. All subsequent work ran against `gangaur_demo`, and the review scripts now reuse one saved session instead of logging in repeatedly.
+**Test data reached your real database, and it has been cleaned.** The dev
+server drifted onto `library-register` during this pass, and the API contract
+suite wrote to it before the drift was caught. All of it has been removed:
+
+| Collection | Left behind | Resolution |
+|---|---|---|
+| `members` | Seat 95 occupied by `RateTest0` | Vacated using the app's own `VACANT_RESET`, so seat 95 is a normal empty seat and all 95 rows remain |
+| `seatrequests` | 1 approved request from `RateTest0` | Deleted, matched on the fixture's exact name and phone |
+| `auditlogs` | 9 rows (8 scripted "Signed In", 1 "Approved Request … RateTest0") | Deleted after re-reading every row to confirm none were genuine; the log now starts with your first real action |
+| `gangaur_demo` | The 95-member synthetic database | Dropped |
+
+Verified after: 0 occupied seats, 95 seat rows, 0 requests, 0 audit rows, and
+the staff record untouched — `Admin`, owner, active, `failedAttempts: 0`, not
+locked. `attendances`, `payments` and `occupancysnapshots` were never written
+to.
+
+The root cause is known and has a guard: `pkill -f "next dev"` matches only the
+launcher, never the `next-server` child, so a server started against `.env`
+survives a restart and keeps answering on port 3000. The review harness's
+`serve.sh` kills both, refuses any database without `demo`/`scratch` in the
+name, and aborts if fewer than 10 seats are occupied. It still recurred once
+this pass, before that script was rebuilt for the session.
+
+**An earlier note on process.** During an earlier pass the dev server reverted to the real database while scripted logins were still sending the demo PIN. That left `failedAttempts: 2` on your admin record — below the 5 that trigger a lockout, so nothing was locked, and no other data was touched. I reset the counter and cleared the rate-limit row. All subsequent work ran against `gangaur_demo`, and the review scripts now reuse one saved session instead of logging in repeatedly.

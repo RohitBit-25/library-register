@@ -159,7 +159,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
                 // Live progress during a check-in pass — the librarian needs to
                 // know how many are left, not how many seats exist.
                 <span
-                  className="tabular rounded-md border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-3 py-1 font-mono text-[10px] font-bold tracking-[0.2em] text-[var(--emerald-600)]"
+                  className="tabular rounded-md border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-3 py-1 font-mono text-xs font-bold tracking-[0.2em] text-[var(--emerald-600)]"
                   aria-live="polite"
                 >
                   {presentToday} / {occupiedCount} PRESENT
@@ -168,14 +168,14 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
                 // A filtered plan looks like a plan, so it has to say so —
                 // otherwise you scroll away, come back, and read a dimmed map
                 // as the whole library.
-                <span className="tabular flex items-center gap-2 rounded-md border border-[var(--text-primary)] bg-[var(--bg-surface)] px-3 py-1 text-[10px] font-bold tracking-[0.12em] text-[var(--text-primary)] uppercase">
+                <span className="tabular flex items-center gap-2 rounded-md border border-[var(--text-primary)] bg-[var(--bg-surface)] px-3 py-1 text-xs font-bold tracking-[0.12em] text-[var(--text-primary)] uppercase">
                   {filtered.length} {STATUS_FILTER_LABEL[statusFilter]}
                   <span className="font-normal normal-case tracking-normal text-[var(--text-tertiary)]">
                     of {members.length}
                   </span>
                 </span>
               ) : (
-                <span className="tabular rounded-md border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-3 py-1 text-[10px] font-bold tracking-[0.2em] text-[var(--saffron-700)]">
+                <span className="tabular rounded-md border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-3 py-1 text-xs font-bold tracking-[0.2em] text-[var(--saffron-700)]">
                   {filtered.length} SEATS
                 </span>
               )}

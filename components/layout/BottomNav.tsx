@@ -55,7 +55,7 @@ export default function BottomNav() {
               )}
             >
               <Icon className="w-5 h-5" />
-              <span className="text-[10px] font-[var(--weight-medium)]">{tab.label}</span>
+              <span className="text-xs font-[var(--weight-medium)]">{tab.label}</span>
             </Link>
           );
         })}

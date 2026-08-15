@@ -130,21 +130,21 @@ export default function AttendancePage() {
             <div className="grid grid-cols-3 gap-[var(--space-4)]">
               <div className="text-center">
                 <p className="font-display text-2xl font-semibold text-[var(--text-primary)]">{weeklySummary.avgRate}%</p>
-                <p className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Avg this week</p>
+                <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Avg this week</p>
               </div>
               <div className="text-center border-x border-[var(--border-subtle)]">
                 <div className="flex items-center justify-center gap-1">
                   <Trophy className="w-3.5 h-3.5 text-[var(--text-tertiary)]" aria-hidden="true" />
                   <p className="font-display text-2xl font-semibold text-[var(--text-secondary)]">{weeklySummary.bestRate}%</p>
                 </div>
-                <p className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Best · {weeklySummary.bestDayName}</p>
+                <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Best · {weeklySummary.bestDayName}</p>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1">
                   <TrendingDown className="w-3.5 h-3.5 text-[var(--text-tertiary)]" aria-hidden="true" />
                   <p className="font-display text-2xl font-semibold text-[var(--text-secondary)]">{weeklySummary.worstRate}%</p>
                 </div>
-                <p className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Low · {weeklySummary.worstDayName}</p>
+                <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Low · {weeklySummary.worstDayName}</p>
               </div>
             </div>
           </Card>
@@ -240,7 +240,7 @@ export default function AttendancePage() {
                         >
                           <span className="font-display text-2xl font-semibold tracking-[var(--tracking-tight)]">{member.seat}</span>
                           <span className={cn(
-                            "text-[11px] font-medium truncate w-full text-center px-1",
+                            "text-xs font-medium truncate w-full text-center px-1",
                             checkedIn ? "text-[var(--emerald-600)]" : "text-[var(--text-secondary)]"
                           )}>
                             {firstName(member.name)}
@@ -314,7 +314,7 @@ export default function AttendancePage() {
                             {d.day}
                           </span>
                         </div>
-                        <span className="text-[10px] font-bold text-[var(--text-tertiary)] mt-1.5 drop-shadow-sm">
+                        <span className="text-xs font-bold text-[var(--text-tertiary)] mt-1.5 drop-shadow-sm">
                           {d.rate}%
                         </span>
                       </motion.div>

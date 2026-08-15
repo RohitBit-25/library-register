@@ -53,7 +53,7 @@ export default function SetupPage() {
               <div key={i} className="flex items-center gap-3 sm:gap-4">
                 <div className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl ${step.color} border border-current/10`}>
                   {step.icon}
-                  <span className="text-[10px] font-bold whitespace-nowrap">{step.label}</span>
+                  <span className="text-xs font-bold whitespace-nowrap">{step.label}</span>
                 </div>
                 {i < 3 && (
                   <ArrowRight className="w-4 h-4 text-[var(--text-tertiary)] shrink-0 hidden sm:block" />

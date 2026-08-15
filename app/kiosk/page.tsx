@@ -131,7 +131,7 @@ export default function KioskPage() {
                 ))}
                 <button
                   onClick={handleDelete}
-                  className="aspect-square rounded-2xl bg-[var(--ruby-50)] border border-[var(--ruby-200)] text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] transition-ui flex items-center justify-center font-bold uppercase text-[11px] tracking-wider hover:-translate-y-1 active:scale-95 shadow-sm cursor-pointer"
+                  className="aspect-square rounded-2xl bg-[var(--ruby-50)] border border-[var(--ruby-200)] text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] transition-ui flex items-center justify-center font-bold uppercase text-xs tracking-wider hover:-translate-y-1 active:scale-95 shadow-sm cursor-pointer"
                 >
                   Clear
                 </button>
@@ -194,7 +194,7 @@ export default function KioskPage() {
                   className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--emerald-50)] border-2 border-[var(--emerald-200)] text-[var(--emerald-600)] hover:bg-[var(--emerald-50)] hover:-translate-y-1 transition-ui disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
                 >
                   <LogIn className="w-8 h-8 mb-2" />
-                  <span className="font-extrabold uppercase tracking-widest text-[11px]">Check In</span>
+                  <span className="font-extrabold uppercase tracking-widest text-xs">Check In</span>
                 </button>
                 <button
                   onClick={() => handleCheckAction('out')}
@@ -202,7 +202,7 @@ export default function KioskPage() {
                   className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:-translate-y-1 transition-ui disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
                 >
                   <LogOut className="w-8 h-8 mb-2" />
-                  <span className="font-extrabold uppercase tracking-widest text-[11px]">Check Out</span>
+                  <span className="font-extrabold uppercase tracking-widest text-xs">Check Out</span>
                 </button>
               </div>
             </div>

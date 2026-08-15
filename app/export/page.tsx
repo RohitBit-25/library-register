@@ -252,13 +252,13 @@ export default function ExportPage() {
                   All members, attendance records, and requests in a single JSON file.
                 </p>
                 <div className="flex items-center gap-[var(--space-3)] mt-[var(--space-2)] flex-wrap">
-                  <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
+                  <span className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
                     {stats.total} seats
                   </span>
-                  <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
+                  <span className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
                     {stats.attendanceDays} attendance days
                   </span>
-                  <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
+                  <span className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
                     {requests.length} requests
                   </span>
                 </div>
@@ -347,7 +347,7 @@ export default function ExportPage() {
             ].map(s => (
               <div key={s.label} className="text-center">
                 <p className="tabular font-display text-2xl font-semibold text-[var(--text-primary)]">{s.value}</p>
-                <p className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">
+                <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">
                   {s.label}
                 </p>
               </div>

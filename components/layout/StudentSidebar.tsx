@@ -60,7 +60,7 @@ export default function StudentSidebar() {
                 strokeWidth={isActive ? 2.5 : 2}
               />
               <span className={cn(
-                "text-[10px] font-bold text-center leading-tight",
+                "text-xs font-bold text-center leading-tight",
                 isActive ? "text-[var(--saffron-700)]" : "text-current"
               )}>
                 {item.label}

@@ -69,7 +69,7 @@ export default function SeatList({
               <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-tertiary)]">
                 {row.label}
               </span>
-              <span className="tabular text-[11px] font-medium text-[var(--text-tertiary)]">
+              <span className="tabular text-xs font-medium text-[var(--text-tertiary)]">
                 {taken}/{row.seats.length} taken
               </span>
             </h3>
@@ -111,7 +111,7 @@ export default function SeatList({
                           <span className="block truncate text-sm font-semibold leading-tight text-[var(--text-primary)]">
                             {firstName(m.name)}
                           </span>
-                          <span className="mt-0.5 flex items-center gap-1 text-[10px] font-medium text-[var(--text-secondary)]">
+                          <span className="mt-0.5 flex items-center gap-1 text-xs font-medium text-[var(--text-secondary)]">
                             <span className={cn('h-1.5 w-1.5 rounded-full', stateDot[status])} />
                             {Icon && <Icon className="h-3 w-3" aria-hidden="true" />}
                             {status === 'active' ? 'Active'

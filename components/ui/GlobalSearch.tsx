@@ -82,7 +82,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
         <span className="text-sm font-medium text-[var(--text-tertiary)] flex-1">
           Search name, phone, seat...
         </span>
-        <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--bg-base)] border border-[var(--border-subtle)] text-[10px] font-mono text-[var(--text-tertiary)] opacity-80 group-hover:opacity-100 transition-opacity shadow-sm">
+        <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--bg-base)] border border-[var(--border-subtle)] text-xs font-mono text-[var(--text-tertiary)] opacity-80 group-hover:opacity-100 transition-opacity shadow-sm">
           <Command className="w-3 h-3" /> K
         </kbd>
       </button>

@@ -128,15 +128,15 @@ export default function MyRequestsPage() {
             {/* Summary chips */}
             {displayResults.length > 0 && (
               <div className="flex flex-wrap items-center gap-2 mb-4">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--saffron-50)] text-[var(--saffron-600)] border-[var(--saffron-200)]">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold bg-[var(--saffron-50)] text-[var(--saffron-600)] border-[var(--saffron-200)]">
                   <Clock className="w-3 h-3" />
                   {pendingCount} Pending
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--emerald-50)] text-[var(--emerald-600)] border-[var(--emerald-200)]">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold bg-[var(--emerald-50)] text-[var(--emerald-600)] border-[var(--emerald-200)]">
                   <CheckCircle className="w-3 h-3" />
                   {approvedCount} Approved
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-[var(--ruby-50)] text-[var(--ruby-600)] border-[var(--ruby-200)]">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold bg-[var(--ruby-50)] text-[var(--ruby-600)] border-[var(--ruby-200)]">
                   <XCircle className="w-3 h-3" />
                   {rejectedCount} Rejected
                 </span>
@@ -197,20 +197,20 @@ export default function MyRequestsPage() {
                                 </span>
                                 <Badge variant={req.status === 'approved' ? 'active' : (req.status === 'rejected' ? 'expired' : 'pending')} />
                               </div>
-                              <span className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-1 mt-0.5">
+                              <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1 mt-0.5">
                                 <Armchair className="w-3 h-3" />
                                 Requested by {req.userName}
                               </span>
                             </div>
                           </div>
-                          <span className="text-[10px] font-mono text-[var(--text-tertiary)] whitespace-nowrap">
+                          <span className="text-xs font-mono text-[var(--text-tertiary)] whitespace-nowrap">
                             {fmtDate(req.createdAt?.toString().split('T')[0] || '')}
                           </span>
                         </div>
 
                         {/* Transaction ID */}
                         <div className="px-3 py-2 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)] mb-2">
-                          <span className="text-[11px] text-[var(--text-secondary)] flex items-center gap-1.5">
+                          <span className="text-xs text-[var(--text-secondary)] flex items-center gap-1.5">
                             <CalendarDays className="w-3 h-3 text-[var(--text-tertiary)]" />
                             Joining {fmtDate(req.joinDate || todayISO())}
                             <Clock className="w-3 h-3 text-[var(--text-tertiary)] ml-2" />
@@ -220,7 +220,7 @@ export default function MyRequestsPage() {
 
                         {req.transactionId && (
                           <div className="px-3 py-2 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)] mb-2">
-                            <span className="text-[11px] text-[var(--text-secondary)] flex items-center gap-1.5">
+                            <span className="text-xs text-[var(--text-secondary)] flex items-center gap-1.5">
                               <Receipt className="w-3 h-3 text-[var(--text-tertiary)]" />
                               UPI Ref: <span className="font-mono">{req.transactionId}</span>
                             </span>
@@ -230,7 +230,7 @@ export default function MyRequestsPage() {
                         {/* Message */}
                         {req.message && (
                           <div className="px-3 py-2 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)]">
-                            <span className="text-[11px] text-[var(--text-secondary)] flex items-start gap-1.5">
+                            <span className="text-xs text-[var(--text-secondary)] flex items-start gap-1.5">
                               <MessageSquare className="w-3 h-3 mt-0.5 shrink-0 text-[var(--text-tertiary)]" />
                               {req.message}
                             </span>

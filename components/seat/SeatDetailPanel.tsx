@@ -169,15 +169,15 @@ export default function SeatDetailPanel({
             <div className="space-y-4 pt-2">
               <div>
                 <FloatingLabelInput label="Full Name" {...editRegister('name')} />
-                {editErrors.name && <span className="text-[10px] text-[var(--ruby-600)] block mt-1 ml-1">{editErrors.name.message}</span>}
+                {editErrors.name && <span className="text-xs text-[var(--ruby-600)] block mt-1 ml-1">{editErrors.name.message}</span>}
               </div>
               <div>
                 <FloatingLabelInput label="WhatsApp Number" type="tel" inputMode="tel" {...editRegister('phone')} />
-                {editErrors.phone && <span className="text-[10px] text-[var(--ruby-600)] block mt-1 ml-1">{editErrors.phone.message}</span>}
+                {editErrors.phone && <span className="text-xs text-[var(--ruby-600)] block mt-1 ml-1">{editErrors.phone.message}</span>}
               </div>
               <div>
                 <FloatingLabelInput label="Date of Joining" type="date" {...editRegister('joinDate')} />
-                {editErrors.joinDate && <span className="text-[10px] text-[var(--ruby-600)] block mt-1 ml-1">{editErrors.joinDate.message}</span>}
+                {editErrors.joinDate && <span className="text-xs text-[var(--ruby-600)] block mt-1 ml-1">{editErrors.joinDate.message}</span>}
               </div>
 
               <div>
@@ -195,7 +195,7 @@ export default function SeatDetailPanel({
                           aria-checked={field.value === d}
                           onClick={() => field.onChange(d)}
                           className={cn(
-                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-ui duration-300 cursor-pointer',
+                            'flex-1 py-3 rounded-lg text-sm font-bold transition-ui duration-300 cursor-pointer',
                             field.value === d
                               ? 'bg-[var(--saffron-500)] text-white shadow-md ring-1 ring-[var(--saffron-500)]/50 z-10'
                               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100',
@@ -224,7 +224,7 @@ export default function SeatDetailPanel({
                           aria-checked={field.value === f}
                           onClick={() => field.onChange(f)}
                           className={cn(
-                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-ui duration-300 cursor-pointer capitalize',
+                            'flex-1 py-3 rounded-lg text-sm font-bold transition-ui duration-300 cursor-pointer capitalize',
                             field.value === f
                               ? (f === 'paid' ? 'bg-[var(--emerald-600)] text-[var(--saffron-50)] shadow-md' : 'bg-[var(--saffron-500)] text-white shadow-md')
                               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100',
@@ -310,7 +310,7 @@ export default function SeatDetailPanel({
                         value={member.phone || '—'}
                         action={member.phone ? (
                           <button onClick={handleCopyPhone} className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer p-1">
-                            {copied ? <span className="text-[10px] font-bold text-[var(--emerald-500)]">Copied!</span> : <Copy className="w-3.5 h-3.5" />}
+                            {copied ? <span className="text-xs font-bold text-[var(--emerald-500)]">Copied!</span> : <Copy className="w-3.5 h-3.5" />}
                           </button>
                         ) : undefined}
                       />
@@ -430,7 +430,7 @@ export default function SeatDetailPanel({
                   type="date"
                   {...renewRegister('renewDate')}
                 />
-                {renewErrors.renewDate && <span className="text-[10px] text-[var(--ruby-600)] block mt-1 ml-1">{renewErrors.renewDate.message}</span>}
+                {renewErrors.renewDate && <span className="text-xs text-[var(--ruby-600)] block mt-1 ml-1">{renewErrors.renewDate.message}</span>}
               </div>
 
               <div>
@@ -448,7 +448,7 @@ export default function SeatDetailPanel({
                           aria-checked={field.value === d}
                           onClick={() => field.onChange(d)}
                           className={cn(
-                            'flex-1 py-3 rounded-lg text-[13px] font-bold transition-ui duration-300 cursor-pointer relative overflow-hidden',
+                            'flex-1 py-3 rounded-lg text-sm font-bold transition-ui duration-300 cursor-pointer relative overflow-hidden',
                             field.value === d
                               ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-sm z-10'
                               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] scale-[0.98] hover:scale-100 z-0',

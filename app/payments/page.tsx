@@ -140,7 +140,7 @@ export default function PaymentsPage() {
                   <p className="truncate text-sm font-bold text-[var(--text-primary)]">
                     {p.memberName || 'Unnamed member'}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-[var(--text-tertiary)]">
+                  <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">
                     {fmtDate(p.date)} · {durationLabel((p.duration || '') as Duration)}
                     {p.paymentMode && ` · ${p.paymentMode.toUpperCase()}`}
                   </p>
@@ -153,7 +153,7 @@ export default function PaymentsPage() {
                 <button
                   onClick={() => setReceipt(p)}
                   aria-label={`Receipt for ${p.memberName}, seat ${p.seat}`}
-                  className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-2.5 text-[11px] font-bold text-[var(--text-secondary)] transition-ui hover:border-[var(--saffron-600)] hover:text-[var(--saffron-700)]"
+                  className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-2.5 text-xs font-bold text-[var(--text-secondary)] transition-ui hover:border-[var(--saffron-600)] hover:text-[var(--saffron-700)]"
                 >
                   <ReceiptIcon className="h-3.5 w-3.5" aria-hidden="true" />
                   Receipt
@@ -164,7 +164,7 @@ export default function PaymentsPage() {
 
           {data.truncated && (
             // Never let a capped list read as the complete picture.
-            <p className="border-t border-[var(--border-subtle)] bg-[var(--bg-muted)] px-4 py-2.5 text-center text-[11px] text-[var(--text-tertiary)]">
+            <p className="border-t border-[var(--border-subtle)] bg-[var(--bg-muted)] px-4 py-2.5 text-center text-xs text-[var(--text-tertiary)]">
               Showing {data.payments.length} of {data.count} — narrow the date range to see the rest.
             </p>
           )}
@@ -181,7 +181,7 @@ function Total({
 }: { label: string; value: string; icon: React.ReactNode; strong?: boolean }) {
   return (
     <div className="bg-[var(--bg-surface)] p-4">
-      <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
+      <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
         <span className={strong ? 'text-[var(--emerald-600)]' : ''}>{icon}</span>
         {label}
       </div>

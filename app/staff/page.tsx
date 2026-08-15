@@ -90,7 +90,7 @@ export default function StaffPage() {
               <form onSubmit={addStaff} className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="block">
-                    <span className="mb-1.5 block text-[13px] font-medium text-[var(--text-secondary)]">Name</span>
+                    <span className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">Name</span>
                     <input
                       value={name}
                       onChange={e => setName(e.target.value)}
@@ -100,7 +100,7 @@ export default function StaffPage() {
                     />
                   </label>
                   <label className="block">
-                    <span className="mb-1.5 block text-[13px] font-medium text-[var(--text-secondary)]">PIN (4–8 digits)</span>
+                    <span className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">PIN (4–8 digits)</span>
                     <input
                       value={pin}
                       onChange={e => setPin(e.target.value.replace(/\D/g, '').slice(0, 8))}
@@ -112,7 +112,7 @@ export default function StaffPage() {
                 </div>
 
                 <fieldset>
-                  <legend className="mb-1.5 text-[13px] font-medium text-[var(--text-secondary)]">Role</legend>
+                  <legend className="mb-1.5 text-sm font-medium text-[var(--text-secondary)]">Role</legend>
                   <div className="flex gap-2">
                     {(['staff', 'owner'] as const).map(r => (
                       <button
@@ -179,17 +179,17 @@ export default function StaffPage() {
                   <p className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)]">
                     {s.name}
                     {s.name === staffName && (
-                      <span className="rounded-md bg-[var(--sapphire-50)] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--sapphire-600)]">
+                      <span className="rounded-md bg-[var(--sapphire-50)] px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider text-[var(--sapphire-600)]">
                         You
                       </span>
                     )}
                     {!s.active && (
-                      <span className="rounded-md bg-[var(--bg-muted)] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
+                      <span className="rounded-md bg-[var(--bg-muted)] px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
                         Revoked
                       </span>
                     )}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-[var(--text-tertiary)]">
+                  <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">
                     {s.role === 'owner' ? 'Owner' : 'Staff'} ·{' '}
                     {s.lastLoginAt ? `last signed in ${fmtDate(s.lastLoginAt.slice(0, 10))}` : 'never signed in'}
                   </p>
@@ -199,7 +199,7 @@ export default function StaffPage() {
                   s.active ? (
                     <button
                       onClick={() => setConfirmRevoke(s)}
-                      className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--ruby-200)] bg-[var(--ruby-50)] px-2.5 text-[11px] font-bold text-[var(--ruby-600)] transition-ui hover:bg-[var(--ruby-100)]"
+                      className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--ruby-200)] bg-[var(--ruby-50)] px-2.5 text-xs font-bold text-[var(--ruby-600)] transition-ui hover:bg-[var(--ruby-100)]"
                     >
                       <Ban className="h-3.5 w-3.5" aria-hidden="true" />
                       Revoke
@@ -207,7 +207,7 @@ export default function StaffPage() {
                   ) : (
                     <button
                       onClick={() => setActive(s, true)}
-                      className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2.5 text-[11px] font-bold text-[var(--emerald-600)] transition-ui hover:bg-[var(--emerald-100)]"
+                      className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2.5 text-xs font-bold text-[var(--emerald-600)] transition-ui hover:bg-[var(--emerald-100)]"
                     >
                       <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
                       Restore
@@ -221,7 +221,7 @@ export default function StaffPage() {
       </Card>
 
       {!isOwner && (
-        <p className="mt-3 text-[11px] text-[var(--text-tertiary)]">
+        <p className="mt-3 text-xs text-[var(--text-tertiary)]">
           Only an owner can add or revoke staff.
         </p>
       )}

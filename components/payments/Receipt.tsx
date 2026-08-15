@@ -84,16 +84,16 @@ export default function Receipt({
               <h2 id={titleId} className="text-base font-bold text-[var(--text-primary)]">
                 Gangaur Library
               </h2>
-              <p className="mt-0.5 text-[11px] text-[var(--text-tertiary)]">
+              <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">
                 JK Circle, Kankroli · Rajsamand
               </p>
             </div>
-            <span className="rounded-md border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--emerald-600)]">
+            <span className="rounded-md border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2 py-1 text-xs font-bold uppercase tracking-wider text-[var(--emerald-600)]">
               Paid
             </span>
           </div>
 
-          <p className="mt-4 font-mono text-[11px] text-[var(--text-tertiary)]">
+          <p className="mt-4 font-mono text-xs text-[var(--text-tertiary)]">
             Receipt {no}
           </p>
 
@@ -118,7 +118,7 @@ export default function Receipt({
             </span>
           </div>
 
-          <p className="mt-4 text-center text-[10px] leading-relaxed text-[var(--text-tertiary)]">
+          <p className="mt-4 text-center text-xs leading-relaxed text-[var(--text-tertiary)]">
             Computer-generated receipt. No signature required.
           </p>
         </div>

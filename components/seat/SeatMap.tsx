@@ -30,7 +30,7 @@ export function getSeatPosition(n: number): SeatPosition {
 }
 
 function toPixel(col: number, row: number) {
-  const SIZE = 48;
+  const SIZE = 60;
   const jitter = (col % 2 === 0) ? 2 : -2;
   return {
     left: PAD + (col - 1) * CELL + (CELL - SIZE) / 2,
@@ -200,7 +200,7 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
         focus-within:ring-2 focus-within:ring-[var(--saffron-500)] focus-within:z-30
         ${className}
       `}
-      style={{ left, top, width: 48, height: 48 }}
+      style={{ left, top, width: 58, height: 58 }}
       data-seat={seatNum}
       aria-label={`Seat ${seatNum}`}
     >
@@ -208,11 +208,11 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
       <img 
         src="/assets/chair.png" 
         alt="" 
-        className="absolute w-[36px] h-[36px] object-contain pointer-events-none drop-shadow-sm" 
+        className="absolute w-[42px] h-[42px] object-contain pointer-events-none drop-shadow-sm" 
         style={{ transform: `${chairOffset[face]} ${rotation[face]}` }} 
       />
       {/* Seat pad interactive container */}
-      <div className="relative w-[38px] h-[38px] z-10 m-auto flex items-center justify-center">
+      <div className="relative w-[54px] h-[54px] z-10 m-auto flex items-center justify-center">
         {children(face)}
       </div>
     </div>
@@ -318,7 +318,7 @@ export function SeatMapContainer({ children }: { children: ReactNode }) {
               className="absolute pointer-events-none z-10"
               style={{ left: PAD + (row.fromCol - 1) * CELL + 4, top: PAD - 32 }}
             >
-              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-white bg-slate-700 px-3 py-1.5 rounded-full shadow-sm">
+              <span className="text-xs font-bold uppercase tracking-[0.1em] text-white bg-slate-700 px-3 py-1.5 rounded-full shadow-sm">
                 {row.label}
               </span>
             </div>

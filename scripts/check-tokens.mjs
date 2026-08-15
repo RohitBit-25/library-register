@@ -156,4 +156,43 @@ for (const file of SOURCE_DIRS.flatMap((d) => walk(join(root, d)))) {
   byLower.set(key, rel);
 }
 
+// ─── Font sizes below the legible floor ─────────────────────────
+//
+// A measurement across fifteen pages once found 89% of all text rendering
+// under 14px, from two causes. The first was the type scale: a pure 1.25
+// ratio anchored at 1rem gives xs = 10.24px and sm = 12.8px, and those two
+// carried almost the whole app. The second was 155 hardcoded sizes —
+// `text-[9px]` through `text-[11px]`, plus `text-[0.64rem]` and
+// `text-[0.8rem]`, which are the old scale values written as raw rem and so
+// kept the old sizes even after the tokens were raised.
+//
+// The scale now floors at 12px (xs) and 14px (sm). This keeps it that way:
+// anything hardcoding a smaller size is bypassing the scale, and would put
+// unreadable text back one component at a time.
+//
+// The seat map is the one exemption — its labels sit inside a plan that
+// scales to fit the viewport, so they are sized against the tile, not the
+// document. They are listed by file rather than waved through as a pattern.
+const SIZE_EXEMPT = new Set(['components/seat/SeatTile.tsx', 'components/seat/SeatMap.tsx',
+  'components/seat/AttendanceTile.tsx', 'components/seat/PublicSeatMap.tsx']);
+const TOO_SMALL = /text-\[(\d+(?:\.\d+)?)px\]|text-\[(0\.\d+)rem\]/g;
+const tiny = [];
+
+for (const file of SOURCE_DIRS.flatMap((d) => walk(join(root, d)))) {
+  if (!/\.tsx?$/.test(file)) continue;
+  const rel = relative(root, file);
+  if (SIZE_EXEMPT.has(rel)) continue;
+  const text = stripComments(readFileSync(file, 'utf8'));
+  for (const m of text.matchAll(TOO_SMALL)) {
+    const px = m[1] ? parseFloat(m[1]) : parseFloat(m[2]) * 16;
+    if (px < 12) tiny.push(`  ${rel}  ${m[0]}  → ${px}px`);
+  }
+}
+
+if (tiny.length) {
+  console.error(`\n${tiny.length} font size(s) below the 12px floor — use text-xs (12px) or text-sm (14px):\n`);
+  console.error(tiny.join('\n') + '\n');
+  process.exit(1);
+}
+
 console.log(`All ${used.size} referenced CSS tokens are defined; no malformed arbitrary values.`);

@@ -239,10 +239,23 @@
     --shadow-glow-sapphire:none;
     --shadow-glow-amber:   none;
 
-    /* === TYPE SCALE === */
-    --text-xs:   0.64rem;
-    --text-sm:   0.80rem;
-    --text-base: 1.00rem;
+    /* === TYPE SCALE ===
+       A 1.25 ratio anchored at 1rem, EXCEPT for the bottom two steps.
+
+       Kept pure, the ratio gives xs = 0.64rem (10.24px) and sm = 0.80rem
+       (12.8px), and the app leans on those two for almost everything: a
+       measurement across fifteen pages found 89% of all text rendering under
+       14px, with 938 elements at 12.8px and only three at 14px. A geometric
+       scale is the wrong tool at the small end — the steps shrink faster than
+       legibility allows, which is the same reason type designers cut separate
+       optical sizes instead of scaling one drawing.
+
+       So the bottom two steps are set to the practical floors (12px for
+       incidental labels, 14px for body) rather than to what the ratio says.
+       Everything from `base` up is untouched and still geometric. */
+    --text-xs:   0.75rem;   /* 12px — captions, pills, table meta */
+    --text-sm:   0.875rem;  /* 14px — body text, the app's workhorse */
+    --text-base: 1.00rem;   /* 16px */
     --text-md:   1.25rem;
     --text-lg:   1.56rem;
     --text-xl:   1.95rem;

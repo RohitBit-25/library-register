@@ -29,7 +29,7 @@ export default function Error({
       </p>
 
       {error.digest && (
-        <p className="mt-3 font-mono text-[11px] text-[var(--text-tertiary)]">
+        <p className="mt-3 font-mono text-xs text-[var(--text-tertiary)]">
           Reference: {error.digest}
         </p>
       )}

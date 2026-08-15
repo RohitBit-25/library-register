@@ -99,15 +99,15 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
             src="/logo-mark.png"
             alt=""
             aria-hidden="true"
-            width={36}
-            height={36}
-            className="h-9 w-9 shrink-0 object-contain"
+            width={44}
+            height={44}
+            className="h-11 w-11 shrink-0 object-contain"
           />
           <div>
-            <p className="text-sm font-extrabold text-[var(--text-primary)] leading-tight tracking-tight">
+            <p className="text-base font-extrabold text-[var(--text-primary)] leading-tight tracking-tight">
               Library Register
             </p>
-            <p className="text-[11px] text-[var(--text-tertiary)] font-medium">
+            <p className="text-xs text-[var(--text-tertiary)] font-medium">
               {dateStr}
             </p>
           </div>
@@ -118,7 +118,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
       <div className="px-6 pb-4 relative z-10">
         <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--sapphire-50)] text-[var(--sapphire-600)]">
           <Shield className="w-3.5 h-3.5" />
-          <span className="text-[11px] font-bold truncate">{staffName ?? 'Admin'}</span>
+          <span className="text-xs font-bold truncate">{staffName ?? 'Admin'}</span>
         </div>
       </div>
 
@@ -145,7 +145,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
               </span>
               <span className="flex-1">{item.label}</span>
               {item.badge && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[var(--saffron-50)] text-[var(--saffron-700)] animate-pulse-subtle">
+                <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[var(--saffron-50)] text-[var(--saffron-700)] animate-pulse-subtle">
                   {item.badge}
                 </span>
               )}

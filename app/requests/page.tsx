@@ -105,7 +105,7 @@ export default function RequestsPage() {
         icon={<Inbox className="h-5 w-5" />}
         subtitle="Review and verify payments for seat requests."
         badge={counts.pending > 0 ? (
-          <span className="px-2 py-0.5 rounded-full text-[0.64rem] font-bold bg-[var(--saffron-600)] text-[var(--text-inverse)] animate-pulse">
+          <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[var(--saffron-600)] text-[var(--text-inverse)] animate-pulse">
             {counts.pending} new
           </span>
         ) : undefined}
@@ -118,7 +118,7 @@ export default function RequestsPage() {
             key={tab.key}
             onClick={() => setFilter(tab.key)}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-lg)] text-[0.64rem] font-bold transition-ui duration-200 cursor-pointer whitespace-nowrap hover:-translate-y-[1px] hover:shadow-[var(--shadow-sm)] active:scale-95',
+              'flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-lg)] text-xs font-bold transition-ui duration-200 cursor-pointer whitespace-nowrap hover:-translate-y-[1px] hover:shadow-[var(--shadow-sm)] active:scale-95',
               filter === tab.key
                 ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-[var(--shadow-sm)]'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] hover:border-[var(--border-strong)]',
@@ -129,7 +129,7 @@ export default function RequestsPage() {
             {tab.count > 0 && (
               <span
                 className={cn(
-                  'px-1.5 py-0.5 rounded-full text-[10px] font-bold',
+                  'px-1.5 py-0.5 rounded-full text-xs font-bold',
                   filter === tab.key
                     ? 'bg-white/20 text-[var(--text-inverse)]'
                     : 'bg-[var(--bg-muted)] text-[var(--text-tertiary)]'
@@ -149,7 +149,7 @@ export default function RequestsPage() {
             <div className="w-14 h-14 rounded-[var(--radius-2xl)] bg-[var(--bg-overlay)] flex items-center justify-center mx-auto mb-3">
               <Inbox className="w-7 h-7 text-[var(--text-tertiary)]" />
             </div>
-            <p className="text-[0.8rem] font-medium text-[var(--text-secondary)]">
+            <p className="text-sm font-medium text-[var(--text-secondary)]">
               {filter === 'pending'
                 ? 'No pending requests'
                 : filter === 'approved'
@@ -158,7 +158,7 @@ export default function RequestsPage() {
                     ? 'No rejected requests'
                     : 'No requests yet'}
             </p>
-            <p className="text-[0.64rem] text-[var(--text-tertiary)] mt-1">
+            <p className="text-xs text-[var(--text-tertiary)] mt-1">
               When users request seats, they&apos;ll appear here
             </p>
           </Card>
@@ -181,7 +181,7 @@ export default function RequestsPage() {
                   <div className="flex items-center gap-3">
                     <div
                       className={cn(
-                        'w-10 h-10 rounded-[var(--radius-xl)] flex items-center justify-center text-[0.8rem] font-mono font-black',
+                        'w-10 h-10 rounded-[var(--radius-xl)] flex items-center justify-center text-sm font-mono font-black',
                         req.status === 'pending' && 'bg-[var(--sapphire-50)] text-[var(--sapphire-600)]',
                         req.status === 'approved' && 'bg-[var(--emerald-50)] text-[var(--emerald-600)]',
                         req.status === 'rejected' && 'bg-[var(--ruby-50)] text-[var(--ruby-600)]',
@@ -191,25 +191,25 @@ export default function RequestsPage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[0.8rem] font-bold text-[var(--text-primary)]">
+                        <span className="text-sm font-bold text-[var(--text-primary)]">
                           {req.userName}
                         </span>
                         <Badge variant={req.status === 'approved' ? 'active' : (req.status === 'rejected' ? 'expired' : 'pending')} />
                       </div>
                       <div className="flex items-center gap-3 mt-0.5 flex-wrap">
-                        <span className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-1">
+                        <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1">
                           <Armchair className="w-3 h-3" />
                           Seat #{req.seat}
                         </span>
-                        <span className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-1">
+                        <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1">
                           <Phone className="w-3 h-3" />
                           {req.userPhone}
                         </span>
-                        <span className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-1">
+                        <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1">
                           <CalendarDays className="w-3 h-3" />
                           {fmtDate(req.joinDate || todayISO())}
                         </span>
-                        <span className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-1 capitalize">
+                        <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1 capitalize">
                           <Clock className="w-3 h-3" />
                           {durationLabel(req.duration || '3M')} · {shiftLabel(req.shift || 'full')}
                         </span>
@@ -217,7 +217,7 @@ export default function RequestsPage() {
                     </div>
                   </div>
 
-                  <span className="text-[10px] font-mono text-[var(--text-tertiary)] whitespace-nowrap">
+                  <span className="text-xs font-mono text-[var(--text-tertiary)] whitespace-nowrap">
                     {fmtDate(req.createdAt.toString().split('T')[0])}
                   </span>
                 </div>
@@ -230,8 +230,8 @@ export default function RequestsPage() {
                         <Banknote className="w-3.5 h-3.5 text-[var(--emerald-600)]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="text-[0.64rem] font-bold text-[var(--emerald-600)] block">Cash Payment</span>
-                        <span className="text-[10px] text-[var(--text-tertiary)]">Verify cash received at counter</span>
+                        <span className="text-xs font-bold text-[var(--emerald-600)] block">Cash Payment</span>
+                        <span className="text-xs text-[var(--text-tertiary)]">Verify cash received at counter</span>
                       </div>
                     </>
                   ) : (
@@ -240,9 +240,9 @@ export default function RequestsPage() {
                         <Smartphone className="w-3.5 h-3.5 text-[var(--saffron-600)]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="text-[0.64rem] font-bold text-[var(--emerald-600)] block">UPI Payment</span>
+                        <span className="text-xs font-bold text-[var(--emerald-600)] block">UPI Payment</span>
                         {req.transactionId && (
-                          <span className="text-[11px] font-mono text-[var(--text-secondary)] break-all">Ref: {req.transactionId}</span>
+                          <span className="text-xs font-mono text-[var(--text-secondary)] break-all">Ref: {req.transactionId}</span>
                         )}
                       </div>
                     </>
@@ -252,7 +252,7 @@ export default function RequestsPage() {
                 {/* Document Preview */}
                 {req.documentUrl && (
                   <div className="mb-3 px-3 py-2 rounded-[var(--radius-lg)] bg-[var(--sapphire-50)] border border-[var(--sapphire-200)]">
-                    <span className="text-[0.64rem] font-bold text-[var(--sapphire-600)] flex items-center gap-1.5 mb-2">
+                    <span className="text-xs font-bold text-[var(--sapphire-600)] flex items-center gap-1.5 mb-2">
                       <FileText className="w-3 h-3" /> ID Document Submitted
                     </span>
                     {req.documentUrl.startsWith('data:image') ? (
@@ -277,7 +277,7 @@ export default function RequestsPage() {
                         href={req.documentUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[11px] text-[var(--text-link)] underline flex items-center gap-1"
+                        className="text-xs text-[var(--text-link)] underline flex items-center gap-1"
                       >
                         <ExternalLink className="w-3 h-3" /> View Document
                       </a>
@@ -288,7 +288,7 @@ export default function RequestsPage() {
                 {/* Message */}
                 {req.message && (
                   <div className="mb-3 px-3 py-2 rounded-[var(--radius-lg)] bg-[var(--bg-muted)] border border-[var(--border-subtle)]">
-                    <span className="text-[0.64rem] text-[var(--text-secondary)] flex items-start gap-1.5">
+                    <span className="text-xs text-[var(--text-secondary)] flex items-start gap-1.5">
                       <MessageSquare className="w-3 h-3 mt-0.5 shrink-0 text-[var(--text-tertiary)]" />
                       {req.message}
                     </span>
@@ -301,14 +301,14 @@ export default function RequestsPage() {
                     <>
                       <Button
                         variant="primary"
-                        className="flex-1 text-[0.64rem] h-[36px]"
+                        className="flex-1 text-xs h-[36px]"
                         onClick={() => handleApprove(req)}
                       >
                         <Check className="w-3.5 h-3.5 mr-1" /> Approve and allot
                       </Button>
                       <Button
                         variant="secondary"
-                        className="h-[36px] flex-1 border border-[var(--ruby-200)] bg-[var(--ruby-50)] text-[0.64rem] text-[var(--ruby-600)] hover:bg-[var(--ruby-100)]"
+                        className="h-[36px] flex-1 border border-[var(--ruby-200)] bg-[var(--ruby-50)] text-xs text-[var(--ruby-600)] hover:bg-[var(--ruby-100)]"
                         onClick={() => handleReject(req.id, req.seat)}
                       >
                         <X className="w-3.5 h-3.5 mr-1" /> Reject
@@ -318,7 +318,7 @@ export default function RequestsPage() {
                   {req.status !== 'pending' && (
                     <Button
                       variant="ghost"
-                      className="px-3 py-2 h-auto text-[0.64rem] text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] ml-auto"
+                      className="px-3 py-2 h-auto text-xs text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] ml-auto"
                       onClick={() => handleDelete(req.id)}
                     >
                       <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete

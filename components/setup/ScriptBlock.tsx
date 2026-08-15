@@ -153,7 +153,7 @@ export default function ScriptBlock() {
       
       {/* Code content */}
       <div className="p-5 overflow-x-auto max-h-[400px] overflow-y-auto">
-        <pre className="text-[13px] font-mono leading-relaxed text-[#d4d4d4]">
+        <pre className="text-sm font-mono leading-relaxed text-[#d4d4d4]">
           <code>{APPS_SCRIPT_TEMPLATE}</code>
         </pre>
       </div>

@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
  *
  * Every admin page had written its own. Across eleven pages that produced five
  * different recipes — `font-display text-2xl font-semibold`, `text-xl
- * sm:text-2xl font-extrabold`, `text-[1.25rem] sm:text-[1.5rem] font-bold`,
+ * sm:text-2xl font-extrabold`, `text-md sm:text-[1.5rem] font-bold`,
  * and two more — so the title changed size and weight as you moved between
  * them, and the gap below it changed with it. Nothing was broken; it just
  * never felt like one product.

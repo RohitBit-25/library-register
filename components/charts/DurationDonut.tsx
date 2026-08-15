@@ -72,7 +72,7 @@ export default function DurationDonut({ data }: DurationDonutProps) {
         {/* Center Text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-2xl font-black text-[var(--text-primary)]">{total}</span>
-          <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider">Members</span>
+          <span className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">Members</span>
         </div>
       </div>
       

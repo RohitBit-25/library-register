@@ -142,7 +142,7 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
 
           <span className={cn(
             'font-mono font-bold self-start leading-none z-10 opacity-70 pl-0.5 pt-0.5 tracking-wider',
-            compact ? 'text-[9.5px]' : 'text-xs',
+            compact ? 'text-xs' : 'text-sm',
             member.vacant ? 'text-[var(--text-secondary)]' : 'text-inherit'
           )}>
             {String(member.seat).padStart(2, '0')}
@@ -158,19 +158,22 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
                 <SeatAvatar
                   name={member.name}
                   seat={member.seat}
-                  size={compact ? 32 : 44}
+                  size={compact ? 26 : 44}
                 />
               </div>
-              <span className={cn(
-                'font-bold w-full text-center tracking-tight overflow-hidden text-ellipsis whitespace-nowrap px-0.5',
-                compact ? 'text-[9px] leading-tight pb-0.5' : 'text-[11px] leading-normal pb-0.5',
-              )}>
-                {firstName(member.name)}
-              </span>
+              {/* Only when there is room. In compact mode the name was being
+                  clipped to nothing by the fixed-height flex column, so it
+                  read as a rendering fault rather than information; the hover
+                  card below is where the name actually lives. */}
+              {!compact && (
+                <span className="shrink-0 font-bold w-full text-center tracking-tight overflow-hidden text-ellipsis whitespace-nowrap px-0.5 text-xs leading-normal pb-0.5">
+                  {firstName(member.name)}
+                </span>
+              )}
             </div>
           )}
 
-          <div className={cn('flex items-center justify-center w-full gap-0.5 z-10 font-bold', compact ? 'text-[9.5px] leading-none mb-0.5' : 'text-[10px] leading-none mb-0.5')}>
+          <div className={cn('flex items-center justify-center w-full gap-0.5 z-10 font-bold', compact ? 'text-[11px] leading-none mb-0.5' : 'text-xs leading-none mb-0.5')}>
             {member.vacant ? (
               <span className="font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity text-[var(--saffron-600)]">Add</span>
             ) : (
@@ -202,17 +205,17 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
                 <div className="flex items-start justify-between">
                   <div>
                     <h4 className="text-sm font-bold text-[var(--text-primary)] tracking-wide">{member.name}</h4>
-                    <p className="text-[10px] text-[var(--text-tertiary)] font-mono mt-0.5">#{String(member.seat).padStart(2, '0')} • {member.phone || 'No phone'}</p>
+                    <p className="text-xs text-[var(--text-tertiary)] font-mono mt-0.5">#{String(member.seat).padStart(2, '0')} • {member.phone || 'No phone'}</p>
                   </div>
                   <div className={cn('w-2 h-2 rounded-full mt-1', status === 'active' ? 'bg-[var(--emerald-500)]' : status === 'expiring' ? 'bg-[var(--saffron-500)]' : 'bg-[var(--ruby-500)]')} />
                 </div>
                 
                 <div className="pt-2 border-t border-[var(--border-default)] flex flex-col gap-1.5 mt-1">
-                  <div className="flex items-center gap-1.5 text-[10px] font-medium text-[var(--text-secondary)]">
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)]">
                     <CalendarIcon className="w-3 h-3 text-[var(--text-tertiary)]" />
                     <span>Due: <span className="text-[var(--text-primary)]">{fmtDateShort(member.expiry)}</span> <span className="opacity-70">({days}d)</span></span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[10px] font-medium text-[var(--text-secondary)]">
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)]">
                     <Clock className="w-3 h-3 text-[var(--text-tertiary)]" />
                     <span className="capitalize text-[var(--text-primary)]">{member.shift} Shift</span>
                   </div>

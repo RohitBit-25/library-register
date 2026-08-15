@@ -239,7 +239,7 @@ export default function SeatGridContent() {
           <GlobalSearch onSelect={seat => setSelectedSeat(seat)} className="relative w-full xl:w-[320px] z-20 shrink-0" />
           
           {/* Consolidated Legend */}
-          <div className="flex flex-wrap items-center gap-4 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] bg-[var(--bg-surface)] px-4 py-2 rounded-xl border border-[var(--border-default)] shadow-sm">
+          <div className="flex flex-wrap items-center gap-4 text-xs font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] bg-[var(--bg-surface)] px-4 py-2 rounded-xl border border-[var(--border-default)] shadow-sm">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[var(--emerald-500)]" /> <span>Active</span>
             </div>
@@ -427,7 +427,7 @@ function StatChip({ label, value, color, icon, active, onToggle }: {
     <>
       {icon && <div className="opacity-90">{icon}</div>}
       <div className="flex flex-col items-start">
-        <span className="mb-1.5 text-[10px] font-semibold uppercase leading-none tracking-[0.12em]">{label}</span>
+        <span className="mb-1.5 text-xs font-semibold uppercase leading-none tracking-[0.12em]">{label}</span>
         <span className="tabular text-sm font-bold leading-none">{value}</span>
       </div>
     </>
