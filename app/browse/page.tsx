@@ -252,7 +252,7 @@ export default function BrowsePage() {
                   Your pick
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="h-4 w-4 rounded-[4px] border border-[var(--saffron-200)] bg-[var(--saffron-50)]" />
+                  <span className="h-4 w-4 rounded-[4px] border border-[#f5c6cb] bg-[#fce4e8]" />
                   Requested
                 </div>
                 <div className="flex items-center gap-2">

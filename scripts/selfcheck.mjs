@@ -369,16 +369,30 @@ check('arrow nav crosses to the facing run, not diagonally', () => {
 });
 
 check('arrow nav will not teleport across the room', () => {
-  // Seats 80-84 are the only ones above seat 1's row, but they sit nine
-  // columns away. Pressing Up at seat 1 must do nothing, not jump there.
+  // Seats 71-75 are the only ones above seat 1's row, but they sit nine or
+  // more columns away. Pressing Up at seat 1 must do nothing, not jump there.
   assert.equal(nextSeatInDirection(1, 'up', ALL_SEATS), null);
 });
 
 check('arrow nav stops at the edge instead of wrapping', () => {
-  // Column 14 is the right wall — nothing further right exists.
-  assert.equal(nextSeatInDirection(90, 'right', ALL_SEATS), null);
+  // Column 14 is the right wall. Under the paired numbering the odd seats of
+  // the right-hand block live there, so 95 is the far corner — 90 is not, it
+  // sits on column 12 with 91 across the desk from it.
+  assert.equal(getSeatPositionConfig(95).x, 14);
+  assert.equal(nextSeatInDirection(95, 'right', ALL_SEATS), null);
   // Seat 1 is the top of its run and the leftmost column.
   assert.equal(nextSeatInDirection(1, 'left', ALL_SEATS), null);
+});
+
+check('numbers pair across each desk, left then right', () => {
+  // The rule the whole plan is built on: the lower number of a pair sits on
+  // the left, its successor directly across the desk, both on the same row.
+  for (const [left, right] of [[11, 12], [29, 30], [31, 32], [51, 52], [76, 77], [94, 95]]) {
+    const l = getSeatPositionConfig(left);
+    const r = getSeatPositionConfig(right);
+    assert.equal(l.y, r.y, `${left}/${right} should share a row`);
+    assert.ok(r.x > l.x, `${left} should sit left of ${right}`);
+  }
 });
 
 check('arrow nav only considers seats that are rendered', () => {

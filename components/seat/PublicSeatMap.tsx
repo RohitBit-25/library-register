@@ -54,7 +54,7 @@ function PublicSeatTileInner({
         dimmed && 'seat-dimmed',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2',
         vacant && !requested && 'cursor-pointer border-[var(--emerald-200)] bg-[var(--emerald-50)]/90 backdrop-blur-[2px] text-[var(--emerald-700)] hover:border-[var(--emerald-500)] hover:bg-[var(--emerald-100)]',
-        requested && 'cursor-not-allowed border-[var(--saffron-200)] bg-[var(--saffron-50)]/90 backdrop-blur-[2px] text-[var(--saffron-700)]',
+        requested && 'cursor-not-allowed border-[#f5c6cb] bg-[#fce4e8]/90 backdrop-blur-[2px] text-[#9a3a47]',
         !vacant && 'cursor-not-allowed border-[var(--border-default)] bg-[var(--bg-muted)]/80 backdrop-blur-[2px] text-[var(--text-tertiary)]',
         selected && 'border-[var(--saffron-500)] bg-[var(--saffron-500)]/95 backdrop-blur-[2px] text-white ring-2 ring-[var(--saffron-500)] ring-offset-2'
       )}

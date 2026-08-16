@@ -1047,6 +1047,64 @@ accessibility clean.
 
 ---
 
+## 7q. Seventeenth pass — craft audit, and prices on the landing page
+
+Run against the `frontend-patterns` and `emil-design-eng` checklists. The
+headline is that **the design system came out cleaner than the page built on
+top of it**: the easing tokens are already the recommended curves
+(`--ease-out: cubic-bezier(0.23, 1, 0.32, 1)`, the Ionic drawer curve), nothing
+in the app animates longer than 300ms, `prefers-reduced-motion` collapses every
+animation globally, Tailwind v4 gates `hover:` behind `@media (hover: hover)`
+for free, and `components/ui/Button.tsx` already carries press feedback. The
+defects were concentrated in `/landing` — the one page written as raw markup
+rather than through the system.
+
+| Before | After | Why |
+| --- | --- | --- |
+| `transition-all` on both hero CTAs | Routed through `components/ui/Button.tsx` | `all` animates every property, including ones that trigger layout |
+| Hero CTAs had **no press state** — raw `<button>`s | `whileTap` from the shared Button | The two most important controls on the public site did not acknowledge a press |
+| `initial={{ scale: 0 }}` ×3 | `scale(0.9–0.92)` + opacity | Nothing in the real world appears from nothing |
+| Three simultaneous `animate-ping` loops on one page | One, on the live seat count | A pulse means "this is live". Three of them means nothing, and none of them stop |
+| `whileTap={{ scale }}` / `whileHover={{ scale }}` ×6 | `{{ transform: 'scale(…)' }}` | Framer's shorthand props run on the main thread and drop frames under load |
+| No prices anywhere | A Plans section from `lib/pricing.ts` | The second question every student asks, and the data was already there |
+
+### The Plans section
+
+Four cards driven entirely by `lib/pricing.ts` — `planPrice`, `monthlyValue`,
+`formatINR`. **No rupee figure is written in the page.** That module reads
+`NEXT_PUBLIC_PLAN_RATES`, so a library setting its own prices gets them here
+too; hardcoding would show the wrong numbers to exactly the people deciding
+whether to walk in.
+
+Each card shows the plan price and its per-month value, so the longer plans
+visibly earn their place (₹700/mo → ₹550/mo at a year). The best-value plan is
+**derived, not declared** — whichever has the lowest monthly cost. Verified by
+running the server with an override where six months beats a year: the badge
+moved to six months on its own. A hardcoded `'1Y'` would have kept pointing at
+the worse deal.
+
+The badge is a badge, not a colour change: the green emphasis on this page
+already means "seats free right now" and should keep meaning only that. It also
+reads without relying on colour.
+
+The section states that fees are settled at the desk, because nothing is charged
+online — `SeatRequestSheet` collects a transaction ID and a librarian verifies
+it before allotting.
+
+### A measurement mistake worth recording
+
+A check reported 239 elements with `transition-property: all` on the landing
+page, against 4 found in source. Both were right: `all` is the CSS *initial*
+value, so every element that never sets a transition reports it. Filtering to a
+non-zero duration gives the real answer — zero. Worth knowing before someone
+"fixes" 239 phantom sites.
+
+Gates: `verify` 50 checks, `build`, sweep clean across 17 pages × 2 widths,
+accessibility clean, landing page still loads zero external hosts.
+
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.

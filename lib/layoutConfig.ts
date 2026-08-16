@@ -37,25 +37,91 @@ export const LAYOUT_CONFIG = {
   // lib/deskLayout.ts, so furniture cannot drift out of sync with seating.
   FLOOR_PLANTS: [
     { col: 1, row: 1 },
-    { col: 13, row: 12 },
     { col: 1, row: 12 },
+    { col: 9, row: 12 },
   ],
 };
 
+/**
+ * Where each seat sits on the grid, and which way the person faces.
+ *
+ * The numbering follows the physical floor plan: each column is numbered
+ * sequentially from top to bottom before moving to the next column. So seats
+ * 11–20 fill the left column of Block B, then 21–30 fill the right column,
+ * and so on. This matches the labels on the room's actual desks, so finding a
+ * seat means following one column — not hunting across a pair.
+ *
+ * Grid, left to right (desk columns are derived in lib/deskLayout.ts from the
+ * facing directions, never declared here):
+ *
+ *   col  1   Row A, seats 1–10, face right → desk at col 2
+ *   col  2   desk (shared by cols 1 and 3)
+ *   col  3   Row B left column, seats 11–20, face left → desk at col 2
+ *   col  4   Row B right column, seats 21–30, face right → desk at col 5
+ *   col  5   desk (shared by cols 4 and 6)
+ *   col  6   Row C left-left column, seats 31–40, face left → desk at col 5
+ *   col  7   Row C left-right column, seats 41–50, face right → desk at col 8
+ *   col  8   desk (shared by cols 7 and 9)
+ *   col  9   Row C right-left column, seats 51–60, face left → desk at col 8
+ *   col 10   Row C right-right column, seats 61–70, face right → desk at col 11
+ *   col 11   desk (shared by cols 10 and 12)
+ *   col 12   Row D left column, seats 77,79,81…95 (odd), face right → desk at col 13
+ *   col 13   desk (shared by cols 12 and 14)
+ *   col 14   Row D right column, seats 76,78,80…94 (even), face left → desk at col 13
+ *
+ *   row  1   top-wall run (71–75), five seats facing down
+ *   rows 2–11  Row A and blocks B, C (six columns of ten)
+ *   rows 3–12  Row D right block, offset one row below the top run
+ */
 export function getSeatPositionConfig(n: number): SeatPosition {
-  if (n >= 1 && n <= 10) return { x: 1, y: 2 + (n - 1), face: 'right' };
-  if (n >= 11 && n <= 20) return { x: 3, y: 3 + (n - 11), face: 'left' };
-  if (n === 21) return { x: 3, y: 2, face: 'down' };
-  if (n === 22) return { x: 4, y: 2, face: 'down' };
-  if (n >= 23 && n <= 32) return { x: 4, y: 3 + (n - 23), face: 'right' };
-  if (n >= 33 && n <= 42) return { x: 6, y: 2 + (n - 33), face: 'left' };
-  if (n >= 43 && n <= 52) return { x: 7, y: 2 + (n - 43), face: 'right' };
-  if (n >= 80 && n <= 84) return { x: 10 + (n - 80), y: 1, face: 'down' };
-  if (n >= 53 && n <= 55) return { x: 9, y: 10 + (n - 53), face: 'left' };
-  if (n >= 56 && n <= 61) return { x: 9, y: 3 + (n - 55), face: 'left' };
-  if (n >= 62 && n <= 70) return { x: 10, y: 3 + (n - 61), face: 'right' };
-  if (n >= 71 && n <= 79) return { x: 12, y: 3 + (n - 71), face: 'left' };
-  if (n >= 85 && n <= 95) return { x: 14, y: 1 + (n - 84), face: 'left' };
+  // Row A — a single column against the left wall.
+  if (n >= 1 && n <= 10) return { x: 1, y: 1 + n, face: 'right' };
+
+  // Blocks B, C, and the middle section: sixty seats in six columns of ten.
+  // Each column is numbered sequentially (11–20, 21–30, 31–40, 41–50, 51–60,
+  // 61–70). Columns alternate facing direction so each pair shares a desk.
+  if (n >= 11 && n <= 70) {
+    const idx = n - 11;                         // 0–59
+    const col = Math.floor(idx / 10);           // 0–5 (which column)
+    const row = idx % 10;                       // 0–9 (position within column)
+
+    // Six seat columns mapped to grid x-positions and facing directions.
+    // Even-indexed columns (0, 2, 4) face LEFT toward the desk on their left.
+    // Odd-indexed columns (1, 3, 5) face RIGHT toward the desk on their right.
+    const colMap: { x: number; face: FaceDir }[] = [
+      { x: 3,  face: 'left'  },  // col 0: seats 11–20
+      { x: 4,  face: 'right' },  // col 1: seats 21–30
+      { x: 6,  face: 'left'  },  // col 2: seats 31–40
+      { x: 7,  face: 'right' },  // col 3: seats 41–50
+      { x: 9,  face: 'left'  },  // col 4: seats 51–60
+      { x: 10, face: 'right' },  // col 5: seats 61–70
+    ];
+
+    return {
+      x: colMap[col].x,
+      y: 2 + row,
+      face: colMap[col].face,
+    };
+  }
+
+  // The run along the top wall, facing the desk below it. Five seats so the
+  // room reaches 95 without stranding one at the foot of a column.
+  if (n >= 71 && n <= 75) return { x: 10 + (n - 71), y: 1, face: 'down' };
+
+  // The right-hand block, offset down one row to clear the top-wall desk.
+  // Odd seat numbers (77, 79 … 95) sit on the LEFT column (col 12), facing
+  // right; even numbers (76, 78 … 94) sit on the RIGHT column (col 14),
+  // facing left — matching the physical plan's labelling.
+  if (n >= 76 && n <= 95) {
+    const i = n - 76;
+    const onLeft = i % 2 !== 0;          // odd index → left (seat 77, 79 …)
+    return {
+      x: onLeft ? 12 : 14,
+      y: 3 + Math.floor(i / 2),
+      face: onLeft ? 'right' : 'left',
+    };
+  }
+
   return { x: 1, y: 1, face: 'up' };
 }
 
@@ -163,11 +229,13 @@ export function seatAmenities(n: number): string[] {
  * One definition, in grid columns, because that is what the room is actually
  * divided by. Both views derive from it.
  */
+// Bands follow the new column layout: each covers a block and the desk beside
+// it, so the label on the plan sits over the seats it names.
 export const SEAT_ROWS = [
-  { label: 'Row A', fromCol: 1, toCol: 5 },
-  { label: 'Row B', fromCol: 6, toCol: 8 },
-  { label: 'Row C', fromCol: 9, toCol: 12 },
-  { label: 'Row D', fromCol: 13, toCol: 14 },
+  { label: 'Row A', fromCol: 1, toCol: 2 },    // seats 1–10
+  { label: 'Row B', fromCol: 3, toCol: 5 },    // seats 11–30
+  { label: 'Row C', fromCol: 6, toCol: 10 },   // seats 31–70
+  { label: 'Row D', fromCol: 11, toCol: 14 },  // seats 71–95
 ] as const;
 
 export type SeatRowLabel = (typeof SEAT_ROWS)[number]['label'];
