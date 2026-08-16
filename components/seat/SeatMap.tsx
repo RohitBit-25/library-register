@@ -212,7 +212,12 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
 }) {
   const { x, y, face } = getSeatPosition(seatNum);
   const { left, top: baseTop } = seatPixel(x, y);
-  const jitter = (x % 2 === 0) ? 2 : -2;
+  // A 2px wobble so the room does not look machine-stamped. Keyed to the
+  // ROW, not the column: the numbering pairs seats across a desk in adjacent
+  // columns, and column parity therefore pushed every pair 4px out of level
+  // with its own partner — the one alignment the plan most needs to hold.
+  // By row, a pair shifts together and stays level.
+  const jitter = (y % 2 === 0) ? 2 : -2;
   const top = baseTop + jitter;
 
   // The new chair asset has its backrest at the top, so it naturally faces DOWN.

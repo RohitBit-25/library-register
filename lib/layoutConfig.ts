@@ -45,76 +45,70 @@ export const LAYOUT_CONFIG = {
 /**
  * Where each seat sits on the grid, and which way the person faces.
  *
- * The numbering follows the physical floor plan: each column is numbered
- * sequentially from top to bottom before moving to the next column. So seats
- * 11–20 fill the left column of Block B, then 21–30 fill the right column,
- * and so on. This matches the labels on the room's actual desks, so finding a
- * seat means following one column — not hunting across a pair.
+ * **The rule, everywhere on the plan: the lower number of a pair sits on the
+ * left, its successor directly across the desk on the same row.** So 11 and 12
+ * are neighbours, 13 and 14 the row below, and reading the room the way you
+ * read a page — left to right, top to bottom — gives 11, 12, 13, 14…
+ *
+ * The alternative is to run each column top-to-bottom (11–20 down the left,
+ * then 21–30 down the right). Both are defensible; this one wins because a
+ * person standing in the room reads across, not down: seeing 11 tells you 12
+ * is the seat you can reach out and touch, not the seat ten places away.
+ *
+ * The scheme it replaced had no rule at all — 1–10 down one column, 11–20 two
+ * columns over, then 21 and 22 dropped against a different wall entirely.
  *
  * Grid, left to right (desk columns are derived in lib/deskLayout.ts from the
  * facing directions, never declared here):
  *
  *   col  1   Row A, seats 1–10, face right → desk at col 2
  *   col  2   desk (shared by cols 1 and 3)
- *   col  3   Row B left column, seats 11–20, face left → desk at col 2
- *   col  4   Row B right column, seats 21–30, face right → desk at col 5
+ *   col  3   block B, left of each pair  (11,13…29), face left  → desk col 2
+ *   col  4   block B, right of each pair (12,14…30), face right → desk col 5
  *   col  5   desk (shared by cols 4 and 6)
- *   col  6   Row C left-left column, seats 31–40, face left → desk at col 5
- *   col  7   Row C left-right column, seats 41–50, face right → desk at col 8
+ *   col  6   block C, left  (31,33…49), face left  → desk col 5
+ *   col  7   block C, right (32,34…50), face right → desk col 8
  *   col  8   desk (shared by cols 7 and 9)
- *   col  9   Row C right-left column, seats 51–60, face left → desk at col 8
- *   col 10   Row C right-right column, seats 61–70, face right → desk at col 11
- *   col 11   desk (shared by cols 10 and 12)
- *   col 12   Row D left column, seats 77,79,81…95 (odd), face right → desk at col 13
+ *   col  9   block D, left  (51,53…69), face left  → desk col 8
+ *   col 10   block D, right (52,54…70), face right → desk col 11
+ *   col 11   desk
+ *   col 12   right block, left  (76,78…94), face right → desk col 13
  *   col 13   desk (shared by cols 12 and 14)
- *   col 14   Row D right column, seats 76,78,80…94 (even), face left → desk at col 13
+ *   col 14   right block, right (77,79…95), face left  → desk col 13
  *
- *   row  1   top-wall run (71–75), five seats facing down
- *   rows 2–11  Row A and blocks B, C (six columns of ten)
- *   rows 3–12  Row D right block, offset one row below the top run
+ *   row  1     top-wall run (71–75), five seats facing down
+ *   rows 2–11  Row A and blocks B, C, D
+ *   rows 3–12  the right block, offset one row to clear the top-wall desk
  */
 export function getSeatPositionConfig(n: number): SeatPosition {
   // Row A — a single column against the left wall.
   if (n >= 1 && n <= 10) return { x: 1, y: 1 + n, face: 'right' };
 
-  // Blocks B, C, and the middle section: sixty seats in six columns of ten.
-  // Each column is numbered sequentially (11–20, 21–30, 31–40, 41–50, 51–60,
-  // 61–70). Columns alternate facing direction so each pair shares a desk.
+  // Blocks B, C and D — twenty seats each, paired across a shared desk.
   if (n >= 11 && n <= 70) {
-    const idx = n - 11;                         // 0–59
-    const col = Math.floor(idx / 10);           // 0–5 (which column)
-    const row = idx % 10;                       // 0–9 (position within column)
-
-    // Six seat columns mapped to grid x-positions and facing directions.
-    // Even-indexed columns (0, 2, 4) face LEFT toward the desk on their left.
-    // Odd-indexed columns (1, 3, 5) face RIGHT toward the desk on their right.
-    const colMap: { x: number; face: FaceDir }[] = [
-      { x: 3,  face: 'left'  },  // col 0: seats 11–20
-      { x: 4,  face: 'right' },  // col 1: seats 21–30
-      { x: 6,  face: 'left'  },  // col 2: seats 31–40
-      { x: 7,  face: 'right' },  // col 3: seats 41–50
-      { x: 9,  face: 'left'  },  // col 4: seats 51–60
-      { x: 10, face: 'right' },  // col 5: seats 61–70
-    ];
-
+    const block = Math.floor((n - 11) / 20);   // 0 = B, 1 = C, 2 = D
+    const i = (n - 11) % 20;                   // position within the block
+    const leftCol = [3, 6, 9][block];
+    const onLeft = i % 2 === 0;                // 11, 13, 15 … take the left
     return {
-      x: colMap[col].x,
-      y: 2 + row,
-      face: colMap[col].face,
+      x: onLeft ? leftCol : leftCol + 1,
+      y: 2 + Math.floor(i / 2),
+      face: onLeft ? 'left' : 'right',
     };
   }
 
-  // The run along the top wall, facing the desk below it. Five seats so the
-  // room reaches 95 without stranding one at the foot of a column.
+  // The run along the top wall, facing the desk below it. Five seats, not the
+  // four the sketch showed: the room holds 95 and this run is where the plan
+  // has floor for the odd one, rather than stranding it at the foot of a
+  // column on a row of its own.
   if (n >= 71 && n <= 75) return { x: 10 + (n - 71), y: 1, face: 'down' };
 
   // The right-hand block, offset down one row to clear the top-wall desk.
-  // Odd seat numbers (77, 79 … 95) sit on the LEFT column (col 12), facing
-  // right; even numbers (76, 78 … 94) sit on the RIGHT column (col 14),
-  // facing left — matching the physical plan's labelling.
+  // Same rule as every other block, so it starts on an even number rather than
+  // an odd one — the parity is incidental, the pairing is the point.
   if (n >= 76 && n <= 95) {
     const i = n - 76;
-    const onLeft = i % 2 !== 0;          // odd index → left (seat 77, 79 …)
+    const onLeft = i % 2 === 0;
     return {
       x: onLeft ? 12 : 14,
       y: 3 + Math.floor(i / 2),

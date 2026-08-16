@@ -1105,6 +1105,76 @@ accessibility clean, landing page still loads zero external hosts.
 
 ---
 
+## 7r. Eighteenth pass — the floor plan redrawn to the sketch
+
+You sent a plan of the room and asked for the layout and its numbering logic to
+match it.
+
+### The numbering now has a rule
+
+**The lower number of a pair sits on the left, its successor directly across
+the desk on the same row.** 11 and 12 are neighbours, 13 and 14 the row below,
+so reading the room the way you read a page gives 11, 12, 13, 14…
+
+What it replaced had no rule at all: 1–10 ran down one column, 11–20 down
+another two columns over, and 21 and 22 were dropped against a different wall
+entirely. Finding seat 43 meant hunting.
+
+    col  1   Row A            1–10        one column, left wall
+    col  3 / 4   block B      11–30       paired across the desk at col 2 / 5
+    col  6 / 7   block C      31–50
+    col  9 / 10  block D      51–70
+    row  1       top wall     71–75       facing down
+    col 12 / 14  right block  76–95       paired across the desk at col 13
+
+Desks are still derived from the facing directions in `lib/deskLayout.ts`, so
+the furniture cannot drift out of sync with the seating — the new arrangement
+produced its desks without a line of furniture being declared.
+
+### Three things in the sketch that could not be taken literally
+
+The sketch numbers **91** seats: it skips 4, 87 and 90, and stops at 94. The
+room and the database hold 95. Those read as drawing slips rather than intent,
+so the gaps are filled, and the fifth seat sits in the top-wall run — where the
+desk already had floor for it — rather than being stranded at the foot of a
+column on a row of its own. Nothing in the model, the schema or the database
+changed.
+
+The sketch also leaves block D's right-hand column (52–70) facing open floor.
+Every other seat in the room has a desk, so this one gets the desk its facing
+implies. It reads as an L with the top-wall desk, which is what a real room
+does in that corner.
+
+### A consequence worth catching
+
+`SeatMap.tsx` nudges each seat 2px up or down so the room does not look
+machine-stamped, keyed to **column** parity. That was harmless when pairs sat
+two columns apart — both got the same nudge. Under paired numbering the two
+halves of every pair are in adjacent columns, so opposite parity pushed each
+pair 4px out of level with its own partner: the one alignment this plan most
+needs to hold. The nudge is now keyed to the row, so a pair shifts together.
+Verified by measuring all 95 rendered positions — every pair reports `dy=0`.
+
+### And a hole in the review harness
+
+Three routes were serving **404** while `sweep.mjs` reported them clean: a
+Next.js 404 page has exactly one `<h1>`, no console errors and no overflow, so
+it passed every check the sweep made. It now asserts the HTTP status, which
+caught the failure immediately.
+
+The 404s themselves were not a code fault — running `next build` against the
+same `.next` directory as a live `next dev` leaves the dev server unable to
+resolve routes, and this machine was low enough on memory that Turbopack could
+not recover. Verification moved to `next build` + `next start`, which is what
+these gates should have been running against all along.
+
+Gates, against the production build: `verify` 51 checks, `build`,
+`check:api` 34, sweep clean across 17 pages × 2 widths, accessibility clean,
+all 95 seats present and every pair level.
+
+
+---
+
 ## 8. What still needs you
 
 1. **A photograph of the actual library** for the landing hero, replacing the stock image.
