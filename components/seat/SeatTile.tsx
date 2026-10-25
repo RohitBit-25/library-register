@@ -70,19 +70,20 @@ function SeatTileInner({ member, onClick, selected = false, dimmed = false }: Se
           aria-label={ariaLabel}
           aria-pressed={selected}
           className={cn(
-            'relative z-10 flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-[9px] border shadow-[var(--shadow-xs)] transition-ui hover:shadow-[var(--shadow-md)]',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--plan-floor)]',
-            s.tint, s.border, s.text,
+            // A desk mat on the wood: occupied seats get a status-coloured mat,
+            // a vacant desk is bare wood with its number burned in.
+            'relative z-10 flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-[6px] border transition-ui',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#E2B97F]',
             member.vacant
-              ? 'hover:border-[var(--saffron-600)]'
-              : 'hover:border-[var(--text-tertiary)]',
-            selected && 'ring-2 ring-[var(--text-primary)] ring-offset-2 ring-offset-[var(--plan-floor)]',
+              ? 'border-transparent bg-transparent text-[#5B3A1A] hover:border-[#9C7040] hover:bg-[#FFFDF8]/55'
+              : cn(s.tint, s.border, s.text, 'shadow-[0_1px_2px_rgba(80,50,20,0.25)] hover:brightness-[0.98]'),
+            selected && 'ring-2 ring-[var(--ink)] ring-offset-2 ring-offset-[#E2B97F]',
             dimmed && 'seat-dimmed',
           )}
         >
           {member.vacant ? (
             <>
-              <span className="font-mono text-[15px] font-medium leading-none text-[var(--text-secondary)] tabular">
+              <span className="text-[20px] font-semibold leading-none tabular">
                 {member.seat}
               </span>
               <Plus
@@ -92,10 +93,10 @@ function SeatTileInner({ member, onClick, selected = false, dimmed = false }: Se
             </>
           ) : (
             <>
-              <span className="absolute left-1.5 top-1 font-mono text-[11px] font-medium leading-none tabular opacity-75">
+              <span className="text-[19px] font-semibold leading-none tabular">
                 {member.seat}
               </span>
-              <span className="mt-1 text-[17px] font-semibold leading-none">
+              <span className="mt-1 text-[11px] font-semibold leading-none opacity-80">
                 {initials(member.name)}
               </span>
               {/* Only the state that needs acting on gets a second mark — the
@@ -103,10 +104,10 @@ function SeatTileInner({ member, onClick, selected = false, dimmed = false }: Se
                   and the hover card; a dot repeated the colour. Expiring and
                   fee-due tints sit close on the ramp, so each carries its own. */}
               {status !== 'active' && (
-                <span className="mt-1 font-mono text-[11px] font-medium leading-none tabular">
-                  {status === 'due' && '₹ due'}
+                <span className="absolute right-1 top-0.5 font-mono text-[10px] font-semibold leading-none tabular">
+                  {status === 'due' && '₹'}
                   {status === 'expiring' && `${days}d`}
-                  {status === 'expired' && `−${-days}d`}
+                  {status === 'expired' && `−${-days}`}
                 </span>
               )}
             </>

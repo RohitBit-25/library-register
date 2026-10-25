@@ -29,10 +29,11 @@ function useIsNarrow() {
 }
 
 const LEGEND = [
-  { label: 'Free', swatch: 'border-[var(--emerald-500)] bg-[var(--bg-surface)]' },
+  // Same mats as the desks on the plan (components/seat/PublicSeatMap).
+  { label: 'Free', swatch: 'border-[var(--emerald-500)]/70 bg-[#DDF3E4]' },
   { label: 'Your pick', swatch: 'border-[var(--saffron-700)] bg-[var(--saffron-600)]' },
-  { label: 'Requested', swatch: 'border-dashed border-[var(--indigo-400)] bg-[var(--indigo-50)]' },
-  { label: 'Taken', swatch: 'border-transparent bg-[var(--plan-desk)]' },
+  { label: 'Requested', swatch: 'border-dashed border-[var(--saffron-400)] bg-[#FDE8D6]' },
+  { label: 'Taken', swatch: 'border-[#CFCAC3] bg-[#E6E3DF]' },
 ];
 
 export default function BrowsePage() {

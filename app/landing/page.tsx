@@ -121,8 +121,8 @@ export default function LandingPage() {
                   <p className="text-xs text-[var(--text-tertiary)]">Live seat availability</p>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
-                  <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-[3px] border border-[var(--emerald-500)] bg-[var(--bg-surface)]" />Free</span>
-                  <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-[3px] bg-[var(--plan-desk)]" />Taken</span>
+                  <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-[3px] border border-[var(--emerald-500)]/70 bg-[#DDF3E4]" />Free</span>
+                  <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-[3px] border border-[#CFCAC3] bg-[#E6E3DF]" />Taken</span>
                 </div>
               </div>
               <div className="p-3">

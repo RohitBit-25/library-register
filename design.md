@@ -89,14 +89,20 @@ matching Tailwind step; no one-off pixel gaps.
 - `brand` variant (saffron) only where the action is itself the brand moment.
 
 ## Floor plan
-Drawn, not illustrated. Slate walls; windows are breaks in the wall with a
-double line; the entrance is a gap with a door-swing arc; AC units are small
-labelled boxes. Desks are light slabs with a divider per place. Seats are white
-rounded chips with a soft shadow, tinted and edged by status with a status dot,
-plus a short chair-back bar showing which way the person faces. Block letters
-sit in ink discs. Blocks are lettered by where they actually are:
-A 1–10 · B 11–30 · C 31–50 · D 51–70 · E 71–75 (front wall) · F 76–95.
-No PNG sprites.
+Drawn to the owner's reference image (2026-10-25), illustrated top-down:
+- Five islands, **Row A–E**, two desks wide with black chairs on the outside,
+  so the two people at an island row face each other across joined desks.
+- Numbering runs down the left column, then the right: A 1–10 | 11–20,
+  B 21–30 | 31–40, C 41–50 | 51–60, D 61–70 | 71–80, E 81–88 | 89–95.
+- Room: tiled cream floor, grey walls, wooden double door centred on the top
+  wall, windows on both side walls and the bottom wall, an AC unit at each end
+  of the bottom wall, potted plants, dark ROW pills over each island.
+- Desks are light oak; a seat's state is a **desk mat** on the wood with the
+  number on it. Public: green free, orange your pick, peach (dashed) requested,
+  grey taken. Admin: the status colours from `statusStyle.ts`; vacant is bare
+  wood.
+- Everything is drawn in code (`components/seat/SeatMap.tsx`, geometry in
+  `lib/layoutConfig.ts` + `lib/deskLayout.ts`). No image sprites.
 
 ## Per-page allowances
 - Marketing page shows real photographs only, listed in `lib/photos.ts`

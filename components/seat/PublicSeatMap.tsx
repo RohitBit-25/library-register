@@ -50,19 +50,20 @@ function PublicSeatTileInner({
       }
       aria-pressed={selected}
       className={cn(
-        'relative z-10 flex h-full w-full flex-col items-center justify-center rounded-[9px] border font-mono transition-ui',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--plan-floor)]',
+        // A desk mat on the wood desk, coloured by what a student can do with it.
+        'relative z-10 flex h-full w-full flex-col items-center justify-center rounded-[6px] border transition-ui',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#E2B97F]',
         dimmed && 'seat-dimmed',
         // Free: the one state a student is looking for, so the one with colour.
-        vacant && !requested && !selected && 'cursor-pointer border-[var(--emerald-500)]/60 bg-[var(--bg-surface)] text-[var(--emerald-700)] shadow-[var(--shadow-sm)] hover:border-[var(--emerald-500)] hover:bg-[var(--emerald-50)]',
+        vacant && !requested && !selected && 'cursor-pointer border-[var(--emerald-500)]/70 bg-[#DDF3E4] text-[var(--emerald-700)] shadow-[0_1px_2px_rgba(80,50,20,0.25)] hover:bg-[#C9EBD5]',
         // Already asked for: hatched, so it reads as "on hold", not "free".
-        requested && 'cursor-not-allowed border-dashed border-[var(--indigo-400)] bg-[var(--indigo-50)] text-[var(--indigo-600)]',
+        requested && 'cursor-not-allowed border-dashed border-[var(--saffron-400)] bg-[#FDE8D6] text-[var(--saffron-800)]',
         // Taken: recedes into the floor.
-        !vacant && 'cursor-not-allowed border-transparent bg-[var(--plan-desk)] text-[var(--text-tertiary)]',
-        selected && 'border-[var(--saffron-700)] bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-[var(--shadow-md)]',
+        !vacant && 'cursor-not-allowed border-[#CFCAC3] bg-[#E6E3DF] text-[#6E6760]',
+        selected && 'border-[var(--saffron-700)] bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-[0_2px_6px_rgba(120,60,10,0.35)]',
       )}
     >
-      <span className="tabular text-[15px] font-medium leading-none">{seat}</span>
+      <span className="text-[20px] font-semibold leading-none tabular">{seat}</span>
       {selected && <Check className="mt-1 size-3.5" aria-hidden="true" />}
     </button>
   );

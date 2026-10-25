@@ -43,10 +43,10 @@ const { buildExpiryMessage, normalisePhone } =
 const { planPrice, monthlyValue, formatINR, formatINRCompact, PLAN_MONTHS, DEFAULT_PLAN_RATES } =
   await import(pathToFileURL(join(out, 'pricing.js')).href);
 
-const { nextSeatInDirection, getSeatPositionConfig, SEAT_ROWS, seatRow } =
+const { nextSeatInDirection, getSeatPositionConfig, SEAT_ROWS, seatRow, partnerSeat } =
   await import(pathToFileURL(join(out, 'layoutConfig.js')).href);
 
-const { deriveDeskRuns, allSeatSlots, seatPixel, SEAT_SIZE } =
+const { allSeatSlots, seatPixel, DESK_W, DESK_H, CHAIR_DEPTH, ROOM } =
   await import(pathToFileURL(join(out, 'deskLayout.js')).href);
 
 const { projectMomentum, shouldDismissSheet } =
@@ -332,47 +332,65 @@ check('an upward flick keeps the sheet even from far down', () => {
 
 // ─── Blocks: the plan and the list must agree ────────────────────
 
-check('every seat belongs to exactly one lettered block', () => {
+check('every seat belongs to exactly one lettered row', () => {
   const counts = new Map(SEAT_ROWS.map((r) => [r.label, 0]));
   for (let n = 1; n <= 95; n++) {
     const label = seatRow(n);
-    assert.ok(counts.has(label), `seat ${n} landed outside the blocks (${label})`);
+    assert.ok(counts.has(label), `seat ${n} landed outside the rows (${label})`);
     counts.set(label, counts.get(label) + 1);
   }
-  assert.equal([...counts.values()].reduce((a, b) => a + b, 0), 95);
-  for (const [label, n] of counts) assert.ok(n > 0, `${label} has no seats`);
+  assert.deepEqual([...counts.values()], [20, 20, 20, 20, 15]);
 });
 
-check('blocks run 1–95 with no gaps or overlaps', () => {
+check('rows run 1–95 with no gaps or overlaps', () => {
   assert.equal(SEAT_ROWS[0].first, 1);
   assert.equal(SEAT_ROWS[SEAT_ROWS.length - 1].last, 95);
   for (let i = 1; i < SEAT_ROWS.length; i++) {
-    assert.equal(SEAT_ROWS[i].first, SEAT_ROWS[i - 1].last + 1,
-      `gap or overlap between ${SEAT_ROWS[i - 1].label} and ${SEAT_ROWS[i].label}`);
+    assert.equal(SEAT_ROWS[i].first, SEAT_ROWS[i - 1].last + 1);
   }
 });
 
-check('no desk is drawn through a seat', () => {
-  // The bug this guards: seats 71-75 faced down, so their derived desk ran
-  // across seat 52 and into the end of the 52-70 desk.
-  const seats = allSeatSlots().map((s) => ({ seat: s.seat, ...seatPixel(s.x, s.y) }));
-  for (const d of deriveDeskRuns()) {
-    for (const s of seats) {
-      const overlapX = Math.min(d.left + d.width, s.left + SEAT_SIZE) - Math.max(d.left, s.left);
-      const overlapY = Math.min(d.top + d.height, s.top + SEAT_SIZE) - Math.max(d.top, s.top);
-      assert.ok(overlapX <= 0 || overlapY <= 0, `desk ${d.id} overlaps seat ${s.seat}`);
-    }
-  }
+check('numbering matches the owner\'s drawing', () => {
+  // Down the left column of an island, then down the right.
+  const at = (n) => { const p = getSeatPositionConfig(n); return [p.x, p.y]; };
+  assert.deepEqual(at(1), [1, 1]);
+  assert.deepEqual(at(10), [1, 10]);
+  assert.deepEqual(at(11), [2, 1]);
+  assert.deepEqual(at(20), [2, 10]);
+  assert.deepEqual(at(41), [5, 1]);
+  assert.deepEqual(at(80), [8, 10]);
+  assert.deepEqual(at(81), [9, 1]);
+  assert.deepEqual(at(88), [9, 8]);
+  assert.deepEqual(at(89), [10, 1]);
+  assert.deepEqual(at(95), [10, 7]);
 });
 
-check('no two desks overlap', () => {
-  const runs = deriveDeskRuns();
-  for (let i = 0; i < runs.length; i++) {
-    for (let j = i + 1; j < runs.length; j++) {
-      const a = runs[i], b = runs[j];
-      const ox = Math.min(a.left + a.width, b.left + b.width) - Math.max(a.left, b.left);
-      const oy = Math.min(a.top + a.height, b.top + b.height) - Math.max(a.top, b.top);
-      assert.ok(ox <= 0 || oy <= 0, `desks ${a.id} and ${b.id} overlap`);
+check('the two seats of an island row face each other across the desk', () => {
+  for (const [l, r] of [[1, 11], [10, 20], [21, 31], [61, 71], [81, 89], [87, 95]]) {
+    assert.equal(partnerSeat(l), r);
+    assert.equal(partnerSeat(r), l);
+    assert.equal(getSeatPositionConfig(l).face, 'right');
+    assert.equal(getSeatPositionConfig(r).face, 'left');
+  }
+  assert.equal(partnerSeat(88), null, 'Row E has one more desk on the left');
+});
+
+check('no two desks (with their chairs) overlap, and all sit inside the walls', () => {
+  const boxes = allSeatSlots().map((s) => {
+    const { left, top } = seatPixel(s.x, s.y);
+    const chairLeft = s.face === 'right' ? CHAIR_DEPTH + 4 : 0;
+    const chairRight = s.face === 'left' ? CHAIR_DEPTH + 4 : 0;
+    return { seat: s.seat, l: left - chairLeft, r: left + DESK_W + chairRight, t: top, b: top + DESK_H };
+  });
+  for (const a of boxes) {
+    assert.ok(a.l > ROOM.WALL && a.r < ROOM.WIDTH - ROOM.WALL && a.b < ROOM.HEIGHT - ROOM.WALL, `seat ${a.seat} is outside the room`);
+  }
+  for (let i = 0; i < boxes.length; i++) {
+    for (let j = i + 1; j < boxes.length; j++) {
+      const a = boxes[i], b = boxes[j];
+      const ox = Math.min(a.r, b.r) - Math.max(a.l, b.l);
+      const oy = Math.min(a.b, b.b) - Math.max(a.t, b.t);
+      assert.ok(ox <= 0 || oy <= 0, `seats ${a.seat} and ${b.seat} overlap`);
     }
   }
 });
@@ -380,44 +398,23 @@ check('no two desks overlap', () => {
 // ─── Seat map keyboard navigation ────────────────────────────────
 const ALL_SEATS = Array.from({ length: 95 }, (_, i) => i + 1);
 
-check('arrow nav moves down a run one seat at a time', () => {
-  // Seats 1-10 run down column 1.
+check('arrow nav moves down a column one seat at a time', () => {
   assert.equal(nextSeatInDirection(1, 'down', ALL_SEATS), 2);
-  assert.equal(nextSeatInDirection(5, 'up', ALL_SEATS), 4);
+  assert.equal(nextSeatInDirection(15, 'up', ALL_SEATS), 14);
 });
 
-check('arrow nav crosses to the facing run, not diagonally', () => {
-  // Seat 11 sits at x=3,y=3; the seat to its right at the same row is 23 (x=4).
-  const right = nextSeatInDirection(11, 'right', ALL_SEATS);
-  assert.equal(getSeatPositionConfig(right).x, 4);
-  assert.equal(getSeatPositionConfig(right).y, getSeatPositionConfig(11).y);
-});
-
-check('arrow nav will not teleport across the room', () => {
-  // Seats 71-75 are the only ones above seat 1's row, but they sit nine or
-  // more columns away. Pressing Up at seat 1 must do nothing, not jump there.
-  assert.equal(nextSeatInDirection(1, 'up', ALL_SEATS), null);
+check('arrow nav crosses the desk, then the aisle', () => {
+  assert.equal(nextSeatInDirection(1, 'right', ALL_SEATS), 11);
+  assert.equal(nextSeatInDirection(11, 'right', ALL_SEATS), 21);
+  assert.equal(nextSeatInDirection(21, 'left', ALL_SEATS), 11);
 });
 
 check('arrow nav stops at the edge instead of wrapping', () => {
-  // Column 14 is the right wall. Under the paired numbering the odd seats of
-  // the right-hand block live there, so 95 is the far corner — 90 is not, it
-  // sits on column 12 with 91 across the desk from it.
-  assert.equal(getSeatPositionConfig(95).x, 14);
-  assert.equal(nextSeatInDirection(95, 'right', ALL_SEATS), null);
-  // Seat 1 is the top of its run and the leftmost column.
+  assert.equal(nextSeatInDirection(1, 'up', ALL_SEATS), null);
   assert.equal(nextSeatInDirection(1, 'left', ALL_SEATS), null);
-});
-
-check('numbers pair across each desk, left then right', () => {
-  // The rule the whole plan is built on: the lower number of a pair sits on
-  // the left, its successor directly across the desk, both on the same row.
-  for (const [left, right] of [[11, 12], [29, 30], [31, 32], [51, 52], [76, 77], [94, 95]]) {
-    const l = getSeatPositionConfig(left);
-    const r = getSeatPositionConfig(right);
-    assert.equal(l.y, r.y, `${left}/${right} should share a row`);
-    assert.ok(r.x > l.x, `${left} should sit left of ${right}`);
-  }
+  assert.equal(nextSeatInDirection(89, 'right', ALL_SEATS), null);
+  assert.equal(nextSeatInDirection(88, 'down', ALL_SEATS), null, 'down stays in its column');
+  assert.equal(nextSeatInDirection(95, 'down', ALL_SEATS), null, 'down stays in its column');
 });
 
 check('arrow nav only considers seats that are rendered', () => {

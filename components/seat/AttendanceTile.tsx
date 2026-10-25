@@ -27,12 +27,10 @@ function AttendanceTileInner({ member, present, onToggle }: AttendanceTileProps)
   if (member.vacant) {
     return (
       <div
-        className="flex h-full w-full items-center justify-center rounded-lg border border-dashed border-[var(--border-default)] bg-[var(--bg-muted)]/50"
+        className="flex h-full w-full items-center justify-center rounded-[6px]"
         aria-hidden="true"
       >
-        <span className="font-mono text-[9px] text-[var(--text-disabled)]">
-          {String(member.seat).padStart(2, '0')}
-        </span>
+        <span className="text-[18px] font-semibold text-[#8C6A44] tabular">{member.seat}</span>
       </div>
     );
   }
@@ -45,22 +43,22 @@ function AttendanceTileInner({ member, present, onToggle }: AttendanceTileProps)
       // The whole tile is the target — a 48px tile is already at the small end
       // for a finger, so there is no smaller checkbox inside it.
       className={cn(
-        'group relative flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-lg border transition-ui',
+        'group relative flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-[6px] border transition-ui',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] focus-visible:ring-offset-1',
         present
-          ? 'border-[var(--emerald-500)] bg-[var(--emerald-50)] shadow-[var(--shadow-sm)]'
-          : 'border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-[var(--emerald-500)]'
+          ? 'border-[var(--emerald-500)] bg-[#DDF3E4] shadow-[0_1px_2px_rgba(80,50,20,0.25)]'
+          : 'border-[#CFC2AE] bg-[#FFFDF8] hover:border-[var(--emerald-500)]'
       )}
       aria-pressed={present}
       aria-label={`Seat ${member.seat}, ${member.name}. ${present ? 'Present' : 'Not marked'}. Tap to toggle.`}
     >
       <span
         className={cn(
-          'absolute left-1 top-0.5 font-mono text-[8px] font-bold',
+          'absolute left-1 top-0.5 font-mono text-[10px] font-semibold tabular',
           present ? 'text-[var(--emerald-600)]' : 'text-[var(--text-disabled)]'
         )}
       >
-        {String(member.seat).padStart(2, '0')}
+        {member.seat}
       </span>
 
       {present ? (
@@ -71,7 +69,7 @@ function AttendanceTileInner({ member, present, onToggle }: AttendanceTileProps)
 
       <span
         className={cn(
-          'mt-0.5 max-w-full truncate px-0.5 text-[8px] font-bold leading-none',
+          'mt-0.5 max-w-full truncate px-0.5 text-[10px] font-semibold leading-none',
           present ? 'text-[var(--emerald-600)]' : 'text-[var(--text-secondary)]'
         )}
       >
