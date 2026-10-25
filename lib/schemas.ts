@@ -42,6 +42,10 @@ export const feeStatus = z.enum(['paid', 'due']);
 export const paymentMode = z.enum(['upi', 'cash']);
 export const requestStatus = z.enum(['pending', 'approved', 'rejected', 'waitlisted']);
 
+/** Rupees actually paid, when it differs from the plan price (a discount,
+ *  a part payment). Whole rupees; omitted means the plan price. */
+export const paidAmount = z.number().int().min(1, 'Amount must be at least ₹1').max(200_000);
+
 /** Accepts an inline image/PDF data URI, size-capped. Empty string = none. */
 export const documentDataUri = z
   .string()
@@ -70,6 +74,8 @@ export const memberPatchSchema = z.object({
   /** Set by the Renew action: a new term was paid for, even if the last one
    *  was paid too. Not stored — it only decides whether to write a Payment. */
   renewal: z.boolean().optional(),
+  /** What was actually paid, for the Payment row. Not stored on the member. */
+  amount: paidAmount.optional(),
 }).strict();
 
 /** POST /api/requests — public endpoint, so this is a trust boundary. */
@@ -84,6 +90,8 @@ export const seatRequestCreateSchema = z.object({
   transactionId: z.string().trim().max(64).default(''),
   paymentMode: paymentMode.default('upi'),
   documentUrl: documentDataUri.default(''),
+  /** What the student says they paid by UPI; staff see it before approving. */
+  amount: paidAmount.optional(),
 }).refine(
   (d) => d.paymentMode !== 'upi' || d.transactionId.length > 0,
   { message: 'Transaction ID is required for UPI payments', path: ['transactionId'] }

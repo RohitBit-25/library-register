@@ -96,7 +96,7 @@ export default function AdminLoginPage() {
 
         <div className="rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-7 shadow-[var(--shadow-xs)]">
           <Wordmark size="sm" caption="Staff desk" />
-          <h1 className="mt-6 font-pixel text-xl font-bold leading-tight text-[var(--text-primary)]">
+          <h1 className="mt-6 font-display text-xl font-semibold leading-tight text-[var(--text-primary)]">
             Sign in
           </h1>
           <p className="mb-6 mt-1.5 text-sm text-[var(--text-secondary)]">

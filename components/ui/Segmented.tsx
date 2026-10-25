@@ -52,7 +52,7 @@ export default function Segmented<T extends string>({
               'flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-[var(--radius-sm)] font-medium transition-ui',
               size === 'sm' ? 'min-h-[30px] px-2.5 text-xs' : 'min-h-[36px] px-3 text-sm',
               pixel
-                ? cn('rounded-none font-pixel uppercase', on
+                ? cn('rounded-none font-display', on
                   ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)]'
                   : 'text-[var(--warm-ink-2)] hover:bg-[var(--warm-band)] hover:text-[var(--warm-ink)]')
                 : on

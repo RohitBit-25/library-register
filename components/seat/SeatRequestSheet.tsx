@@ -30,6 +30,8 @@ interface SeatRequestSheetProps {
     transactionId: string,
     paymentMode: 'upi' | 'cash',
     documentUrl: string,
+    /** UPI only: what the student entered; undefined = the plan price. */
+    amount?: number,
   ) => Promise<{ success: boolean; error: string | null }>;
 }
 
@@ -139,6 +141,7 @@ export default function SeatRequestSheet({
       transactionId.trim(),
       paymentMode,
       documentUrl,
+      paymentMode === 'upi' && amount > 0 ? amount : undefined,
     );
 
       if (res.success) {
@@ -228,7 +231,7 @@ export default function SeatRequestSheet({
                   <div className="size-16 bg-[var(--ruby-50)] flex items-center justify-center mx-auto mb-4">
                     <Armchair className="size-8 text-[var(--ruby-600)]" />
                   </div>
-                  <h3 className="font-pixel text-xl font-bold uppercase mb-1">
+                  <h3 className="font-display text-xl font-bold mb-1">
                     Seat #{member.seat} is Occupied
                   </h3>
                   <p className="text-sm text-[var(--text-secondary)] mb-1">
@@ -259,7 +262,7 @@ export default function SeatRequestSheet({
                   >
                     <CheckCircle2 className="size-10 text-[var(--emerald-600)]" />
                   </motion.div>
-                  <h3 className="font-pixel text-[2rem] font-bold uppercase leading-none mb-3">
+                  <h3 className="font-display text-[2rem] font-bold tracking-tight leading-none mb-3">
                     Request sent
                   </h3>
                   <p className="text-sm text-[var(--text-secondary)]">
@@ -273,7 +276,7 @@ export default function SeatRequestSheet({
                   <div className="shrink-0 border-b-4 border-[var(--warm-ink)] bg-[var(--warm-band)] px-6 pb-4 pt-5">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <h3 className="font-pixel text-xl font-bold uppercase leading-none sm:text-2xl">
+                        <h3 className="font-display text-xl font-bold leading-none sm:text-2xl">
                           Request desk <span className="tabular">{member.seat}</span>
                         </h3>
                         <p className="mt-2 text-sm text-[var(--warm-ink-2)]">
@@ -620,7 +623,7 @@ export default function SeatRequestSheet({
                       onClick={handleSubmit}
                       disabled={!isValid || loading}
                       className={cn(
-                        'px-btn px-raised m-1 w-[calc(100%-8px)] min-h-[52px] font-pixel text-lg font-semibold uppercase flex items-center justify-center gap-2.5',
+                        'px-btn px-raised m-1 w-[calc(100%-8px)] min-h-[52px] font-display text-lg font-semibold flex items-center justify-center gap-2.5',
                         isValid && !loading
                           ? 'cursor-pointer bg-[var(--saffron-600)] text-[var(--text-inverse)] hover:bg-[var(--saffron-700)]'
                           : 'cursor-not-allowed bg-[var(--warm-band)] text-[var(--warm-ink-3)]',

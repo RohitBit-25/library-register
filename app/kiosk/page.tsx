@@ -68,7 +68,7 @@ export default function KioskPage() {
     setActiveSeat(null);
   };
 
-  const key = 'px-btn px-raised m-1 flex h-16 cursor-pointer items-center justify-center bg-[var(--bg-surface)] font-pixel text-[1.75rem] font-semibold tabular text-[var(--warm-ink)] hover:bg-[var(--warm-band)]';
+  const key = 'px-btn px-raised m-1 flex h-16 cursor-pointer items-center justify-center bg-[var(--bg-surface)] font-display text-[1.75rem] font-semibold tabular text-[var(--warm-ink)] hover:bg-[var(--warm-band)]';
 
   return (
     <div className="flex min-h-dvh flex-col bg-[var(--warm-bg)] text-[var(--warm-ink)]">
@@ -76,7 +76,7 @@ export default function KioskPage() {
         <span className="flex min-w-0 items-center gap-3">
           <Image src="/logo-mark.png" alt="" width={40} height={40} className="size-10 shrink-0 object-contain" priority />
           <span className="min-w-0 leading-none">
-            <span className="block truncate font-pixel text-lg font-bold uppercase"><span className="sm:hidden">Gangaur</span><span className="hidden sm:inline">Shree Gangaur Library</span></span>
+            <span className="block truncate font-display text-lg font-bold"><span className="sm:hidden">Gangaur</span><span className="hidden sm:inline">Shree Gangaur Library</span></span>
             <span className="mt-1 block text-xs text-[var(--warm-ink-3)]">Self check-in</span>
           </span>
         </span>
@@ -92,7 +92,7 @@ export default function KioskPage() {
         <div className="w-full max-w-[380px]">
           {isLoading ? null : !isAdmin ? (
             <div className="text-center">
-              <h1 className="font-pixel text-[2rem] font-bold uppercase leading-none">Check-in is locked</h1>
+              <h1 className="font-display text-[2rem] font-bold tracking-tight leading-none">Check-in is locked</h1>
               <p className="mt-4 text-sm leading-relaxed text-[var(--warm-ink-2)]">
                 A librarian needs to sign in on this device once. After that it
                 stays on this screen for students to use.
@@ -103,11 +103,11 @@ export default function KioskPage() {
             </div>
           ) : activeMember ? (
             <div className="text-center">
-              <p className="px-box m-1 inline-flex items-baseline gap-3 bg-[var(--px-hud)] px-5 py-3 font-pixel uppercase text-[var(--px-hud-text)]">
+              <p className="px-box m-1 inline-flex items-baseline gap-3 bg-[var(--px-hud)] px-5 py-3 font-display text-[var(--px-hud-text)]">
                 <span className="text-base">Desk</span>
-                <span className="text-[3rem] font-bold leading-none tabular">{activeMember.seat}</span>
+                <span className="text-[3rem] font-bold tracking-tight leading-none tabular">{activeMember.seat}</span>
               </p>
-              <h1 className="mt-6 font-pixel text-2xl font-bold">{activeMember.name}</h1>
+              <h1 className="mt-6 font-display text-2xl font-bold">{activeMember.name}</h1>
               <p className="mt-1 text-sm text-[var(--warm-ink-2)]">
                 {isPresent(todayStr, activeMember.seat) ? 'You are checked in today.' : 'Not checked in yet today.'}
               </p>
@@ -116,7 +116,7 @@ export default function KioskPage() {
                   type="button"
                   disabled={busy || isPresent(todayStr, activeMember.seat)}
                   onClick={() => act('in')}
-                  className="px-btn px-raised m-1 flex min-h-[72px] cursor-pointer flex-col items-center justify-center gap-1 bg-[var(--saffron-600)] font-pixel text-base font-semibold uppercase text-[var(--text-inverse)] hover:bg-[var(--saffron-700)] disabled:cursor-not-allowed disabled:bg-[var(--warm-band)] disabled:text-[var(--warm-ink-3)]"
+                  className="px-btn px-raised m-1 flex min-h-[72px] cursor-pointer flex-col items-center justify-center gap-1 bg-[var(--saffron-600)] font-display text-base font-semibold text-[var(--text-inverse)] hover:bg-[var(--saffron-700)] disabled:cursor-not-allowed disabled:bg-[var(--warm-band)] disabled:text-[var(--warm-ink-3)]"
                 >
                   <LogIn className="size-5" aria-hidden="true" />
                   Check in
@@ -125,7 +125,7 @@ export default function KioskPage() {
                   type="button"
                   disabled={busy || !isPresent(todayStr, activeMember.seat)}
                   onClick={() => act('out')}
-                  className="px-btn px-raised m-1 flex min-h-[72px] cursor-pointer flex-col items-center justify-center gap-1 bg-[var(--bg-surface)] font-pixel text-base font-semibold uppercase text-[var(--warm-ink)] hover:bg-[var(--warm-band)] disabled:cursor-not-allowed disabled:bg-[var(--warm-band)] disabled:text-[var(--warm-ink-3)]"
+                  className="px-btn px-raised m-1 flex min-h-[72px] cursor-pointer flex-col items-center justify-center gap-1 bg-[var(--bg-surface)] font-display text-base font-semibold text-[var(--warm-ink)] hover:bg-[var(--warm-band)] disabled:cursor-not-allowed disabled:bg-[var(--warm-band)] disabled:text-[var(--warm-ink-3)]"
                 >
                   <LogOut className="size-5" aria-hidden="true" />
                   Check out
@@ -141,11 +141,11 @@ export default function KioskPage() {
             </div>
           ) : (
             <>
-              <h1 className="text-center font-pixel text-[2rem] font-bold leading-none">Type your desk number</h1>
+              <h1 className="text-center font-display text-[2rem] font-bold tracking-tight leading-none">Type your desk number</h1>
               <output
                 aria-live="polite"
                 className={cn(
-                  'px-box m-1 mt-7 flex h-24 items-center justify-center bg-[var(--px-hud)] font-pixel text-[3.5rem] font-bold tabular text-[var(--px-hud-text)]',
+                  'px-box m-1 mt-7 flex h-24 items-center justify-center bg-[var(--px-hud)] font-display text-[3.5rem] font-bold tracking-tight tabular text-[var(--px-hud-text)]',
                   !seatInput && 'text-[var(--px-hud-text)]/40',
                 )}
               >

@@ -220,6 +220,8 @@ export async function PATCH(request: Request) {
     // the request stays pending, so the admin can act on it again.
     const joinDate = req.joinDate || todayISO();
     const duration = req.duration || '3M';
+    // The amount the student entered for UPI, else the plan price.
+    const amount = req.amount > 0 ? req.amount : planPrice(duration);
     const allotted = await Member.findOneAndUpdate(
       { seat: req.seat, vacant: true },
       {
@@ -235,7 +237,7 @@ export async function PATCH(request: Request) {
           paymentMode: req.paymentMode || 'upi',
           termsAccepted: true,
           lastPaymentAt: new Date(),
-          lastPaymentAmount: planPrice(duration),
+          lastPaymentAmount: amount,
         },
       },
       { new: true }
@@ -262,7 +264,6 @@ export async function PATCH(request: Request) {
     // Approval marks the fee paid, so it is a collection like any other. It
     // used to set fee: 'paid' without a ledger row, so every fee taken through
     // a student request was missing from Collections.
-    const amount = planPrice(duration);
     if (amount > 0) {
       await Payment.create({
         seat: req.seat,
@@ -278,7 +279,7 @@ export async function PATCH(request: Request) {
     await AuditLog.create({
       user: session.name,
       action: 'Approved Request',
-      details: `Seat ${req.seat} allotted to ${req.userName} (${duration})`
+      details: `Seat ${req.seat} allotted to ${req.userName} (${duration}, ₹${amount})`
         + (moved.modifiedCount ? `; ${moved.modifiedCount} other request(s) moved to the waitlist` : ''),
       seat: req.seat,
     });

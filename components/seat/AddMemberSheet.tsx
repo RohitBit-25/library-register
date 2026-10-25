@@ -5,14 +5,14 @@ import BottomSheet from '@/components/ui/BottomSheet';
 import AddMemberForm from '@/components/member/AddMemberForm';
 
 import { X, UserPlus } from 'lucide-react';
-import { type Member } from '@/lib/types';
+import { type NewMember } from '@/lib/types';
 
 interface AddMemberSheetProps {
   open: boolean;
   onClose: () => void;
   seat: number | null;
   vacantSeats: number[];
-  onSubmit: (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => void;
+  onSubmit: (seat: number, data: NewMember) => void;
   isMobile: boolean;
   initialData?: { name: string; phone: string; paymentMode: 'upi' | 'cash' };
 }

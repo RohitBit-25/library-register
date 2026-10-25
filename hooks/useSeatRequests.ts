@@ -93,7 +93,7 @@ export function useSeatRequests() {
           transactionId: request.transactionId || '',
           paymentMode: request.paymentMode || 'upi',
           documentUrl: request.documentUrl || '',
-          status: 'pending',
+          ...(request.amount ? { amount: request.amount } : {}),
         }),
       });
 

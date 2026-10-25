@@ -215,6 +215,38 @@ await check('vacating clears the member and is audited', async () => {
   assert.ok(await db.collection('auditlogs').findOne({ action: 'Vacated Seat', seat: 10 }));
 });
 
+console.log('\nAmounts actually paid');
+const lastPayment = (seat) => db.collection('payments').find({ seat }).sort({ _id: -1 }).limit(1).next();
+await check('Add member records the amount typed, not the plan price', async () => {
+  const r = await call('/api/members/11', { method: 'PATCH', cookie: owner, body: { name: 'Discount', phone: '9777777771', joinDate: today, duration: '1M', expiry: '2099-01-01', fee: 'paid', paymentMode: 'cash', vacant: false, amount: 650 } });
+  assert.equal(r.status, 200, JSON.stringify(r.json));
+  assert.equal((await lastPayment(11)).amount, 650);
+  assert.equal((await member(11)).lastPaymentAmount, 650);
+  assert.ok(!('amount' in (await member(11))), 'amount must not be stored on the member');
+});
+await check('a renewal records its typed amount; without one, the plan price', async () => {
+  await call('/api/members/11', { method: 'PATCH', cookie: owner, body: { joinDate: '2099-01-01', duration: '3M', expiry: '2099-04-01', fee: 'paid', renewal: true, amount: 1700 } });
+  assert.equal((await lastPayment(11)).amount, 1700);
+  await call('/api/members/11', { method: 'PATCH', cookie: owner, body: { joinDate: '2099-04-01', duration: '1M', expiry: '2099-05-01', fee: 'paid', renewal: true } });
+  assert.equal((await lastPayment(11)).amount, 700);
+});
+await check('a zero, negative or fractional amount is refused', async () => {
+  for (const amount of [0, -5, 12.5, '100']) {
+    const r = await call('/api/members/11', { method: 'PATCH', cookie: owner, body: { fee: 'paid', amount } });
+    assert.equal(r.status, 400, `amount ${amount} gave ${r.status}`);
+  }
+  await call('/api/members/11', { method: 'DELETE', cookie: owner });
+});
+await check('a student\'s UPI amount is what approval records', async () => {
+  const q = await call('/api/requests', { method: 'POST', body: { seat: 12, userName: 'Part Pay', userPhone: '9777777772', paymentMode: 'upi', transactionId: 'UPI999', duration: '3M', amount: 1500 } });
+  assert.equal(q.status, 201, JSON.stringify(q.json));
+  const list = (await call('/api/requests', { cookie: owner })).json;
+  assert.equal(list.find((x) => x.id === q.json.id).amount, 1500);
+  assert.equal((await call('/api/requests', { method: 'PATCH', cookie: owner, body: { id: q.json.id, status: 'approved' } })).status, 200);
+  assert.equal((await lastPayment(12)).amount, 1500);
+  await call('/api/members/12', { method: 'DELETE', cookie: owner });
+});
+
 console.log('\nFull library → waitlist');
 await check('a full library queues a request, and vacating surfaces the queue', async () => {
   await db.collection('members').updateMany({}, { $set: { vacant: false, name: 'Filler', phone: '9000000002', fee: 'paid', expiry: '2099-01-01' } });

@@ -5,6 +5,7 @@ import { useSeatRequests } from '@/hooks/useSeatRequests';
 import { useToast } from '@/hooks/useToast';
 import { fmtDate, cn, todayISO, durationLabel, shiftLabel } from '@/lib/utils';
 import { type SeatRequest } from '@/lib/types';
+import { formatINR, planPrice } from '@/lib/pricing';
 import {
   Inbox,
   Check,
@@ -294,6 +295,13 @@ export default function RequestsPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <span className="text-xs font-bold text-[var(--emerald-600)] block">UPI Payment</span>
+                        {/* What the student says they paid — check it against the UPI ref. */}
+                        <span className="block text-xs text-[var(--text-secondary)]">
+                          Paid <span className="font-semibold tabular text-[var(--text-primary)]">{formatINR(req.amount || planPrice(req.duration))}</span>
+                          {req.amount && req.amount !== planPrice(req.duration)
+                            ? <> · plan is {formatINR(planPrice(req.duration))}</>
+                            : !req.amount && <> (plan price)</>}
+                        </span>
                         {req.transactionId && (
                           <span className="text-xs font-mono text-[var(--text-secondary)] break-all">Ref: {req.transactionId}</span>
                         )}

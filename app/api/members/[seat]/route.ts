@@ -38,7 +38,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
         { status: 400 }
       );
     }
-    const { renewal, ...patch } = parsedBody.data;
+    const { renewal, amount: paid, ...patch } = parsedBody.data;
 
     if (Object.keys(patch).length === 0) {
       return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
@@ -78,7 +78,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
       if (current?.fee !== 'paid' || renewed) {
         const duration = patch.duration ?? current?.duration ?? '';
         paymentToRecord = {
-          amount: planPrice(duration),
+          // What was actually taken; the plan price when nobody changed it.
+          amount: paid ?? planPrice(duration),
           duration,
           name: patch.name ?? current?.name ?? '',
           phone: patch.phone ?? current?.phone ?? '',

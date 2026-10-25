@@ -15,6 +15,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FloatingLabelInput } from '@/components/ui/FloatingLabelInput';
 import { phoneInput } from '@/lib/schemas';
+import { formatINR, planPrice } from '@/lib/pricing';
 
 const renewSchema = z.object({
   renewDate: z.string().min(1, 'Required'),
@@ -37,7 +38,8 @@ interface SeatDetailPanelProps {
   onClose: () => void;
   onMarkPaid: (seat: number) => void;
   onMarkDue: (seat: number) => void;
-  onRenew: (seat: number, joinDate: string, duration: Duration) => void;
+  /** `amount`: rupees actually paid, when not the plan price. */
+  onRenew: (seat: number, joinDate: string, duration: Duration, amount?: number) => void;
   onRemove: (seat: number) => void;
   onUpdate?: (seat: number, patch: Partial<Member>) => void;
   isMobile: boolean;
@@ -72,6 +74,8 @@ export default function SeatDetailPanel({
   readonly = false,
 }: SeatDetailPanelProps) {
   const [renewMode, setRenewMode] = useState(false);
+  // null until typed: follows the chosen plan's price.
+  const [renewAmountTyped, setRenewAmountTyped] = useState<string | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -340,7 +344,7 @@ export default function SeatDetailPanel({
                     that cannot be undone.
                   */}
                   <ActionBtn
-                    onClick={() => { renewReset({ renewDate: renewalStartDate(member.expiry), renewDuration: '3M' }); setRenewMode(true); }}
+                    onClick={() => { renewReset({ renewDate: renewalStartDate(member.expiry), renewDuration: '3M' }); setRenewAmountTyped(null); setRenewMode(true); }}
                     icon={<RefreshCw className="size-4" />}
                     className="w-full border-[var(--ink)] bg-[var(--ink)] text-[var(--text-inverse)] hover:bg-[var(--ink-hover)]"
                   >
@@ -407,7 +411,8 @@ export default function SeatDetailPanel({
           /* Renewal form */
           <m.form
             onSubmit={handleRenewSubmit((data) => {
-              onRenew(member.seat, data.renewDate, data.renewDuration);
+              const paid = Number(renewAmountTyped ?? planPrice(data.renewDuration)) || 0;
+              onRenew(member.seat, data.renewDate, data.renewDuration, paid > 0 ? paid : undefined);
               setRenewMode(false);
               onClose();
             })}
@@ -459,6 +464,21 @@ export default function SeatDetailPanel({
                     </div>
                   )}
                 />
+              </div>
+
+              <div>
+                <label htmlFor="renew-amount" className="text-xs font-bold text-[var(--text-secondary)] ml-1">Amount paid (₹)</label>
+                <input
+                  id="renew-amount"
+                  type="text"
+                  inputMode="numeric"
+                  value={renewAmountTyped ?? String(planPrice(watchDuration))}
+                  onChange={(e) => setRenewAmountTyped(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  className="mt-1.5 w-full min-h-[44px] rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] px-3.5 font-mono text-base tabular text-[var(--text-primary)] focus:border-[var(--saffron-600)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]/20"
+                />
+                <span className="mt-1 ml-1 block text-xs text-[var(--text-tertiary)]">
+                  {watchDuration} plan is {formatINR(planPrice(watchDuration))}. Collections records what you enter.
+                </span>
               </div>
 
               <div className="rounded-xl bg-[var(--emerald-50)] border border-[var(--emerald-200)] p-4 shadow-sm text-center border-dashed">

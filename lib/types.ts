@@ -41,6 +41,10 @@ export interface Stats {
 }
 
 // ─── Seat Request ──────────────────────────────────────────────
+/** A new member as the Add member form sends it: the member's fields plus
+ *  what they paid (for the Payment row; not stored on the member). */
+export type NewMember = Omit<Member, 'seat' | 'vacant'> & { amount?: number };
+
 export interface SeatRequest {
   id: string | number;
   seat: number;
@@ -53,6 +57,8 @@ export interface SeatRequest {
   transactionId?: string;
   paymentMode: 'upi' | 'cash';
   documentUrl?: string;
+  /** Rupees the student entered for UPI; 0 or missing = the plan price. */
+  amount?: number;
   /** Staff list only: an ID was uploaded (fetch it from /api/requests/:id/document). */
   hasDocument?: boolean;
   status: 'pending' | 'approved' | 'rejected' | 'waitlisted';

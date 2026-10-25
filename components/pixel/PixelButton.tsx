@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 type Tone = 'saffron' | 'cream';
 
-const base = 'px-btn px-raised m-1 inline-flex min-h-[52px] items-center justify-center gap-2 whitespace-nowrap px-6 font-pixel text-lg font-semibold uppercase';
+const base = 'px-btn px-raised m-1 inline-flex min-h-[52px] items-center justify-center gap-2 whitespace-nowrap px-6 font-display text-lg font-semibold';
 
 const tones: Record<Tone, string> = {
   saffron: 'bg-[var(--saffron-600)] text-[var(--text-inverse)] hover:bg-[var(--saffron-700)]',

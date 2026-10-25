@@ -26,7 +26,7 @@ export default function UnifiedHeader({ wide = false }: { wide?: boolean }) {
       <div className={cn('mx-auto flex items-center justify-between gap-3 px-4 py-3 sm:px-6', wide ? 'max-w-[1400px]' : 'max-w-[1160px]')}>
         <Link href="/landing" className="flex min-w-0 items-center gap-3" aria-label="Shree Gangaur Library — home">
           <Image src="/logo-mark.png" alt="" width={40} height={40} className="size-10 shrink-0 object-contain" priority />
-          <span className="truncate font-pixel text-lg font-bold uppercase leading-none sm:text-xl">
+          <span className="truncate font-display text-lg font-bold leading-none sm:text-xl">
             <span className="sm:hidden">Gangaur</span>
             <span className="hidden sm:inline">Shree Gangaur Library</span>
           </span>

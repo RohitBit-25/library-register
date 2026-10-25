@@ -1,7 +1,7 @@
 'use client';
 
 /* Hallmark · genre: playful · macrostructure: custom (bespoke) — the owner's pixel-art kit as the page's world
- * theme: custom pixel (cream, wood, ink; Pixelify Sans display + Geist body) · enrichment: owner's own pixel art
+ * theme: custom pixel (cream, wood, ink; Geist throughout — the pixel font was dropped for legibility) · enrichment: owner's own pixel art
  * nav: custom pixel bar · footer: Ft2 inline */
 
 import { useMemo } from 'react';
@@ -50,7 +50,7 @@ export default function LandingPage() {
   const { members, isLoading } = useMembers();
   const free = useMemo(() => members.filter((m) => m.vacant).length, [members]);
   const total = members.length || SEAT_COUNT;
-  const px = 'font-pixel';
+  const px = 'font-display';
   const contact = SITE_INFO.phone || SITE_INFO.whatsapp || SITE_INFO.address || SITE_INFO.mapsUrl;
 
   return (
@@ -63,14 +63,14 @@ export default function LandingPage() {
           <div>
             {/* HUD readout: the one live number a visitor came for. */}
             <p
-              className={cn(px, 'px-box m-1 inline-flex items-center gap-3 bg-[var(--px-hud)] px-4 py-2 text-base font-semibold uppercase text-[var(--px-hud-text)]')}
+              className={cn(px, 'px-box m-1 inline-flex items-center gap-3 bg-[var(--px-hud)] px-4 py-2 text-base font-semibold text-[var(--px-hud-text)]')}
               aria-live="polite"
             >
               <span className="size-2.5 bg-[var(--px-hud-text)]" aria-hidden="true" />
               {isLoading ? 'Loading…' : `Seats free ${free} / ${total}`}
             </p>
 
-            <h1 className={cn(px, 'mt-7 text-[3rem] font-bold leading-[0.95] sm:text-[4.25rem] lg:text-[5rem]')}>
+            <h1 className={cn(px, 'mt-7 text-[3rem] font-bold tracking-tight leading-[0.95] sm:text-[4.25rem] lg:text-[5rem]')}>
               Your desk is waiting.
             </h1>
             <p className="mt-6 max-w-[44ch] text-md leading-relaxed text-[var(--warm-ink-2)]">
@@ -88,7 +88,7 @@ export default function LandingPage() {
           <div className="relative mx-auto w-full max-w-[420px]">
             <div className={cn(px, 'px-raised relative z-10 mx-auto mb-2 w-fit bg-[var(--bg-surface)] px-5 py-3 text-center')}>
               <p className="font-devanagari text-lg leading-snug">रोज़ सुबह 6 से रात 10 बजे तक</p>
-              <p className="text-base font-semibold uppercase">Open 6 AM – 10 PM daily</p>
+              <p className="text-base font-semibold">Open 6 AM – 10 PM daily</p>
               {/* bubble tail, two pixel steps */}
               <span className="absolute -bottom-[12px] left-1/2 h-2 w-4 -translate-x-1/2 bg-[var(--warm-ink)]" aria-hidden="true" />
               <span className="absolute -bottom-[20px] left-1/2 h-2 w-2 -translate-x-1/2 bg-[var(--warm-ink)]" aria-hidden="true" />
@@ -109,7 +109,7 @@ export default function LandingPage() {
         {/* ── The hall: your own art, on a wooden floor ── */}
         <section className="mt-6">
           <div className="mx-auto max-w-[1160px] px-4 sm:px-6">
-            <h2 className={cn(px, 'text-[2.25rem] font-bold leading-tight sm:text-[3rem]')}>{SEAT_COUNT} desks. One quiet hall.</h2>
+            <h2 className={cn(px, 'text-[2.25rem] font-bold tracking-tight leading-tight sm:text-[3rem]')}>{SEAT_COUNT} desks. One quiet hall.</h2>
           </div>
           <div className="relative mt-6">
             <div className="px-planks absolute inset-x-0 bottom-0 h-[38%]" aria-hidden="true" />
@@ -127,7 +127,7 @@ export default function LandingPage() {
           <div className="border-t-4 border-[var(--warm-ink)] bg-[var(--px-wood-dark)] px-4 py-5">
             <ul className="mx-auto flex max-w-[1160px] flex-wrap justify-center gap-4" aria-label="Facilities">
               {FACILITIES.map((f) => (
-                <li key={f} className={cn(px, 'px-box m-1 bg-[var(--warm-bg)] px-4 py-1.5 text-base font-semibold uppercase')}>
+                <li key={f} className={cn(px, 'px-box m-1 bg-[var(--warm-bg)] px-4 py-1.5 text-base font-semibold')}>
                   {f}
                 </li>
               ))}
@@ -146,7 +146,7 @@ export default function LandingPage() {
             className="mx-auto h-auto w-full max-w-[560px]"
           />
           <div>
-            <h2 className={cn(px, 'text-[2.25rem] font-bold leading-tight sm:text-[3rem]')}>One desk. All yours.</h2>
+            <h2 className={cn(px, 'text-[2.25rem] font-bold tracking-tight leading-tight sm:text-[3rem]')}>One desk. All yours.</h2>
             <ul className="mt-6 space-y-4 text-md text-[var(--warm-ink-2)]">
               {[
                 'Reserved for you for your whole plan.',
@@ -168,7 +168,7 @@ export default function LandingPage() {
         {/* ── Fees, as price tags ── */}
         <section id="fees" className="scroll-mt-6 border-y-4 border-[var(--warm-ink)] bg-[var(--warm-band)]">
           <div className="mx-auto max-w-[1160px] px-4 py-20 sm:px-6 lg:py-24">
-            <h2 className={cn(px, 'text-[2.25rem] font-bold leading-tight sm:text-[3rem]')}>Pick your pass.</h2>
+            <h2 className={cn(px, 'text-[2.25rem] font-bold tracking-tight leading-tight sm:text-[3rem]')}>Pick your pass.</h2>
             <p className="mt-3 max-w-[52ch] text-md text-[var(--warm-ink-2)]">
               From about ₹{perDay(BEST_VALUE)} a day. One reserved desk for the whole plan — paid at the desk, by UPI or cash.
             </p>
@@ -191,12 +191,12 @@ export default function LandingPage() {
                         ★ Best value
                       </span>
                     )}
-                    <span className={cn(px, 'text-xl font-semibold uppercase')}>{label}</span>
-                    <span className={cn(px, 'mt-4 text-[2.75rem] font-bold leading-none tabular')}>{formatINR(planPrice(duration))}</span>
+                    <span className={cn(px, 'text-xl font-semibold')}>{label}</span>
+                    <span className={cn(px, 'mt-4 text-[2.75rem] font-bold tracking-tight leading-none tabular')}>{formatINR(planPrice(duration))}</span>
                     <span className="mt-3 text-sm text-[var(--warm-ink-2)] tabular">
                       {formatINR(monthlyValue(duration))} a month · about ₹{perDay(duration)} a day
                     </span>
-                    <span className={cn(px, 'mt-6 text-base font-semibold uppercase text-[var(--saffron-700)]')}>Pick a seat ▶</span>
+                    <span className={cn(px, 'mt-6 text-base font-semibold text-[var(--saffron-700)]')}>Pick a seat ▶</span>
                   </Link>
                 );
               })}
@@ -206,7 +206,7 @@ export default function LandingPage() {
 
         {/* ── How to join: one dialogue box, the student as the portrait ── */}
         <section className="mx-auto max-w-[1000px] px-4 py-20 sm:px-6 lg:py-24">
-          <h2 className={cn(px, 'text-[2.25rem] font-bold leading-tight sm:text-[3rem]')}>Joining takes a minute.</h2>
+          <h2 className={cn(px, 'text-[2.25rem] font-bold tracking-tight leading-tight sm:text-[3rem]')}>Joining takes a minute.</h2>
           <div className="px-raised m-1 mt-10 flex flex-col gap-6 bg-[var(--bg-surface)] p-6 sm:flex-row sm:items-center sm:p-8">
             <div className="px-box mx-auto shrink-0 bg-[var(--warm-tint)] p-2 sm:mx-0">
               <Image src="/landing/student.png" alt="" width={1254} height={1254} sizes="120px" className="size-28 object-contain" />
@@ -242,7 +242,7 @@ export default function LandingPage() {
               {SITE_INFO.reviews.slice(0, 3).map((r) => (
                 <figure key={r.name} className="px-raised m-1 bg-[var(--bg-surface)] p-6">
                   <blockquote className="text-md leading-relaxed">“{r.quote}”</blockquote>
-                  <figcaption className={cn(px, 'mt-4 text-base font-semibold uppercase')}>
+                  <figcaption className={cn(px, 'mt-4 text-base font-semibold')}>
                     {r.name}{r.note && <span className="text-[var(--warm-ink-3)]"> · {r.note}</span>}
                   </figcaption>
                 </figure>
@@ -254,7 +254,7 @@ export default function LandingPage() {
           <section className="mx-auto max-w-[1160px] px-4 pb-20 sm:px-6">
             <div className="px-raised m-1 flex flex-col gap-5 bg-[var(--bg-surface)] p-6 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className={cn(px, 'text-2xl font-bold uppercase')}>Come and see the hall</h2>
+                <h2 className={cn(px, 'text-2xl font-bold')}>Come and see the hall</h2>
                 {SITE_INFO.address && <p className="mt-1 text-[15px] text-[var(--warm-ink-2)]">{SITE_INFO.address}</p>}
               </div>
               <div className="flex flex-wrap gap-4">
@@ -269,11 +269,11 @@ export default function LandingPage() {
         {/* ── Good to know: plain questions, plain answers ── */}
         <section className="border-t-4 border-[var(--warm-ink)] bg-[var(--bg-surface)]">
           <div className="mx-auto max-w-[1160px] px-4 py-16 sm:px-6">
-            <h2 className={cn(px, 'text-[2rem] font-bold leading-tight')}>Good to know</h2>
+            <h2 className={cn(px, 'text-[2rem] font-bold tracking-tight leading-tight')}>Good to know</h2>
             <dl className="mt-8 grid gap-x-12 gap-y-7 sm:grid-cols-2">
               {FAQ.map(({ q, a }) => (
                 <div key={q}>
-                  <dt className={cn(px, 'text-lg font-semibold uppercase')}>{q}</dt>
+                  <dt className={cn(px, 'text-lg font-semibold')}>{q}</dt>
                   <dd className="mt-1.5 text-[15px] leading-relaxed text-[var(--warm-ink-2)]">{a}</dd>
                 </div>
               ))}
@@ -284,7 +284,7 @@ export default function LandingPage() {
         {/* ── Closing: a row of empty desks, waiting ── */}
         <section className="overflow-hidden bg-[var(--warm-band)] pt-16">
           <div className="mx-auto max-w-[1160px] px-4 text-center sm:px-6">
-            <h2 className={cn(px, 'text-[2.25rem] font-bold leading-tight sm:text-[3rem]')}>
+            <h2 className={cn(px, 'text-[2.25rem] font-bold tracking-tight leading-tight sm:text-[3rem]')}>
               {isLoading || free === 0 ? 'Your desk is waiting.' : `${free} desks are free today.`}
             </h2>
             <div className="mt-7">

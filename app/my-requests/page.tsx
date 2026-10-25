@@ -49,7 +49,7 @@ export default function MyRequestsPage() {
       <UnifiedHeader />
 
       <main className="mx-auto w-full max-w-[760px] flex-1 px-4 py-10 sm:px-6 lg:py-16">
-        <h1 className="font-pixel text-[2.25rem] font-bold leading-none sm:text-[3rem]">
+        <h1 className="font-display text-[2.25rem] font-bold tracking-tight leading-none sm:text-[3rem]">
           My requests
         </h1>
         <p className="mt-4 text-md text-[var(--warm-ink-2)]">
@@ -84,7 +84,7 @@ export default function MyRequestsPage() {
           {searched && displayResults !== null && (
             displayResults.length === 0 ? (
               <div className="px-box m-1 bg-[var(--bg-surface)] p-6">
-                <p className="font-pixel text-xl font-bold uppercase">No requests for this number</p>
+                <p className="font-display text-xl font-bold">No requests for this number</p>
                 <p className="mt-2 text-sm text-[var(--warm-ink-2)]">
                   Check the number, or{' '}
                   <button type="button" onClick={() => router.push('/browse')} className="cursor-pointer font-semibold text-[var(--saffron-700)] underline underline-offset-4">
@@ -96,7 +96,7 @@ export default function MyRequestsPage() {
             ) : (
               <>
                 <p className="mb-4 text-sm text-[var(--warm-ink-2)]">
-                  <span className="font-pixel tabular text-[var(--warm-ink)]">{displayResults.length}</span>{' '}
+                  <span className="font-display tabular text-[var(--warm-ink)]">{displayResults.length}</span>{' '}
                   {displayResults.length === 1 ? 'request' : 'requests'}
                   {pendingCount > 0 && <> · <span className="font-mono tabular">{pendingCount}</span> waiting</>}
                   {approvedCount > 0 && <> · <span className="font-mono tabular">{approvedCount}</span> allotted</>}
@@ -108,8 +108,8 @@ export default function MyRequestsPage() {
                     return (
                       <li key={req.id || i} className="px-raised m-1 flex gap-4 bg-[var(--bg-surface)] p-4 sm:p-5">
                         <div className="flex size-16 shrink-0 flex-col items-center justify-center border-4 border-[var(--warm-ink)] bg-[var(--warm-band)]">
-                          <span className="font-pixel text-xs uppercase leading-none text-[var(--warm-ink-3)]">Desk</span>
-                          <span className="mt-1 font-pixel text-2xl font-bold leading-none tabular">{req.seat}</span>
+                          <span className="font-display text-xs uppercase leading-none text-[var(--warm-ink-3)]">Desk</span>
+                          <span className="mt-1 font-display text-2xl font-bold leading-none tabular">{req.seat}</span>
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">

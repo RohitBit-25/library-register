@@ -8,7 +8,7 @@ import SeatDetailPanel from '@/components/seat/SeatDetailPanel';
 import AddMemberSheet from '@/components/seat/AddMemberSheet';
 import GlobalSearch from '@/components/ui/GlobalSearch';
 import { SeatSkeleton } from '@/components/ui/Skeleton';
-import { type Duration, type Member } from '@/lib/types';
+import { type Duration, type Member, type NewMember } from '@/lib/types';
 import { useAuth } from '@/hooks/useAuth';
 import { useStaggerReveal } from '@/hooks/useStaggerReveal';
 import { getSeatStatus, cn } from '@/lib/utils';
@@ -116,8 +116,8 @@ export default function SeatGridContent() {
     addToast('warning', `Seat ${seat} marked as pending payment`);
   };
 
-  const handleRenew = (seat: number, joinDate: string, duration: Duration) => {
-    renew(seat, joinDate, duration as '1M' | '3M' | '6M' | '1Y', (msg) => addToast('error', msg));
+  const handleRenew = (seat: number, joinDate: string, duration: Duration, amount?: number) => {
+    renew(seat, joinDate, duration as '1M' | '3M' | '6M' | '1Y', (msg) => addToast('error', msg), amount);
     addToast('success', `Membership extended for Seat ${seat}`);
   };
 
@@ -135,7 +135,7 @@ export default function SeatGridContent() {
     addToast('success', `Updated details for Seat ${seat}`);
   };
 
-  const handleAddSubmit = async (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => {
+  const handleAddSubmit = async (seat: number, data: NewMember) => {
     const success = await add(seat, data);
     if (success) {
       addToast('success', `Allotted Seat ${seat} to ${data.name}`);

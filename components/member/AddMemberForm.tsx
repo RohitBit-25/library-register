@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useEffect, useState } from 'react';
-import { type Member } from '@/lib/types';
+import { type NewMember } from '@/lib/types';
 import { calcExpiry, todayISO, cn } from '@/lib/utils';
 import { Zap, User, Phone as PhoneIcon } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -44,7 +44,7 @@ type AddMemberFormValues = z.infer<typeof addMemberSchema>;
 
 interface AddMemberFormProps {
   vacantSeats: number[];
-  onSubmit: (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => void;
+  onSubmit: (seat: number, data: NewMember) => void;
   initialData?: { name: string; phone: string; paymentMode: 'upi' | 'cash' };
 }
 
@@ -109,7 +109,9 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
       fee: data.fee,
       paymentMode: data.paymentMode,
       documentStatus: data.documentStatus,
-      termsAccepted: true
+      termsAccepted: true,
+      // Recorded in Collections; left out (plan price) when the box is empty.
+      ...(amount > 0 ? { amount } : {}),
     });
   };
 
@@ -258,23 +260,26 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           />
         </FieldGroup>
         
+        <div>
+          <label htmlFor="add-amount" className="mb-1.5 ml-1 block text-sm font-medium text-[var(--text-primary)]">
+            Amount paid (₹)
+          </label>
+          <input
+            id="add-amount"
+            type="text"
+            inputMode="numeric"
+            value={amountText}
+            onChange={(e) => setAmountTyped(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            className="w-full min-h-[44px] rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] px-3.5 font-mono text-base tabular text-[var(--text-primary)] focus:border-[var(--saffron-600)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]/20"
+          />
+          <p className="mt-1.5 ml-1 text-xs text-[var(--text-secondary)]">
+            {watchDuration} plan is {formatINR(planPrice(watchDuration))}. Change it for a discount or part payment — Collections records this amount.
+          </p>
+        </div>
+
         {watchPaymentMode === 'upi' && (
           <div className="bg-[var(--bg-base)] rounded-xl p-6 flex flex-col items-center justify-center border border-[var(--border-default)] mt-2 text-center animate-in fade-in zoom-in-95 duration-200 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 w-full h-1 bg-[var(--saffron-500)]" />
-            <label htmlFor="add-amount" className="mb-1.5 self-stretch text-left text-sm font-medium text-[var(--text-primary)]">
-              Amount (₹)
-            </label>
-            <input
-              id="add-amount"
-              type="text"
-              inputMode="numeric"
-              value={amountText}
-              onChange={(e) => setAmountTyped(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              className="mb-1.5 w-full min-h-[44px] rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] px-3.5 font-mono text-base tabular text-[var(--text-primary)] focus:border-[var(--saffron-600)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]/20"
-            />
-            <p className="mb-4 self-stretch text-left text-xs text-[var(--text-secondary)]">
-              {watchDuration} plan is {formatINR(planPrice(watchDuration))}. Clear it to let the student enter the amount in their app.
-            </p>
             <p className="text-sm font-semibold text-[var(--text-primary)] mb-4">
               {amount > 0
                 ? <>Scan to pay <span className="tabular">{formatINR(amount)}</span> via UPI</>

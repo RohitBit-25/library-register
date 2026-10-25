@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { type Member } from '@/lib/types';
+import { type Member, type NewMember } from '@/lib/types';
 import { calcExpiry } from '@/lib/utils';
 
 // ─── Resilient fetcher with error handling ─────────────────────────
@@ -102,7 +102,7 @@ export function useMembers() {
   // ─── Update member with rollback ─────────────────────────────
   const update = useCallback(async (
     seat: number,
-    patch: Partial<Member> & { renewal?: boolean },
+    patch: Partial<Member> & { renewal?: boolean; amount?: number },
     onError?: (msg: string) => void
   ) => {
     // Snapshot for rollback
@@ -188,7 +188,7 @@ export function useMembers() {
   // ─── Add member with rollback ────────────────────────────────
   const add = useCallback(async (
     seatNumber: number,
-    data: Omit<Member, 'seat' | 'vacant'>,
+    data: NewMember,
     onError?: (msg: string) => void
   ): Promise<boolean> => {
     const isOccupied = members.some(m => m.seat === seatNumber && !m.vacant);
@@ -229,12 +229,14 @@ export function useMembers() {
     seat: number,
     joinDate: string,
     duration: '1M' | '3M' | '6M' | '1Y',
-    onError?: (msg: string) => void
+    onError?: (msg: string) => void,
+    /** Rupees actually paid; omitted = the plan price. */
+    amount?: number,
   ) => {
     const expiry = calcExpiry(joinDate, duration);
     // `renewal` tells the server this is a newly paid term, so it is ledgered
     // even when the previous term was already paid.
-    update(seat, { joinDate, duration, expiry, fee: 'paid', renewal: true }, onError);
+    update(seat, { joinDate, duration, expiry, fee: 'paid', renewal: true, ...(amount ? { amount } : {}) }, onError);
   }, [update]);
 
   // ─── Get next vacant seat ────────────────────────────────────

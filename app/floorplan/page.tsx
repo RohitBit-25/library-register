@@ -6,7 +6,7 @@ import { ArrowLeft, Minus, Plus, Maximize2 } from 'lucide-react';
 import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
 import AddMemberSheet from '@/components/seat/AddMemberSheet';
-import { type Duration, type Member } from '@/lib/types';
+import { type Duration, type Member, type NewMember } from '@/lib/types';
 import SeatTile from '@/components/seat/SeatTile';
 import SeatDetailPanel from '@/components/seat/SeatDetailPanel';
 import { SeatMapContainer, SeatMapWrapper } from '@/components/seat/SeatMap';
@@ -107,8 +107,8 @@ export default function FloorPlanPage() {
     update(seat, { fee: 'due' }, (msg) => addToast('error', msg));
     addToast('warning', `Seat ${seat} marked as pending payment`);
   };
-  const onRenew = (seat: number, joinDate: string, duration: Duration) => {
-    renew(seat, joinDate, duration as '1M' | '3M' | '6M' | '1Y', (msg) => addToast('error', msg));
+  const onRenew = (seat: number, joinDate: string, duration: Duration, amount?: number) => {
+    renew(seat, joinDate, duration as '1M' | '3M' | '6M' | '1Y', (msg) => addToast('error', msg), amount);
     addToast('success', `Membership extended for Seat ${seat}`);
   };
   const onRemove = (seat: number) => {
@@ -123,7 +123,7 @@ export default function FloorPlanPage() {
     update(seat, patch, (msg) => addToast('error', msg));
     addToast('success', `Updated details for Seat ${seat}`);
   };
-  const onAdd = async (seat: number, data: Omit<Member, 'seat' | 'vacant'>) => {
+  const onAdd = async (seat: number, data: NewMember) => {
     if (await add(seat, data)) {
       addToast('success', `Allotted Seat ${seat} to ${data.name}`);
       close();

@@ -44,7 +44,7 @@ export default function PageHeader({
   return (
     <header className={`mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between ${className}`}>
       <div className="min-w-0">
-        <h1 className="flex items-center gap-2.5 font-pixel text-lg font-bold leading-tight text-[var(--text-primary)] sm:text-xl">
+        <h1 className="flex items-center gap-2.5 font-display text-lg font-semibold leading-tight text-[var(--text-primary)] sm:text-xl">
           {/* `icon` is accepted for existing call sites but not drawn: half
               the pages passed one and half did not, so titles never lined up. */}
           <span className="truncate">{title}</span>

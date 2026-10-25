@@ -100,11 +100,11 @@ export default function BrowsePage() {
 
   const handleSubmitRequest = async (
     seat: number, name: string, phone: string, message: string, joinDate: string, duration: Duration, shift: Shift,
-    transactionId: string, paymentMode: 'upi' | 'cash', documentUrl: string
+    transactionId: string, paymentMode: 'upi' | 'cash', documentUrl: string, amount?: number
   ) => {
     const result = await addRequest({
       seat, userName: name, userPhone: phone, message, joinDate, duration, shift,
-      transactionId, paymentMode, documentUrl,
+      transactionId, paymentMode, documentUrl, amount,
     });
     // Not closed here: the sheet shows its own "request sent" state and
     // calls onClose when it is done. Closing on success hid that
@@ -127,11 +127,11 @@ export default function BrowsePage() {
       <main className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col px-4 py-6 sm:px-6 lg:py-8">
         <header className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-pixel text-[2rem] font-bold leading-none sm:text-[2.5rem]">
+            <h1 className="font-display text-[2rem] font-bold tracking-tight leading-none sm:text-[2.5rem]">
               Pick a free desk
             </h1>
             <p className="mt-3 flex flex-wrap items-center gap-3 text-sm text-[var(--warm-ink-2)]">
-              <span className="px-box m-1 inline-flex items-center gap-2 bg-[var(--px-hud)] px-3 py-1 font-pixel text-sm font-semibold uppercase text-[var(--px-hud-text)]" aria-live="polite">
+              <span className="px-box m-1 inline-flex items-center gap-2 bg-[var(--px-hud)] px-3 py-1 font-display text-sm font-semibold text-[var(--px-hud-text)]" aria-live="polite">
                 <span className="size-2 bg-[var(--px-hud-text)]" aria-hidden="true" />
                 {isLoading ? 'Loading…' : `Free ${freeCount} / ${members.length}`}
               </span>
@@ -203,7 +203,7 @@ export default function BrowsePage() {
                   <li key={l.label} className="flex items-center gap-1.5">
                     <span className={cn('size-3.5 border-2', l.swatch)} aria-hidden="true" />
                     {l.label}
-                    {n !== null && !isLoading && <span className="font-pixel tabular text-[var(--warm-ink)]">{n}</span>}
+                    {n !== null && !isLoading && <span className="font-display tabular text-[var(--warm-ink)]">{n}</span>}
                   </li>
                 );
               })}
@@ -214,7 +214,7 @@ export default function BrowsePage() {
                 orientation, which is what a map is good for on a phone. */}
             {!isLoading && (
               <div data-equivalent-for="seat-map" className="mt-6 sm:hidden">
-                <h2 className="mb-4 font-pixel text-xl font-bold uppercase">
+                <h2 className="mb-4 font-display text-xl font-bold">
                   Free desks <span className="text-[var(--warm-ink-3)] tabular">{availableSeats.length}</span>
                 </h2>
                 {availableSeats.length === 0 ? (
@@ -229,7 +229,7 @@ export default function BrowsePage() {
                         type="button"
                         onClick={() => handleSeatClick(seat)}
                         aria-label={`Seat ${seat}, free — tap to request`}
-                        className="px-btn px-box min-h-[48px] cursor-pointer bg-[var(--emerald-50)] font-pixel text-lg font-semibold text-[var(--emerald-700)] tabular"
+                        className="px-btn px-box min-h-[48px] cursor-pointer bg-[var(--emerald-50)] font-display text-lg font-semibold text-[var(--emerald-700)] tabular"
                       >
                         {seat}
                       </button>
@@ -246,8 +246,8 @@ export default function BrowsePage() {
             <div className="px-raised sticky top-6 m-1 bg-[var(--bg-surface)] p-5">
               {selectedMember?.vacant ? (
                 <>
-                  <p className="font-pixel text-sm uppercase text-[var(--warm-ink-3)]">{seatRow(selectedMember.seat)}</p>
-                  <h2 className="mt-1 font-pixel text-[2.75rem] font-bold leading-none">
+                  <p className="font-display text-sm uppercase text-[var(--warm-ink-3)]">{seatRow(selectedMember.seat)}</p>
+                  <h2 className="mt-1 font-display text-[2.75rem] font-bold tracking-tight leading-none">
                     Desk <span className="tabular">{selectedMember.seat}</span>
                   </h2>
                   {/* Derived from where this seat actually sits in the hall. */}
@@ -272,7 +272,7 @@ export default function BrowsePage() {
                 </>
               ) : (
                 <>
-                  <h2 className="font-pixel text-xl font-bold uppercase">How it works</h2>
+                  <h2 className="font-display text-xl font-bold">How it works</h2>
                   <ol className="mt-4 space-y-4 text-sm">
                     {[
                       ['Pick a free seat', 'Green seats are open. Use the shift filter if you only need mornings or evenings.'],
@@ -280,7 +280,7 @@ export default function BrowsePage() {
                       ['Pay and get allotted', 'Pay by UPI or cash at the desk. The librarian confirms it and allots your seat — follow it under My requests.'],
                     ].map(([t, d], i) => (
                       <li key={t} className="flex gap-3">
-                        <span className="w-6 shrink-0 font-pixel text-lg font-bold leading-5 text-[var(--saffron-700)]">
+                        <span className="w-6 shrink-0 font-display text-lg font-bold leading-5 text-[var(--saffron-700)]">
                           {i + 1}
                         </span>
                         <span>
