@@ -7,17 +7,15 @@
 import { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Pixelify_Sans } from 'next/font/google';
 import { useMembers } from '@/hooks/useMembers';
 import { formatINR, monthlyValue, planPrice, PLAN_MONTHS } from '@/lib/pricing';
 import { PHOTOS } from '@/lib/photos';
 import { SITE_INFO } from '@/lib/siteInfo';
 import { SEAT_COUNT } from '@/lib/layoutConfig';
 import { cn } from '@/lib/utils';
-
-// The pixel face for headings, labels and prices — the voice of the owner's
-// art. Body copy stays in Geist so paragraphs read easily.
-const pixel = Pixelify_Sans({ subsets: ['latin'], weight: ['500', '600', '700'], display: 'swap' });
+import PixelButton from '@/components/pixel/PixelButton';
+import UnifiedHeader from '@/components/layout/UnifiedHeader';
+import PublicFooter from '@/components/layout/PublicFooter';
 
 /** Every figure comes from lib/pricing.ts — no rupee amount is written here. */
 const PLANS = [
@@ -48,54 +46,16 @@ const FAQ = [
   { q: 'How do I pay?', a: 'At the desk, by UPI or cash. Nothing is charged on this website.' },
 ];
 
-/** A pixel-framed button. `press` sinks it into its shadow, like a game button. */
-function PixelButton({ href, children, tone = 'saffron', className }: {
-  href: string; children: React.ReactNode; tone?: 'saffron' | 'cream'; className?: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className={cn(
-        pixel.className,
-        'px-btn px-raised m-1 inline-flex min-h-[52px] items-center gap-2 whitespace-nowrap px-6 text-lg font-semibold uppercase',
-        tone === 'saffron'
-          ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] hover:bg-[var(--saffron-700)]'
-          : 'bg-[var(--bg-surface)] text-[var(--warm-ink)] hover:bg-[var(--warm-band)]',
-        className,
-      )}
-    >
-      {children}
-    </Link>
-  );
-}
-
 export default function LandingPage() {
   const { members, isLoading } = useMembers();
   const free = useMemo(() => members.filter((m) => m.vacant).length, [members]);
   const total = members.length || SEAT_COUNT;
-  const px = pixel.className;
+  const px = 'font-pixel';
   const contact = SITE_INFO.phone || SITE_INFO.whatsapp || SITE_INFO.address || SITE_INFO.mapsUrl;
 
   return (
     <div className="flex min-h-dvh flex-col bg-[var(--warm-bg)] text-[var(--warm-ink)]">
-      {/* ── Header: name plate, three links, one button ── */}
-      <header className="border-b-4 border-[var(--warm-ink)] bg-[var(--warm-bg)]">
-        <div className="mx-auto flex max-w-[1160px] items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <Link href="/landing" className="flex min-w-0 items-center gap-3" aria-label="Shree Gangaur Library — home">
-            <Image src="/logo-mark.png" alt="" width={40} height={40} className="size-10 shrink-0 object-contain" priority />
-            <span className={cn(px, 'truncate text-lg font-bold uppercase leading-none sm:text-xl')}>
-              <span className="sm:hidden">Gangaur</span>
-              <span className="hidden sm:inline">Shree Gangaur Library</span>
-            </span>
-          </Link>
-          <nav aria-label="Main" className="flex items-center gap-1 sm:gap-5">
-            <Link href="/browse" className="hidden text-sm font-medium text-[var(--warm-ink-2)] hover:text-[var(--warm-ink)] md:inline">Seats</Link>
-            <Link href="#fees" className="hidden text-sm font-medium text-[var(--warm-ink-2)] hover:text-[var(--warm-ink)] md:inline">Fees</Link>
-            <Link href="/my-requests" className="px-2 text-sm font-medium text-[var(--warm-ink-2)] hover:text-[var(--warm-ink)]">My requests</Link>
-            <Link href="/admin/login" className="hidden text-sm font-medium text-[var(--warm-ink-3)] hover:text-[var(--warm-ink)] lg:inline">Staff</Link>
-          </nav>
-        </div>
-      </header>
+      <UnifiedHeader />
 
       <main className="flex-1">
         {/* ── Hero: the promise, and the student who keeps it ── */}
@@ -254,7 +214,7 @@ export default function LandingPage() {
             <ol className="space-y-4">
               {STEPS.map((s, i) => (
                 <li key={s} className="flex items-baseline gap-4 text-md">
-                  <span className={cn(px, 'shrink-0 whitespace-nowrap text-xl font-bold text-[var(--saffron-700)]')}>{i + 1} ▸</span>
+                  <span className={cn(px, 'w-10 shrink-0 whitespace-nowrap text-xl font-bold text-[var(--saffron-700)]')}>{i + 1} ▸</span>
                   <span>{s}</span>
                 </li>
               ))}
@@ -345,19 +305,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t-4 border-[var(--warm-ink)] bg-[var(--warm-ink)] text-[var(--warm-bg)]">
-        <div className="mx-auto flex max-w-[1160px] flex-col gap-4 px-4 py-7 sm:px-6 md:flex-row md:items-center md:justify-between">
-          <p className={cn(px, 'text-lg font-semibold uppercase')}>
-            Shree Gangaur Library <span className="font-devanagari normal-case">· श्री गणगौर</span>
-          </p>
-          <p className="text-sm text-[var(--warm-on-saffron)]">Rajsamand, Rajasthan · 6 AM – 10 PM daily</p>
-          <nav aria-label="Footer" className="flex gap-6 text-sm">
-            <Link href="/browse" className="hover:underline">Seats</Link>
-            <Link href="/my-requests" className="hover:underline">My requests</Link>
-            <Link href="/admin/login" className="hover:underline">Staff sign in</Link>
-          </nav>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

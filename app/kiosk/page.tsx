@@ -7,7 +7,8 @@ import { useAttendance } from '@/hooks/useAttendance';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { Delete, ArrowRight, ArrowLeft, LogIn, LogOut } from 'lucide-react';
-import Wordmark from '@/components/layout/Wordmark';
+import Image from 'next/image';
+import PixelButton from '@/components/pixel/PixelButton';
 import { isSeat } from '@/lib/layoutConfig';
 import { cn } from '@/lib/utils';
 
@@ -67,14 +68,20 @@ export default function KioskPage() {
     setActiveSeat(null);
   };
 
-  const key = 'flex h-16 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-surface)] text-2xl font-medium tabular text-[var(--text-primary)] transition-ui hover:border-[var(--border-strong)] active:bg-[var(--bg-muted)]';
+  const key = 'px-btn px-raised m-1 flex h-16 cursor-pointer items-center justify-center bg-[var(--bg-surface)] font-pixel text-[1.75rem] font-semibold tabular text-[var(--warm-ink)] hover:bg-[var(--warm-band)]';
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[var(--bg-void)]">
-      <header className="flex items-center justify-between border-b border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3 sm:px-6">
-        <Wordmark size="md" caption="Self check-in" />
+    <div className="flex min-h-dvh flex-col bg-[var(--warm-bg)] text-[var(--warm-ink)]">
+      <header className="flex items-center justify-between gap-3 border-b-4 border-[var(--warm-ink)] px-4 py-3 sm:px-6">
+        <span className="flex min-w-0 items-center gap-3">
+          <Image src="/logo-mark.png" alt="" width={40} height={40} className="size-10 shrink-0 object-contain" priority />
+          <span className="min-w-0 leading-none">
+            <span className="block truncate font-pixel text-lg font-bold uppercase"><span className="sm:hidden">Gangaur</span><span className="hidden sm:inline">Shree Gangaur Library</span></span>
+            <span className="mt-1 block text-xs text-[var(--warm-ink-3)]">Self check-in</span>
+          </span>
+        </span>
         {isAdmin && (
-          <Link href="/" className="flex items-center gap-1.5 text-sm font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
+          <Link href="/" className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-[var(--warm-ink-3)] hover:text-[var(--warm-ink)]">
             <ArrowLeft className="size-4" aria-hidden="true" />
             Staff desk
           </Link>
@@ -82,36 +89,34 @@ export default function KioskPage() {
       </header>
 
       <main className="flex flex-1 items-center justify-center px-4 py-10">
-        <div className="w-full max-w-[360px]">
+        <div className="w-full max-w-[380px]">
           {isLoading ? null : !isAdmin ? (
             <div className="text-center">
-              <h1 className="font-display text-xl font-semibold leading-tight">Check-in is locked</h1>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+              <h1 className="font-pixel text-[2rem] font-bold uppercase leading-none">Check-in is locked</h1>
+              <p className="mt-4 text-sm leading-relaxed text-[var(--warm-ink-2)]">
                 A librarian needs to sign in on this device once. After that it
                 stays on this screen for students to use.
               </p>
-              <Link
-                href="/admin/login?next=/kiosk"
-                className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--ink)] bg-[var(--ink)] px-5 text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--ink-hover)]"
-              >
-                Staff sign in
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
+              <PixelButton href="/admin/login?next=/kiosk" className="mt-7">
+                Staff sign in ▶
+              </PixelButton>
             </div>
           ) : activeMember ? (
             <div className="text-center">
-              <p className="text-sm text-[var(--text-secondary)]">Seat</p>
-              <p className="font-display text-4xl font-semibold leading-none tabular">{activeMember.seat}</p>
-              <h1 className="mt-4 text-lg font-semibold">{activeMember.name}</h1>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">
+              <p className="px-box m-1 inline-flex items-baseline gap-3 bg-[var(--px-hud)] px-5 py-3 font-pixel uppercase text-[var(--px-hud-text)]">
+                <span className="text-base">Desk</span>
+                <span className="text-[3rem] font-bold leading-none tabular">{activeMember.seat}</span>
+              </p>
+              <h1 className="mt-6 font-pixel text-2xl font-bold">{activeMember.name}</h1>
+              <p className="mt-1 text-sm text-[var(--warm-ink-2)]">
                 {isPresent(todayStr, activeMember.seat) ? 'You are checked in today.' : 'Not checked in yet today.'}
               </p>
-              <div className="mt-8 grid grid-cols-2 gap-3">
+              <div className="mt-8 grid grid-cols-2 gap-4">
                 <button
                   type="button"
                   disabled={busy || isPresent(todayStr, activeMember.seat)}
                   onClick={() => act('in')}
-                  className="flex min-h-[64px] cursor-pointer flex-col items-center justify-center gap-1 rounded-[var(--radius-md)] border border-[var(--ink)] bg-[var(--ink)] text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--ink-hover)] disabled:cursor-not-allowed disabled:border-[var(--border-default)] disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)]"
+                  className="px-btn px-raised m-1 flex min-h-[72px] cursor-pointer flex-col items-center justify-center gap-1 bg-[var(--saffron-600)] font-pixel text-base font-semibold uppercase text-[var(--text-inverse)] hover:bg-[var(--saffron-700)] disabled:cursor-not-allowed disabled:bg-[var(--warm-band)] disabled:text-[var(--warm-ink-3)]"
                 >
                   <LogIn className="size-5" aria-hidden="true" />
                   Check in
@@ -120,7 +125,7 @@ export default function KioskPage() {
                   type="button"
                   disabled={busy || !isPresent(todayStr, activeMember.seat)}
                   onClick={() => act('out')}
-                  className="flex min-h-[64px] cursor-pointer flex-col items-center justify-center gap-1 rounded-[var(--radius-md)] border border-[var(--border-strong)] bg-[var(--bg-surface)] text-sm font-semibold text-[var(--text-primary)] transition-ui hover:bg-[var(--bg-muted)] disabled:cursor-not-allowed disabled:text-[var(--text-disabled)]"
+                  className="px-btn px-raised m-1 flex min-h-[72px] cursor-pointer flex-col items-center justify-center gap-1 bg-[var(--bg-surface)] font-pixel text-base font-semibold uppercase text-[var(--warm-ink)] hover:bg-[var(--warm-band)] disabled:cursor-not-allowed disabled:bg-[var(--warm-band)] disabled:text-[var(--warm-ink-3)]"
                 >
                   <LogOut className="size-5" aria-hidden="true" />
                   Check out
@@ -129,28 +134,28 @@ export default function KioskPage() {
               <button
                 type="button"
                 onClick={() => setActiveSeat(null)}
-                className="mt-4 cursor-pointer py-2 text-sm text-[var(--text-secondary)] underline-offset-4 hover:underline"
+                className="mt-5 cursor-pointer py-2 text-sm text-[var(--warm-ink-2)] underline-offset-4 hover:underline"
               >
                 Not you? Go back
               </button>
             </div>
           ) : (
             <>
-              <h1 className="text-center font-display text-xl font-semibold leading-tight">Type your seat number</h1>
+              <h1 className="text-center font-pixel text-[2rem] font-bold leading-none">Type your desk number</h1>
               <output
                 aria-live="polite"
                 className={cn(
-                  'mt-6 flex h-20 items-center justify-center rounded-[var(--radius-lg)] border border-[var(--border-strong)] bg-[var(--bg-surface)] font-display text-4xl font-semibold tabular',
-                  !seatInput && 'text-[var(--text-disabled)]',
+                  'px-box m-1 mt-7 flex h-24 items-center justify-center bg-[var(--px-hud)] font-pixel text-[3.5rem] font-bold tabular text-[var(--px-hud-text)]',
+                  !seatInput && 'text-[var(--px-hud-text)]/40',
                 )}
               >
                 {seatInput || '—'}
               </output>
-              <div className="mt-4 grid grid-cols-3 gap-2.5">
+              <div className="mt-6 grid grid-cols-3 gap-3">
                 {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((d) => (
                   <button key={d} type="button" className={key} onClick={() => press(d)}>{d}</button>
                 ))}
-                <button type="button" className={cn(key, 'text-[var(--text-secondary)]')} onClick={() => setSeatInput((p) => p.slice(0, -1))} aria-label="Delete last digit">
+                <button type="button" className={cn(key, 'text-[var(--warm-ink-2)]')} onClick={() => setSeatInput((p) => p.slice(0, -1))} aria-label="Delete last digit">
                   <Delete className="size-6" aria-hidden="true" />
                 </button>
                 <button type="button" className={key} onClick={() => press('0')}>0</button>
@@ -159,7 +164,7 @@ export default function KioskPage() {
                   onClick={enter}
                   disabled={!seatInput}
                   aria-label="Confirm seat number"
-                  className="flex h-16 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border border-[var(--ink)] bg-[var(--ink)] text-[var(--text-inverse)] transition-ui hover:bg-[var(--ink-hover)] disabled:cursor-not-allowed disabled:border-[var(--border-default)] disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)]"
+                  className="px-btn px-raised m-1 flex h-16 cursor-pointer items-center justify-center bg-[var(--saffron-600)] text-[var(--text-inverse)] hover:bg-[var(--saffron-700)] disabled:cursor-not-allowed disabled:bg-[var(--warm-band)] disabled:text-[var(--warm-ink-3)]"
                 >
                   <ArrowRight className="size-6" />
                 </button>

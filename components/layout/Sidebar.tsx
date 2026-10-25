@@ -59,7 +59,7 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
                       className={cn(
                         'flex min-h-[36px] items-center gap-2.5 rounded-[var(--radius-sm)] px-2.5 text-sm font-medium transition-ui',
                         isActive
-                          ? 'bg-[var(--bg-muted)] text-[var(--text-primary)]'
+                          ? 'bg-[var(--bg-muted)] text-[var(--text-primary)] shadow-[inset_4px_0_0_var(--saffron-600)]'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]',
                       )}
                     >

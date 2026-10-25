@@ -17,16 +17,22 @@ chosen by the owner on 2026-10-24 over an earlier editorial pass that read as
 dull. White surfaces on a cool grey page, near-black ink, one family, soft
 layered shadows, saffron kept for brand moments.
 
-## Public landing page (exception, 2026-10-25)
+## Student pages: pixel identity (2026-10-25)
 The owner rejected the SaaS and warm versions as generic and chose **their own
-pixel-art kit** for `/landing` only. The art lives in `public/landing/`
+pixel-art kit**. It now covers every student page — `/landing`, `/browse`
+(and its request form), `/my-requests`, `/kiosk` — through shared pieces:
+`UnifiedHeader` (name plate), `PublicFooter`, `PixelButton`
+(`components/pixel/`), and `Segmented pixel`. The staff side keeps the crisp
+system but shares the voice: page titles, the wordmark and the
+login title use `font-pixel`, and the active sidebar item carries a saffron
+edge. Staff figures stay in Geist: Pixelify's 5 reads as S at small sizes. The art lives in `public/landing/`
 (`hall.png`, `student.png`, `desk.png`, `desks-row.png`; originals kept at the
-repo root). Pixelify Sans is the display face (next/font, loaded in the page,
-nowhere else); body stays Geist. Surfaces are cream (`--warm-*`) with hard
-pixel boxes: `.px-box` (2px ink border + hard offset shadow), `.px-raised`,
+repo root). Pixelify Sans is the display face (`--font-pixelify` from the root layout,
+used as `font-pixel`); body and tables stay Geist. Surfaces are cream (`--warm-*`) with hard
+pixel boxes: `.px-box` (4px ink frame), `.px-raised` (frame + hard offset shadow),
 `.px-btn` (presses down on :active), `.px-planks` (wood floor under the art);
 colours come from `--px-*` tokens (wood, navy badge, green bullets, dark HUD
-chip). No rounded corners, no gradients, no soft shadows on this page. Voice is
+chip). No rounded corners, no gradients, no soft shadows on these pages. Voice is
 short and bilingual (Hindi speech bubble on the student). Seat counts and per-day
 fees are computed, never typed. Real-world details (phone, WhatsApp,
 address/map, reviews, photos) live in `lib/siteInfo.ts` / `lib/photos.ts` and

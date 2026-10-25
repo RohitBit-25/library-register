@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Tiro_Devanagari_Hindi } from "next/font/google";
+import { Geist, Geist_Mono, Pixelify_Sans, Tiro_Devanagari_Hindi } from "next/font/google";
 import "./globals.css";
 import AppShell from "@/components/layout/AppShell";
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
@@ -15,6 +15,15 @@ const geist = Geist({
 const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
+  display: "swap",
+});
+
+// The owner's pixel-art voice: student-page headings, buttons and prices, and
+// the staff page titles. Body copy and tables stay in Geist.
+const pixelify = Pixelify_Sans({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-pixelify",
   display: "swap",
 });
 
@@ -55,7 +64,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`h-full ${geist.variable} ${geistMono.variable} ${tiroDevanagari.variable}`}
+      className={`h-full ${geist.variable} ${geistMono.variable} ${pixelify.variable} ${tiroDevanagari.variable}`}
       suppressHydrationWarning
     >
       <head>

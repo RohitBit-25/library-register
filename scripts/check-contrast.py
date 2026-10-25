@@ -55,6 +55,11 @@ CHECKS = [
     ("--saffron-700",    "--warm-band",  4.5),
     ("--warm-on-saffron", "--saffron-600", 3.0),  # large Devanagari line only
     ("--px-hud-text",    "--px-hud",     4.5),
+    # Student pages (browse, my-requests, kiosk, request form).
+    ("--warm-ink-2",     "--bg-surface", 4.5),
+    ("--warm-ink-3",     "--bg-surface", 3.0),   # input borders (non-text)
+    ("--emerald-700",    "--emerald-50", 4.5),   # free-desk buttons on phones
+    ("--saffron-700",    "--bg-surface", 4.5),
     ("--text-inverse",   "--px-navy",    4.5),
     ("--text-accent",    "--bg-surface", 4.5),
     ("--text-link",      "--bg-surface", 4.5),

@@ -9,9 +9,9 @@ import PublicSeatMap from '@/components/seat/PublicSeatMap';
 import UnifiedHeader from '@/components/layout/UnifiedHeader';
 import SeatRequestSheet from '@/components/seat/SeatRequestSheet';
 import Segmented from '@/components/ui/Segmented';
-import { Button } from '@/components/ui/Button';
+import PixelButton from '@/components/pixel/PixelButton';
 import { SeatSkeleton } from '@/components/ui/Skeleton';
-import { Check, Minus, Plus as PlusIcon, Maximize2, ArrowRight } from 'lucide-react';
+import { Minus, Plus as PlusIcon, Maximize2 } from 'lucide-react';
 import { seatAmenities, seatRow, isSeat } from '@/lib/layoutConfig';
 import { cn } from '@/lib/utils';
 
@@ -118,26 +118,29 @@ export default function BrowsePage() {
     if (sent) { setSelectedSeat(null); setSent(false); }
   };
 
-  const zoomBtn = 'flex size-9 cursor-pointer items-center justify-center rounded-[var(--radius-sm)] border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-secondary)] transition-ui hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]';
+  const zoomBtn = 'flex size-10 cursor-pointer items-center justify-center bg-[var(--bg-surface)] text-[var(--warm-ink-2)] transition-ui hover:bg-[var(--warm-band)] hover:text-[var(--warm-ink)]';
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[var(--bg-void)] text-[var(--text-primary)]">
-      <UnifiedHeader />
+    <div className="flex min-h-dvh flex-col bg-[var(--warm-bg)] text-[var(--warm-ink)]">
+      <UnifiedHeader wide />
 
       <main className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col px-4 py-6 sm:px-6 lg:py-8">
         <header className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-display text-lg font-semibold leading-tight sm:text-xl">
-              Pick a free seat
+            <h1 className="font-pixel text-[2rem] font-bold leading-none sm:text-[2.5rem]">
+              Pick a free desk
             </h1>
-            <p className="mt-1.5 text-sm text-[var(--text-secondary)]">
-              {isLoading ? 'Loading the hall…' : (
-                <><span className="font-mono tabular text-[var(--text-primary)]">{freeCount}</span> of {members.length} free right now. Tap a green seat to request it.</>
-              )}
+            <p className="mt-3 flex flex-wrap items-center gap-3 text-sm text-[var(--warm-ink-2)]">
+              <span className="px-box m-1 inline-flex items-center gap-2 bg-[var(--px-hud)] px-3 py-1 font-pixel text-sm font-semibold uppercase text-[var(--px-hud-text)]" aria-live="polite">
+                <span className="size-2 bg-[var(--px-hud-text)]" aria-hidden="true" />
+                {isLoading ? 'Loading…' : `Free ${freeCount} / ${members.length}`}
+              </span>
+              Tap a green desk to request it.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Segmented
+              pixel
               label="Shift"
               value={shiftFilter}
               onChange={setShiftFilter}
@@ -147,12 +150,12 @@ export default function BrowsePage() {
                 { value: 'evening', label: 'Evening' },
               ]}
             />
-            <div className="hidden items-center gap-1 sm:flex" role="group" aria-label="Zoom">
+            <div className="px-box m-1 hidden items-center divide-x-4 divide-[var(--warm-ink)] sm:flex" role="group" aria-label="Zoom">
               <button type="button" className={zoomBtn} aria-label="Zoom out"
                 onClick={() => setZoom((z) => typeof z === 'number' ? Math.max(0.5, z - 0.25) : 0.75)}>
                 <Minus className="size-4" aria-hidden="true" />
               </button>
-              <button type="button" className={cn(zoomBtn, zoom === 'room' && 'border-[var(--text-primary)] text-[var(--text-primary)]')}
+              <button type="button" className={cn(zoomBtn, zoom === 'room' && 'bg-[var(--warm-band)] text-[var(--warm-ink)]')}
                 aria-label="Fit the whole room on screen" aria-pressed={zoom === 'room'}
                 onClick={() => setZoom((z) => (z === 'room' ? null : 'room'))}>
                 <Maximize2 className="size-4" aria-hidden="true" />
@@ -170,11 +173,13 @@ export default function BrowsePage() {
             {/* Fitting both axes needs a container with a real height. */}
             <div className="flex flex-1 sm:min-h-[60vh] lg:min-h-[calc(100dvh-260px)]">
               {isLoading ? (
-                <div className="grid w-full grid-cols-6 gap-2 rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 sm:grid-cols-8 md:grid-cols-10 shadow-[var(--shadow-xs)]">
+                <div className="px-box m-1 grid flex-1 grid-cols-6 gap-2 bg-[var(--bg-surface)] p-4 sm:grid-cols-8 md:grid-cols-10">
                   {Array.from({ length: 40 }, (_, i) => <SeatSkeleton key={i} />)}
                 </div>
               ) : (
+                <div className="px-box m-1 flex min-w-0 flex-1 overflow-hidden bg-[var(--bg-surface)]">
                 <PublicSeatMap
+                  frameless
                   fit={zoom === 'room' ? 'both' : 'width'}
                   scale={typeof zoom === 'number' ? zoom : undefined}
                   members={members}
@@ -183,10 +188,11 @@ export default function BrowsePage() {
                   onSelect={handleSeatClick}
                   isDimmed={(m) => !inShift.has(m.seat)}
                 />
+                </div>
               )}
             </div>
 
-            <ul className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--text-secondary)]" aria-label="Legend">
+            <ul className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-[var(--warm-ink-2)]" aria-label="Legend">
               {LEGEND.map((l) => {
                 // Live counts; "Selected" is your own pick, so it has none.
                 const n = l.label === 'Available' ? availableSeats.length
@@ -195,9 +201,9 @@ export default function BrowsePage() {
                   : null;
                 return (
                   <li key={l.label} className="flex items-center gap-1.5">
-                    <span className={cn('size-3 rounded-[3px] border', l.swatch)} aria-hidden="true" />
+                    <span className={cn('size-3.5 border-2', l.swatch)} aria-hidden="true" />
                     {l.label}
-                    {n !== null && !isLoading && <span className="font-mono tabular text-[var(--text-tertiary)]">{n}</span>}
+                    {n !== null && !isLoading && <span className="font-pixel tabular text-[var(--warm-ink)]">{n}</span>}
                   </li>
                 );
               })}
@@ -208,22 +214,22 @@ export default function BrowsePage() {
                 orientation, which is what a map is good for on a phone. */}
             {!isLoading && (
               <div data-equivalent-for="seat-map" className="mt-6 sm:hidden">
-                <h2 className="mb-3 font-display text-md font-semibold">
-                  Free seats <span className="font-mono text-sm font-normal text-[var(--text-tertiary)] tabular">{availableSeats.length}</span>
+                <h2 className="mb-4 font-pixel text-xl font-bold uppercase">
+                  Free desks <span className="text-[var(--warm-ink-3)] tabular">{availableSeats.length}</span>
                 </h2>
                 {availableSeats.length === 0 ? (
-                  <p className="text-sm text-[var(--text-secondary)]">
+                  <p className="text-sm text-[var(--warm-ink-2)]">
                     No free seats{shiftFilter === 'all' ? '' : ' in this shift'} right now. Requests still go on the waitlist.
                   </p>
                 ) : (
-                  <div className="grid grid-cols-5 gap-2">
+                  <div className="grid grid-cols-5 gap-3 p-1">
                     {availableSeats.map((seat) => (
                       <button
                         key={seat}
                         type="button"
                         onClick={() => handleSeatClick(seat)}
                         aria-label={`Seat ${seat}, free — tap to request`}
-                        className="min-h-[44px] rounded-[var(--radius-sm)] border border-[var(--emerald-500)] bg-[var(--bg-surface)] font-mono text-sm font-medium text-[var(--emerald-700)] tabular transition-ui active:bg-[var(--emerald-50)]"
+                        className="px-btn px-box min-h-[48px] cursor-pointer bg-[var(--emerald-50)] font-pixel text-lg font-semibold text-[var(--emerald-700)] tabular"
                       >
                         {seat}
                       </button>
@@ -237,37 +243,36 @@ export default function BrowsePage() {
           {/* Desktop side panel: always present, so the layout does not jump
               when a seat is chosen. Empty state explains the three steps. */}
           <aside className="hidden w-[300px] shrink-0 lg:block">
-            <div className="sticky top-6 rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-5 shadow-[var(--shadow-xs)]">
+            <div className="px-raised sticky top-6 m-1 bg-[var(--bg-surface)] p-5">
               {selectedMember?.vacant ? (
                 <>
-                  <p className="text-xs text-[var(--text-tertiary)]">{seatRow(selectedMember.seat)} · reading hall</p>
-                  <h2 className="mt-1 font-display text-xl font-semibold leading-none">
-                    Seat <span className="tabular">{selectedMember.seat}</span>
+                  <p className="font-pixel text-sm uppercase text-[var(--warm-ink-3)]">{seatRow(selectedMember.seat)}</p>
+                  <h2 className="mt-1 font-pixel text-[2.75rem] font-bold leading-none">
+                    Desk <span className="tabular">{selectedMember.seat}</span>
                   </h2>
                   {/* Derived from where this seat actually sits in the hall. */}
-                  <ul className="mt-5 space-y-2 border-t border-[var(--border-default)] pt-4 text-sm text-[var(--text-secondary)]">
+                  <ul className="mt-5 space-y-2 border-t-4 border-[var(--warm-line)] pt-4 text-sm text-[var(--warm-ink-2)]">
                     {seatAmenities(selectedMember.seat).map((a) => (
                       <li key={a} className="flex items-start gap-2">
-                        <Check className="mt-0.5 size-4 shrink-0 text-[var(--emerald-600)]" aria-hidden="true" />
+                        <span className="mt-1.5 size-2 shrink-0 bg-[var(--px-green)]" aria-hidden="true" />
                         {a}
                       </li>
                     ))}
                   </ul>
-                  <Button className="mt-6 w-full" onClick={() => setRequestOpen(true)}>
-                    Request seat {selectedMember.seat}
-                    <ArrowRight className="size-4" aria-hidden="true" />
-                  </Button>
+                  <PixelButton className="mt-6 w-[calc(100%-8px)]" onClick={() => setRequestOpen(true)}>
+                    Request desk {selectedMember.seat} ▶
+                  </PixelButton>
                   <button
                     type="button"
                     onClick={() => setSelectedSeat(null)}
-                    className="mt-2 w-full cursor-pointer py-2 text-sm text-[var(--text-secondary)] underline-offset-4 hover:text-[var(--text-primary)] hover:underline"
+                    className="mt-3 w-full cursor-pointer py-2 text-sm text-[var(--warm-ink-2)] underline-offset-4 hover:text-[var(--warm-ink)] hover:underline"
                   >
-                    Choose a different seat
+                    Choose a different desk
                   </button>
                 </>
               ) : (
                 <>
-                  <h2 className="font-display text-md font-semibold">How it works</h2>
+                  <h2 className="font-pixel text-xl font-bold uppercase">How it works</h2>
                   <ol className="mt-4 space-y-4 text-sm">
                     {[
                       ['Pick a free seat', 'Green seats are open. Use the shift filter if you only need mornings or evenings.'],
@@ -275,12 +280,12 @@ export default function BrowsePage() {
                       ['Pay and get allotted', 'Pay by UPI or cash at the desk. The librarian confirms it and allots your seat — follow it under My requests.'],
                     ].map(([t, d], i) => (
                       <li key={t} className="flex gap-3">
-                        <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[var(--border-strong)] font-mono text-xs text-[var(--text-secondary)]">
+                        <span className="w-6 shrink-0 font-pixel text-lg font-bold leading-5 text-[var(--saffron-700)]">
                           {i + 1}
                         </span>
                         <span>
-                          <span className="block font-semibold text-[var(--text-primary)]">{t}</span>
-                          <span className="mt-0.5 block text-[var(--text-secondary)]">{d}</span>
+                          <span className="block font-semibold text-[var(--warm-ink)]">{t}</span>
+                          <span className="mt-0.5 block text-[var(--warm-ink-2)]">{d}</span>
                         </span>
                       </li>
                     ))}

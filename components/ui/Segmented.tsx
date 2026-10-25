@@ -18,6 +18,7 @@ export default function Segmented<T extends string>({
   label,
   className,
   size = 'md',
+  pixel = false,
 }: {
   value: T;
   onChange: (v: T) => void;
@@ -26,12 +27,18 @@ export default function Segmented<T extends string>({
   label: string;
   className?: string;
   size?: 'sm' | 'md';
+  /** The student pages' look: a hard-edged box, the chosen option in saffron. */
+  pixel?: boolean;
 }) {
   return (
     <div
       role="group"
       aria-label={label}
-      className={cn('inline-flex shrink-0 items-center gap-0.5 rounded-[var(--radius-md)] bg-[var(--bg-muted)] p-0.5', className)}
+      className={cn(
+        'inline-flex shrink-0 items-center',
+        pixel ? 'px-box m-1 bg-[var(--bg-surface)]' : 'gap-0.5 rounded-[var(--radius-md)] bg-[var(--bg-muted)] p-0.5',
+        className,
+      )}
     >
       {options.map((o) => {
         const on = o.value === value;
@@ -44,9 +51,13 @@ export default function Segmented<T extends string>({
             className={cn(
               'flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-[var(--radius-sm)] font-medium transition-ui',
               size === 'sm' ? 'min-h-[30px] px-2.5 text-xs' : 'min-h-[36px] px-3 text-sm',
-              on
-                ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-sm)] ring-1 ring-[var(--border-default)]'
-                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
+              pixel
+                ? cn('rounded-none font-pixel uppercase', on
+                  ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)]'
+                  : 'text-[var(--warm-ink-2)] hover:bg-[var(--warm-band)] hover:text-[var(--warm-ink)]')
+                : on
+                  ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-sm)] ring-1 ring-[var(--border-default)]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
             )}
           >
             {o.icon && <span className={cn('shrink-0', on ? 'text-[var(--saffron-600)]' : 'text-[var(--text-tertiary)]')} aria-hidden="true">{o.icon}</span>}

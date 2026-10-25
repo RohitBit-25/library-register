@@ -5,9 +5,10 @@ import { useSeatRequests } from '@/hooks/useSeatRequests';
 import { useRouter } from 'next/navigation';
 import { type SeatRequest } from '@/lib/types';
 import { cn, fmtDate, durationLabel, shiftLabel, todayISO } from '@/lib/utils';
-import { Button } from '@/components/ui/Button';
+import PixelButton from '@/components/pixel/PixelButton';
 import { Search, Phone, Clock, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import UnifiedHeader from '@/components/layout/UnifiedHeader';
+import PublicFooter from '@/components/layout/PublicFooter';
 
 export default function MyRequestsPage() {
   const { lookupByPhone, storedUserPhone, requests: autoRequests } = useSeatRequests();
@@ -44,24 +45,24 @@ export default function MyRequestsPage() {
   } as const;
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[var(--bg-void)]">
+    <div className="flex min-h-dvh flex-col bg-[var(--warm-bg)] text-[var(--warm-ink)]">
       <UnifiedHeader />
 
-      <main className="mx-auto w-full max-w-[760px] flex-1 px-4 py-6 sm:px-6 lg:py-10">
-        <h1 className="font-display text-lg font-semibold leading-tight sm:text-xl">
+      <main className="mx-auto w-full max-w-[760px] flex-1 px-4 py-10 sm:px-6 lg:py-16">
+        <h1 className="font-pixel text-[2.25rem] font-bold leading-none sm:text-[3rem]">
           My requests
         </h1>
-        <p className="mt-1.5 text-sm text-[var(--text-secondary)]">
+        <p className="mt-4 text-md text-[var(--warm-ink-2)]">
           Enter the phone number you used when you asked for a seat.
         </p>
 
         <form
-          className="mt-6 flex gap-2"
+          className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center"
           onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
         >
           <label htmlFor="my-requests-phone" className="sr-only">Phone number</label>
-          <div className="relative flex-1">
-            <Phone className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--text-tertiary)]" aria-hidden="true" />
+          <div className="px-box relative m-1 flex-1 bg-[var(--bg-surface)]">
+            <Phone className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--warm-ink-3)]" aria-hidden="true" />
             <input
               id="my-requests-phone"
               type="tel"
@@ -70,23 +71,23 @@ export default function MyRequestsPage() {
               value={phone}
               onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
               placeholder="10-digit mobile number"
-              className="min-h-[44px] w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] pl-9 pr-3 font-mono text-base text-[var(--text-primary)] tabular placeholder:font-body placeholder:text-[var(--text-tertiary)] focus:border-[var(--saffron-600)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]/20"
+              className="min-h-[52px] w-full bg-transparent pl-10 pr-3 font-pixel text-lg tracking-wider text-[var(--warm-ink)] tabular placeholder:font-body placeholder:text-base placeholder:tracking-normal placeholder:text-[var(--text-tertiary)] focus:outline-none focus-visible:bg-[var(--warm-tint)]"
             />
           </div>
-          <Button type="submit" disabled={phone.length < 10 || loading} className="min-w-[96px]">
+          <PixelButton type="submit" disabled={phone.length < 10 || loading}>
             {loading ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : <Search className="size-4" aria-hidden="true" />}
             Look up
-          </Button>
+          </PixelButton>
         </form>
 
-        <div className="mt-8" aria-live="polite">
+        <div className="mt-10" aria-live="polite">
           {searched && displayResults !== null && (
             displayResults.length === 0 ? (
-              <div className="border-t border-[var(--border-default)] pt-6">
-                <p className="font-semibold">No requests for this number</p>
-                <p className="mt-1 text-sm text-[var(--text-secondary)]">
+              <div className="px-box m-1 bg-[var(--bg-surface)] p-6">
+                <p className="font-pixel text-xl font-bold uppercase">No requests for this number</p>
+                <p className="mt-2 text-sm text-[var(--warm-ink-2)]">
                   Check the number, or{' '}
-                  <button type="button" onClick={() => router.push('/browse')} className="cursor-pointer font-medium text-[var(--text-link)] underline underline-offset-4">
+                  <button type="button" onClick={() => router.push('/browse')} className="cursor-pointer font-semibold text-[var(--saffron-700)] underline underline-offset-4">
                     pick a free seat
                   </button>{' '}
                   to send one.
@@ -94,21 +95,21 @@ export default function MyRequestsPage() {
               </div>
             ) : (
               <>
-                <p className="mb-3 text-sm text-[var(--text-secondary)]">
-                  <span className="font-mono tabular text-[var(--text-primary)]">{displayResults.length}</span>{' '}
+                <p className="mb-4 text-sm text-[var(--warm-ink-2)]">
+                  <span className="font-pixel tabular text-[var(--warm-ink)]">{displayResults.length}</span>{' '}
                   {displayResults.length === 1 ? 'request' : 'requests'}
                   {pendingCount > 0 && <> · <span className="font-mono tabular">{pendingCount}</span> waiting</>}
                   {approvedCount > 0 && <> · <span className="font-mono tabular">{approvedCount}</span> allotted</>}
                   {rejectedCount > 0 && <> · <span className="font-mono tabular">{rejectedCount}</span> not approved</>}
                 </p>
-                <ul className="divide-y divide-[var(--border-default)] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-xs)]">
+                <ul className="space-y-6">
                   {displayResults.map((req, i) => {
                     const st = STATUS[req.status as keyof typeof STATUS] ?? STATUS.pending;
                     return (
-                      <li key={req.id || i} className="flex gap-4 p-4 sm:p-5">
-                        <div className="flex size-14 shrink-0 flex-col items-center justify-center rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-base)]">
-                          <span className="text-xs leading-none text-[var(--text-tertiary)]">Seat</span>
-                          <span className="mt-0.5 font-display text-md font-semibold leading-none tabular">{req.seat}</span>
+                      <li key={req.id || i} className="px-raised m-1 flex gap-4 bg-[var(--bg-surface)] p-4 sm:p-5">
+                        <div className="flex size-16 shrink-0 flex-col items-center justify-center border-4 border-[var(--warm-ink)] bg-[var(--warm-band)]">
+                          <span className="font-pixel text-xs uppercase leading-none text-[var(--warm-ink-3)]">Desk</span>
+                          <span className="mt-1 font-pixel text-2xl font-bold leading-none tabular">{req.seat}</span>
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
@@ -157,6 +158,7 @@ export default function MyRequestsPage() {
           )}
         </div>
       </main>
+      <PublicFooter />
     </div>
   );
 }

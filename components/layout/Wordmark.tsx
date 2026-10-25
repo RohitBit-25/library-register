@@ -48,7 +48,7 @@ export default function Wordmark({
         )}
         <span
           className={cn(
-            'block truncate font-semibold text-[var(--text-primary)]',
+            'block truncate font-pixel font-bold text-[var(--text-primary)]',
             size === 'sm' && 'text-sm',
             size === 'md' && 'text-[15px]',
             size === 'lg' && 'text-md',

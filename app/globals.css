@@ -25,6 +25,7 @@
     --font-display: var(--font-geist), -apple-system, sans-serif;
     --font-body: var(--font-geist), -apple-system, sans-serif;
     --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+    --font-pixel: var(--font-pixelify), var(--font-geist), monospace;
 
     --animate-shimmer: shimmer 1.6s infinite;
     --animate-content-show: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -409,7 +410,7 @@
                 8px 8px 0 0 var(--px-shadow);
   }
   .px-btn { transition: transform 80ms var(--ease-out), box-shadow 80ms var(--ease-out); }
-  .px-btn:active {
+  .px-btn:not(:disabled):active {
     transform: translate(4px, 4px);
     box-shadow: 4px 0 0 0 var(--warm-ink), -4px 0 0 0 var(--warm-ink),
                 0 4px 0 0 var(--warm-ink), 0 -4px 0 0 var(--warm-ink);
