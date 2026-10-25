@@ -33,13 +33,11 @@ export const LAYOUT_CONFIG = {
     { label: 'Window', start: 3, end: 4, wall: 'right', type: 'window' },
     { label: 'Window', start: 11, end: 12, wall: 'right', type: 'window' },
   ] as WallDetail[],
-  // FLOOR_DESKS removed: desks are now derived from seat positions in
-  // lib/deskLayout.ts, so furniture cannot drift out of sync with seating.
-  FLOOR_PLANTS: [
-    { col: 1, row: 1 },
-    { col: 1, row: 12 },
-    { col: 9, row: 12 },
-  ],
+  // Desks are derived from seat positions in lib/deskLayout.ts, so furniture
+  // cannot drift out of sync with seating. Plants were removed with the
+  // sprite art: decoration, not information, on a plan people navigate by.
+  /** Entrance: centre of the door opening in the top wall, in grid columns. */
+  ENTRANCE_COL: 6.5,
 };
 
 /**
@@ -76,7 +74,7 @@ export const LAYOUT_CONFIG = {
  *   col 13   desk (shared by cols 12 and 14)
  *   col 14   right block, right (77,79…95), face left  → desk col 13
  *
- *   row  1     top-wall run (71–75), five seats facing down
+ *   row  1     top-wall run (71–75), five seats facing the wall counter
  *   rows 2–11  Row A and blocks B, C, D
  *   rows 3–12  the right block, offset one row to clear the top-wall desk
  */
@@ -97,11 +95,14 @@ export function getSeatPositionConfig(n: number): SeatPosition {
     };
   }
 
-  // The run along the top wall, facing the desk below it. Five seats, not the
-  // four the sketch showed: the room holds 95 and this run is where the plan
-  // has floor for the odd one, rather than stranding it at the foot of a
-  // column on a row of its own.
-  if (n >= 71 && n <= 75) return { x: 10 + (n - 71), y: 1, face: 'down' };
+  // The run along the top wall. Five seats, not the four the sketch showed:
+  // the room holds 95 and this run is where the plan has floor for the odd
+  // one, rather than stranding it at the foot of a column on a row of its own.
+  //
+  // They face UP, at a counter against the wall. Facing down put their desk
+  // on row 2 — straight through seat 52 and into the end of the 52–70 desk,
+  // which is what made the corner of the plan read as a collision.
+  if (n >= 71 && n <= 75) return { x: 10 + (n - 71), y: 1, face: 'up' };
 
   // The right-hand block, offset down one row to clear the top-wall desk.
   // Same rule as every other block, so it starts on an even number rather than
@@ -211,35 +212,32 @@ export function seatAmenities(n: number): string[] {
 }
 
 /**
- * The four seat runs the floor plan labels Row A–D, as grid-column ranges.
+ * The blocks of seats, lettered the way the room is actually divided.
  *
- * These used to exist twice: as four hardcoded `left` offsets in SeatMap's
- * JSX, and as four hardcoded seat-number ranges in SeatList. They disagreed —
- * the plan's Row A covers seats 1–32, the list called 1–22 Row A — so a third
- * of the library had a different row name depending on which view you were
- * looking at, on a page whose whole job is helping someone find a physical
- * seat in a physical room.
+ * These used to be four column bands labelled Row A–D, and the bands did not
+ * match the furniture: "Row C" covered 31–70 (two separate desk blocks) and
+ * "Row D" lumped the five wall seats in with the right-hand block. On a page
+ * whose whole job is helping someone find a physical seat, a label has to
+ * name one block you can walk up to.
  *
- * One definition, in grid columns, because that is what the room is actually
- * divided by. Both views derive from it.
+ * By seat-number range, because each block is a contiguous run of numbers —
+ * the plan, the list view and the browse page all derive from this one table.
  */
-// Bands follow the new column layout: each covers a block and the desk beside
-// it, so the label on the plan sits over the seats it names.
 export const SEAT_ROWS = [
-  { label: 'Row A', fromCol: 1, toCol: 2 },    // seats 1–10
-  { label: 'Row B', fromCol: 3, toCol: 5 },    // seats 11–30
-  { label: 'Row C', fromCol: 6, toCol: 10 },   // seats 31–70
-  { label: 'Row D', fromCol: 11, toCol: 14 },  // seats 71–95
+  { label: 'Block A', letter: 'A', first: 1, last: 10 },   // left wall, one column
+  { label: 'Block B', letter: 'B', first: 11, last: 30 },
+  { label: 'Block C', letter: 'C', first: 31, last: 50 },
+  { label: 'Block D', letter: 'D', first: 51, last: 70 },
+  { label: 'Block E', letter: 'E', first: 71, last: 75 },  // front-wall counter
+  { label: 'Block F', letter: 'F', first: 76, last: 95 },  // right-hand block
 ] as const;
 
 export type SeatRowLabel = (typeof SEAT_ROWS)[number]['label'];
 
-/** Which lettered run a seat belongs to, from its position on the plan. */
+/** Which lettered block a seat belongs to. */
 export function seatRow(n: number): SeatRowLabel {
-  const { x } = getSeatPositionConfig(n);
-  const row = SEAT_ROWS.find((r) => x >= r.fromCol && x <= r.toCol);
-  // Every column 1–14 falls in a band, so this is unreachable for a real
-  // seat; falling back to the first run keeps a bad seat number visible
+  const row = SEAT_ROWS.find((r) => n >= r.first && n <= r.last);
+  // Unreachable for seats 1–95; falling back keeps a bad seat number visible
   // rather than dropping it out of the list entirely.
   return (row ?? SEAT_ROWS[0]).label;
 }

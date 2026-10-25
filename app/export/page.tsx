@@ -1,5 +1,7 @@
 'use client';
 
+import { todayISO } from '@/lib/utils';
+
 import { useState, useMemo } from 'react';
 import { useMembers } from '@/hooks/useMembers';
 import { useAttendance } from '@/hooks/useAttendance';
@@ -86,7 +88,7 @@ export default function ExportPage() {
       return;
     }
 
-    const dateStamp = new Date().toISOString().split('T')[0];
+    const dateStamp = todayISO();
 
     if (format === 'csv') {
       const csv = toCsv(
@@ -118,7 +120,7 @@ export default function ExportPage() {
   // ─── Attendance Export ────────────────────────────────────────
   const exportAttendance = (format: ExportFormat) => {
     const thirtyDayData = getLast30DaysData();
-    const dateStamp = new Date().toISOString().split('T')[0];
+    const dateStamp = todayISO();
 
     if (format === 'csv') {
       const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -141,7 +143,7 @@ export default function ExportPage() {
       return;
     }
 
-    const dateStamp = new Date().toISOString().split('T')[0];
+    const dateStamp = todayISO();
 
     if (format === 'csv') {
       const csv = toCsv(
@@ -162,7 +164,7 @@ export default function ExportPage() {
 
   // ─── Full Backup ──────────────────────────────────────────────
   const exportFullBackup = () => {
-    const dateStamp = new Date().toISOString().split('T')[0];
+    const dateStamp = todayISO();
     const backup = {
       exportedAt: new Date().toISOString(),
       version: '1.0',
@@ -190,7 +192,7 @@ export default function ExportPage() {
     {
       title: 'Members',
       description: `${stats.occupied} active members • ${stats.vacant} vacant seats`,
-      icon: <FileSpreadsheet className="w-5 h-5" />,
+      icon: <FileSpreadsheet className="size-5" />,
       iconBg: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]',
       accentBorder: 'border-l-[var(--border-default)]',
       onExport: exportMembers,
@@ -198,7 +200,7 @@ export default function ExportPage() {
     {
       title: 'Attendance',
       description: `${stats.attendanceDays} days of records • Last 30 days`,
-      icon: <CalendarCheck className="w-5 h-5" />,
+      icon: <CalendarCheck className="size-5" />,
       iconBg: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]',
       accentBorder: 'border-l-[var(--border-default)]',
       onExport: exportAttendance,
@@ -206,7 +208,7 @@ export default function ExportPage() {
     {
       title: 'Seat Requests',
       description: `${requests.length} total • ${stats.pendingRequests} pending`,
-      icon: <Inbox className="w-5 h-5" />,
+      icon: <Inbox className="size-5" />,
       iconBg: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]',
       accentBorder: 'border-l-[var(--border-default)]',
       onExport: exportRequests,
@@ -223,12 +225,12 @@ export default function ExportPage() {
       {/* Header */}
       <motion.div variants={itemVariants}>
         <PageHeader
-          title="Data Export"
-          icon={<HardDrive className="h-5 w-5" />}
+          title="Export"
+          icon={<HardDrive className="size-5" />}
           subtitle="Download members, attendance, and request data."
           actions={lastExport ? (
             <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-muted)] px-3 py-1.5 text-xs font-semibold tabular text-[var(--text-secondary)]">
-              <CheckCircle className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
+              <CheckCircle className="size-4 text-[var(--emerald-600)]" aria-hidden="true" />
               Last export: {lastExport}
             </div>
           ) : undefined}
@@ -237,28 +239,28 @@ export default function ExportPage() {
 
       {/* Full Backup Card */}
       <motion.div variants={itemVariants} className="mb-[var(--space-6)]">
-        <Card variant="base" className="overflow-hidden border-l-2 border-l-[var(--saffron-500)]">
+        <Card variant="base" className="overflow-hidden">
           <div className="p-[var(--space-5)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-[var(--space-4)]">
             <div className="flex items-center gap-[var(--space-4)]">
-              <div className="w-12 h-12 rounded-[var(--radius-xl)] bg-[var(--saffron-50)] flex items-center justify-center shrink-0">
-                <Database className="w-6 h-6 text-[var(--ruby-600)]" />
+              <div className="size-12 rounded-[var(--radius-xl)] bg-[var(--saffron-50)] flex items-center justify-center shrink-0">
+                <Database className="size-6 text-[var(--ruby-600)]" />
               </div>
               <div>
                 <h2 className="font-display text-base font-semibold text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
-                  <Shield className="w-4 h-4 text-[var(--ruby-600)]" />
+                  <Shield className="size-4 text-[var(--ruby-600)]" />
                   Full Database Backup
                 </h2>
                 <p className="text-xs text-[var(--text-secondary)] mt-[var(--space-1)]">
                   All members, attendance records, and requests in a single JSON file.
                 </p>
                 <div className="flex items-center gap-[var(--space-3)] mt-[var(--space-2)] flex-wrap">
-                  <span className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
+                  <span className="text-xs font-bold text-[var(--text-tertiary)] bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
                     {stats.total} seats
                   </span>
-                  <span className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
+                  <span className="text-xs font-bold text-[var(--text-tertiary)] bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
                     {stats.attendanceDays} attendance days
                   </span>
-                  <span className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
+                  <span className="text-xs font-bold text-[var(--text-tertiary)] bg-[var(--bg-muted)] px-2 py-0.5 rounded-md">
                     {requests.length} requests
                   </span>
                 </div>
@@ -268,9 +270,9 @@ export default function ExportPage() {
               variant="primary"
               size="lg"
               onClick={exportFullBackup}
-              className="bg-[var(--ruby-500)] hover:bg-[var(--ruby-600)] text-[var(--saffron-50)] border-transparent shrink-0"
+              className="shrink-0"
             >
-              <Download className="w-4 h-4 mr-2" />
+              <Download className="size-4" />
               Download Full Backup
             </Button>
           </div>
@@ -279,8 +281,8 @@ export default function ExportPage() {
 
       {/* Individual Export Cards */}
       <motion.div variants={itemVariants} className="space-y-[var(--space-4)]">
-        <h3 className="font-display text-sm font-semibold text-[var(--text-tertiary)] uppercase tracking-wider flex items-center gap-[var(--space-2)]">
-          <Clock className="w-4 h-4" />
+        <h3 className="font-display text-sm font-semibold text-[var(--text-tertiary)] flex items-center gap-[var(--space-2)]">
+          <Clock className="size-4" />
           Export by Category
         </h3>
 
@@ -288,12 +290,12 @@ export default function ExportPage() {
           <Card
             key={card.title}
             variant="base"
-            className={`overflow-hidden border-l ${card.accentBorder}`}
+            className="overflow-hidden"
           >
             <div className="p-[var(--space-5)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-[var(--space-4)]">
               {/* Info */}
               <div className="flex items-center gap-[var(--space-4)]">
-                <div className={`w-10 h-10 rounded-[var(--radius-xl)] flex items-center justify-center shrink-0 ${card.iconBg}`}>
+                <div className={`size-10 rounded-[var(--radius-xl)] flex items-center justify-center shrink-0 ${card.iconBg}`}>
                   {card.icon}
                 </div>
                 <div>
@@ -314,7 +316,7 @@ export default function ExportPage() {
                   onClick={() => card.onExport('csv')}
                   className="flex-1 sm:flex-initial"
                 >
-                  <FileSpreadsheet className="w-4 h-4 mr-1.5" />
+                  <FileSpreadsheet className="size-4 mr-1.5" />
                   CSV
                 </Button>
                 <Button
@@ -323,7 +325,7 @@ export default function ExportPage() {
                   onClick={() => card.onExport('json')}
                   className="flex-1 sm:flex-initial"
                 >
-                  <FileJson className="w-4 h-4 mr-1.5" />
+                  <FileJson className="size-4 mr-1.5" />
                   JSON
                 </Button>
               </div>
@@ -335,7 +337,7 @@ export default function ExportPage() {
       {/* Data Summary Footer */}
       <motion.div variants={itemVariants} className="mt-[var(--space-8)]">
         <Card variant="base" className="p-[var(--space-5)]">
-          <h3 className="font-display text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider mb-[var(--space-4)]">
+          <h3 className="font-display text-xs font-bold text-[var(--text-tertiary)] mb-[var(--space-4)]">
             Quick Summary
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-[var(--space-4)]">
@@ -347,7 +349,7 @@ export default function ExportPage() {
             ].map(s => (
               <div key={s.label} className="text-center">
                 <p className="tabular font-display text-2xl font-semibold text-[var(--text-primary)]">{s.value}</p>
-                <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">
+                <p className="text-xs font-bold text-[var(--text-tertiary)] mt-0.5">
                   {s.label}
                 </p>
               </div>

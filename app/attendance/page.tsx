@@ -67,7 +67,7 @@ export default function AttendancePage() {
 
   if (!isHydrated) return (
     <div className="flex justify-center items-center h-64">
-      <Loader2 className="w-8 h-8 animate-spin text-[var(--saffron-600)]" />
+      <Loader2 className="size-8 animate-spin text-[var(--saffron-600)]" />
     </div>
   );
 
@@ -92,15 +92,15 @@ export default function AttendancePage() {
       <motion.div variants={itemVariants}>
         <PageHeader
           title="Attendance"
-          icon={<CalendarCheck className="h-5 w-5" />}
+          icon={<CalendarCheck className="size-5" />}
           subtitle="Track daily member check-ins and history."
           actions={
-            <div className="flex bg-[var(--bg-elevated)] border p-1 border-[var(--border-subtle)] rounded-[var(--radius-lg)] shadow-[var(--shadow-sm)] self-start">
+            <div className="flex self-start rounded-[var(--radius-md)] bg-[var(--bg-muted)] p-0.5">
               <button 
                 onClick={() => setView('today')}
                 className={cn(
-                  "px-[var(--space-5)] py-[var(--space-2)] text-sm font-semibold rounded-[var(--radius-md)] transition-ui",
-                  view === 'today' ? "bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-[var(--shadow-sm)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                  "min-h-[36px] cursor-pointer px-4 text-sm font-medium rounded-[var(--radius-sm)] transition-ui",
+                  view === 'today' ? "bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-sm)] ring-1 ring-[var(--border-default)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 )}
               >
                 Today
@@ -108,8 +108,8 @@ export default function AttendancePage() {
               <button 
                 onClick={() => setView('history')}
                 className={cn(
-                  "px-[var(--space-5)] py-[var(--space-2)] text-sm font-semibold rounded-[var(--radius-md)] transition-ui",
-                  view === 'history' ? "bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-[var(--shadow-sm)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                  "min-h-[36px] cursor-pointer px-4 text-sm font-medium rounded-[var(--radius-sm)] transition-ui",
+                  view === 'history' ? "bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-sm)] ring-1 ring-[var(--border-default)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 )}
               >
                 History
@@ -124,27 +124,27 @@ export default function AttendancePage() {
         <motion.div variants={itemVariants} className="mb-[var(--space-6)]">
           <Card variant="base" className="p-[var(--space-4)] relative">
                         <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-3)]">
-              <TrendingUp className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />
-              <h2 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">Weekly Summary</h2>
+              <TrendingUp className="size-4 text-[var(--text-tertiary)]" aria-hidden="true" />
+              <h2 className="text-xs font-bold text-[var(--text-primary)]">Weekly Summary</h2>
             </div>
             <div className="grid grid-cols-3 gap-[var(--space-4)]">
               <div className="text-center">
                 <p className="font-display text-2xl font-semibold text-[var(--text-primary)]">{weeklySummary.avgRate}%</p>
-                <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Avg this week</p>
+                <p className="text-xs font-bold text-[var(--text-tertiary)] mt-0.5">Avg this week</p>
               </div>
               <div className="text-center border-x border-[var(--border-subtle)]">
                 <div className="flex items-center justify-center gap-1">
-                  <Trophy className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />
+                  <Trophy className="size-4 text-[var(--text-tertiary)]" aria-hidden="true" />
                   <p className="font-display text-2xl font-semibold text-[var(--text-secondary)]">{weeklySummary.bestRate}%</p>
                 </div>
-                <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Best · {weeklySummary.bestDayName}</p>
+                <p className="text-xs font-bold text-[var(--text-tertiary)] mt-0.5">Best · {weeklySummary.bestDayName}</p>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1">
-                  <TrendingDown className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />
+                  <TrendingDown className="size-4 text-[var(--text-tertiary)]" aria-hidden="true" />
                   <p className="font-display text-2xl font-semibold text-[var(--text-secondary)]">{weeklySummary.worstRate}%</p>
                 </div>
-                <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">Low · {weeklySummary.worstDayName}</p>
+                <p className="text-xs font-bold text-[var(--text-tertiary)] mt-0.5">Low · {weeklySummary.worstDayName}</p>
               </div>
             </div>
           </Card>
@@ -165,23 +165,23 @@ export default function AttendancePage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-[var(--space-4)]">
               <Card variant="base" className="p-[var(--space-5)] relative">
                                 <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-2)]">
-                  <Users className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />
-                  <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">Check-ins</p>
+                  <Users className="size-4 text-[var(--text-tertiary)]" aria-hidden="true" />
+                  <p className="text-xs font-bold text-[var(--text-tertiary)]">Check-ins</p>
                 </div>
                 <div className="flex items-baseline gap-[var(--space-2)]">
-                  <span className="font-display text-4xl font-semibold text-[var(--text-primary)] tracking-[var(--tracking-tight)]">{presentToday}</span>
+                  <span className="font-display text-4xl font-semibold text-[var(--text-primary)]">{presentToday}</span>
                   <span className="text-sm font-medium text-[var(--text-secondary)]">/ {totalOccupied}</span>
                 </div>
               </Card>
 
               <Card variant="base" className="p-[var(--space-5)] relative">
                                 <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-2)]">
-                  <Percent className="w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />
-                  <p className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">Turnout</p>
+                  <Percent className="size-4 text-[var(--text-tertiary)]" aria-hidden="true" />
+                  <p className="text-xs font-bold text-[var(--text-tertiary)]">Turnout</p>
                 </div>
                 <div className="flex items-baseline gap-[var(--space-2)]">
                   <span className={cn(
-                    'font-display text-4xl font-semibold tabular tracking-[var(--tracking-tight)]',
+                    'font-display text-4xl font-semibold tabular',
                     attendanceRateToday >= 60 ? 'text-[var(--emerald-600)]' : 'text-[var(--text-primary)]'
                   )}>{attendanceRateToday}%</span>
                 </div>
@@ -192,10 +192,9 @@ export default function AttendancePage() {
                   size="lg"
                   variant="primary"
                   onClick={() => setConfirmMarkAll(true)}
-                  className="px-[var(--space-6)] py-[var(--space-4)] bg-[var(--saffron-600)] text-[var(--text-inverse)] hover:bg-[var(--saffron-700)]"
                 >
-                  <UserCheck className="w-5 h-5 mr-2" />
-                  Mark All Present
+                  <UserCheck className="size-4" />
+                  Mark all present
                 </Button>
               </div>
             </div>
@@ -211,8 +210,8 @@ export default function AttendancePage() {
               
               {occupiedMembers.length === 0 ? (
                 <div className="text-center py-[var(--space-10)] px-[var(--space-4)] bg-[var(--bg-muted)] rounded-[var(--radius-xl)] border border-[var(--border-subtle)] flex flex-col items-center">
-                  <div className="w-14 h-14 bg-[var(--bg-overlay)] rounded-[var(--radius-2xl)] mb-[var(--space-3)] flex justify-center items-center shadow-[var(--shadow-sm)] border border-[var(--border-subtle)]">
-                    <UserCheck className="w-7 h-7 text-[var(--text-tertiary)]" />
+                  <div className="size-14 bg-[var(--bg-overlay)] rounded-[var(--radius-2xl)] mb-[var(--space-3)] flex justify-center items-center shadow-[var(--shadow-sm)] border border-[var(--border-subtle)]">
+                    <UserCheck className="size-7 text-[var(--text-tertiary)]" />
                   </div>
                   <span className="text-md font-[var(--weight-semibold)] text-[var(--text-primary)]">No seats are currently occupied.</span>
                   <p className="text-sm font-[var(--weight-medium)] text-[var(--text-secondary)] mt-[var(--space-1)]">Add members to start tracking attendance.</p>
@@ -238,7 +237,7 @@ export default function AttendancePage() {
                               : "bg-[var(--bg-elevated)] border-[var(--border-subtle)] hover:border-[var(--saffron-500)] hover:shadow-[var(--shadow-glow-saffron)] text-[var(--text-primary)]"
                           )}
                         >
-                          <span className="font-display text-2xl font-semibold tracking-[var(--tracking-tight)]">{member.seat}</span>
+                          <span className="font-display text-2xl font-semibold">{member.seat}</span>
                           <span className={cn(
                             "text-xs font-medium truncate w-full text-center px-1",
                             checkedIn ? "text-[var(--emerald-600)]" : "text-[var(--text-secondary)]"
@@ -255,7 +254,7 @@ export default function AttendancePage() {
                                 transition={springQuick}
                                 className="absolute right-1 top-1 rounded-full bg-[var(--emerald-600)] text-[var(--text-inverse)] shadow-[var(--shadow-sm)] border-2 border-[var(--bg-elevated)]"
                               >
-                                <CheckCircle2 className="w-4 h-4" />
+                                <CheckCircle2 className="size-4" />
                               </motion.div>
                             )}
                           </AnimatePresence>
@@ -280,8 +279,8 @@ export default function AttendancePage() {
             {/* Heatmap Section */}
             <Card variant="base" className="p-[var(--space-6)] sm:p-[var(--space-8)]">
               <div className="flex items-center gap-[var(--space-3)] mb-[var(--space-6)]">
-                <div className="w-10 h-10 rounded-xl bg-[var(--sapphire-50)] flex items-center justify-center border border-[var(--sapphire-200)] shadow-[var(--shadow-sm)]">
-                  <CalendarDays className="w-5 h-5 text-[var(--text-tertiary)]" aria-hidden="true" />
+                <div className="size-10 rounded-xl bg-[var(--sapphire-50)] flex items-center justify-center border border-[var(--sapphire-200)] shadow-[var(--shadow-sm)]">
+                  <CalendarDays className="size-5 text-[var(--text-tertiary)]" aria-hidden="true" />
                 </div>
                 <div>
                   <h2 className="font-display text-lg font-semibold text-[var(--text-primary)]">30-Day Contribution Graph</h2>
@@ -307,11 +306,11 @@ export default function AttendancePage() {
                         className="flex flex-col items-center justify-center cursor-crosshair"
                       >
                         <div className={cn(
-                          "w-10 h-10 sm:w-12 sm:h-12 rounded-[var(--radius-md)] flex flex-col items-center justify-center transition-ui duration-300 hover:scale-110 hover:-translate-y-1 hover:shadow-lg",
+                          "size-10 sm:w-12 sm:h-12 rounded-[var(--radius-md)] flex flex-col items-center justify-center transition-ui duration-300 hover:scale-110 hover:shadow-lg",
                           colorClass,
                           isToday && "ring-4 ring-[var(--saffron-500)]/30 ring-offset-2 ring-offset-[var(--bg-elevated)]"
                         )}>
-                          <span className="text-xs sm:text-sm font-display font-semibold tracking-[var(--tracking-tight)]">
+                          <span className="text-xs sm:text-sm font-display font-semibold">
                             {d.day}
                           </span>
                         </div>

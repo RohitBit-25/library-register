@@ -92,7 +92,7 @@ export default function ConfirmDialog({
                 : 'shrink-0 rounded-full bg-[var(--saffron-50)] p-2 text-[var(--saffron-700)]'
             }
           >
-            <AlertCircle className="h-6 w-6" aria-hidden="true" />
+            <AlertCircle className="size-6" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <AlertDialogTitle className="text-lg font-bold text-[var(--text-primary)]">

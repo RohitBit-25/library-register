@@ -16,8 +16,8 @@ export default function Error({
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--ruby-50)] border border-[var(--ruby-200)]">
-        <AlertTriangle className="h-7 w-7 text-[var(--ruby-600)]" aria-hidden="true" />
+      <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-[var(--ruby-50)] border border-[var(--ruby-200)]">
+        <AlertTriangle className="size-7 text-[var(--ruby-600)]" aria-hidden="true" />
       </div>
 
       <h1 className="font-display text-xl font-semibold text-[var(--text-primary)]">
@@ -36,9 +36,9 @@ export default function Error({
 
       <button
         onClick={reset}
-        className="mt-6 inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-lg border border-[var(--saffron-700)] bg-[var(--saffron-600)] px-6 py-3 text-sm font-semibold text-[var(--text-inverse)] transition-colors hover:bg-[var(--saffron-700)]"
+        className="mt-6 inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-lg border border-[var(--ink)] bg-[var(--ink)] px-6 py-3 text-sm font-semibold text-[var(--text-inverse)] transition-colors hover:bg-[var(--ink-hover)]"
       >
-        <RotateCw className="h-4 w-4" aria-hidden="true" />
+        <RotateCw className="size-4" aria-hidden="true" />
         Try again
       </button>
     </div>

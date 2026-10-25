@@ -28,7 +28,6 @@ import type { ReactNode } from 'react';
 export default function PageHeader({
   title,
   subtitle,
-  icon,
   badge,
   actions,
   className = '',
@@ -43,19 +42,16 @@ export default function PageHeader({
   className?: string;
 }) {
   return (
-    <header className={`mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between ${className}`}>
+    <header className={`mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between ${className}`}>
       <div className="min-w-0">
-        <h1 className="flex items-center gap-2.5 font-display text-lg font-bold tracking-[var(--tracking-tight)] text-[var(--text-primary)] sm:text-xl">
-          {icon && (
-            <span className="shrink-0 text-[var(--text-tertiary)]" aria-hidden="true">
-              {icon}
-            </span>
-          )}
+        <h1 className="flex items-center gap-2.5 font-display text-lg font-semibold leading-tight text-[var(--text-primary)] sm:text-xl">
+          {/* `icon` is accepted for existing call sites but not drawn: half
+              the pages passed one and half did not, so titles never lined up. */}
           <span className="truncate">{title}</span>
           {badge}
         </h1>
         {subtitle && (
-          <p className="mt-1 text-sm font-medium text-[var(--text-secondary)]">
+          <p className="mt-1.5 text-[15px] text-[var(--text-secondary)]">
             {subtitle}
           </p>
         )}

@@ -58,7 +58,7 @@ export default function QRCodePanel() {
     >
       {/* Status Bar */}
       <div className="flex items-center gap-2 px-6 py-3 border-b border-[var(--border-subtle)] bg-[var(--emerald-50)]">
-        <div className="w-2.5 h-2.5 rounded-full bg-[var(--emerald-400)] animate-pulse-subtle" />
+        <div className="size-2.5 rounded-full bg-[var(--emerald-400)]" />
         <span className="text-xs font-bold text-[var(--emerald-600)]">
           Portal active
         </span>
@@ -67,8 +67,8 @@ export default function QRCodePanel() {
       <div className="flex flex-col md:flex-row">
         {/* Left side: Info & Actions */}
         <div className="flex-1 p-6 md:p-8 flex flex-col justify-center border-b md:border-b-0 md:border-r border-[var(--border-subtle)]">
-          <h2 className="text-xl font-extrabold text-[var(--text-primary)] mb-2 flex items-center gap-2">
-            <QrCode className="w-5 h-5 text-[var(--saffron-600)]" />
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2 flex items-center gap-2">
+            <QrCode className="size-5 text-[var(--saffron-600)]" />
             Library Portal QR Code
           </h2>
           <p className="text-sm text-[var(--text-secondary)] mb-6">
@@ -82,18 +82,18 @@ export default function QRCodePanel() {
                 href={url || '/'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--saffron-500)] text-[#1a1a16] rounded-[var(--radius-md)] font-[var(--weight-bold)] text-sm hover:opacity-90 transition-ui shadow-[var(--shadow-glow-saffron)]"
+                className="flex-1 min-w-[130px] min-h-[44px] flex items-center justify-center gap-2 whitespace-nowrap px-4 rounded-[var(--radius-sm)] border border-[var(--ink)] bg-[var(--ink)] text-sm font-semibold text-[var(--text-inverse)] hover:bg-[var(--ink-hover)] transition-ui"
               >
-                <ExternalLink className="w-4 h-4" />
+                <ExternalLink className="size-4" />
                 Open Portal
               </a>
               
               {/* Copy Link */}
               <button
                 onClick={handleCopyLink}
-                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl font-bold text-sm text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors cursor-pointer"
+                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl font-bold text-sm text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors cursor-pointer shadow-[var(--shadow-xs)]"
               >
-                {copied ? <Check className="w-4 h-4 text-[var(--emerald-600)]" /> : <Copy className="w-4 h-4" />}
+                {copied ? <Check className="size-4 text-[var(--emerald-600)]" /> : <Copy className="size-4" />}
                 {copied ? 'Copied!' : 'Copy Link'}
               </button>
                
@@ -102,9 +102,9 @@ export default function QRCodePanel() {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 min-w-[130px] flex items-center justify-center gap-2 px-4 py-2.5 bg-[#25D366] text-[var(--saffron-50)] rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-sm"
+                className="flex-1 min-w-[130px] min-h-[44px] flex items-center justify-center gap-2 whitespace-nowrap px-4 rounded-[var(--radius-sm)] border border-[var(--emerald-500)] bg-[var(--bg-surface)] text-sm font-medium text-[var(--emerald-700)] hover:bg-[var(--emerald-50)] transition-ui"
               >
-                <Share2 className="w-4 h-4" />
+                <Share2 className="size-4" />
                 WhatsApp
               </a>
             </div>
@@ -127,7 +127,7 @@ export default function QRCodePanel() {
                 fgColor="#E8853A"
               />
             ) : (
-              <div className="w-[200px] h-[200px] bg-[var(--bg-overlay)] animate-pulse flex items-center justify-center text-xs text-[var(--text-tertiary)]">Loading...</div>
+              <div className="size-[200px] bg-[var(--bg-overlay)] animate-pulse flex items-center justify-center text-xs text-[var(--text-tertiary)]">Loading...</div>
             )}
           </div>
           <button
@@ -135,7 +135,7 @@ export default function QRCodePanel() {
             disabled={!url}
             className="mt-6 flex items-center justify-center gap-2 px-6 py-2.5 bg-[var(--saffron-500)]/15 text-[var(--saffron-600)] hover:bg-[var(--saffron-500)] hover:text-[var(--saffron-50)] rounded-[var(--radius-full)] font-bold text-sm transition-ui active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Download className="w-4 h-4" />
+            <Download className="size-4" />
             Download PNG
           </button>
           <p className="text-xs text-[var(--text-tertiary)] mt-3 text-center max-w-[200px]">

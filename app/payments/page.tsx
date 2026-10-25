@@ -70,22 +70,22 @@ export default function PaymentsPage() {
     <div className="animate-fade-in max-w-5xl pb-24">
       <PageHeader
         title="Collections"
-        icon={<IndianRupee className="h-5 w-5" />}
+        icon={<IndianRupee className="size-5" />}
         subtitle="Every fee recorded, with a receipt for each."
       />
 
       {/* Range + export */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-1 shadow-sm">
+        <div className="flex max-w-full items-center gap-0.5 overflow-x-auto rounded-[var(--radius-md)] bg-[var(--bg-muted)] p-0.5 no-scrollbar">
           {RANGES.map(r => (
             <button
               key={r.key}
               onClick={() => setRangeKey(r.key)}
               aria-pressed={rangeKey === r.key}
-              className={`min-h-[36px] cursor-pointer rounded-lg px-3.5 text-xs font-bold transition-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] ${
+              className={`min-h-[36px] cursor-pointer whitespace-nowrap rounded-[var(--radius-sm)] px-3 text-sm font-medium transition-ui ${
                 rangeKey === r.key
-                  ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-sm'
-                  : 'text-[var(--text-secondary)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]'
+                  ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-sm)] ring-1 ring-[var(--border-default)]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
               {r.label}
@@ -96,19 +96,19 @@ export default function PaymentsPage() {
         <button
           onClick={exportCsv}
           disabled={data.payments.length === 0}
-          className="flex min-h-[36px] cursor-pointer items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-3.5 text-xs font-bold text-[var(--text-secondary)] shadow-sm transition-ui hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex min-h-[36px] cursor-pointer items-center gap-2 whitespace-nowrap rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] px-3 text-sm font-medium text-[var(--text-primary)] transition-ui hover:bg-[var(--bg-muted)] disabled:cursor-not-allowed disabled:text-[var(--text-disabled)]"
         >
-          <Download className="h-4 w-4" aria-hidden="true" />
+          <Download className="size-4" aria-hidden="true" />
           Export CSV
         </button>
       </div>
 
       {/* Totals */}
       <div className="mb-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-[var(--border-default)] bg-[var(--border-subtle)] lg:grid-cols-4">
-        <Total label="Collected" value={formatINR(data.total)} icon={<Wallet className="h-4 w-4" />} strong />
-        <Total label="Cash" value={formatINR(byMode.cash)} icon={<Banknote className="h-4 w-4" />} />
-        <Total label="UPI" value={formatINR(byMode.upi)} icon={<Smartphone className="h-4 w-4" />} />
-        <Total label="Payments" value={String(data.count)} icon={<ReceiptIcon className="h-4 w-4" />} />
+        <Total label="Collected" value={formatINR(data.total)} icon={<Wallet className="size-4" />} strong />
+        <Total label="Cash" value={formatINR(byMode.cash)} icon={<Banknote className="size-4" />} />
+        <Total label="UPI" value={formatINR(byMode.upi)} icon={<Smartphone className="size-4" />} />
+        <Total label="Payments" value={String(data.count)} icon={<ReceiptIcon className="size-4" />} />
       </div>
 
       {isLoading ? (
@@ -117,8 +117,8 @@ export default function PaymentsPage() {
         </div>
       ) : data.payments.length === 0 ? (
         <Card variant="base" className="p-10 text-center">
-          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">
-            <ReceiptIcon className="h-7 w-7 text-[var(--text-tertiary)]" aria-hidden="true" />
+          <div className="mx-auto mb-3 flex size-14 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">
+            <ReceiptIcon className="size-7 text-[var(--text-tertiary)]" aria-hidden="true" />
           </div>
           <p className="text-sm font-semibold text-[var(--text-secondary)]">
             No payments in this period
@@ -132,7 +132,7 @@ export default function PaymentsPage() {
           <ul className="divide-y divide-[var(--border-subtle)]">
             {data.payments.map(p => (
               <li key={p.id} className="flex items-center gap-3 px-4 py-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--bg-muted)] font-mono text-xs font-bold text-[var(--text-primary)]">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--bg-muted)] font-mono text-xs font-bold text-[var(--text-primary)]">
                   {String(p.seat).padStart(2, '0')}
                 </span>
 
@@ -155,7 +155,7 @@ export default function PaymentsPage() {
                   aria-label={`Receipt for ${p.memberName}, seat ${p.seat}`}
                   className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-2.5 text-xs font-bold text-[var(--text-secondary)] transition-ui hover:border-[var(--saffron-600)] hover:text-[var(--saffron-700)]"
                 >
-                  <ReceiptIcon className="h-4 w-4" aria-hidden="true" />
+                  <ReceiptIcon className="size-4" aria-hidden="true" />
                   Receipt
                 </button>
               </li>
@@ -181,7 +181,7 @@ function Total({
 }: { label: string; value: string; icon: React.ReactNode; strong?: boolean }) {
   return (
     <div className="bg-[var(--bg-surface)] p-4">
-      <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
+      <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-tertiary)]">
         <span className={strong ? 'text-[var(--emerald-600)]' : ''}>{icon}</span>
         {label}
       </div>

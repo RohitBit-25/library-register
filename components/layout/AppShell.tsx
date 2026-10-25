@@ -69,12 +69,12 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   if (isLoading || !isAdmin) {
     return (
       <div
-        className="flex min-h-screen items-center justify-center bg-[var(--bg-void)]"
+        className="flex min-h-dvh items-center justify-center bg-[var(--bg-void)]"
         role="status"
         aria-live="polite"
       >
         <span className="sr-only">Checking your session…</span>
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--border-default)] border-t-[var(--saffron-600)]" />
+        <div className="size-8 animate-spin rounded-full border-2 border-[var(--border-default)] border-t-[var(--saffron-600)]" />
       </div>
     );
   }
@@ -87,7 +87,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
       {!isFullScreenMap && <TopBar />}
       <main 
         className={cn(
-          "min-h-screen transition-ui flex flex-col bg-[var(--bg-void)]",
+          "min-h-dvh transition-ui flex flex-col bg-[var(--bg-void)]",
           isAdmin && !isFullScreenMap
             ? "pt-14 pb-16 lg:pb-0 lg:pt-0 lg:ml-[240px]" 
             : !isFullScreenMap ? "pt-14 pb-16 lg:pb-0 lg:pt-14" : ""

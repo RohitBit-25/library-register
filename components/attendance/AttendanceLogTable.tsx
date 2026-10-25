@@ -27,8 +27,8 @@ export function AttendanceLogTable({ data }: { data: AttendanceLog[] }) {
           const dateObj = parseISO(val);
           return (
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[var(--bg-muted)] flex items-center justify-center text-[var(--text-secondary)]">
-                <CalendarDays className="w-4 h-4" />
+              <div className="size-8 rounded-full bg-[var(--bg-muted)] flex items-center justify-center text-[var(--text-secondary)]">
+                <CalendarDays className="size-4" />
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-[var(--text-primary)]">
@@ -49,7 +49,7 @@ export function AttendanceLogTable({ data }: { data: AttendanceLog[] }) {
         const count = row.getValue('count') as number;
         return (
           <div className="flex items-center gap-2 font-bold text-[var(--text-primary)]">
-            <Users className="w-4 h-4 text-[var(--text-tertiary)]" />
+            <Users className="size-4 text-[var(--text-tertiary)]" />
             {count}
           </div>
         );
@@ -95,7 +95,7 @@ export function AttendanceLogTable({ data }: { data: AttendanceLog[] }) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-black text-[var(--text-primary)]">Attendance History</h3>
+          <h3 className="text-lg font-semibold text-[var(--text-primary)]">Attendance History</h3>
           <p className="text-xs font-semibold text-[var(--text-tertiary)] mt-0.5">Detailed view of the last 30 days</p>
         </div>
       </div>

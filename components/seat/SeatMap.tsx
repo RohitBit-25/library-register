@@ -1,7 +1,6 @@
 'use client';
 
 import React, { ReactNode, memo } from 'react';
-import { DoorOpen, Snowflake, Wind } from 'lucide-react';
 import {
   LAYOUT_CONFIG,
   getSeatPositionConfig,
@@ -10,7 +9,7 @@ import {
   type SeatPosition,
   SEAT_ROWS,
 } from '@/lib/layoutConfig';
-import { deriveDeskRuns, type DeskRun, seatPixel } from '@/lib/deskLayout';
+import { deriveDeskRuns, type DeskRun, seatPixel, SEAT_SIZE } from '@/lib/deskLayout';
 
 // Types now live in lib/layoutConfig (the data layer). Re-exported here
 // because ~10 components already import them from this module.
@@ -18,188 +17,220 @@ export type { FaceDir, SeatPosition };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const { CELL, PAD, COLS, ROWS, WALL_DETAILS, FLOOR_PLANTS } = LAYOUT_CONFIG;
+const { CELL, PAD, COLS, ROWS, WALL_DETAILS, ENTRANCE_COL } = LAYOUT_CONFIG;
 
 const CANVAS_W = COLS * CELL + PAD * 2;
 const CANVAS_H = ROWS * CELL + PAD * 2;
 
-// ─── Logic ────────────────────────────────────────────────────────────────────
+/** Wall centre-line, inset from the canvas edge. */
+const WALL = 14;
+/** Wall stroke. Heavy enough to read as structure at 42% zoom. */
+const WALL_T = 4;
 
 export function getSeatPosition(n: number): SeatPosition {
   return getSeatPositionConfig(n);
 }
-
-// Removed duplicate toPixel: it conflicted with deskLayout.ts sizing. We now use seatPixel directly.
-
-// ─── Visual Components ────────────────────────────────────────────────────────
-
-/**
- * A shared desk, derived from a run of seats that face the same way.
- *
- * Replaces four hand-placed grey rectangles that had no relationship to seat
- * positions. Each slab now sits against the seats that use it, with a divider
- * between neighbours — which is what makes the floor read as furniture rather
- * than as squares scattered on a grid.
- */
-// desk.png is 2073×758: a top-down table with a moulded cap at each end and a
-// run of power sockets along the middle.
-const DESK_SRC_W = 2073;
-const DESK_SRC_H = 758;
-/** Fraction of the sprite taken by one end cap. */
-const DESK_CAP = 0.12;
-
-const DeskSlab = memo(function DeskSlab({ run }: { run: DeskRun }) {
-  const isVertical = run.face === 'left' || run.face === 'right';
-
-  // Drawn along its length, then rotated for runs that travel down a column.
-  const length = isVertical ? run.height : run.width;
-  const depth = isVertical ? run.width : run.height;
-
-  // Three ways to fill a 950px table from a 2073px sprite, and only one of
-  // them looks like furniture:
-  //
-  //   stretch — what this did before. A 3.3× horizontal smear: the grain
-  //             turns to streaks and each socket becomes a pale slab.
-  //   repeat  — tiles the whole sprite, so the moulded end caps reappear
-  //             every 280px down the middle of the table.
-  //   round   — border-image keeps the two caps at the two ends and tiles
-  //             only the middle, rounding the tile so a whole number fits.
-  //
-  // `round` is the one that reads as a single long desk with sockets spaced
-  // along it, which is what a reading hall actually has.
-  const cap = Math.round(depth * (DESK_SRC_W / DESK_SRC_H) * DESK_CAP);
-
-  return (
-    <div
-      className="absolute z-0"
-      style={{ left: run.left, top: run.top, width: run.width, height: run.height }}
-      aria-hidden="true"
-    >
-      <div
-        className="absolute drop-shadow-md"
-        style={{
-          width: length,
-          height: depth,
-          top: '50%',
-          left: '50%',
-          transform: isVertical
-            ? 'translate(-50%, -50%) rotate(90deg)'
-            : 'translate(-50%, -50%)',
-          borderImageSource: "url('/assets/desk.png')",
-          borderImageSlice: `0 ${DESK_CAP * 100}% 0 ${DESK_CAP * 100}% fill`,
-          borderImageWidth: `0 ${cap}px 0 ${cap}px`,
-          borderImageRepeat: 'round round',
-          borderStyle: 'solid',
-          borderColor: 'transparent',
-        }}
-      />
-    </div>
-  );
-});
 
 /** Local class joiner — SeatMap has no other reason to import from lib/utils. */
 function cnLocal(...v: (string | false | undefined)[]) {
   return v.filter(Boolean).join(' ');
 }
 
-/** Flat, architectural plant marker */
-const Plant = ({ col, row }: { col: number; row: number }) => (
-  <div
-    className="absolute flex items-center justify-center pointer-events-none drop-shadow-md"
-    style={{
-      left: PAD + (col - 1) * CELL + CELL * 0.1,
-      top: PAD + (row - 1) * CELL + CELL * 0.1,
-      width: CELL * 0.8,
-      height: CELL * 0.8,
-    }}
-  >
-    <img src="/assets/plant.png" alt="Plant" className="w-full h-full object-contain" />
-  </div>
-);
+// ─── The drawing ──────────────────────────────────────────────────────────────
+//
+// This was six clip-art PNGs — wood-grain desks, blue office chairs, potted
+// plants, a cartoon door, AC units — in three different illustration styles,
+// with each chair sprite peeking out from behind its seat tile so every seat
+// read as two overlapping objects. A floor plan is a drawing: walls, openings,
+// furniture as plain shapes, and the seats carrying the only colour, because
+// the seats are the only thing on it that changes.
 
 /**
- * Floor surface.
+ * A desk, derived from the run of seats that use it.
  *
- * Was a full 76px grid drawn in a visible border colour, which turned the
- * room into graph paper and competed with the furniture for attention. A real
- * floor plan shows the floor, not the drafting grid: this is a warm ground
- * with a faint tile joint, well below the desks in contrast.
+ * Hairline dividers mark each person's share of the table — the thing that
+ * makes a long slab read as twenty places rather than one plank — and shared
+ * tables get a spine down the middle where the two sides meet.
  */
-const FloorSurface = memo(function FloorSurface() {
+const DeskSlab = memo(function DeskSlab({ run }: { run: DeskRun }) {
+  const vertical = run.face === 'left' || run.face === 'right';
+
+  // Cell boundaries between consecutive seats along the run.
+  const steps = [...new Set(run.seats.map((n) => {
+    const p = getSeatPositionConfig(n);
+    return vertical ? p.y : p.x;
+  }))].sort((a, b) => a - b);
+  const dividers = steps.slice(0, -1).map((v) => PAD + v * CELL - (vertical ? run.top : run.left));
+
   return (
     <div
-      className="absolute inset-0 pointer-events-none z-0 bg-[#EFECE6]"
-      style={{
-        backgroundImage: `
-          linear-gradient(rgba(148,140,130,0.15) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(148,140,130,0.15) 1px, transparent 1px)
-        `,
-        backgroundSize: `${CELL}px ${CELL}px`,
-        backgroundPosition: `${PAD}px ${PAD}px`,
-      }}
-    />
+      className="absolute rounded-[6px] border border-[var(--plan-desk-edge)] bg-[var(--plan-desk)]"
+      style={{ left: run.left, top: run.top, width: run.width, height: run.height }}
+      aria-hidden="true"
+    >
+      {run.shared && (
+        <span
+          className="absolute bg-[var(--plan-desk-edge)]"
+          style={vertical
+            ? { left: '50%', top: 0, bottom: 0, width: 1 }
+            : { top: '50%', left: 0, right: 0, height: 1 }}
+        />
+      )}
+      {dividers.map((d) => (
+        <span
+          key={d}
+          className="absolute bg-[var(--plan-desk-edge)] opacity-70"
+          style={vertical
+            ? { top: d, left: 0, right: 0, height: 1 }
+            : { left: d, top: 0, bottom: 0, width: 1 }}
+        />
+      ))}
+    </div>
   );
 });
 
-function WallLabel({ detail }: { detail: WallDetail }) {
+/** A window: a break in the wall, drawn as the architectural double line. */
+function WallOpening({ detail }: { detail: WallDetail }) {
   const { start, end, wall, type } = detail;
-  const size = (end - start + 1) * CELL;
+  const span = (end - start + 1) * CELL;
   const offset = PAD + (start - 1) * CELL;
-  const isVertical = wall === 'left' || wall === 'right';
+  const vertical = wall === 'left' || wall === 'right';
+  const wallPos = wall === 'top' || wall === 'left' ? WALL : (vertical ? CANVAS_W : CANVAS_H) - WALL;
 
-  const depth = 48; // Thicker so it's visible
-  const style: React.CSSProperties = isVertical
-    ? { top: offset, height: size, width: depth, [wall]: 0, position: 'absolute' }
-    : { left: offset, width: size, height: depth, [wall]: 0, position: 'absolute' };
-
-  const isWindow = type === 'window';
-  const imgSrc = isWindow ? '/assets/windows.png' : '/assets/ac.png';
-
-  return (
-    <div
-      className="flex items-center justify-center z-10 pointer-events-none drop-shadow-sm"
-      style={style}
-    >
-      <img 
-        src={imgSrc} 
-        alt="" 
-        className="object-contain" 
-        style={{
-          width: isVertical ? depth : size,
-          height: isVertical ? size : depth,
-          transform: isVertical ? (wall === 'right' ? 'rotate(-90deg)' : 'rotate(90deg)') : (wall === 'top' ? 'rotate(180deg)' : 'rotate(0deg)')
-        }}
+  if (type === 'window') {
+    const len = span - 16;
+    const style: React.CSSProperties = vertical
+      ? { left: wallPos - 5, top: offset + 8, width: 10, height: len, borderLeftWidth: 2, borderRightWidth: 2 }
+      : { top: wallPos - 5, left: offset + 8, height: 10, width: len, borderTopWidth: 2, borderBottomWidth: 2 };
+    return (
+      <span
+        className="absolute border-solid border-[var(--plan-window)] bg-[var(--plan-floor)]"
+        style={style}
+        aria-hidden="true"
       />
+    );
+  }
+
+  // Air conditioner: a small labelled unit on the inside face of the wall.
+  const w = Math.min(span - 20, 120);
+  const h = 22;
+  const inner = wall === 'top' || wall === 'left' ? wallPos + WALL_T / 2 + 4 : wallPos - WALL_T / 2 - 4 - h;
+  const style: React.CSSProperties = vertical
+    ? { left: inner, top: offset + (span - w) / 2, width: h, height: w }
+    : { top: inner, left: offset + (span - w) / 2, width: w, height: h };
+  return (
+    <span
+      className="absolute flex items-center justify-center rounded-[3px] border border-[var(--plan-wall)] bg-[var(--bg-surface)] text-xs font-medium text-[var(--text-secondary)]"
+      style={style}
+      aria-hidden="true"
+    >
+      AC
+    </span>
+  );
+}
+
+/** The entrance: an opening in the top wall with the door's swing drawn in. */
+function Entrance() {
+  const width = Math.round(CELL * 1.4);
+  const left = PAD + (ENTRANCE_COL - 0.5) * CELL - width / 2;
+  return (
+    <div className="absolute" style={{ left, top: WALL - WALL_T, width, height: width + WALL_T }} aria-hidden="true">
+      {/* Cut the wall. */}
+      <span className="absolute inset-x-0 top-0 bg-[var(--plan-floor)]" style={{ height: WALL_T * 2 }} />
+      <svg className="absolute inset-0 overflow-visible" width={width} height={width + WALL_T}>
+        {/* Door leaf, standing open, and its swing. */}
+        <line x1={0} y1={WALL_T} x2={0} y2={WALL_T + width} stroke="var(--plan-wall)" strokeWidth={2} />
+        <path
+          d={`M 0 ${WALL_T + width} A ${width} ${width} 0 0 0 ${width} ${WALL_T}`}
+          fill="none"
+          stroke="var(--plan-chair)"
+          strokeWidth={1}
+          strokeDasharray="3 3"
+        />
+      </svg>
+      <span className="absolute left-3 top-4 text-xs font-medium text-[var(--text-secondary)]">
+        Entrance
+      </span>
     </div>
   );
 }
 
-/** Floor decorations — desks & plants */
+/**
+ * Block letters, placed in the floor next to the block they name.
+ *
+ * A–D sit in the free row under their blocks (the row above is taken by the
+ * door swing and the front-wall counter); E sits beside the counter; F in the
+ * gap above its own block.
+ */
+const BLOCK_LABELS = SEAT_ROWS.map((b) => {
+  const pos = Array.from({ length: b.last - b.first + 1 }, (_, i) => getSeatPositionConfig(b.first + i));
+  const minX = Math.min(...pos.map((p) => p.x));
+  const maxX = Math.max(...pos.map((p) => p.x));
+  const minY = Math.min(...pos.map((p) => p.y));
+  const maxY = Math.max(...pos.map((p) => p.y));
+
+  let cx = PAD + ((minX + maxX) / 2 - 0.5) * CELL;
+  let cy: number;
+  if (b.letter === 'E') {
+    cx = PAD + (minX - 1.5) * CELL;
+    cy = PAD + (minY - 0.5) * CELL;
+  } else if (b.letter === 'F') {
+    cy = PAD + (minY - 1.5) * CELL;
+  } else {
+    cy = PAD + (maxY + 0.5) * CELL;
+  }
+  return { ...b, cx, cy };
+});
+
+function BlockLabel({ letter, first, last, cx, cy }: (typeof BLOCK_LABELS)[number]) {
+  return (
+    <div
+      className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 whitespace-nowrap"
+      style={{ left: cx, top: cy }}
+    >
+      <span className="flex size-7 items-center justify-center rounded-full bg-[var(--ink)] text-sm font-semibold leading-none text-[var(--text-inverse)]">{letter}</span>
+      <span className="font-mono text-[13px] text-[var(--text-secondary)]">{first}–{last}</span>
+    </div>
+  );
+}
+
 // Computed once at module load — the seat layout is static.
 const DESK_RUNS = deriveDeskRuns();
 
-function FloorDecorations() {
+/** Everything that is not a seat. Static, so it renders once. */
+const FloorPlanDrawing = memo(function FloorPlanDrawing() {
   return (
-    <div className="absolute inset-0 pointer-events-none z-0">
+    <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+      {/* Floor + walls */}
+      <div
+        className="absolute rounded-[10px] bg-[var(--plan-floor)]"
+        style={{
+          left: WALL - WALL_T / 2,
+          top: WALL - WALL_T / 2,
+          right: WALL - WALL_T / 2,
+          bottom: WALL - WALL_T / 2,
+          border: `${WALL_T}px solid var(--plan-wall)`,
+          // No floor grid: the desks and their per-seat dividers already
+          // give the room its rhythm; a third set of lines was decoration.
+        }}
+      />
+      {WALL_DETAILS.map((d, i) => <WallOpening key={i} detail={d} />)}
+      <Entrance />
       {DESK_RUNS.map((run) => <DeskSlab key={run.id} run={run} />)}
-      {FLOOR_PLANTS.map((p, i) => <Plant key={i} {...p} />)}
+      {BLOCK_LABELS.map((b) => <BlockLabel key={b.letter} {...b} />)}
     </div>
   );
-}
-
-/** Architecturally-grounded entry gate */
-function EntryMarker() {
-  return (
-    <div
-      className="absolute top-0 -translate-x-1/2 z-20 pointer-events-none flex items-start justify-center"
-      style={{ left: PAD + 6 * CELL, width: 4 * CELL, height: 96, top: -8 }}
-    >
-      <img src="/assets/door.png" alt="Entrance" className="h-full object-contain drop-shadow-md" />
-    </div>
-  );
-}
+});
 
 // ─── Map Wrappers ─────────────────────────────────────────────────────────────
+
+/** Where the chair back sits: on the side away from the desk. */
+const CHAIR_BACK: Record<FaceDir, React.CSSProperties> = {
+  right: { left: -6, top: '50%', width: 4, height: 30, transform: 'translateY(-50%)' },
+  left:  { right: -6, top: '50%', width: 4, height: 30, transform: 'translateY(-50%)' },
+  down:  { top: -6, left: '50%', height: 4, width: 30, transform: 'translateX(-50%)' },
+  up:    { bottom: -6, left: '50%', height: 4, width: 30, transform: 'translateX(-50%)' },
+};
 
 export const SeatMapWrapper = memo(function SeatMapWrapper({
   seatNum,
@@ -211,53 +242,23 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
   className?: string;
 }) {
   const { x, y, face } = getSeatPosition(seatNum);
-  const { left, top: baseTop } = seatPixel(x, y);
-  // A 2px wobble so the room does not look machine-stamped. Keyed to the
-  // ROW, not the column: the numbering pairs seats across a desk in adjacent
-  // columns, and column parity therefore pushed every pair 4px out of level
-  // with its own partner — the one alignment the plan most needs to hold.
-  // By row, a pair shifts together and stays level.
-  const jitter = (y % 2 === 0) ? 2 : -2;
-  const top = baseTop + jitter;
-
-  // The new chair asset has its backrest at the top, so it naturally faces DOWN.
-  const rotation: Record<FaceDir, string> = {
-    up: 'rotate(180deg)',
-    down: 'rotate(0deg)',
-    left: 'rotate(90deg)',
-    right: 'rotate(-90deg)',
-  };
-
-  // Adjust translation to pull the chair slightly away from the desk so it doesn't clip into the table
-  const chairOffset: Record<FaceDir, string> = {
-    up: 'translateY(14px)',
-    down: 'translateY(-14px)',
-    left: 'translateX(14px)',
-    right: 'translateX(-14px)',
-  };
+  // No wobble. The old ±2px row jitter was there "so the room does not look
+  // machine-stamped"; on a plan read for alignment it just looked crooked.
+  const { left, top } = seatPixel(x, y);
 
   return (
     <div
-      className={`
-        absolute flex items-center justify-center
-        transition-ui duration-200 ease-in-out
-        hover:z-30
-        focus-within:ring-2 focus-within:ring-[var(--saffron-500)] focus-within:z-30
-        ${className}
-      `}
-      style={{ left, top, width: 60, height: 60 }}
+      className={`absolute hover:z-30 focus-within:z-30 ${className}`}
+      style={{ left, top, width: SEAT_SIZE, height: SEAT_SIZE }}
       data-seat={seatNum}
-      aria-label={`Seat ${seatNum}`}
     >
-      {/* Chair graphic underneath the seat tile, kept small and properly oriented */}
-      <img 
-        src="/assets/chair.png" 
-        alt="" 
-        className="absolute w-[42px] h-[42px] object-contain pointer-events-none drop-shadow-sm" 
-        style={{ transform: `${chairOffset[face]} ${rotation[face]}` }} 
+      {/* The chair back: shows which way the person sits, in one stroke. */}
+      <span
+        className="pointer-events-none absolute rounded-full bg-[var(--plan-chair)]"
+        style={CHAIR_BACK[face]}
+        aria-hidden="true"
       />
-      {/* Seat pad interactive container */}
-      <div className="relative w-[56px] h-[56px] z-10 m-auto flex items-center justify-center">
+      <div className="absolute inset-0.5">
         {children(face)}
       </div>
     </div>
@@ -265,15 +266,7 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
 });
 
 /**
- * Scales the plan down so the whole room fits the available width.
- *
- * The canvas is a fixed 1160px. Below that the right-hand columns (seats
- * 84–95) were simply cut off — the container scrolled, but nothing indicated
- * there was more room to the right, so a third of the library was invisible
- * on a laptop. Never scales above 1: a small room should not be blown up.
- */
-/**
- * Smallest the plan may shrink to. Below this a 48px seat is under 20px and
+ * Smallest the plan may shrink to. Below this a seat is under 25px and
  * stops being a tap target, so the phone layout offers zoom instead of
  * shrinking further.
  */
@@ -287,7 +280,7 @@ const MIN_SCALE = 0.42;
  */
 type FitMode = 'width' | 'both';
 
-function useFitToWidth(mode: FitMode = 'width') {
+function useFitToWidth(mode: FitMode = 'width', minScale = MIN_SCALE) {
   const outerRef = React.useRef<HTMLDivElement>(null);
   const [scale, setScale] = React.useState(1);
   /** True when the room is wider than the screen even at MIN_SCALE. */
@@ -299,20 +292,20 @@ function useFitToWidth(mode: FitMode = 'width') {
 
     const measure = () => {
       // Padding is part of the visual frame, so measure against content width.
-      const available = el.clientWidth - 32;
+      const available = el.clientWidth - 24;
       const byWidth = available / CANVAS_W;
       const exact = mode === 'both'
-        ? Math.min(byWidth, (el.clientHeight - 32) / CANVAS_H)
+        ? Math.min(byWidth, (el.clientHeight - 24) / CANVAS_H)
         : byWidth;
-      setScale(Math.min(1, Math.max(MIN_SCALE, exact)));
-      setOverflows(exact < MIN_SCALE);
+      setScale(Math.min(1, Math.max(minScale, exact)));
+      setOverflows(exact < minScale);
     };
 
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [mode]);
+  }, [mode, minScale]);
 
   return { outerRef, scale, overflows };
 }
@@ -322,6 +315,7 @@ export function SeatMapContainer({
   fit = 'width',
   scale: scaleProp,
   frameless = false,
+  minScale,
 }: {
   children: ReactNode;
   /** See FitMode. Defaults to the embedded-card behaviour. */
@@ -329,99 +323,58 @@ export function SeatMapContainer({
   /**
    * An absolute scale that replaces the fitted one, for the dedicated plan
    * page's zoom control. Absolute rather than a multiplier of the fit, so
-   * "100%" means 100% everywhere — as a multiplier it happened to be right on
-   * a desktop, where fit-to-width lands near 1, and meant 42% on a phone.
+   * "100%" means 100% everywhere.
    */
   scale?: number;
   /** Drop the card chrome when the page already provides a frame. */
   frameless?: boolean;
+  /** Override the tap-target floor — only for read-only previews. */
+  minScale?: number;
 }) {
-  const { outerRef, scale: fitted, overflows } = useFitToWidth(fit);
+  const { outerRef, scale: fitted, overflows } = useFitToWidth(fit, minScale);
   const scale = scaleProp ?? fitted;
 
   return (
     <div
       ref={outerRef}
       className={cnLocal(
-        'w-full relative group overflow-auto custom-scrollbar',
-        !frameless && 'rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)]',
+        'relative w-full overflow-auto custom-scrollbar',
+        !frameless && 'rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 shadow-[var(--shadow-sm)] sm:p-4',
         // Fitting both axes measures this element's height, so it has to have
-        // one. Without it the box is content-sized, the measured height is
-        // whatever the last scale produced, and the fit converges on a scale
-        // *smaller* than fitting width alone.
+        // one. Without it the box is content-sized and the fit converges on a
+        // scale smaller than fitting width alone.
         (frameless || fit === 'both') && 'h-full',
       )}
-      style={{ minHeight: frameless ? undefined : (scale < 1 ? undefined : '600px') }}
     >
       {/*
-        Scaling from `top center` inside a `w-max` box meant the untransformed
-        1160px canvas was centred first and only then shrunk, so on a phone the
-        whole plan landed several hundred pixels to the right of the viewport
-        and the card rendered blank — every seat in the library, invisible.
-
         Scale from the top-left and reserve a box of exactly the scaled size,
-        then centre that box. The plan now always starts at the left edge.
+        then centre that box. Scaling from `top center` inside a `w-max` box
+        landed the plan off-screen on a phone.
       */}
       <div
         className={frameless ? 'mx-auto my-auto' : 'mx-auto'}
-        style={{
-          width: CANVAS_W * scale,
-          height: CANVAS_H * scale,
-        }}
+        style={{ width: CANVAS_W * scale, height: CANVAS_H * scale }}
       >
-      <div
-        style={{
-          transform: `scale(${scale})`,
-          transformOrigin: 'top left',
-          width: CANVAS_W,
-          height: CANVAS_H,
-        }}
-      >
-        {/* ── Main Canvas ── */}
         <div
-          className="relative shrink-0"
+          className="relative"
           style={{
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
             width: CANVAS_W,
             height: CANVAS_H,
           }}
         >
-          {/* Background layer */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl shadow-sm">
-            {/* ── Grid ── */}
-            <FloorSurface />
-            {/* ── Floor content ── */}
-            <FloorDecorations />
-          </div>
-
-          {/* ── Unclipped Elements ── */}
-          {/* Section labels */}
-          {SEAT_ROWS.map((row) => (
-            <div
-              key={row.label}
-              className="absolute pointer-events-none z-10"
-              style={{ left: PAD + (row.fromCol - 1) * CELL + 4, top: PAD - 32 }}
-            >
-              <span className="text-xs font-bold uppercase tracking-[0.1em] text-white bg-slate-700 px-3 py-1.5 rounded-full shadow-sm">
-                {row.label}
-              </span>
-            </div>
-          ))}
-
-          <EntryMarker />
-          {WALL_DETAILS.map((d, i) => <WallLabel key={i} detail={d} />)}
-
-          {/* ── Seats ── */}
-          <div className="absolute inset-0 z-20">
+          <FloorPlanDrawing />
+          <div className="absolute inset-0">
             {children}
           </div>
         </div>
-      </div>
       </div>
 
       {/* Below MIN_SCALE the room no longer fits, so say so rather than
           letting a third of the library sit silently off-screen. */}
       {overflows && (
-        <p className="px-4 pb-3 text-center text-[11px] font-medium text-[var(--text-tertiary)]">
+        <p className="pt-2 text-center text-xs font-medium text-[var(--text-tertiary)]">
           Scroll sideways to see the rest of the hall
         </p>
       )}

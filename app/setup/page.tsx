@@ -31,8 +31,8 @@ export default function SetupPage() {
     >
       <motion.div variants={itemVariants}>
         <PageHeader
-          title="Automation Setup"
-          icon={<Zap className="h-5 w-5" />}
+          title="Request link & automation"
+          icon={<Zap className="size-5" />}
           subtitle="Connect Google Forms for automated seat allotment and email notifications."
         />
       </motion.div>
@@ -40,15 +40,15 @@ export default function SetupPage() {
       {/* Automation Flow Diagram */}
       <motion.div variants={itemVariants} className="mb-8">
         <div className="card-base rounded-2xl border border-[var(--border-default)] bg-[var(--bg-glass)] p-6 overflow-hidden">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)] mb-5">
+          <h2 className="text-xs font-bold text-[var(--text-tertiary)] mb-5">
             How It Works — Zero Manual Work
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             {[
-              { icon: <QrCode className="w-5 h-5" />, label: 'Member scans QR', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
-              { icon: <FileText className="w-5 h-5" />, label: 'Fills the form', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
-              { icon: <Zap className="w-5 h-5" />, label: 'Script runs', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
-              { icon: <Mail className="w-5 h-5" />, label: 'You get an email', color: 'bg-[var(--saffron-50)] text-[var(--saffron-700)]' },
+              { icon: <QrCode className="size-5" />, label: 'Member scans QR', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
+              { icon: <FileText className="size-5" />, label: 'Fills the form', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
+              { icon: <Zap className="size-5" />, label: 'Script runs', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
+              { icon: <Mail className="size-5" />, label: 'You get an email', color: 'bg-[var(--saffron-50)] text-[var(--saffron-700)]' },
             ].map((step, i) => (
               <div key={i} className="flex items-center gap-3 sm:gap-4">
                 <div className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl ${step.color} border border-current/10`}>
@@ -56,7 +56,7 @@ export default function SetupPage() {
                   <span className="text-xs font-bold whitespace-nowrap">{step.label}</span>
                 </div>
                 {i < 3 && (
-                  <ArrowRight className="w-4 h-4 text-[var(--text-tertiary)] shrink-0 hidden sm:block" />
+                  <ArrowRight className="size-4 text-[var(--text-tertiary)] shrink-0 hidden sm:block" />
                 )}
               </div>
             ))}
@@ -71,8 +71,8 @@ export default function SetupPage() {
 
       {/* Instruction Guide */}
       <motion.div variants={itemVariants} className="mt-8">
-        <h2 className="text-lg font-extrabold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-          <ListChecks className="w-5 h-5 text-[var(--sapphire-600)]" />
+        <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+          <ListChecks className="size-5 text-[var(--sapphire-600)]" />
           Integration guide
         </h2>
 
@@ -81,13 +81,13 @@ export default function SetupPage() {
           {/* Step 1 */}
           <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="size-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 1
               </div>
               <div>
                 <h3 className="text-sm font-bold text-[var(--text-primary)]">Create your Google Form</h3>
                 <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-[var(--sapphire-600)] hover:underline inline-flex items-center gap-1">Google Forms <ExternalLink className="w-4 h-4" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
+                  Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-[var(--sapphire-600)] hover:underline inline-flex items-center gap-1">Google Forms <ExternalLink className="size-4" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
                 </p>
                 <ol className="list-decimal list-inside mt-2 text-xs font-mono bg-[var(--bg-base)] border border-[var(--border-default)] p-3 rounded-lg text-[var(--text-tertiary)]">
                   <li>Full Name</li>
@@ -104,7 +104,7 @@ export default function SetupPage() {
           {/* Step 2 */}
           <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="size-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 2
               </div>
               <div>
@@ -119,7 +119,7 @@ export default function SetupPage() {
           {/* Step 3 */}
           <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="size-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 3
               </div>
               <div className="w-full">
@@ -136,7 +136,7 @@ export default function SetupPage() {
           {/* Step 4 */}
           <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
+              <div className="size-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
                 4
               </div>
               <div>

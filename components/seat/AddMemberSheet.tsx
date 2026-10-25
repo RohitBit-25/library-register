@@ -62,10 +62,10 @@ export default function AddMemberSheet({
   // Desktop: fill container
   return (
     <div className="h-full flex flex-col bg-transparent text-[var(--text-primary)] min-h-0">
-      <div className="flex items-center justify-between p-5 border-b border-[var(--border-subtle)] bg-[var(--bg-base)]/50 backdrop-blur-md sticky top-0 z-10 shrink-0">
-        <h3 className="text-base font-black text-[var(--text-primary)] font-mono flex items-center gap-2">
-          <span className="w-8 h-8 bg-[var(--saffron-700)] rounded-lg flex items-center justify-center text-[var(--saffron-50)] shadow-sm">
-            <UserPlus className="w-4 h-4" />
+      <div className="flex items-center justify-between p-5 border-b border-[var(--border-subtle)] bg-[var(--bg-base)]/50 sticky top-0 z-10 shrink-0">
+        <h3 className="text-base font-semibold text-[var(--text-primary)] font-mono flex items-center gap-2">
+          <span className="size-8 bg-[var(--saffron-700)] rounded-lg flex items-center justify-center text-[var(--saffron-50)] shadow-sm">
+            <UserPlus className="size-4" />
           </span>
           {seat ? `Assign Seat ${String(seat).padStart(2, '0')}` : 'Registration'}
         </h3>
@@ -74,7 +74,7 @@ export default function AddMemberSheet({
           aria-label="Close registration panel"
           className="cursor-pointer rounded-xl p-2 text-[var(--text-tertiary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] transition-ui hover:rotate-90 duration-200"
         >
-          <X className="w-5 h-5" aria-hidden="true" />
+          <X className="size-5" aria-hidden="true" />
         </button>
       </div>
       

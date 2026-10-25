@@ -12,7 +12,9 @@ export const dynamic = 'force-dynamic';
  * Long enough to handle a dispute about an approval, short enough that the
  * library is not indefinitely holding government IDs it no longer needs.
  */
-export const RETENTION_DAYS = 30;
+// Not exported: a route module may only export handlers and route config —
+// an extra export fails `next build` type-checking.
+const RETENTION_DAYS = 30;
 
 /**
  * GET /api/cron/purge-documents — delete ID documents from settled requests.

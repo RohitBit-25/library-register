@@ -1,5 +1,7 @@
 'use client';
 
+import { todayISO } from '@/lib/utils';
+
 import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
 import MemberTable from '@/components/member/MemberTable';
@@ -61,7 +63,7 @@ export default function MembersPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `library-members-export-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `library-members-export-${todayISO()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
     addToast('success', `Exported ${selectedMembers.length} members to CSV`);
@@ -89,8 +91,8 @@ export default function MembersPage() {
   return (
     <div>
       <PageHeader
-        title="All Members"
-        icon={<Users className="h-5 w-5" />}
+        title="Members"
+        icon={<Users className="size-5" />}
         subtitle={`${members.filter(m => !m.vacant).length} members · ${members.filter(m => m.vacant).length} vacant`}
       />
 

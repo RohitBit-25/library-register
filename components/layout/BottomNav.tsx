@@ -3,63 +3,35 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/hooks/useAuth';
-import {
-  LayoutDashboard,
-  Users,
-  BarChart3,
-  Inbox,
-  Eye,
-  HardDrive,
-} from 'lucide-react';
+import { ADMIN_TABS } from '@/components/layout/adminNav';
 
-
-/* ─── Admin Tabs ──────────────────────────────────────────────── */
-
-const adminTabs = [
-  { href: '/', label: 'Map', icon: LayoutDashboard },
-  { href: '/analytics', label: 'Dashboard', icon: BarChart3 },
-  { href: '/members', label: 'Members', icon: Users },
-  { href: '/requests', label: 'Requests', icon: Inbox },
-  { href: '/export', label: 'Export', icon: HardDrive },
-];
-
-/* ─── User Tabs ───────────────────────────────────────────────── */
-
-const userTabs = [
-  { href: '/browse', label: 'Browse', icon: Eye },
-  { href: '/my-requests', label: 'Requests', icon: Inbox },
-];
-
+/** Admin tab bar below lg. Public pages carry their own chrome. */
 export default function BottomNav() {
   const pathname = usePathname();
-  const { isAdmin } = useAuth();
-  const tabs = isAdmin ? adminTabs : userTabs;
 
   return (
-    <>
-      {/* Tab bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[var(--z-sticky)] h-16 flex items-center justify-around bg-[var(--bg-surface)] border-t border-[var(--border-default)] pb-safe-bottom">
-        {tabs.map(tab => {
-          const isActive = pathname === tab.href;
-          const Icon = tab.icon;
-          return (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className={cn(
-                'relative z-10 flex flex-col items-center justify-center gap-[var(--space-1)] min-w-[64px] py-[var(--space-1)] cursor-pointer transition-ui',
-                isActive
-                  ? 'text-[var(--saffron-600)] scale-110'
-                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]',
-              )}
-            >
-              <Icon className="w-5 h-5" />
-              <span className="text-xs font-[var(--weight-medium)]">{tab.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-    </>
+    <nav
+      aria-label="Admin"
+      className="fixed bottom-0 left-0 right-0 z-30 flex min-h-16 items-stretch justify-around border-t border-[var(--border-default)] bg-[var(--bg-surface)] pb-safe-bottom lg:hidden"
+    >
+      {ADMIN_TABS.map((tab) => {
+        const isActive = pathname === tab.href;
+        const Icon = tab.icon;
+        return (
+          <Link
+            key={tab.href}
+            href={tab.href}
+            aria-current={isActive ? 'page' : undefined}
+            className={cn(
+              'flex min-w-[60px] flex-1 flex-col items-center justify-center gap-1 transition-ui',
+              isActive ? 'text-[var(--text-primary)]' : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]',
+            )}
+          >
+            <Icon className={cn('size-5', isActive && 'text-[var(--saffron-600)]')} aria-hidden="true" />
+            <span className={cn('text-xs', isActive ? 'font-semibold' : 'font-medium')}>{tab.tab}</span>
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

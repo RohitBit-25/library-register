@@ -56,6 +56,9 @@ export const memberPatchSchema = z.object({
   paymentMode: paymentMode.optional(),
   documentStatus: z.string().max(200).optional(),
   termsAccepted: z.boolean().optional(),
+  /** Set by the Renew action: a new term was paid for, even if the last one
+   *  was paid too. Not stored — it only decides whether to write a Payment. */
+  renewal: z.boolean().optional(),
 }).strict();
 
 /** POST /api/requests — public endpoint, so this is a trust boundary. */

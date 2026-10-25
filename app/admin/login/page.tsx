@@ -4,7 +4,8 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
-import { Lock, ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import Wordmark from '@/components/layout/Wordmark';
 
 /**
  * Staff sign-in.
@@ -71,35 +72,29 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[var(--bg-void)] p-6">
+    <main className="flex min-h-dvh flex-col items-center justify-center bg-[var(--bg-void)] p-6">
       <div className="w-full max-w-[380px]">
         <Link
           href="/landing"
-          className="mb-8 inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-[var(--text-secondary)] transition-ui hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] transition-ui hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
         >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          <ArrowLeft className="size-4" aria-hidden="true" />
           Back to the library
         </Link>
 
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-7 shadow-sm">
-          <div className="mb-6 flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--saffron-700)] text-[var(--text-inverse)]">
-              <Lock className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <div>
-              <h1 className="font-display text-lg font-bold tracking-tight text-[var(--text-primary)]">
-                Staff sign in
-              </h1>
-              <p className="text-xs font-medium text-[var(--text-secondary)]">
-                Gangaur Library management
-              </p>
-            </div>
-          </div>
+        <div className="rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-7 shadow-[var(--shadow-xs)]">
+          <Wordmark size="sm" caption="Staff desk" />
+          <h1 className="mt-6 font-display text-xl font-semibold leading-tight text-[var(--text-primary)]">
+            Sign in
+          </h1>
+          <p className="mb-6 mt-1.5 text-sm text-[var(--text-secondary)]">
+            Your PIN identifies you, so the activity log records who did what.
+          </p>
 
           <form onSubmit={handleSubmit} noValidate>
             <label
               htmlFor="staff-pin"
-              className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]"
+              className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]"
             >
               Your PIN
             </label>
@@ -117,7 +112,7 @@ export default function AdminLoginPage() {
               onChange={(e) => { setPin(e.target.value.replace(/\D/g, '')); setError(''); }}
               aria-invalid={!!error}
               aria-describedby={error ? errorId : undefined}
-              className="tabular w-full rounded-xl border border-[var(--border-strong)] bg-[var(--bg-base)] px-4 py-3 text-center text-lg font-bold tracking-[0.4em] text-[var(--text-primary)] transition-ui focus:border-[var(--saffron-500)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]"
+              className="tabular w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] px-4 py-3 text-center font-mono text-lg text-[var(--text-primary)] transition-ui focus:border-[var(--saffron-600)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]/20"
               placeholder="••••"
             />
 
@@ -125,7 +120,7 @@ export default function AdminLoginPage() {
               <p
                 id={errorId}
                 role="alert"
-                className="mt-3 rounded-lg border border-[var(--ruby-200)] bg-[var(--ruby-50)] px-3 py-2 text-xs font-semibold text-[var(--ruby-600)]"
+                className="mt-3 rounded-[var(--radius-sm)] border border-[var(--ruby-200)] bg-[var(--ruby-50)] px-3 py-2 text-sm text-[var(--ruby-700)]"
               >
                 {error}
               </p>
@@ -134,9 +129,9 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={!pin || isSubmitting}
-              className="mt-5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--saffron-700)] py-3 text-sm font-bold text-[var(--text-inverse)] transition-ui hover:bg-[var(--saffron-800)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)]"
+              className="mt-5 flex min-h-[44px] w-full cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-[var(--ink)] bg-[var(--ink)] text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--ink-hover)] disabled:cursor-not-allowed disabled:border-[var(--border-default)] disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)]"
             >
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+              {isSubmitting && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
               {isSubmitting ? 'Checking…' : 'Sign in'}
             </button>
           </form>
@@ -144,8 +139,8 @@ export default function AdminLoginPage() {
 
         <p className="mt-5 text-center text-xs text-[var(--text-tertiary)]">
           Students do not need to sign in.{' '}
-          <Link href="/browse" className="font-semibold text-[var(--text-link)] underline">
-            Browse seats
+          <Link href="/browse" className="font-medium text-[var(--text-link)] underline underline-offset-4">
+            Find a seat
           </Link>
         </p>
       </div>

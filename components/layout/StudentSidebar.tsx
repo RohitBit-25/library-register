@@ -54,7 +54,7 @@ export default function StudentSidebar() {
             >
               <item.icon 
                 className={cn(
-                  "w-6 h-6 transition-transform group-hover:scale-110",
+                  "size-6 transition-transform group-hover:scale-110",
                   isActive ? "text-[var(--saffron-600)]" : "text-current"
                 )} 
                 strokeWidth={isActive ? 2.5 : 2}

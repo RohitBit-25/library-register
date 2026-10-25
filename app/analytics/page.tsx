@@ -1,5 +1,7 @@
 'use client';
 
+import { STATUS_STYLE } from '@/components/seat/statusStyle';
+
 import { useMembers } from '@/hooks/useMembers';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useToast } from '@/hooks/useToast';
@@ -67,10 +69,12 @@ export default function DashboardPage() {
     addToast('success', `Seat ${seat} — fee marked as paid`);
   };
 
-  const alertBorderColors: Record<string, string> = {
-    expired: 'border-l-[var(--ruby-500)]',
-    due: 'border-l-[var(--marigold-500)]',
-    expiring: 'border-l-[var(--emerald-500)]',
+  // Same colours as the seat plan (components/seat/statusStyle). "Expiring"
+  // was emerald here — the colour that means "active" everywhere else.
+  const alertDot: Record<string, string> = {
+    expired: STATUS_STYLE.expired.dot,
+    due: STATUS_STYLE.due.dot,
+    expiring: STATUS_STYLE.expiring.dot,
   };
 
   return (
@@ -82,11 +86,11 @@ export default function DashboardPage() {
       {/* Page header */}
       <motion.div variants={itemVariants}>
         <PageHeader
-          title="Dashboard"
+          title="Analytics"
           subtitle={dateStr}
           actions={
             <div className="hidden items-center gap-2 rounded-lg bg-[var(--bg-muted)] px-3 py-1.5 text-xs font-semibold tabular text-[var(--text-secondary)] sm:flex">
-              <TrendingUp className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
+              <TrendingUp className="size-4 text-[var(--emerald-600)]" aria-hidden="true" />
               {Math.round((stats.occupied / 95) * 100)}% occupied
             </div>
           }
@@ -99,28 +103,28 @@ export default function DashboardPage() {
           value={stats.occupied}
           label="Occupied seats"
           accent="gray"
-          icon={<Users className="w-5 h-5" />}
+          icon={<Users className="size-5" />}
           onClick={() => router.push('/members?filter=active')}
         />
         <StatCard
           value={stats.vacant}
           label="Vacant seats"
           accent="gray"
-          icon={<UserMinus className="w-5 h-5" />}
+          icon={<UserMinus className="size-5" />}
           onClick={() => router.push('/members?filter=vacant')}
         />
         <StatCard
           value={stats.due}
           label="Fee pending"
           accent="amber"
-          icon={<AlertTriangle className="w-5 h-5" />}
+          icon={<AlertTriangle className="size-5" />}
           onClick={() => router.push('/members?filter=due')}
         />
         <StatCard
           value={stats.expired}
           label="Expired"
           accent="red"
-          icon={<CalendarX className="w-5 h-5" />}
+          icon={<CalendarX className="size-5" />}
           onClick={() => router.push('/members?filter=expired')}
         />
       </motion.div>
@@ -133,7 +137,7 @@ export default function DashboardPage() {
         <Card variant="base" className="overflow-hidden">
           <div className="flex items-center justify-between gap-2 border-b border-[var(--border-subtle)] bg-[var(--bg-muted)] px-[var(--space-5)] py-[var(--space-4)]">
             <h2 className="font-display flex items-center gap-[var(--space-2)] text-sm font-semibold text-[var(--text-primary)]">
-              <IndianRupee className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
+              <IndianRupee className="size-4 text-[var(--emerald-600)]" aria-hidden="true" />
               Fees
             </h2>
             <span className="text-xs font-medium text-[var(--text-tertiary)]">
@@ -183,7 +187,7 @@ export default function DashboardPage() {
           <Card variant="base" className="overflow-hidden">
             <div className="px-[var(--space-5)] py-[var(--space-4)] border-b border-[var(--border-subtle)] bg-[var(--bg-muted)]">
               <h2 className="font-display text-sm font-semibold text-[var(--text-primary)] flex items-center gap-[var(--space-2)]">
-                <AlertTriangle className="w-4 h-4 text-[var(--marigold-700)]" />
+                <AlertTriangle className="size-4 text-[var(--marigold-700)]" />
                 Alerts
                 <span className="tabular rounded-full bg-[var(--marigold-50)] px-2 py-0.5 text-xs font-bold text-[var(--marigold-700)]">
                   {alerts.length}
@@ -195,10 +199,11 @@ export default function DashboardPage() {
               {alerts.map(m => (
                 <div
                   key={`alert-${m.seat}`}
-                  className={`flex items-center justify-between px-[var(--space-5)] py-[var(--space-3)] hover:bg-[var(--bg-muted)] transition-colors border-l ${alertBorderColors[m.alertType]}`}
+                  className={`flex items-center justify-between px-[var(--space-5)] py-[var(--space-3)] hover:bg-[var(--bg-muted)] transition-colors`}
                 >
                   <div className="flex items-center gap-[var(--space-3)] min-w-0">
-                    <span className="text-xs font-mono font-bold text-[var(--text-tertiary)] shrink-0 w-8 h-8 flex items-center justify-center rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-[var(--shadow-sm)]">
+                    <span className={`size-2 shrink-0 rounded-full ${alertDot[m.alertType]}`} aria-hidden="true" />
+                    <span className="w-7 shrink-0 font-mono text-sm text-[var(--text-secondary)] tabular">
                       {m.seat}
                     </span>
                     <div className="min-w-0">
@@ -220,7 +225,7 @@ export default function DashboardPage() {
                         onClick={() => handleMarkPaid(m.seat)}
                         className="bg-[var(--emerald-600)] text-[var(--text-inverse)] border-transparent hover:bg-[var(--emerald-600)]"
                       >
-                        <Check className="w-4 h-4 mr-1" />
+                        <Check className="size-4 mr-1" />
                         Mark paid
                       </Button>
                     ) : (
@@ -229,7 +234,7 @@ export default function DashboardPage() {
                         size="sm"
                         onClick={() => router.push(`/?seat=${m.seat}`)}
                       >
-                        <RefreshCw className="w-4 h-4 mr-1" />
+                        <RefreshCw className="size-4 mr-1" />
                         Renew
                       </Button>
                     )}
@@ -237,12 +242,6 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-            {alerts.length > 4 && (
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--bg-surface)] to-transparent"
-              />
-            )}
             </div>
           </Card>
         </motion.div>
@@ -305,7 +304,7 @@ export default function DashboardPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-[var(--text-tertiary)] bg-[var(--bg-muted)] uppercase tracking-wider font-semibold">
+                <tr className="text-left text-xs text-[var(--text-tertiary)] bg-[var(--bg-muted)] font-semibold">
                   <th scope="col" className="w-16 px-[var(--space-5)] py-[var(--space-3)]">Seat</th>
                   <th scope="col" className="px-[var(--space-5)] py-[var(--space-3)]">Name</th>
                   <th scope="col" className="hidden w-32 px-[var(--space-5)] py-[var(--space-3)] sm:table-cell">Expires</th>
@@ -333,8 +332,8 @@ export default function DashboardPage() {
                   <tr>
                     <td colSpan={4} className="px-[var(--space-5)] py-[var(--space-8)] text-center text-[var(--text-tertiary)]">
                       <div className="flex flex-col items-center gap-[var(--space-2)]">
-                        <div className="w-12 h-12 rounded-[var(--radius-full)] bg-[var(--emerald-50)] flex items-center justify-center">
-                          <Check className="w-6 h-6 text-[var(--emerald-600)]" />
+                        <div className="size-12 rounded-[var(--radius-full)] bg-[var(--emerald-50)] flex items-center justify-center">
+                          <Check className="size-6 text-[var(--emerald-600)]" />
                         </div>
                         <span className="font-[var(--weight-medium)]">No alerts — everything looks good!</span>
                       </div>
@@ -481,7 +480,7 @@ function MoneyStat({
         onClick && 'cursor-pointer transition-colors hover:bg-[var(--bg-muted)]'
       )}
     >
-      <dt className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
+      <dt className="text-xs font-bold text-[var(--text-tertiary)]">
         {label}
       </dt>
       <dd>

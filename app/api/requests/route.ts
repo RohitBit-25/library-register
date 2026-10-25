@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
+import { isValidObjectId } from 'mongoose';
 import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
 import Member from '@/models/Member';
+import Payment from '@/models/Payment';
+import { planPrice } from '@/lib/pricing';
 import AuditLog from '@/models/AuditLog';
 import { getSession } from '@/lib/auth-server';
 import { todayISO, calcExpiry } from '@/lib/utils';
@@ -171,6 +174,9 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: formatZodError(parsed.error) }, { status: 400 });
     }
     const { id, status } = parsed.data;
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: 'Invalid request ID' }, { status: 400 });
+    }
 
     await dbConnect();
 
@@ -180,6 +186,15 @@ export async function PATCH(request: Request) {
     }
     if (req.status === status) {
       return NextResponse.json(serializeRequest(req.toObject()));
+    }
+    // An approved request already put someone in the seat. Flipping it back
+    // to pending/rejected left that member seated against a request that
+    // said otherwise; the seat has to be vacated as its own deliberate act.
+    if (req.status === 'approved') {
+      return NextResponse.json(
+        { error: `This request already allotted seat ${req.seat}. Vacate the seat from the plan instead.` },
+        { status: 409 }
+      );
     }
 
     if (status !== 'approved') {
@@ -212,6 +227,8 @@ export async function PATCH(request: Request) {
           vacant: false,
           paymentMode: req.paymentMode || 'upi',
           termsAccepted: true,
+          lastPaymentAt: new Date(),
+          lastPaymentAmount: planPrice(duration),
         },
       },
       { new: true }
@@ -226,6 +243,22 @@ export async function PATCH(request: Request) {
 
     req.status = 'approved';
     await req.save();
+
+    // Approval marks the fee paid, so it is a collection like any other. It
+    // used to set fee: 'paid' without a ledger row, so every fee taken through
+    // a student request was missing from Collections.
+    const amount = planPrice(duration);
+    if (amount > 0) {
+      await Payment.create({
+        seat: req.seat,
+        memberName: req.userName,
+        memberPhone: req.userPhone,
+        amount,
+        duration,
+        paymentMode: req.paymentMode || null,
+        date: todayISO(),
+      });
+    }
 
     await AuditLog.create({
       user: session.name,
@@ -252,8 +285,8 @@ export async function DELETE(request: Request) {
 
   try {
     const id = new URL(request.url).searchParams.get('id');
-    if (!id) {
-      return NextResponse.json({ error: 'Missing request ID' }, { status: 400 });
+    if (!id || !isValidObjectId(id)) {
+      return NextResponse.json({ error: 'Missing or invalid request ID' }, { status: 400 });
     }
 
     await dbConnect();

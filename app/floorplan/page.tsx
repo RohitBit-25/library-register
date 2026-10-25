@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Minus, Plus, Maximize2, Percent } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, Maximize2 } from 'lucide-react';
 import { useMembers } from '@/hooks/useMembers';
 import { useToast } from '@/hooks/useToast';
 import AddMemberSheet from '@/components/seat/AddMemberSheet';
@@ -10,12 +10,11 @@ import { type Duration, type Member } from '@/lib/types';
 import SeatTile from '@/components/seat/SeatTile';
 import SeatDetailPanel from '@/components/seat/SeatDetailPanel';
 import { SeatMapContainer, SeatMapWrapper } from '@/components/seat/SeatMap';
+import { SeatLegend } from '@/components/seat/SeatGrid';
+import Segmented from '@/components/ui/Segmented';
 import { getSeatStatus } from '@/lib/seat-status';
 import { type Shift } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
 
 /**
  * The floor plan, on its own.
@@ -50,13 +49,6 @@ function useIsPhone() {
   );
 }
 
-const LEGEND = [
-  { label: 'Active', className: 'bg-[var(--emerald-500)]' },
-  { label: 'Expiring', className: 'bg-[var(--saffron-500)]' },
-  { label: 'Fee due', className: 'bg-[var(--marigold-500)]' },
-  { label: 'Expired', className: 'bg-[var(--ruby-500)]' },
-  { label: 'Vacant', className: 'bg-[var(--border-default)]' },
-];
 
 export default function FloorPlanPage() {
   const router = useRouter();
@@ -145,24 +137,24 @@ export default function FloorPlanPage() {
     setChosenZoom(next ?? current);
   }, [zoom]);
 
-  const btn = 'flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-xl border '
-    + 'border-[var(--border-default)] bg-[var(--bg-surface)] px-3 text-sm font-semibold '
-    + 'text-[var(--text-primary)] transition-ui hover:border-[var(--saffron-300)] '
-    + 'hover:bg-[var(--saffron-50)] focus-visible:outline-none focus-visible:ring-2 '
-    + 'focus-visible:ring-[var(--saffron-500)] disabled:opacity-40 disabled:hover:bg-[var(--bg-surface)]';
+  const btn = 'flex h-10 min-w-10 cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border '
+    + 'border-[var(--border-default)] bg-[var(--bg-surface)] px-2.5 text-sm font-medium '
+    + 'text-[var(--text-primary)] transition-ui hover:border-[var(--border-strong)] '
+    + 'disabled:cursor-not-allowed disabled:text-[var(--text-disabled)] disabled:hover:border-[var(--border-default)]';
+  const btnOn = 'border-[var(--text-primary)] ring-1 ring-[var(--text-primary)]';
 
   return (
     <div className="flex h-[100dvh] flex-col overflow-hidden bg-[var(--bg-void)]">
       {/* ── Toolbar ──────────────────────────────────────────────── */}
       <header className="flex shrink-0 flex-wrap items-center gap-3 border-b border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3 sm:px-6">
-        <button type="button" onClick={() => router.push('/')} className={btn} aria-label="Back to the dashboard">
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          <span className="hidden sm:inline">Dashboard</span>
+        <button type="button" onClick={() => router.push('/')} className={btn} aria-label="Back to seats">
+          <ArrowLeft className="size-4" aria-hidden="true" />
+          <span className="hidden sm:inline">Seats</span>
         </button>
 
         <div className="min-w-0">
-          <h1 className="truncate text-base font-bold tracking-tight text-[var(--text-primary)] sm:text-md">
-            Floor Plan
+          <h1 className="truncate font-display text-md font-semibold leading-tight text-[var(--text-primary)]">
+            Floor plan
           </h1>
           <p className="text-xs text-[var(--text-secondary)]">
             {isLoading ? 'Loading the hall…' : (
@@ -182,37 +174,37 @@ export default function FloorPlanPage() {
         </div>
 
         <div className="ml-auto flex items-center gap-2">
-          <Select value={shiftFilter} onValueChange={(v) => setShiftFilter(v as Shift | 'all')}>
-            <SelectTrigger className="h-11 w-[150px] font-semibold" aria-label="Filter the plan by shift">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All shifts</SelectItem>
-              <SelectItem value="morning">Morning shift</SelectItem>
-              <SelectItem value="evening">Evening shift</SelectItem>
-            </SelectContent>
-          </Select>
+          <Segmented
+            size="sm"
+            label="Shift"
+            value={shiftFilter}
+            onChange={setShiftFilter}
+            options={[
+              { value: 'all', label: 'All shifts' },
+              { value: 'morning', label: 'Morning' },
+              { value: 'evening', label: 'Evening' },
+            ]}
+          />
 
           <div className="flex items-center gap-1" role="group" aria-label="Zoom">
             <button type="button" onClick={() => stepZoom(-1)} className={btn}
               disabled={zoom !== null && zoom <= ZOOM_STEPS[0]} aria-label="Zoom out">
-              <Minus className="h-4 w-4" aria-hidden="true" />
+              <Minus className="size-4" aria-hidden="true" />
             </button>
             <button type="button" onClick={() => setChosenZoom(null)}
-              className={cn(btn, zoom === null && 'border-[var(--saffron-500)] bg-[var(--saffron-50)]')}
+              className={cn(btn, zoom === null && btnOn)}
               aria-label="Fit the whole room on screen" aria-pressed={zoom === null}>
-              <Maximize2 className="h-4 w-4" aria-hidden="true" />
+              <Maximize2 className="size-4" aria-hidden="true" />
               <span className="hidden lg:inline">Fit</span>
             </button>
             <button type="button" onClick={() => setChosenZoom(1)}
-              className={cn(btn, zoom === 1 && 'border-[var(--saffron-500)] bg-[var(--saffron-50)]')}
+              className={cn(btn, zoom === 1 && btnOn)}
               aria-label="Show the plan at full size" aria-pressed={zoom === 1}>
-              <Percent className="h-4 w-4" aria-hidden="true" />
-              <span className="hidden lg:inline">100</span>
+              <span className="font-mono text-xs tabular">1:1</span>
             </button>
             <button type="button" onClick={() => stepZoom(1)} className={btn}
               disabled={zoom !== null && zoom >= ZOOM_STEPS[ZOOM_STEPS.length - 1]} aria-label="Zoom in">
-              <Plus className="h-4 w-4" aria-hidden="true" />
+              <Plus className="size-4" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -245,13 +237,8 @@ export default function FloorPlanPage() {
       </main>
 
       {/* ── Legend ───────────────────────────────────────────────── */}
-      <footer className="flex shrink-0 flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
-        {LEGEND.map((l) => (
-          <span key={l.label} className="flex items-center gap-2 text-xs font-bold text-[var(--text-secondary)]">
-            <span className={cn('h-3 w-3 rounded-full', l.className)} aria-hidden="true" />
-            {l.label}
-          </span>
-        ))}
+      <footer className="flex shrink-0 justify-center border-t border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
+        <SeatLegend />
       </footer>
 
       {selectedSeat !== null && (

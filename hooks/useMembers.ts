@@ -102,7 +102,7 @@ export function useMembers() {
   // ─── Update member with rollback ─────────────────────────────
   const update = useCallback(async (
     seat: number,
-    patch: Partial<Member>,
+    patch: Partial<Member> & { renewal?: boolean },
     onError?: (msg: string) => void
   ) => {
     // Snapshot for rollback
@@ -232,7 +232,9 @@ export function useMembers() {
     onError?: (msg: string) => void
   ) => {
     const expiry = calcExpiry(joinDate, duration);
-    update(seat, { joinDate, duration, expiry, fee: 'paid' }, onError);
+    // `renewal` tells the server this is a newly paid term, so it is ledgered
+    // even when the previous term was already paid.
+    update(seat, { joinDate, duration, expiry, fee: 'paid', renewal: true }, onError);
   }, [update]);
 
   // ─── Get next vacant seat ────────────────────────────────────

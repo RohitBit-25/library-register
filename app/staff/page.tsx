@@ -74,7 +74,7 @@ export default function StaffPage() {
     <div className="animate-fade-in max-w-3xl pb-24">
       <PageHeader
         title="Staff"
-        icon={<Users className="h-5 w-5" />}
+        icon={<Users className="size-5" />}
         subtitle={
           <>
             Each person signs in with their own PIN, so the activity log records who did what.
@@ -105,7 +105,7 @@ export default function StaffPage() {
                       value={pin}
                       onChange={e => setPin(e.target.value.replace(/\D/g, '').slice(0, 8))}
                       required inputMode="numeric" autoComplete="off"
-                      className="h-11 w-full rounded-xl border border-[var(--border-strong)] bg-[var(--bg-base)] px-3 font-mono tracking-[0.3em] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]"
+                      className="h-11 w-full rounded-xl border border-[var(--border-strong)] bg-[var(--bg-base)] px-3 font-mono text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]"
                       placeholder="••••"
                     />
                   </label>
@@ -133,7 +133,7 @@ export default function StaffPage() {
                 <div className="flex gap-2 pt-1">
                   <button
                     type="submit" disabled={busy || pin.length < 4 || name.trim().length < 2}
-                    className="min-h-[44px] flex-1 cursor-pointer rounded-xl bg-[var(--saffron-600)] text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--saffron-700)] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="min-h-[44px] flex-1 cursor-pointer rounded-xl bg-[var(--ink)] text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--ink-hover)] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {busy ? 'Adding…' : 'Add staff member'}
                   </button>
@@ -149,9 +149,9 @@ export default function StaffPage() {
           ) : (
             <button
               onClick={() => setAdding(true)}
-              className="flex min-h-[44px] cursor-pointer items-center gap-2 rounded-xl border border-[var(--saffron-700)] bg-[var(--saffron-600)] px-5 text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--saffron-700)]"
+              className="flex min-h-[44px] cursor-pointer items-center gap-2 rounded-xl border border-[var(--ink)] bg-[var(--ink)] px-5 text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--ink-hover)]"
             >
-              <UserPlus className="h-4 w-4" aria-hidden="true" />
+              <UserPlus className="size-4" aria-hidden="true" />
               Add staff member
             </button>
           )}
@@ -165,26 +165,26 @@ export default function StaffPage() {
           <ul className="divide-y divide-[var(--border-subtle)]">
             {staff.map(s => (
               <li key={s.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
-                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${
                   s.role === 'owner'
                     ? 'bg-[var(--saffron-50)] text-[var(--saffron-700)]'
                     : 'bg-[var(--bg-muted)] text-[var(--text-secondary)]'
                 }`}>
                   {s.role === 'owner'
-                    ? <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                    : <KeyRound className="h-4 w-4" aria-hidden="true" />}
+                    ? <ShieldCheck className="size-4" aria-hidden="true" />
+                    : <KeyRound className="size-4" aria-hidden="true" />}
                 </span>
 
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)]">
                     {s.name}
                     {s.name === staffName && (
-                      <span className="rounded-md bg-[var(--sapphire-50)] px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider text-[var(--sapphire-600)]">
+                      <span className="rounded-md bg-[var(--sapphire-50)] px-1.5 py-0.5 text-xs font-bold text-[var(--sapphire-600)]">
                         You
                       </span>
                     )}
                     {!s.active && (
-                      <span className="rounded-md bg-[var(--bg-muted)] px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
+                      <span className="rounded-md bg-[var(--bg-muted)] px-1.5 py-0.5 text-xs font-bold text-[var(--text-tertiary)]">
                         Revoked
                       </span>
                     )}
@@ -201,7 +201,7 @@ export default function StaffPage() {
                       onClick={() => setConfirmRevoke(s)}
                       className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--ruby-200)] bg-[var(--ruby-50)] px-2.5 text-xs font-bold text-[var(--ruby-600)] transition-ui hover:bg-[var(--ruby-100)]"
                     >
-                      <Ban className="h-4 w-4" aria-hidden="true" />
+                      <Ban className="size-4" aria-hidden="true" />
                       Revoke
                     </button>
                   ) : (
@@ -209,7 +209,7 @@ export default function StaffPage() {
                       onClick={() => setActive(s, true)}
                       className="flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2.5 text-xs font-bold text-[var(--emerald-600)] transition-ui hover:bg-[var(--emerald-100)]"
                     >
-                      <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                      <RotateCcw className="size-4" aria-hidden="true" />
                       Restore
                     </button>
                   )

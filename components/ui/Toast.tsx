@@ -62,7 +62,7 @@ export default function ToastContainer({ toasts, onRemove }: ToastContainerProps
               )}
               role="alert"
             >
-              <Icon className="w-5 h-5 shrink-0 mt-0.5" />
+              <Icon className="size-5 shrink-0 mt-0.5" />
               <p className="text-sm font-[var(--font-body)] text-[var(--text-primary)] flex-1 leading-[1.5]">
                 {t.message}
               </p>
@@ -71,7 +71,7 @@ export default function ToastContainer({ toasts, onRemove }: ToastContainerProps
                 className="shrink-0 cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors p-1 -mr-1"
                 aria-label="Dismiss notification"
               >
-                <X className="w-4 h-4" />
+                <X className="size-4" />
               </button>
             </motion.div>
           );

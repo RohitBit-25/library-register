@@ -122,11 +122,11 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
       {/* Seat Selection */}
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-5">
         <div className="flex items-center justify-between border-b border-[var(--border-default)] pb-4">
-          <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-wide">
+          <h3 className="text-sm font-semibold text-[var(--text-primary)]">
             Seat Allotment
           </h3>
           <span className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-muted)] px-3 py-1.5 text-xs font-bold text-[var(--text-secondary)]">
-            <Zap className="w-4 h-4" />
+            <Zap className="size-4" />
             {vacantSeats.length} Available
           </span>
         </div>
@@ -134,7 +134,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <FieldGroup label="Seat Number" required error={errors.seat?.message}>
           <select
             {...register('seat', { valueAsNumber: true })}
-            className="w-full cursor-pointer rounded-xl border border-[var(--border-default)] px-4 py-3.5 text-sm font-mono font-bold bg-[var(--bg-surface)]/50 text-[var(--text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--saffron-500)]/10 focus:border-[var(--saffron-200)] backdrop-blur-md transition-ui duration-300"
+            className="w-full cursor-pointer rounded-xl border border-[var(--border-default)] px-4 py-3.5 text-sm font-mono font-bold bg-[var(--bg-surface)]/50 text-[var(--text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--saffron-500)]/10 focus:border-[var(--saffron-200)] transition-ui duration-300 shadow-[var(--shadow-xs)]"
           >
             {vacantSeats.length === 0 ? (
               <option value="-1">No seats available</option>
@@ -151,14 +151,14 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
 
       {/* Form fields */}
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-6">
-        <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-wide border-b border-[var(--border-default)] pb-4">
+        <h3 className="text-sm font-semibold text-[var(--text-primary)] border-b border-[var(--border-default)] pb-4">
           Member Details
         </h3>
 
         {/* Name */}
         <FloatingLabelInput 
           label="Full Name" 
-          icon={<User className="w-4 h-4" />}
+          icon={<User className="size-4" />}
           error={errors.name?.message}
           {...register('name')}
         />
@@ -167,7 +167,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <div className="grid grid-cols-1 gap-5 mt-4">
           <FloatingLabelInput 
             label="WhatsApp Number" 
-            icon={<PhoneIcon className="w-4 h-4" />}
+            icon={<PhoneIcon className="size-4" />}
             type="tel"
             inputMode="tel"
             error={errors.phone?.message}
@@ -213,18 +213,18 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
               />
               {watchDocumentStatus ? (
                 <div className="flex flex-col items-center gap-2">
-                  <CheckCircle2 className="w-10 h-10 text-[var(--emerald-600)] shrink-0 drop-shadow-sm" />
+                  <CheckCircle2 className="size-10 text-[var(--emerald-600)] shrink-0 drop-shadow-sm" />
                   <span className="text-sm font-bold text-[var(--text-primary)]">{watchDocumentStatus}</span>
                   <span className="text-xs font-semibold text-[var(--text-secondary)] group-hover:text-[var(--saffron-600)] transition-colors">Click to replace file</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-3 text-[var(--text-secondary)] group-hover:text-[var(--saffron-600)] transition-colors">
                   <div className="bg-[var(--bg-base)] p-3 rounded-full shadow-sm border border-[var(--border-default)] transition-transform group-hover:scale-110 duration-200">
-                    <Upload className="w-5 h-5 text-current" />
+                    <Upload className="size-5 text-current" />
                   </div>
                   <div>
                     <span className="text-sm font-bold block text-[var(--saffron-600)] drop-shadow-sm">Add file</span>
-                    <span className="mt-1 block text-xs font-medium tracking-wide text-[var(--text-tertiary)]">JPEG, PNG, WebP or PDF · up to 2 MB</span>
+                    <span className="mt-1 block text-xs font-medium text-[var(--text-tertiary)]">JPEG, PNG, WebP or PDF · up to 2 MB</span>
                   </div>
                 </div>
               )}
@@ -235,7 +235,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
 
       {/* Payment Section */}
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-5">
-        <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-wide border-b border-[var(--border-default)] pb-4">
+        <h3 className="text-sm font-semibold text-[var(--text-primary)] border-b border-[var(--border-default)] pb-4">
           Payment Details
         </h3>
         
@@ -259,8 +259,8 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         {watchPaymentMode === 'upi' && (
           <div className="bg-[var(--bg-base)] rounded-xl p-6 flex flex-col items-center justify-center border border-[var(--border-default)] mt-2 text-center animate-in fade-in zoom-in-95 duration-200 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 w-full h-1 bg-[var(--saffron-500)]" />
-            <p className="text-sm font-black tracking-wide text-[var(--text-primary)] mb-4 uppercase">Scan to pay via UPI</p>
-            <div className="p-3 bg-white rounded-xl shadow-sm border border-black/5">
+            <p className="text-sm font-semibold text-[var(--text-primary)] mb-4">Scan to pay via UPI</p>
+            <div className="p-3 bg-[var(--bg-surface)] rounded-xl shadow-sm border border-black/5">
               <QRCodeCanvas 
                 value={`upi://pay?pa=9462572575@axl&pn=KAMLESH%20SINGH%20ASDLIYA&cu=INR`}
                 size={160}
@@ -275,16 +275,16 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
 
       {/* Terms & Conditions */}
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm space-y-4">
-        <h3 className="text-sm font-black text-[var(--ruby-600)] uppercase tracking-wide border-b border-[var(--border-default)] pb-4 mb-5 flex items-center gap-2">
+        <h3 className="text-sm font-semibold text-[var(--ruby-600)] border-b border-[var(--border-default)] pb-4 mb-5 flex items-center gap-2">
           Declaration & Terms and Condition 
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--ruby-500)]" />
+          <span className="inline-block size-1.5 rounded-full bg-[var(--ruby-500)]" />
         </h3>
         
         <label className="flex items-start gap-4 cursor-pointer group p-2 -mx-2 rounded-lg hover:bg-[var(--bg-base)] transition-colors">
           <input 
             type="checkbox" 
             {...register('termsAccepted.rules')}
-            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-600)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
+            className="mt-1 size-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-600)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
           />
           <span className={cn(
             "text-sm font-medium leading-relaxed group-hover:text-[var(--saffron-600)] transition-colors pt-0.5",
@@ -298,7 +298,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <input 
             type="checkbox" 
             {...register('termsAccepted.damage')}
-            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-600)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
+            className="mt-1 size-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-600)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
           />
           <span className={cn(
             "text-sm font-medium leading-relaxed group-hover:text-[var(--saffron-600)] transition-colors pt-0.5",
@@ -312,7 +312,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <input 
             type="checkbox" 
             {...register('termsAccepted.nonRefundable')}
-            className="mt-1 w-5 h-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-600)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
+            className="mt-1 size-5 rounded border-2 border-[var(--border-default)] text-[var(--saffron-600)] focus:ring-[var(--saffron-500)] accent-[var(--saffron-500)] cursor-pointer transition-transform group-hover:scale-105" 
           />
           <span className={cn(
             "text-sm font-medium leading-relaxed group-hover:text-[var(--saffron-600)] transition-colors pt-0.5",
@@ -328,14 +328,14 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         <button
           type="submit"
           disabled={vacantSeats.length === 0 || !isValid}
-          className="flex-1 rounded-xl bg-[var(--saffron-500)] py-4 text-sm font-black tracking-widest uppercase text-[#1a1a16] hover:brightness-110 transition-ui duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover: active:scale-[0.98]"
+          className="flex-1 min-h-[48px] rounded-[var(--radius-sm)] border border-[var(--ink)] bg-[var(--ink)] text-sm font-semibold text-[var(--text-inverse)] hover:bg-[var(--ink-hover)] transition-ui cursor-pointer disabled:cursor-not-allowed disabled:border-[var(--border-default)] disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)] active:scale-[0.98]"
         >
-          Submit Form
+          Allot seat
         </button>
         <button
           type="button"
           onClick={clearForm}
-          className="rounded-xl border border-[var(--border-default)] px-6 text-sm font-black uppercase text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-[var(--ruby-600)] transition-ui duration-300 cursor-pointer shadow-sm active:scale-[0.98]"
+          className="rounded-xl border border-[var(--border-default)] px-6 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-[var(--ruby-600)] transition-ui duration-300 cursor-pointer shadow-sm active:scale-[0.98]"
         >
           Clear
         </button>
@@ -360,14 +360,14 @@ function FieldGroup({
 }) {
   return (
     <div className="flex flex-col">
-      <label className="block text-xs font-black uppercase tracking-wider text-[var(--text-secondary)] mb-2 ml-1">
+      <label className="block text-sm font-medium text-[var(--text-primary)] mb-2 ml-1">
         {label}
         {required && <span className="text-[var(--ruby-600)] ml-1.5 text-sm leading-none">*</span>}
       </label>
       {children}
       {error && (
-        <p className="mt-2 ml-1 text-xs font-bold text-[var(--ruby-600)] flex items-center gap-1.5 tracking-wide">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--ruby-500)]" />
+        <p className="mt-2 ml-1 text-xs font-bold text-[var(--ruby-600)] flex items-center gap-1.5">
+          <span className="inline-block size-1.5 rounded-full bg-[var(--ruby-500)]" />
           {error}
         </p>
       )}
@@ -394,7 +394,7 @@ function SegmentedControl({
           className={cn(
             'flex-1 py-3 rounded-lg text-sm font-bold transition-ui duration-300 cursor-pointer relative overflow-hidden',
             value === opt.value
-              ? 'bg-[var(--saffron-500)] text-white shadow-md scale-100 ring-1 ring-[var(--saffron-500)]/50 z-10'
+              ? 'bg-[var(--saffron-500)] text-[var(--text-inverse)] shadow-md scale-100 ring-1 ring-[var(--saffron-500)]/50 z-10'
               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-glass)] scale-[0.98] hover:scale-100 z-0',
           )}
         >

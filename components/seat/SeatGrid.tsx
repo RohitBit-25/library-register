@@ -8,8 +8,11 @@ import AttendanceTile from './AttendanceTile';
 import { SeatMapContainer, SeatMapWrapper, type FaceDir } from './SeatMap';
 import { nextSeatInDirection } from '@/lib/layoutConfig';
 import { useAttendance } from '@/hooks/useAttendance';
+import { useToast } from '@/hooks/useToast';
 import { LazyMotion, domAnimation } from 'framer-motion';
-import { Sun, Moon, Layers, Grid3X3, ClipboardCheck, Settings2, CheckCheck, Map as MapIcon, List } from 'lucide-react';
+import { Sun, Moon, Layers, ClipboardCheck, Settings2, CheckCheck } from 'lucide-react';
+import Segmented from '@/components/ui/Segmented';
+import { STATUS_STYLE, STATUS_ORDER } from './statusStyle';
 import SeatList from './SeatList';
 import { getSeatState } from '@/lib/seat-status';
 import { useSyncExternalStore } from 'react';
@@ -63,6 +66,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
 
   const { isPresent, markPresent, markAbsent, markAllPresent, todayStr, presentToday } =
     useAttendance();
+  const { addToast } = useToast();
 
   const handleSeatClick = useCallback((seat: number) => {
     onSeatClick(seat);
@@ -72,9 +76,9 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
   // The map already knows who sits where, so walking the room and tapping
   // seats beats leaving for a separate list of 95 rows.
   const handleToggleAttendance = useCallback((seat: number) => {
-    if (isPresent(todayStr, seat)) markAbsent(todayStr, seat);
-    else markPresent(todayStr, seat);
-  }, [isPresent, markAbsent, markPresent, todayStr]);
+    const write = isPresent(todayStr, seat) ? markAbsent(todayStr, seat) : markPresent(todayStr, seat);
+    write.then((ok) => { if (!ok) addToast('error', `Could not save attendance for seat ${seat}. Try again.`); });
+  }, [isPresent, markAbsent, markPresent, todayStr, addToast]);
 
   // Arrow keys walk the floor plan. Tab order follows seat number, which
   // jumps across the room between runs, so reaching seat 90 by keyboard meant
@@ -132,177 +136,123 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
   const filtered = useMemo(() => members.filter(matchesFilters), [members, matchesFilters]);
 
   const shifts: { value: Shift | 'all'; label: string; icon: React.ReactNode }[] = [
-    { value: 'all', label: 'All', icon: <Layers className="w-4 h-4" /> },
-    { value: 'morning', label: 'Morning', icon: <Sun className="w-4 h-4" /> },
-    { value: 'evening', label: 'Evening', icon: <Moon className="w-4 h-4" /> },
+    { value: 'all', label: 'All shifts', icon: <Layers className="size-3.5" /> },
+    { value: 'morning', label: 'Morning', icon: <Sun className="size-3.5" /> },
+    { value: 'evening', label: 'Evening', icon: <Moon className="size-3.5" /> },
   ];
 
   return (
     <LazyMotion features={domAnimation}>
       <div className="w-full">
-        {/* Grid Container */}
-        <div className="rounded-xl bg-[var(--bg-surface)] overflow-hidden relative shadow-sm">
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-[var(--border-default)] bg-[var(--bg-muted)]/30">
-            <div className="flex items-center gap-4">
-              <div className="p-2 rounded-lg bg-[var(--saffron-50)] border border-[var(--saffron-200)]">
-                <Grid3X3 className="w-4 h-4 text-[var(--saffron-600)]" />
-              </div>
-              <h2 className="text-lg font-bold text-[var(--text-primary)]">
-                {mode === 'attendance'
-                  ? "Today's Attendance"
-                  : shiftFilter === 'all'
-                    ? 'Floor Plan'
-                    : `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Shift`}
-              </h2>
-              {mode === 'attendance' ? (
-                // Live progress during a check-in pass — the librarian needs to
-                // know how many are left, not how many seats exist.
-                <span
-                  className="tabular rounded-md border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-3 py-1 font-mono text-xs font-bold tracking-[0.2em] text-[var(--emerald-600)]"
-                  aria-live="polite"
-                >
-                  {presentToday} / {occupiedCount} PRESENT
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          {/* Plan / list. On a phone the plan has to shrink past the point
+              where a seat is readable, so the list is the working view there. */}
+          <Segmented
+            className="sm:hidden"
+            label="View"
+            value={effectiveView}
+            onChange={setView}
+            options={[
+              { value: 'plan', label: 'Plan' },
+              { value: 'list', label: 'List' },
+            ]}
+          />
+          {/* Attendance is a different job from management — same map,
+              different question, so it gets its own mode. */}
+          <Segmented
+            className="hidden sm:inline-flex"
+            label="Mode"
+            value={mode}
+            onChange={setMode}
+            options={[
+              { value: 'manage', label: 'Manage', icon: <Settings2 className="size-3.5" /> },
+              { value: 'attendance', label: 'Attendance', icon: <ClipboardCheck className="size-3.5" /> },
+            ]}
+          />
+          {mode === 'manage' && (
+            <Segmented label="Shift" value={shiftFilter} onChange={setShiftFilter} options={shifts} />
+          )}
+
+          <div className="ml-auto flex items-center gap-3">
+            {mode === 'attendance' ? (
+              <>
+                <span className="text-sm text-[var(--text-secondary)]" aria-live="polite">
+                  <span className="font-mono font-medium text-[var(--text-primary)] tabular">{presentToday}</span> of{' '}
+                  <span className="font-mono tabular">{occupiedCount}</span> present
                 </span>
-              ) : statusFilter ? (
-                // A filtered plan looks like a plan, so it has to say so —
-                // otherwise you scroll away, come back, and read a dimmed map
-                // as the whole library.
-                <span className="tabular flex items-center gap-2 rounded-md border border-[var(--text-primary)] bg-[var(--bg-surface)] px-3 py-1 text-xs font-bold tracking-[0.12em] text-[var(--text-primary)] uppercase">
-                  {filtered.length} {STATUS_FILTER_LABEL[statusFilter]}
-                  <span className="font-normal normal-case tracking-normal text-[var(--text-tertiary)]">
-                    of {members.length}
-                  </span>
-                </span>
-              ) : (
-                <span className="tabular rounded-md border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-3 py-1 text-xs font-bold tracking-[0.2em] text-[var(--saffron-700)]">
-                  {filtered.length} SEATS
-                </span>
-              )}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              {/* Plan / list. The plan is 1160px wide; on a phone it has to
-                  shrink past the point where a seat is readable or tappable,
-                  so the list is the working view there. */}
-              <div className="flex shrink-0 items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-1 shadow-sm sm:hidden">
-                {([
-                  { value: 'plan' as const, label: 'Plan', icon: <MapIcon className="h-4 w-4" /> },
-                  { value: 'list' as const, label: 'List', icon: <List className="h-4 w-4" /> },
-                ]).map(v => (
-                  <button
-                    key={v.value}
-                    onClick={() => setView(v.value)}
-                    aria-pressed={effectiveView === v.value}
-                    className={cn(
-                      'flex min-h-[36px] cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)]',
-                      effectiveView === v.value
-                        ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-sm'
-                        : 'text-[var(--text-secondary)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]',
-                    )}
-                  >
-                    {v.icon}
-                    {v.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Mode switch. Attendance is a different job from management —
-                  same map, different question, so it gets its own mode rather
-                  than more controls crowded into the seat panel. */}
-              <div className="flex shrink-0 items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-1 shadow-sm">
-                {([
-                  { value: 'manage' as const, label: 'Manage', icon: <Settings2 className="h-4 w-4" /> },
-                  { value: 'attendance' as const, label: 'Attendance', icon: <ClipboardCheck className="h-4 w-4" /> },
-                ]).map(m => (
-                  <button
-                    key={m.value}
-                    onClick={() => setMode(m.value)}
-                    aria-pressed={mode === m.value}
-                    className={cn(
-                      'flex min-h-[36px] cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)]',
-                      mode === m.value
-                        ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-sm'
-                        : 'text-[var(--text-secondary)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]',
-                    )}
-                  >
-                    {m.icon}
-                    {m.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Shift filter is only meaningful when managing seats. */}
-              {mode === 'manage' && (
-                <div className="flex shrink-0 items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-1 shadow-sm">
-                  {shifts.map(s => (
-                    <button
-                      key={s.value}
-                      onClick={() => setShiftFilter(s.value)}
-                      className={cn(
-                        'flex min-h-[36px] cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)]',
-                        shiftFilter === s.value
-                          ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-sm'
-                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]',
-                      )}
-                    >
-                      {s.icon}
-                      {s.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {mode === 'attendance' && (
                 <button
-                  onClick={() => markAllPresent(todayStr)}
-                  className="flex min-h-[36px] shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-3.5 text-xs font-bold text-[var(--emerald-600)] transition-ui hover:bg-[var(--emerald-100)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald-600)]"
+                  type="button"
+                  onClick={() => markAllPresent(todayStr).then((ok) => { if (!ok) addToast('error', 'Could not mark everyone present. Try again.'); })}
+                  className="flex min-h-[36px] cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] px-3 text-sm font-medium text-[var(--text-primary)] transition-ui hover:bg-[var(--bg-muted)]"
                 >
-                  <CheckCheck className="h-4 w-4" aria-hidden="true" />
+                  <CheckCheck className="size-4 text-[var(--emerald-600)]" aria-hidden="true" />
                   Mark all present
                 </button>
-              )}
-            </div>
+              </>
+            ) : statusFilter ? (
+              // A filtered plan looks like a plan, so it has to say so —
+              // otherwise you come back and read a dimmed map as the library.
+              <span className="text-sm text-[var(--text-secondary)]" aria-live="polite">
+                Showing <span className="font-mono font-medium text-[var(--text-primary)] tabular">{filtered.length}</span>{' '}
+                {STATUS_FILTER_LABEL[statusFilter]}
+              </span>
+            ) : (
+              <SeatLegend className="hidden sm:flex" />
+            )}
           </div>
-
-          {effectiveView === 'list' && mode === 'manage' ? (
-            <SeatList
-              members={shiftFilter === 'all' ? members : filtered}
-              onSeatClick={handleSeatClick}
-              selectedSeat={selectedSeat}
-            />
-          ) : (
-          <div onKeyDown={handleMapKeyDown} role="group" aria-label="Seat map — use arrow keys to move between seats">
-          <SeatMapContainer>
-            {members.map(member => (
-              <SeatMapWrapper key={member.seat} seatNum={member.seat}>
-                {(face: FaceDir) => (
-                  <div className="h-full w-full">
-                    {mode === 'attendance' ? (
-                      <AttendanceTile
-                        member={member}
-                        present={isPresent(todayStr, member.seat)}
-                        onToggle={handleToggleAttendance}
-                      />
-                    ) : (
-                      <SeatTile
-                        member={member}
-                        onClick={handleSeatClick}
-                        compact={true}
-                        face={face}
-                        selected={selectedSeat === member.seat}
-                        dimmed={mode === 'manage' && !matchesFilters(member)}
-                      />
-                    )}
-                  </div>
-                )}
-              </SeatMapWrapper>
-            ))}
-          </SeatMapContainer>
-          </div>
-          )}
         </div>
+
+        {effectiveView === 'list' && mode === 'manage' ? (
+          <SeatList
+            members={shiftFilter === 'all' ? members : filtered}
+            onSeatClick={handleSeatClick}
+            selectedSeat={selectedSeat}
+          />
+        ) : (
+          <div onKeyDown={handleMapKeyDown} role="group" aria-label="Seat map — use arrow keys to move between seats">
+            <SeatMapContainer>
+              {members.map(member => (
+                <SeatMapWrapper key={member.seat} seatNum={member.seat}>
+                  {(face: FaceDir) => (
+                    <div className="h-full w-full">
+                      {mode === 'attendance' ? (
+                        <AttendanceTile
+                          member={member}
+                          present={isPresent(todayStr, member.seat)}
+                          onToggle={handleToggleAttendance}
+                        />
+                      ) : (
+                        <SeatTile
+                          member={member}
+                          onClick={handleSeatClick}
+                          compact={true}
+                          face={face}
+                          selected={selectedSeat === member.seat}
+                          dimmed={mode === 'manage' && !matchesFilters(member)}
+                        />
+                      )}
+                    </div>
+                  )}
+                </SeatMapWrapper>
+              ))}
+            </SeatMapContainer>
+          </div>
+        )}
       </div>
     </LazyMotion>
+  );
+}
+
+/** The key to the plan's colours, from the same table the tiles use. */
+export function SeatLegend({ className }: { className?: string }) {
+  return (
+    <ul className={cn('flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs text-[var(--text-secondary)]', className)} aria-label="Legend">
+      {STATUS_ORDER.map((k) => (
+        <li key={k} className="flex items-center gap-1.5 whitespace-nowrap">
+          <span className={cn('size-2.5 rounded-[3px] border', STATUS_STYLE[k].swatch)} aria-hidden="true" />
+          {STATUS_STYLE[k].label}
+        </li>
+      ))}
+    </ul>
   );
 }

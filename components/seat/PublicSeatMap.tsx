@@ -50,17 +50,20 @@ function PublicSeatTileInner({
       }
       aria-pressed={selected}
       className={cn(
-        'relative z-10 flex h-full w-full flex-col items-center justify-center rounded-lg border transition-ui duration-200',
+        'relative z-10 flex h-full w-full flex-col items-center justify-center rounded-[9px] border font-mono transition-ui',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--plan-floor)]',
         dimmed && 'seat-dimmed',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2',
-        vacant && !requested && 'cursor-pointer border-[var(--emerald-200)] bg-[var(--emerald-50)]/90 backdrop-blur-[2px] text-[var(--emerald-700)] hover:border-[var(--emerald-500)] hover:bg-[var(--emerald-100)]',
-        requested && 'cursor-not-allowed border-[#f5c6cb] bg-[#fce4e8]/90 backdrop-blur-[2px] text-[#9a3a47]',
-        !vacant && 'cursor-not-allowed border-[var(--border-default)] bg-[var(--bg-muted)]/80 backdrop-blur-[2px] text-[var(--text-tertiary)]',
-        selected && 'border-[var(--saffron-500)] bg-[var(--saffron-500)]/95 backdrop-blur-[2px] text-white ring-2 ring-[var(--saffron-500)] ring-offset-2'
+        // Free: the one state a student is looking for, so the one with colour.
+        vacant && !requested && !selected && 'cursor-pointer border-[var(--emerald-500)]/60 bg-[var(--bg-surface)] text-[var(--emerald-700)] shadow-[var(--shadow-sm)] hover:border-[var(--emerald-500)] hover:bg-[var(--emerald-50)]',
+        // Already asked for: hatched, so it reads as "on hold", not "free".
+        requested && 'cursor-not-allowed border-dashed border-[var(--indigo-400)] bg-[var(--indigo-50)] text-[var(--indigo-600)]',
+        // Taken: recedes into the floor.
+        !vacant && 'cursor-not-allowed border-transparent bg-[var(--plan-desk)] text-[var(--text-tertiary)]',
+        selected && 'border-[var(--saffron-700)] bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-[var(--shadow-md)]',
       )}
     >
-      <span className="tabular text-[11px] font-bold leading-none">{seat}</span>
-      {selected && <Check className="mt-0.5 h-3 w-3" aria-hidden="true" />}
+      <span className="tabular text-[15px] font-medium leading-none">{seat}</span>
+      {selected && <Check className="mt-1 size-3.5" aria-hidden="true" />}
     </button>
   );
 }
@@ -68,7 +71,7 @@ function PublicSeatTileInner({
 const PublicSeatTile = memo(PublicSeatTileInner);
 
 export default function PublicSeatMap({
-  members, selectedSeat, requestedSeats, onSelect, isDimmed, fit = 'width', scale,
+  members, selectedSeat, requestedSeats, onSelect, isDimmed, fit = 'width', scale, frameless = false, minScale,
 }: {
   members: Member[];
   selectedSeat: number | null;
@@ -80,9 +83,13 @@ export default function PublicSeatMap({
   fit?: 'width' | 'both';
   /** Absolute scale from the page's zoom control, if any. */
   scale?: number;
+  /** Drop the card chrome when the page already frames the plan. */
+  frameless?: boolean;
+  /** Read-only previews may shrink below the tap-target floor. */
+  minScale?: number;
 }) {
   return (
-    <SeatMapContainer fit={fit} scale={scale}>
+    <SeatMapContainer fit={fit} scale={scale} frameless={frameless} minScale={minScale}>
       {members.map((m) => (
         <SeatMapWrapper key={m.seat} seatNum={m.seat}>
           {() => (

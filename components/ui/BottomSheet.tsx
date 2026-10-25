@@ -73,7 +73,7 @@ export default function BottomSheet({
   return (
     <DialogPrimitive.Root open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/50 backdrop-blur-md data-[state=open]:animate-fade-in" />
+        <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-[var(--text-primary)]/40 data-[state=open]:animate-fade-in" />
 
         <DialogPrimitive.Content
           aria-label={title || 'Detail panel'}
@@ -117,14 +117,14 @@ export default function BottomSheet({
 
             {title && (
               <div className="relative z-10 flex items-center justify-between px-6 pb-4">
-                <DialogPrimitive.Title className="text-xl font-bold tracking-tight text-[var(--text-primary)]">
+                <DialogPrimitive.Title className="text-xl font-bold text-[var(--text-primary)]">
                   {title}
                 </DialogPrimitive.Title>
                 <DialogPrimitive.Close
                   className="cursor-pointer rounded-lg p-1.5 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-base)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
                   aria-label="Close panel"
                 >
-                  <X className="h-5 w-5" aria-hidden="true" />
+                  <X className="size-5" aria-hidden="true" />
                 </DialogPrimitive.Close>
               </div>
             )}

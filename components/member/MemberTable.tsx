@@ -37,7 +37,7 @@ type FilterType = 'all' | SeatStatus | 'morning' | 'evening';
 
 function SortIcon({ field, currentField, asc }: { field: SortField; currentField: SortField; asc: boolean }) {
   if (field !== currentField) return null;
-  return asc ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />;
+  return asc ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />;
 }
 
 export default function MemberTable({
@@ -206,7 +206,7 @@ export default function MemberTable({
             <Tooltip content="Send payment reminders via WhatsApp">
               <button
                 onClick={() => onBulkWhatsApp(Array.from(selected))}
-                className="cursor-pointer rounded-lg bg-[#25D366] px-3.5 py-2 text-xs font-bold text-[var(--saffron-50)] hover:bg-[#20bd5a] transition-colors shadow-sm"
+                className="cursor-pointer whitespace-nowrap rounded-[var(--radius-sm)] border border-[var(--emerald-500)] bg-[var(--bg-surface)] px-3 py-2 text-sm font-medium text-[var(--emerald-700)] hover:bg-[var(--emerald-50)] transition-colors"
               >
                 WhatsApp
               </button>
@@ -231,14 +231,14 @@ export default function MemberTable({
 
       {/* Search */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--text-tertiary)]" />
         <input
           type="search"
           aria-label="Search members by name, phone or seat"
           placeholder="Search name, phone, seat... (Press / to focus)"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] pl-9 pr-4 py-3 text-sm font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)] focus:border-[var(--saffron-200)] transition-ui shadow-sm"
+          className="w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] pl-9 pr-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]/20 focus:border-[var(--saffron-600)] transition-ui"
         />
       </div>
 
@@ -249,10 +249,10 @@ export default function MemberTable({
             key={f.value}
             onClick={() => setFilter(f.value)}
             className={cn(
-               'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-ui duration-200 cursor-pointer border shadow-sm',
+               'shrink-0 min-h-[32px] px-3 rounded-full text-sm font-medium transition-ui cursor-pointer border whitespace-nowrap',
               filter === f.value
-                ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] border-[var(--saffron-600)] shadow-[var(--shadow-md)] -translate-y-[1px]'
-                : 'bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-sm)] hover:-translate-y-[1px]',
+                ? 'border-[var(--text-primary)] bg-[var(--text-primary)] text-[var(--text-inverse)]'
+                : 'border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]',
             )}
           >
             {f.label}
@@ -263,7 +263,7 @@ export default function MemberTable({
       {/* Desktop table */}
       <div className="hidden md:block overflow-x-auto overflow-y-auto max-h-[calc(100vh-220px)] rounded-[var(--radius-xl)] shadow-[var(--shadow-sm)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] relative custom-scrollbar">
         <table className="w-full text-sm">
-          <thead className="sticky top-0 z-10 backdrop-blur-xl bg-[var(--bg-surface)]/90 border-b border-[var(--border-default)]">
+          <thead className="sticky top-0 z-10 bg-[var(--bg-surface)] border-b border-[var(--border-default)]">
             <tr>
               <th className="w-10 p-3">
                 <input
@@ -271,7 +271,7 @@ export default function MemberTable({
                   checked={selected.size === filtered.filter(m => !m.vacant).length && selected.size > 0}
                   onChange={toggleSelectAll}
                   aria-label="Select every member in this list"
-                  className="h-6 w-6 cursor-pointer rounded accent-[var(--saffron-500)]"
+                  className="size-6 cursor-pointer rounded accent-[var(--saffron-500)]"
                 />
               </th>
               <th className="text-left p-3 font-bold cursor-pointer select-none hover:text-[var(--saffron-700)] transition-colors" onClick={() => toggleSort('seat')}>
@@ -320,7 +320,7 @@ export default function MemberTable({
                         checked={selected.has(m.seat)}
                         onChange={() => toggleSelect(m.seat)}
                         aria-label={`Select ${m.name || `seat ${m.seat}`}`}
-                        className="h-6 w-6 cursor-pointer rounded accent-[var(--saffron-500)]"
+                        className="size-6 cursor-pointer rounded accent-[var(--saffron-500)]"
                       />
                     )}
                   </td>
@@ -330,9 +330,9 @@ export default function MemberTable({
                       <button
                         onClick={(e) => handleCopy(e, String(m.seat), 'seat')}
                         aria-label={`Copy seat number ${m.seat}`}
-                        className="reveal-on-hover flex h-6 w-6 cursor-pointer items-center justify-center rounded text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+                        className="reveal-on-hover flex size-6 cursor-pointer items-center justify-center rounded text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
                       >
-                        <Copy className="h-4 w-4" aria-hidden="true" />
+                        <Copy className="size-4" aria-hidden="true" />
                       </button>
                     </div>
                   </td>
@@ -348,9 +348,9 @@ export default function MemberTable({
                         <button
                           onClick={(e) => handleCopy(e, m.phone, 'phone number')}
                           aria-label={`Copy phone number for ${m.name}`}
-                          className="reveal-on-hover flex h-6 w-6 cursor-pointer items-center justify-center rounded text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+                          className="reveal-on-hover flex size-6 cursor-pointer items-center justify-center rounded text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
                         >
-                          <Copy className="h-4 w-4" aria-hidden="true" />
+                          <Copy className="size-4" aria-hidden="true" />
                         </button>
                       </div>
                     ) : '—'}
@@ -365,7 +365,7 @@ export default function MemberTable({
                         aria-label={`Allot seat ${m.seat}`}
                         className="inline-flex min-h-[26px] cursor-pointer items-center gap-1 rounded-md border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-2.5 py-1 text-xs font-bold text-[var(--saffron-700)] transition-ui hover:bg-[var(--saffron-100)]"
                       >
-                        <Plus className="h-4 w-4" aria-hidden="true" /> Add
+                        <Plus className="size-4" aria-hidden="true" /> Add
                       </Link>
                     ) : (
                       <Badge variant={status} />
@@ -378,12 +378,12 @@ export default function MemberTable({
                           aria-label={`Actions for ${m.name}`}
                           className="cursor-pointer rounded-lg p-1.5 text-[var(--text-tertiary)] transition-ui hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] data-[state=open]:bg-[var(--bg-muted)]"
                         >
-                          <MoreVertical className="h-4 w-4" aria-hidden="true" />
+                          <MoreVertical className="size-4" aria-hidden="true" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-52">
                           {onEdit && (
                             <DropdownMenuItem onSelect={() => onEdit(m.seat)} className="flex cursor-pointer items-center gap-2.5 px-3 py-2 text-sm font-semibold">
-                              <Pencil className="h-4 w-4" aria-hidden="true" />
+                              <Pencil className="size-4" aria-hidden="true" />
                               Edit details
                             </DropdownMenuItem>
                           )}
@@ -391,11 +391,11 @@ export default function MemberTable({
                             onSelect={() => (m.fee === 'due' ? onMarkPaid(m.seat) : onMarkDue(m.seat))}
                             className="flex cursor-pointer items-center gap-2.5 px-3 py-2 text-sm font-semibold"
                           >
-                            <Check className="h-4 w-4" aria-hidden="true" />
+                            <Check className="size-4" aria-hidden="true" />
                             {m.fee === 'due' ? 'Mark fee paid' : 'Mark fee due'}
                           </DropdownMenuItem>
                           <DropdownMenuItem onSelect={() => onRenew(m.seat)} className="flex cursor-pointer items-center gap-2.5 px-3 py-2 text-sm font-semibold">
-                            <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                            <RefreshCw className="size-4" aria-hidden="true" />
                             Renew membership
                           </DropdownMenuItem>
                           {m.phone && (
@@ -405,7 +405,7 @@ export default function MemberTable({
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
-                                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                                <MessageCircle className="size-4" aria-hidden="true" />
                                 Send a WhatsApp reminder
                               </a>
                             </DropdownMenuItem>
@@ -416,7 +416,7 @@ export default function MemberTable({
                             variant="destructive"
                             className="flex cursor-pointer items-center gap-2.5 px-3 py-2 text-sm font-semibold"
                           >
-                            <Trash2 className="h-4 w-4" aria-hidden="true" />
+                            <Trash2 className="size-4" aria-hidden="true" />
                             Remove member
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -452,7 +452,7 @@ export default function MemberTable({
                   'rounded-2xl border transition-colors shadow-sm',
                   selected.has(m.seat) 
                     ? 'border-[var(--saffron-300)] bg-[var(--saffron-50)] shadow-[var(--shadow-sm)]'
-                    : 'border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-sm)] hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-md)] hover:-translate-y-[1px]',
+                    : 'border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--shadow-sm)] hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-md)]',
                 )}
               >
                 <div className="p-4 flex items-start justify-between">
@@ -464,7 +464,7 @@ export default function MemberTable({
                           checked={selected.has(m.seat)}
                           onChange={() => toggleSelect(m.seat)}
                           aria-label={`Select ${m.name || `seat ${m.seat}`}`}
-                          className="h-6 w-6 cursor-pointer rounded accent-[var(--saffron-500)]"
+                          className="size-6 cursor-pointer rounded accent-[var(--saffron-500)]"
                         />
                       </div>
                     )}
@@ -473,7 +473,7 @@ export default function MemberTable({
                         <span className="text-xs font-mono font-bold text-[var(--text-tertiary)] bg-[var(--bg-overlay)] px-1.5 py-0.5 rounded">
                           #{String(m.seat).padStart(2, '0')}
                         </span>
-                        <span className="text-base font-black text-[var(--text-primary)] tracking-tight">
+                        <span className="text-base font-semibold text-[var(--text-primary)]">
                           {m.vacant ? 'Vacant' : m.name}
                         </span>
                       </div>
@@ -494,7 +494,7 @@ export default function MemberTable({
                       href={`/?seat=${m.seat}`}
                       className="inline-flex min-h-[26px] cursor-pointer items-center gap-1 rounded-lg border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-3 py-1.5 text-xs font-bold text-[var(--saffron-700)] transition-ui hover:bg-[var(--saffron-100)]"
                     >
-                      <UserPlus className="w-4 h-4" />
+                      <UserPlus className="size-4" />
                       Add
                     </Link>
                   ) : (
@@ -506,7 +506,7 @@ export default function MemberTable({
                       className="cursor-pointer p-2 rounded-lg bg-[var(--bg-overlay)] hover:bg-[var(--bg-surface)] transition-colors"
                       aria-label={`Actions for ${m.name}`}
                     >
-                      <MoreVertical className="w-5 h-5 text-[var(--text-secondary)]" />
+                      <MoreVertical className="size-5 text-[var(--text-secondary)]" />
                     </button>
                   )}
                 </div>
@@ -523,16 +523,16 @@ export default function MemberTable({
                       <div className="p-3 grid grid-cols-2 gap-2">
                         <button
                           onClick={() => { if (m.fee === 'due') { onMarkPaid(m.seat); } else { onMarkDue(m.seat); } setOpenActions(null); }}
-                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-ui"
+                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] transition-ui"
                         >
-                          <Check className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
+                          <Check className="size-4 text-[var(--emerald-600)]" aria-hidden="true" />
                           <span className="text-xs mt-0.5">{m.fee === 'due' ? 'Mark Paid' : 'Mark Due'}</span>
                         </button>
                         <button
                           onClick={() => { onRenew(m.seat); setOpenActions(null); }}
-                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] hover:-translate-y-0.5 transition-ui"
+                          className="flex justify-center flex-col items-center gap-1 cursor-pointer font-bold px-3 py-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm hover:border-[var(--border-strong)] transition-ui"
                         >
-                          <RefreshCw className="h-4 w-4 text-[var(--saffron-700)]" aria-hidden="true" />
+                          <RefreshCw className="size-4 text-[var(--saffron-700)]" aria-hidden="true" />
                           <span className="text-xs mt-0.5">Renew</span>
                         </button>
                         {m.phone && (
@@ -540,10 +540,10 @@ export default function MemberTable({
                             href={`https://wa.me/${m.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hi ' + firstName(m.name) + ', your library fee for Seat ' + m.seat + ' is due.')}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex justify-center flex-1 col-span-2 sm:col-span-1 items-center gap-2 cursor-pointer text-xs font-bold px-3 py-3 rounded-xl bg-[#25D366]/10 text-[#20bd5a] border border-[#25D366]/20 shadow-sm"
+                            className="flex justify-center flex-1 col-span-2 sm:col-span-1 items-center gap-2 cursor-pointer text-xs font-bold px-3 py-3 rounded-[var(--radius-sm)] bg-[var(--emerald-50)] text-[var(--emerald-700)] border border-[var(--emerald-200)]"
                             onClick={(e) => { e.stopPropagation(); setOpenActions(null); }}
                           >
-                            <MessageCircle className="w-5 h-5" />
+                            <MessageCircle className="size-5" />
                             WhatsApp Message
                           </a>
                         )}
@@ -551,7 +551,7 @@ export default function MemberTable({
                           onClick={() => { setSeatToRemove(m.seat); setOpenActions(null); }}
                           className="flex justify-center flex-1 col-span-2 sm:col-span-1 items-center gap-2 cursor-pointer text-xs font-bold px-3 py-3 rounded-xl bg-[rgba(232,66,66,0.06)] text-[var(--ruby-600)] border border-[rgba(232,66,66,0.15)] shadow-sm"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="size-4" />
                           Remove Member
                         </button>
                       </div>
@@ -570,8 +570,8 @@ export default function MemberTable({
           animate={{ opacity: 1, scale: 1 }}
           className="text-center py-[var(--space-10)] px-[var(--space-4)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-[var(--radius-xl)] shadow-[var(--shadow-sm)] mt-[var(--space-4)]"
         >
-          <div className="w-14 h-14 bg-[var(--bg-overlay)] rounded-[var(--radius-2xl)] flex items-center justify-center mx-auto mb-[var(--space-3)] border border-[var(--border-subtle)]">
-            <Search className="w-7 h-7 text-[var(--text-tertiary)]" />
+          <div className="size-14 bg-[var(--bg-overlay)] rounded-[var(--radius-2xl)] flex items-center justify-center mx-auto mb-[var(--space-3)] border border-[var(--border-subtle)]">
+            <Search className="size-7 text-[var(--text-tertiary)]" />
           </div>
           <h3 className="text-md font-[var(--weight-semibold)] text-[var(--text-primary)] mb-[var(--space-1)]">No members found</h3>
           <p className="text-sm text-[var(--text-secondary)] font-[var(--weight-medium)]">Try adjusting your filters or search query.</p>

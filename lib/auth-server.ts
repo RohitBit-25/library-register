@@ -3,6 +3,8 @@ import { cookies } from 'next/headers';
 import { randomUUID } from 'node:crypto';
 import dbConnect from '@/lib/mongodb';
 import RevokedSession from '@/models/RevokedSession';
+import Staff from '@/models/Staff';
+import { isValidObjectId } from 'mongoose';
 
 // No fallback. A hardcoded default here would be published in the repo, and
 // anyone could forge an admin_session cookie with it. Generate one with:
@@ -86,6 +88,15 @@ export async function getSession(): Promise<Session | null> {
     if (typeof p.jti === 'string') {
       await dbConnect();
       if (await RevokedSession.exists({ jti: p.jti })) return null;
+    }
+
+    // Deactivated on the Staff page. Without this, "Revoke" only stopped new
+    // sign-ins: someone removed from the staff kept full access for the rest
+    // of their 7-day token on every device they were already signed in on.
+    if (typeof p.staffId === 'string' && p.staffId) {
+      await dbConnect();
+      if (!isValidObjectId(p.staffId)) return null;
+      if (!(await Staff.exists({ _id: p.staffId, active: true }))) return null;
     }
 
     return {

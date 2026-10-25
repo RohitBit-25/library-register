@@ -64,9 +64,9 @@ function AttendanceTileInner({ member, present, onToggle }: AttendanceTileProps)
       </span>
 
       {present ? (
-        <Check className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
+        <Check className="size-4 text-[var(--emerald-600)]" aria-hidden="true" />
       ) : (
-        <span className="h-4 w-4 rounded-full border border-dashed border-[var(--border-strong)]" aria-hidden="true" />
+        <span className="size-4 rounded-full border border-dashed border-[var(--border-strong)]" aria-hidden="true" />
       )}
 
       <span

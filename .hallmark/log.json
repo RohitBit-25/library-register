@@ -1,0 +1,26 @@
+[
+  {
+    "date": "2026-10-24",
+    "scope": "app",
+    "genre": "modern-minimal",
+    "macrostructure": "Split hero + live product (public) + Workbench (admin)",
+    "theme": "custom (Coral register: cool-white surfaces, ink primary, saffron brand, Geist)",
+    "theme_axes": "light / geometric-sans / warm",
+    "enrichment": "live seat plan as product shot; photo gallery gated on lib/photos.ts",
+    "nav": "N5 floating pill \u00b7 side-rail admin",
+    "footer": "Ft2 inline",
+    "brief": "Owner rejected the editorial pass as dull/AI-looking; rebuilt as crisp modern SaaS"
+  },
+  {
+    "date": "2026-10-24",
+    "scope": "app",
+    "genre": "editorial",
+    "macrostructure": "Map / Diagram (public) + Workbench (admin)",
+    "theme": "custom (heritage editorial: warm paper, saffron accent, Fraunces + Outfit + DM Mono)",
+    "theme_axes": "light / high-contrast-serif / warm",
+    "enrichment": "none (the live floor plan is the image)",
+    "nav": "N1a public \u00b7 side-rail admin",
+    "footer": "Ft1 mast-headed",
+    "brief": "Shree Gangaur Study Library \u2014 whole-site redesign + floor plan redraw + backend fixes"
+  }
+]

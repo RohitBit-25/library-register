@@ -125,42 +125,38 @@ export default function ScriptBlock() {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ ...springUI, delay: 0.1 }}
-      className="mt-8 bg-[#1a1b26] border border-[#2a2b3d] rounded-2xl overflow-hidden shadow-lg"
+      className="mt-8 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-xs)]"
     >
-      {/* Code editor header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[#2a2b3d] bg-[#13141f]">
+      {/* A labelled rule above the code — no imitation window chrome; the
+          admin's own browser already is the window. */}
+      <div className="flex items-center justify-between border-b border-[var(--border-default)] px-4 py-2.5">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5">
-            <div className="h-3 w-3 rounded-full bg-[var(--ruby-500)]" />
-            <div className="h-3 w-3 rounded-full bg-[var(--marigold-500)]" />
-            <div className="h-3 w-3 rounded-full bg-[var(--emerald-500)]" />
-          </div>
-          <span className="ml-3 text-xs font-mono text-[var(--text-tertiary)] flex items-center gap-1.5">
-            <Shield className="w-4 h-4" />
+          <span className="text-xs font-mono text-[var(--text-secondary)] flex items-center gap-1.5">
+            <Shield className="size-4" />
             Code.gs
           </span>
         </div>
         <button
           onClick={handleCopy}
-          className="flex cursor-pointer items-center gap-2 rounded-lg border border-transparent px-3.5 py-1.5 text-xs font-bold text-[var(--text-secondary)] transition-ui hover:border-[var(--border-default)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]"
+          className="flex min-h-[36px] cursor-pointer items-center gap-2 whitespace-nowrap rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] px-3 text-sm font-medium text-[var(--text-primary)] transition-ui hover:bg-[var(--bg-muted)]"
         >
           {copied
-            ? <Check className="h-4 w-4 text-[var(--emerald-600)]" aria-hidden="true" />
-            : <Copy className="h-4 w-4" aria-hidden="true" />}
-          {copied ? 'Copied!' : 'Copy Code'}
+            ? <Check className="size-4 text-[var(--emerald-600)]" aria-hidden="true" />
+            : <Copy className="size-4" aria-hidden="true" />}
+          {copied ? 'Copied' : 'Copy code'}
         </button>
       </div>
       
       {/* Code content */}
-      <div className="p-5 overflow-x-auto max-h-[400px] overflow-y-auto">
-        <pre className="text-sm font-mono leading-relaxed text-[#d4d4d4]">
+      <div className="max-h-[400px] overflow-auto bg-[var(--bg-base)] p-5">
+        <pre className="font-mono text-sm leading-relaxed text-[var(--text-primary)]">
           <code>{APPS_SCRIPT_TEMPLATE}</code>
         </pre>
       </div>
 
       {/* Info footer */}
       <div className="flex items-start gap-3 border-t border-[var(--sapphire-200)] bg-[var(--sapphire-50)] p-4">
-        <Info className="mt-0.5 h-5 w-5 shrink-0 text-[var(--sapphire-600)]" aria-hidden="true" />
+        <Info className="mt-0.5 size-5 shrink-0 text-[var(--sapphire-600)]" aria-hidden="true" />
         <p className="text-sm text-[var(--text-secondary)]">
           <strong className="text-[var(--sapphire-600)]">Important:</strong> Change the{' '}
           <code className="rounded bg-[var(--bg-surface)] px-1.5 py-0.5 font-mono text-xs text-[var(--text-primary)]">ADMIN_EMAIL</code>{' '}

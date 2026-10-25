@@ -5,6 +5,7 @@ import { type Member } from '@/lib/types';
 import { cn, firstName } from '@/lib/utils';
 import { getSeatState } from '@/lib/seat-status';
 import { SEAT_ROWS, seatRow } from '@/lib/layoutConfig';
+import { STATUS_STYLE } from './statusStyle';
 import { Sun, Moon, SunMoon, Plus } from 'lucide-react';
 
 /**
@@ -16,31 +17,11 @@ import { Sun, Moon, SunMoon, Plus } from 'lucide-react';
  * orientation; this is for getting work done on the device the admin is
  * actually holding while walking the hall.
  *
- * Grouped by the same A–D runs the plan labels — and now genuinely so. These
- * bands were hardcoded here as seat-number ranges (1–22, 23–42, 43–70, 71–95)
- * while the plan drew its labels from grid columns, and the two disagreed:
- * the plan's Row A is seats 1–32, not 1–22. Seat 71 was Row C on the map and
- * Row D in the list. Both now derive from SEAT_ROWS in lib/layoutConfig.
+ * Grouped by the same lettered blocks the plan draws (A–F), from SEAT_ROWS in
+ * lib/layoutConfig — one table, so the list and the plan cannot disagree.
  */
 
 const shiftIcon = { morning: Sun, evening: Moon, full: SunMoon } as const;
-
-/** Same five states, same colours, as the tiles on the plan. */
-const stateStyle: Record<string, string> = {
-  active:   'border-[var(--emerald-200)] bg-[var(--emerald-50)]',
-  expiring: 'border-[var(--marigold-200)] bg-[var(--marigold-50)]',
-  due:      'border-[var(--saffron-200)] bg-[var(--saffron-50)]',
-  expired:  'border-[var(--ruby-200)] bg-[var(--ruby-50)]',
-  vacant:   'border-dashed border-[var(--border-default)] bg-[var(--bg-muted)]',
-};
-
-const stateDot: Record<string, string> = {
-  active:   'bg-[var(--emerald-500)]',
-  expiring: 'bg-[var(--marigold-500)]',
-  due:      'bg-[var(--saffron-500)]',
-  expired:  'bg-[var(--ruby-500)]',
-  vacant:   'bg-transparent',
-};
 
 export default function SeatList({
   members, onSeatClick, selectedSeat,
@@ -66,11 +47,11 @@ export default function SeatList({
         return (
           <section key={row.label}>
             <h3 className="mb-2 flex items-baseline gap-2 px-0.5">
-              <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-tertiary)]">
+              <span className="font-display text-md font-semibold text-[var(--text-primary)]">
                 {row.label}
               </span>
-              <span className="tabular text-xs font-medium text-[var(--text-tertiary)]">
-                {taken}/{row.seats.length} taken
+              <span className="text-xs text-[var(--text-tertiary)]">
+                <span className="font-mono tabular">{taken}</span> of <span className="font-mono tabular">{row.seats.length}</span> taken
               </span>
             </h3>
 
@@ -92,18 +73,21 @@ export default function SeatList({
                       className={cn(
                         // 56px tall: comfortably above the 44px minimum target,
                         // which the 20px tiles on a shrunken plan were not.
-                        'flex min-h-[56px] w-full items-center gap-2.5 rounded-xl border px-2.5 py-2 text-left transition-ui',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2',
-                        stateStyle[status] ?? stateStyle.vacant,
-                        selectedSeat === m.seat && 'ring-2 ring-[var(--saffron-500)]'
+                        'flex min-h-[56px] w-full items-center gap-2.5 rounded-[var(--radius-md)] border px-2.5 py-2 text-left transition-ui',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] focus-visible:ring-offset-2',
+                        // White rows: the dot and the word already carry the
+                        // state; tinting every row as well read as a rainbow.
+                        'border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-xs)]',
+                        m.vacant && 'border-dashed bg-transparent shadow-none',
+                        selectedSeat === m.seat && 'ring-2 ring-[var(--text-primary)] ring-offset-1'
                       )}
                     >
-                      <span className="tabular w-7 shrink-0 text-sm font-bold text-[var(--text-primary)]">
+                      <span className="w-7 shrink-0 font-mono text-sm font-medium text-[var(--text-primary)] tabular">
                         {m.seat}
                       </span>
                       {m.vacant ? (
                         <span className="flex items-center gap-1.5 text-xs font-semibold text-[var(--text-tertiary)]">
-                          <Plus className="h-4 w-4" aria-hidden="true" />
+                          <Plus className="size-4" aria-hidden="true" />
                           Vacant
                         </span>
                       ) : (
@@ -112,12 +96,9 @@ export default function SeatList({
                             {firstName(m.name)}
                           </span>
                           <span className="mt-0.5 flex items-center gap-1 text-xs font-medium text-[var(--text-secondary)]">
-                            <span className={cn('h-1.5 w-1.5 rounded-full', stateDot[status])} />
-                            {Icon && <Icon className="h-4 w-4" aria-hidden="true" />}
-                            {status === 'active' ? 'Active'
-                              : status === 'expiring' ? 'Expiring'
-                              : status === 'due' ? 'Fee due'
-                              : 'Expired'}
+                            <span className={cn('size-1.5 rounded-full', STATUS_STYLE[status].dot)} aria-hidden="true" />
+                            {STATUS_STYLE[status].label}
+                            {Icon && <Icon className="ml-auto size-3.5 text-[var(--text-tertiary)]" aria-hidden="true" />}
                           </span>
                         </span>
                       )}

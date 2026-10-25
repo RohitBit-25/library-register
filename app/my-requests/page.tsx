@@ -5,23 +5,8 @@ import { useSeatRequests } from '@/hooks/useSeatRequests';
 import { useRouter } from 'next/navigation';
 import { type SeatRequest } from '@/lib/types';
 import { cn, fmtDate, durationLabel, shiftLabel, todayISO } from '@/lib/utils';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import {
-  Search,
-  Phone,
-  Inbox,
-  Clock,
-  CheckCircle,
-  XCircle,
-  ArrowLeft,
-  Armchair,
-  Receipt,
-  MessageSquare,
-  CalendarDays,
-  Loader2,
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/Button';
+import { Search, Phone, Clock, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import UnifiedHeader from '@/components/layout/UnifiedHeader';
 
 export default function MyRequestsPage() {
@@ -51,243 +36,126 @@ export default function MyRequestsPage() {
   const approvedCount = displayResults?.filter(r => r.status === 'approved').length ?? 0;
   const rejectedCount = displayResults?.filter(r => r.status === 'rejected').length ?? 0;
 
+  const STATUS = {
+    pending:    { label: 'Waiting for the desk', note: 'The librarian will check your payment and allot the seat.', text: 'text-[var(--indigo-600)]', Icon: Clock },
+    waitlisted: { label: 'On the waitlist', note: 'The seat was taken first. You are next in line when one frees up.', text: 'text-[var(--marigold-700)]', Icon: Clock },
+    approved:   { label: 'Seat allotted', note: 'Payment verified — the seat is yours from your joining date.', text: 'text-[var(--emerald-600)]', Icon: CheckCircle },
+    rejected:   { label: 'Not approved', note: 'Please speak to the librarian at the desk.', text: 'text-[var(--ruby-600)]', Icon: XCircle },
+  } as const;
+
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--bg-void)]">
+    <div className="flex min-h-dvh flex-col bg-[var(--bg-void)]">
       <UnifiedHeader />
 
-      <main className="animate-fade-in mx-auto w-full max-w-[900px] flex-1 p-4 md:p-6 lg:p-8">
-      {/* Header */}
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-[var(--text-primary)] sm:text-xl">
-            <Inbox className="h-5 w-5 text-[var(--text-tertiary)]" aria-hidden="true" />
-            My requests
-          </h1>
-          <p className="text-sm text-[var(--text-secondary)] mt-0.5">
-            Track the status of your seat requests
-          </p>
-        </div>
-        <button
-          onClick={() => router.push('/browse')}
-          aria-label="Back to browse seats"
-          className="cursor-pointer flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] bg-[var(--bg-surface)] hover:text-[var(--text-primary)] transition-colors border border-[var(--border-default)]"
+      <main className="mx-auto w-full max-w-[760px] flex-1 px-4 py-6 sm:px-6 lg:py-10">
+        <h1 className="font-display text-lg font-semibold leading-tight sm:text-xl">
+          My requests
+        </h1>
+        <p className="mt-1.5 text-sm text-[var(--text-secondary)]">
+          Enter the phone number you used when you asked for a seat.
+        </p>
+
+        <form
+          className="mt-6 flex gap-2"
+          onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Back to Browse</span>
-        </button>
-      </div>
+          <label htmlFor="my-requests-phone" className="sr-only">Phone number</label>
+          <div className="relative flex-1">
+            <Phone className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--text-tertiary)]" aria-hidden="true" />
+            <input
+              id="my-requests-phone"
+              type="tel"
+              inputMode="numeric"
+              autoComplete="tel-national"
+              value={phone}
+              onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+              placeholder="10-digit mobile number"
+              className="min-h-[44px] w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] pl-9 pr-3 font-mono text-base text-[var(--text-primary)] tabular placeholder:font-body placeholder:text-[var(--text-tertiary)] focus:border-[var(--saffron-600)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]/20"
+            />
+          </div>
+          <Button type="submit" disabled={phone.length < 10 || loading} className="min-w-[96px]">
+            {loading ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : <Search className="size-4" aria-hidden="true" />}
+            Look up
+          </Button>
+        </form>
 
-      {/* Phone Search Card */}
-      <Card variant="base" className="p-5 mb-6">
-        <label htmlFor="my-requests-phone" className="text-xs font-bold text-[var(--text-secondary)] mb-2 flex items-center gap-1.5">
-          <Phone className="w-4 h-4" />
-          Enter your registered phone number
-        </label>
-        <div className="flex gap-2">
-          <input
-            id="my-requests-phone"
-            type="tel"
-            inputMode="numeric"
-            value={phone}
-            onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-            onKeyDown={e => { if (e.key === 'Enter') handleSearch(); }}
-            placeholder="10-digit mobile number"
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--sapphire-500)]/40 transition-ui font-mono tracking-wider"
-          />
-          <button
-            onClick={handleSearch}
-            aria-label="Search for my requests"
-            disabled={phone.length < 10 || loading}
-            className={cn(
-              'cursor-pointer px-5 py-2.5 rounded-xl text-sm font-bold transition-ui flex items-center gap-2',
-              phone.length >= 10 && !loading
-                ? 'bg-[var(--saffron-700)] text-[var(--text-inverse)] hover:bg-[var(--saffron-800)] active:scale-[0.98]'
-                : 'bg-[var(--bg-muted)] text-[var(--text-tertiary)] cursor-not-allowed'
-            )}
-          >
-            {loading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+        <div className="mt-8" aria-live="polite">
+          {searched && displayResults !== null && (
+            displayResults.length === 0 ? (
+              <div className="border-t border-[var(--border-default)] pt-6">
+                <p className="font-semibold">No requests for this number</p>
+                <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                  Check the number, or{' '}
+                  <button type="button" onClick={() => router.push('/browse')} className="cursor-pointer font-medium text-[var(--text-link)] underline underline-offset-4">
+                    pick a free seat
+                  </button>{' '}
+                  to send one.
+                </p>
+              </div>
             ) : (
-              <Search className="w-4 h-4" />
-            )}
-            <span className="hidden sm:inline">Search</span>
-          </button>
+              <>
+                <p className="mb-3 text-sm text-[var(--text-secondary)]">
+                  <span className="font-mono tabular text-[var(--text-primary)]">{displayResults.length}</span>{' '}
+                  {displayResults.length === 1 ? 'request' : 'requests'}
+                  {pendingCount > 0 && <> · <span className="font-mono tabular">{pendingCount}</span> waiting</>}
+                  {approvedCount > 0 && <> · <span className="font-mono tabular">{approvedCount}</span> allotted</>}
+                  {rejectedCount > 0 && <> · <span className="font-mono tabular">{rejectedCount}</span> not approved</>}
+                </p>
+                <ul className="divide-y divide-[var(--border-default)] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-xs)]">
+                  {displayResults.map((req, i) => {
+                    const st = STATUS[req.status as keyof typeof STATUS] ?? STATUS.pending;
+                    return (
+                      <li key={req.id || i} className="flex gap-4 p-4 sm:p-5">
+                        <div className="flex size-14 shrink-0 flex-col items-center justify-center rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-base)]">
+                          <span className="text-xs leading-none text-[var(--text-tertiary)]">Seat</span>
+                          <span className="mt-0.5 font-display text-md font-semibold leading-none tabular">{req.seat}</span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                            <p className={cn('flex items-center gap-1.5 text-sm font-semibold', st.text)}>
+                              <st.Icon className="size-4" aria-hidden="true" />
+                              {st.label}
+                            </p>
+                            <span className="font-mono text-xs text-[var(--text-tertiary)] tabular">
+                              Sent {fmtDate(req.createdAt?.toString().split('T')[0] || '')}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-sm text-[var(--text-secondary)]">{st.note}</p>
+                          <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-xs">
+                            {/* The public lookup returns status fields only — no name,
+                                UPI ref or note — so those rows appear only when present. */}
+                            {req.userName && (
+                              <>
+                                <dt className="text-[var(--text-tertiary)]">Name</dt>
+                                <dd className="text-[var(--text-primary)]">{req.userName}</dd>
+                              </>
+                            )}
+                            <dt className="text-[var(--text-tertiary)]">Joining</dt>
+                            <dd className="text-[var(--text-primary)]">
+                              {fmtDate(req.joinDate || todayISO())} · {durationLabel(req.duration || '3M')} · {shiftLabel(req.shift || 'full')}
+                            </dd>
+                            {req.transactionId && (
+                              <>
+                                <dt className="text-[var(--text-tertiary)]">UPI ref</dt>
+                                <dd className="font-mono text-[var(--text-primary)]">{req.transactionId}</dd>
+                              </>
+                            )}
+                            {req.message && (
+                              <>
+                                <dt className="text-[var(--text-tertiary)]">Note</dt>
+                                <dd className="text-[var(--text-primary)]">{req.message}</dd>
+                              </>
+                            )}
+                          </dl>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
+            )
+          )}
         </div>
-      </Card>
-
-      {/* Results */}
-      <AnimatePresence mode="wait">
-        {searched && displayResults !== null && (
-          <motion.div
-            key="results"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Summary chips */}
-            {displayResults.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2 mb-4">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold bg-[var(--saffron-50)] text-[var(--saffron-600)] border-[var(--saffron-200)]">
-                  <Clock className="w-4 h-4" />
-                  {pendingCount} Pending
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold bg-[var(--emerald-50)] text-[var(--emerald-600)] border-[var(--emerald-200)]">
-                  <CheckCircle className="w-4 h-4" />
-                  {approvedCount} Approved
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold bg-[var(--ruby-50)] text-[var(--ruby-600)] border-[var(--ruby-200)]">
-                  <XCircle className="w-4 h-4" />
-                  {rejectedCount} Rejected
-                </span>
-              </div>
-            )}
-
-            {/* Request Cards */}
-            <div className="space-y-3 pb-20">
-              {displayResults.length === 0 ? (
-                <Card variant="base" className="p-10 text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-[var(--bg-overlay)] flex items-center justify-center mx-auto mb-3">
-                    <Inbox className="w-7 h-7 text-[var(--text-tertiary)]" />
-                  </div>
-                  <p className="text-sm font-medium text-[var(--text-secondary)]">
-                    No requests found
-                  </p>
-                  <p className="text-xs text-[var(--text-tertiary)] mt-1">
-                    No seat requests found for this phone number.
-                    <br />
-                    Browse available seats to submit a request.
-                  </p>
-                </Card>
-              ) : (
-                displayResults.map((req, i) => (
-                  <motion.div
-                    key={req.id || i}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                  >
-                    <Card
-                      variant="base"
-                      className={cn(
-                        'overflow-hidden shadow-sm',
-                        req.status === 'pending' && 'border-l border-l-[var(--saffron-500)]',
-                        req.status === 'approved' && 'border-l border-l-[var(--emerald-500)]',
-                        req.status === 'rejected' && 'border-l border-l-[var(--ruby-500)]',
-                      )}
-                    >
-                      <div className="p-4">
-                        {/* Top row */}
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={cn(
-                                'w-10 h-10 rounded-xl flex items-center justify-center text-sm font-mono font-black',
-                                req.status === 'pending' && 'bg-[var(--saffron-50)] text-[var(--saffron-600)]',
-                                req.status === 'approved' && 'bg-[var(--emerald-50)] text-[var(--emerald-600)]',
-                                req.status === 'rejected' && 'bg-[var(--ruby-50)] text-[var(--ruby-600)]',
-                              )}
-                            >
-                              {String(req.seat).padStart(2, '0')}
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-bold text-[var(--text-primary)]">
-                                  Seat #{req.seat}
-                                </span>
-                                <Badge variant={req.status === 'approved' ? 'active' : (req.status === 'rejected' ? 'expired' : 'pending')} />
-                              </div>
-                              <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1 mt-0.5">
-                                <Armchair className="w-4 h-4" />
-                                Requested by {req.userName}
-                              </span>
-                            </div>
-                          </div>
-                          <span className="text-xs font-mono text-[var(--text-tertiary)] whitespace-nowrap">
-                            {fmtDate(req.createdAt?.toString().split('T')[0] || '')}
-                          </span>
-                        </div>
-
-                        {/* Transaction ID */}
-                        <div className="px-3 py-2 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)] mb-2">
-                          <span className="text-xs text-[var(--text-secondary)] flex items-center gap-1.5">
-                            <CalendarDays className="w-4 h-4 text-[var(--text-tertiary)]" />
-                            Joining {fmtDate(req.joinDate || todayISO())}
-                            <Clock className="w-4 h-4 text-[var(--text-tertiary)] ml-2" />
-                            {durationLabel(req.duration || '3M')} · {shiftLabel(req.shift || 'full')}
-                          </span>
-                        </div>
-
-                        {req.transactionId && (
-                          <div className="px-3 py-2 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)] mb-2">
-                            <span className="text-xs text-[var(--text-secondary)] flex items-center gap-1.5">
-                              <Receipt className="w-4 h-4 text-[var(--text-tertiary)]" />
-                              UPI Ref: <span className="font-mono">{req.transactionId}</span>
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Message */}
-                        {req.message && (
-                          <div className="px-3 py-2 rounded-lg bg-[var(--bg-muted)] border border-[var(--border-subtle)]">
-                            <span className="text-xs text-[var(--text-secondary)] flex items-start gap-1.5">
-                              <MessageSquare className="w-4 h-4 mt-0.5 shrink-0 text-[var(--text-tertiary)]" />
-                              {req.message}
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Status Message */}
-                        <div className="mt-3 text-xs">
-                          {req.status === 'pending' && (
-                            <p className="text-[var(--saffron-600)] font-medium flex items-center gap-1.5">
-                              <Clock className="w-4 h-4" />
-                              Awaiting admin verification of your payment
-                            </p>
-                          )}
-                          {req.status === 'approved' && (
-                            <p className="text-[var(--emerald-600)] font-medium flex items-center gap-1.5">
-                              <CheckCircle className="w-4 h-4" />
-                              Payment verified! Your seat has been allotted.
-                            </p>
-                          )}
-                          {req.status === 'rejected' && (
-                            <p className="text-[var(--ruby-600)] font-medium flex items-center gap-1.5">
-                              <XCircle className="w-4 h-4" />
-                              Request was not approved. Please contact the library.
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  </motion.div>
-                ))
-              )}
-            </div>
-          </motion.div>
-        )}
-
-        {/* Initial state — not yet searched */}
-        {!searched && (
-          <motion.div
-            key="initial"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <Card variant="base" className="p-10 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">
-                <Search className="h-8 w-8 text-[var(--text-tertiary)]" aria-hidden="true" />
-              </div>
-              <h2 className="text-base font-bold text-[var(--text-primary)] mb-1">
-                Find your requests
-              </h2>
-              <p className="text-sm text-[var(--text-tertiary)] leading-relaxed max-w-xs mx-auto">
-                Enter the phone number you used when submitting your seat request to view its current status.
-              </p>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
       </main>
     </div>
   );

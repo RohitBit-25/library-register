@@ -1,31 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
-import {
-  LayoutDashboard,
-  Users,
-  BarChart3,
-  Inbox,
-  LogOut,
-  Shield,
-  HardDrive,
-  IndianRupee,
-  Users2,
-  ScanLine,
-} from 'lucide-react';
-import { Tooltip } from '@/components/ui/Tooltip';
-import { useRouter } from 'next/navigation';
-
-interface NavItem {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
-  badge?: string;
-}
+import Wordmark from '@/components/layout/Wordmark';
+import { ADMIN_NAV } from '@/components/layout/adminNav';
 
 interface SidebarProps {
   dueCount?: number;
@@ -37,52 +18,16 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
   const { logout, staffName } = useAuth();
   const router = useRouter();
 
-  const navItems: NavItem[] = [
-    { href: '/', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
-    { href: '/floorplan', label: 'Seat Map (Full)', icon: <ScanLine className="w-5 h-5" /> },
-    { href: '/analytics', label: 'Analytics', icon: <BarChart3 className="w-5 h-5" /> },
-    {
-      href: '/members',
-      label: 'All Members',
-      icon: <Users className="w-5 h-5" />,
-      badge: dueCount > 0 ? `${dueCount} due` : undefined,
-    },
-    {
-      href: '/requests',
-      label: 'Requests',
-      icon: <Inbox className="w-5 h-5" />,
-      badge: pendingRequests > 0 ? `${pendingRequests}` : undefined,
-    },
-    {
-      href: '/payments',
-      label: 'Collections',
-      icon: <IndianRupee className="w-5 h-5" />,
-    },
-    {
-      href: '/export',
-      label: 'Export Data',
-      icon: <HardDrive className="w-5 h-5" />,
-    },
-    {
-      href: '/staff',
-      label: 'Staff',
-      icon: <Users2 className="w-5 h-5" />,
-    },
-    {
-      href: '/kiosk',
-      label: 'Self Check-In',
-      icon: <ScanLine className="w-5 h-5" />,
-    },
-    {
-      href: '/audit',
-      label: 'Activity Log',
-      icon: <Shield className="w-5 h-5" />,
-    },
-  ];
+  // Counts belong to the page they send you to. Plain numbers, no pulse:
+  // a badge that breathes forever stops meaning anything by the second day.
+  const counts: Record<string, number> = {
+    '/requests': pendingRequests,
+    '/members': dueCount,
+  };
 
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false });
-  const dateStr = now.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+  const dateStr = new Date().toLocaleDateString('en-IN', {
+    weekday: 'short', day: 'numeric', month: 'short',
+  });
 
   const handleLogout = () => {
     logout();
@@ -90,85 +35,71 @@ export default function Sidebar({ dueCount = 0, pendingRequests = 0 }: SidebarPr
   };
 
   return (
-    <aside className="hidden lg:flex flex-col w-[240px] h-screen fixed left-0 top-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)] z-30 overflow-hidden">
-      <div className="flex items-center gap-3 px-6 h-16 shrink-0 relative z-10">
-        {/* Subtle gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--saffron-500)]/5 via-transparent to-transparent pointer-events-none" />
-        
-        <div className="flex items-center gap-2.5 relative z-10">
-          <Image
-            src="/logo-mark.png"
-            alt=""
-            aria-hidden="true"
-            width={44}
-            height={44}
-            className="h-11 w-11 shrink-0 object-contain"
-          />
-          <div>
-            <p className="text-base font-extrabold text-[var(--text-primary)] leading-tight tracking-tight">
-              Library Register
+    <aside className="fixed left-0 top-0 z-30 hidden h-dvh w-[240px] flex-col border-r border-[var(--border-default)] bg-[var(--bg-surface)] lg:flex">
+      <div className="flex h-16 items-center border-b border-[var(--border-default)] px-4">
+        <Wordmark size="sm" caption="Staff desk" />
+      </div>
+
+      <nav aria-label="Admin" className="flex-1 overflow-y-auto px-3 py-3 custom-scrollbar">
+        {ADMIN_NAV.map((group) => (
+          <div key={group.group} className="mt-5 first:mt-0">
+            <p className="px-3 pb-1.5 text-xs font-medium text-[var(--text-tertiary)]">
+              {group.group}
             </p>
-            <p className="text-xs text-[var(--text-tertiary)] font-medium">
-              {dateStr}
-            </p>
+            <ul className="space-y-px">
+              {group.items.map((item) => {
+                const isActive = pathname === item.href;
+                const count = counts[item.href] ?? 0;
+                const Icon = item.icon;
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={cn(
+                        'flex min-h-[36px] items-center gap-2.5 rounded-[var(--radius-sm)] px-2.5 text-sm font-medium transition-ui',
+                        isActive
+                          ? 'bg-[var(--bg-muted)] text-[var(--text-primary)]'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]',
+                      )}
+                    >
+                      <Icon
+                        className={cn('size-[18px] shrink-0', isActive ? 'text-[var(--saffron-600)]' : 'text-[var(--text-tertiary)]')}
+                        aria-hidden="true"
+                      />
+                      <span className="flex-1 truncate">{item.label}</span>
+                      {count > 0 && (
+                        <span className="min-w-5 rounded-full bg-[var(--saffron-50)] px-1.5 py-0.5 text-center font-mono text-xs font-medium tabular text-[var(--saffron-700)]">
+                          {count}
+                          <span className="sr-only">{item.href === '/members' ? ' with fees due' : ' pending'}</span>
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-        </div>
-      </div>
-
-      {/* Admin badge */}
-      <div className="px-6 pb-4 relative z-10">
-        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--sapphire-50)] text-[var(--sapphire-600)]">
-          <Shield className="w-4 h-4" />
-          <span className="text-xs font-bold truncate">{staffName ?? 'Admin'}</span>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
-        {navItems.map(item => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-ui duration-200 cursor-pointer relative active:scale-[0.98]',
-                isActive
-                  ? 'bg-[var(--sapphire-50)] text-[var(--sapphire-600)] font-bold shadow-sm'
-                  : 'text-[var(--text-secondary)] hover:bg-[var(--bg-base)] hover:text-[var(--text-primary)] hover:shadow-sm',
-              )}
-            >
-              <span className={cn(
-                'transition-transform duration-200',
-                isActive && 'scale-110',
-              )}>
-                {item.icon}
-              </span>
-              <span className="flex-1">{item.label}</span>
-              {item.badge && (
-                <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[var(--saffron-50)] text-[var(--saffron-700)] animate-pulse-subtle">
-                  {item.badge}
-                </span>
-              )}
-            </Link>
-          );
-        })}
+        ))}
       </nav>
 
-      {/* Footer */}
-      <div className="p-4 shrink-0 relative z-10">
-        <div className="flex items-center justify-between mb-3 text-xs font-mono text-[var(--text-tertiary)]">
-          {timeStr}
+      <div className="m-3 flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-base)] p-2.5">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--ink)] text-xs font-semibold text-[var(--text-inverse)]" aria-hidden="true">
+          {(staffName ?? 'S').trim().charAt(0).toUpperCase()}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium text-[var(--text-primary)]">{staffName ?? 'Staff'}</p>
+          <p className="text-xs text-[var(--text-tertiary)]">{dateStr}</p>
         </div>
-        <Tooltip content="Sign out of the system" side="right">
-          <button
-            onClick={handleLogout}
-            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] active:scale-[0.98] transition-ui border border-[var(--border-default)] hover:border-[var(--ruby-200)] shadow-sm"
-          >
-            <LogOut className="w-4 h-4" />
-            Logout
-          </button>
-        </Tooltip>
+        <button
+          type="button"
+          onClick={handleLogout}
+          aria-label="Sign out"
+          title="Sign out"
+          className="flex size-9 cursor-pointer items-center justify-center rounded-[var(--radius-sm)] text-[var(--text-tertiary)] transition-ui hover:bg-[var(--ruby-50)] hover:text-[var(--ruby-600)]"
+        >
+          <LogOut className="size-4" aria-hidden="true" />
+        </button>
       </div>
     </aside>
   );

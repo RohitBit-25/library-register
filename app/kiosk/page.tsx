@@ -1,214 +1,172 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useMembers } from '@/hooks/useMembers';
 import { useAttendance } from '@/hooks/useAttendance';
-import { motion, AnimatePresence } from 'framer-motion';
-import { LogIn, LogOut, ArrowLeft, ArrowRight, CheckCircle2, XCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
-import { springUI } from '@/lib/motion';
-import Image from 'next/image';
+import { Delete, ArrowRight, ArrowLeft, LogIn, LogOut } from 'lucide-react';
+import Wordmark from '@/components/layout/Wordmark';
+import { cn } from '@/lib/utils';
 
+/**
+ * The front-desk tablet. A student types their seat number and checks in.
+ *
+ * Writing attendance needs a staff session (the API returns 401 otherwise),
+ * so the tablet is unlocked once by a librarian and left on this page. It
+ * used to run without one: the public member list is redacted, so every
+ * student was greeted as "Occupied", told they had "checked in successfully",
+ * and nothing was saved.
+ */
 export default function KioskPage() {
   const { members } = useMembers();
   const { isPresent, markPresent, markAbsent, todayStr } = useAttendance();
+  const { isAdmin, isLoading } = useAuth();
   const { addToast } = useToast();
-  
+
   const [seatInput, setSeatInput] = useState('');
-  const [isHydrated, setIsHydrated] = useState(false);
-  const [activeMember, setActiveMember] = useState<typeof members[0] | null>(null);
+  const [activeSeat, setActiveSeat] = useState<number | null>(null);
+  const [busy, setBusy] = useState(false);
 
+  const activeMember = activeSeat !== null ? members.find((m) => m.seat === activeSeat) ?? null : null;
+
+  // A kiosk left on someone's name is a privacy leak; return to the keypad.
   useEffect(() => {
-    const timer = setTimeout(() => setIsHydrated(true), 0);
-    return () => clearTimeout(timer);
-  }, []);
+    if (activeSeat === null) return;
+    const t = setTimeout(() => setActiveSeat(null), 20_000);
+    return () => clearTimeout(t);
+  }, [activeSeat]);
 
-  if (!isHydrated) return null;
+  const press = (d: string) => setSeatInput((p) => (p.length < 2 ? p + d : p));
 
-  const handleNumpad = (num: string) => {
-    if (seatInput.length < 3) setSeatInput(prev => prev + num);
-  };
-
-  const handleDelete = () => {
-    setSeatInput(prev => prev.slice(0, -1));
-  };
-
-  const handleEnter = () => {
-    if (!seatInput) return;
-    const seatId = parseInt(seatInput, 10);
-    const member = members.find(m => m.seat === seatId && !m.vacant);
-    
-    if (member) {
-      setActiveMember(member);
-      setSeatInput('');
-    } else {
-      addToast('error', 'No active member found at this seat.');
-      setSeatInput('');
+  const enter = () => {
+    const n = parseInt(seatInput, 10);
+    setSeatInput('');
+    const m = members.find((x) => x.seat === n && !x.vacant);
+    if (!m) {
+      addToast('error', n >= 1 && n <= 95 ? `Seat ${n} has no member.` : 'Seats are numbered 1 to 95.');
+      return;
     }
+    setActiveSeat(n);
   };
 
-  const handleCheckAction = (action: 'in' | 'out') => {
+  const act = async (dir: 'in' | 'out') => {
     if (!activeMember) return;
-    if (action === 'in') {
-      markPresent(todayStr, activeMember.seat);
-      addToast('success', `${activeMember.name} checked in successfully!`);
-    } else {
-      markAbsent(todayStr, activeMember.seat);
-      addToast('success', `${activeMember.name} checked out.`);
+    setBusy(true);
+    const ok = dir === 'in'
+      ? await markPresent(todayStr, activeMember.seat)
+      : await markAbsent(todayStr, activeMember.seat);
+    setBusy(false);
+    if (!ok) {
+      addToast('error', 'That did not save. Please tell the librarian.');
+      return;
     }
-    setActiveMember(null);
+    addToast('success', dir === 'in' ? `Checked in at seat ${activeMember.seat}` : `Checked out of seat ${activeMember.seat}`);
+    setActiveSeat(null);
   };
+
+  const key = 'flex h-16 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-surface)] text-2xl font-medium tabular text-[var(--text-primary)] transition-ui hover:border-[var(--border-strong)] active:bg-[var(--bg-muted)]';
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center p-4 selection:bg-[var(--saffron-50)]">
-      
-      {/* Background Decor */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-[var(--amber-500)]/5 blur-3xl"></div>
-      </div>
+    <div className="flex min-h-dvh flex-col bg-[var(--bg-void)]">
+      <header className="flex items-center justify-between border-b border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3 sm:px-6">
+        <Wordmark size="md" caption="Self check-in" />
+        {isAdmin && (
+          <Link href="/" className="flex items-center gap-1.5 text-sm font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            Staff desk
+          </Link>
+        )}
+      </header>
 
-      <div className="absolute top-6 left-6 z-50">
-        <Link href="/" className="flex items-center gap-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors bg-[var(--bg-surface)]/80 backdrop-blur-md px-4 py-2 rounded-full border border-[var(--border-default)] font-medium cursor-pointer shadow-sm hover:shadow-md">
-          <ArrowLeft className="w-4 h-4" />
-          Exit Kiosk
-        </Link>
-      </div>
-
-      <AnimatePresence mode="wait">
-        {!activeMember ? (
-          <motion.div
-            key="numpad"
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 1.05, filter: 'blur(4px)' }}
-            transition={springUI}
-            className="w-full max-w-sm"
-          >
-            <div className="text-center mb-8">
-              {/* The kiosk is the one full-screen surface a student stands
-                  in front of, and it carried no branding at all — a generic
-                  icon on an empty page. The library's own banner belongs
-                  here more than anywhere else in the product. */}
-              <Image
-                src="/banner.png"
-                alt="Shree Gangaur Library — knowledge today, success tomorrow"
-                width={520}
-                height={208}
-                priority
-                className="mx-auto mb-8 h-auto w-full max-w-[420px]"
-              />
-              <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
-                Self Check-In
-              </h1>
-              <p className="text-[var(--text-secondary)] mt-2 font-medium">
-                Enter your seat number to begin
+      <main className="flex flex-1 items-center justify-center px-4 py-10">
+        <div className="w-full max-w-[360px]">
+          {isLoading ? null : !isAdmin ? (
+            <div className="text-center">
+              <h1 className="font-display text-xl font-semibold leading-tight">Check-in is locked</h1>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+                A librarian needs to sign in on this device once. After that it
+                stays on this screen for students to use.
               </p>
+              <Link
+                href="/admin/login?next=/kiosk"
+                className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--ink)] bg-[var(--ink)] px-5 text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--ink-hover)]"
+              >
+                Staff sign in
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </Link>
             </div>
-
-            <div className="card-base p-6 sm:p-8 rounded-[2rem] bg-[var(--bg-glass)] backdrop-blur-xl border border-[var(--border-default)] shadow-2xl">
-              <div className="mb-8">
-                <div className="h-20 w-full bg-[var(--bg-base)] border-2 border-[var(--border-default)] rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-inner">
-                  <span className={cn(
-                    "text-5xl font-mono font-black tracking-widest leading-none",
-                    seatInput ? "text-[var(--text-primary)]" : "text-[var(--text-tertiary)]/40"
-                  )}>
-                    {seatInput || "---"}
-                  </span>
-                </div>
+          ) : activeMember ? (
+            <div className="text-center">
+              <p className="text-sm text-[var(--text-secondary)]">Seat</p>
+              <p className="font-display text-4xl font-semibold leading-none tabular">{activeMember.seat}</p>
+              <h1 className="mt-4 text-lg font-semibold">{activeMember.name}</h1>
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                {isPresent(todayStr, activeMember.seat) ? 'You are checked in today.' : 'Not checked in yet today.'}
+              </p>
+              <div className="mt-8 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  disabled={busy || isPresent(todayStr, activeMember.seat)}
+                  onClick={() => act('in')}
+                  className="flex min-h-[64px] cursor-pointer flex-col items-center justify-center gap-1 rounded-[var(--radius-md)] border border-[var(--ink)] bg-[var(--ink)] text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--ink-hover)] disabled:cursor-not-allowed disabled:border-[var(--border-default)] disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)]"
+                >
+                  <LogIn className="size-5" aria-hidden="true" />
+                  Check in
+                </button>
+                <button
+                  type="button"
+                  disabled={busy || !isPresent(todayStr, activeMember.seat)}
+                  onClick={() => act('out')}
+                  className="flex min-h-[64px] cursor-pointer flex-col items-center justify-center gap-1 rounded-[var(--radius-md)] border border-[var(--border-strong)] bg-[var(--bg-surface)] text-sm font-semibold text-[var(--text-primary)] transition-ui hover:bg-[var(--bg-muted)] disabled:cursor-not-allowed disabled:text-[var(--text-disabled)]"
+                >
+                  <LogOut className="size-5" aria-hidden="true" />
+                  Check out
+                </button>
               </div>
-
-              <div className="grid grid-cols-3 gap-3 sm:gap-4">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
-                  <button
-                    key={num}
-                    onClick={() => handleNumpad(num.toString())}
-                    className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-[var(--border-subtle)] text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-ui active:scale-95 cursor-pointer"
-                  >
-                    {num}
-                  </button>
+              <button
+                type="button"
+                onClick={() => setActiveSeat(null)}
+                className="mt-4 cursor-pointer py-2 text-sm text-[var(--text-secondary)] underline-offset-4 hover:underline"
+              >
+                Not you? Go back
+              </button>
+            </div>
+          ) : (
+            <>
+              <h1 className="text-center font-display text-xl font-semibold leading-tight">Type your seat number</h1>
+              <output
+                aria-live="polite"
+                className={cn(
+                  'mt-6 flex h-20 items-center justify-center rounded-[var(--radius-lg)] border border-[var(--border-strong)] bg-[var(--bg-surface)] font-display text-4xl font-semibold tabular',
+                  !seatInput && 'text-[var(--text-disabled)]',
+                )}
+              >
+                {seatInput || '—'}
+              </output>
+              <div className="mt-4 grid grid-cols-3 gap-2.5">
+                {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((d) => (
+                  <button key={d} type="button" className={key} onClick={() => press(d)}>{d}</button>
                 ))}
-                <button
-                  onClick={handleDelete}
-                  className="aspect-square rounded-2xl bg-[var(--ruby-50)] border border-[var(--ruby-200)] text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] transition-ui flex items-center justify-center font-bold uppercase text-xs tracking-wider hover:-translate-y-1 active:scale-95 shadow-sm cursor-pointer"
-                >
-                  Clear
+                <button type="button" className={cn(key, 'text-[var(--text-secondary)]')} onClick={() => setSeatInput((p) => p.slice(0, -1))} aria-label="Delete last digit">
+                  <Delete className="size-6" aria-hidden="true" />
                 </button>
+                <button type="button" className={key} onClick={() => press('0')}>0</button>
                 <button
-                  onClick={() => handleNumpad('0')}
-                  className="aspect-square rounded-2xl bg-[var(--bg-base)] border border-[var(--border-subtle)] text-2xl font-black text-[var(--text-primary)] shadow-sm hover:shadow-md hover:bg-[var(--bg-surface)] hover:-translate-y-1 transition-ui active:scale-95 cursor-pointer"
-                >
-                  0
-                </button>
-                <button
-                  onClick={handleEnter}
+                  type="button"
+                  onClick={enter}
                   disabled={!seatInput}
                   aria-label="Confirm seat number"
-                  className="flex aspect-square cursor-pointer items-center justify-center rounded-2xl bg-[var(--saffron-700)] text-[var(--text-inverse)] transition-ui hover:-translate-y-1 hover:bg-[var(--saffron-800)] active:scale-95 disabled:cursor-not-allowed disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)]"
+                  className="flex h-16 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border border-[var(--ink)] bg-[var(--ink)] text-[var(--text-inverse)] transition-ui hover:bg-[var(--ink-hover)] disabled:cursor-not-allowed disabled:border-[var(--border-default)] disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)]"
                 >
-                  <ArrowRight className="w-8 h-8" />
+                  <ArrowRight className="size-6" />
                 </button>
               </div>
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="action"
-            initial={{ opacity: 0, scale: 0.95, y: -10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 1.05, filter: 'blur(4px)' }}
-            transition={springUI}
-            className="w-full max-w-sm"
-          >
-            <div className="glass p-8 rounded-[2rem] border border-[var(--border-default)] shadow-2xl relative overflow-hidden text-center">
-              
-              <button 
-                onClick={() => setActiveMember(null)}
-                className="absolute top-4 left-4 p-2 bg-[var(--bg-base)] rounded-full text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-
-              <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-[2rem] bg-[var(--emerald-600)] text-[var(--text-inverse)] shadow-md">
-                <span className="text-4xl font-black text-[var(--saffron-50)] -rotate-3 font-mono">
-                  {String(activeMember.seat).padStart(2, '0')}
-                </span>
-              </div>
-              
-              <h2 className="text-3xl font-black tracking-tight text-[var(--text-primary)] mb-1">
-                {activeMember.name}
-              </h2>
-              <p className="text-[var(--text-tertiary)] font-medium mb-8">
-                Current Status: {isPresent(todayStr, activeMember.seat) ? (
-                  <span className="text-[var(--emerald-600)] font-bold inline-flex items-center gap-1">Checked In <CheckCircle2 className="w-4 h-4" /></span>
-                ) : (
-                  <span className="text-[var(--text-secondary)] font-bold inline-flex items-center gap-1">Checked Out <XCircle className="w-4 h-4" /></span>
-                )}
-              </p>
-
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  onClick={() => handleCheckAction('in')}
-                  disabled={isPresent(todayStr, activeMember.seat)}
-                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--emerald-50)] border-2 border-[var(--emerald-200)] text-[var(--emerald-600)] hover:bg-[var(--emerald-50)] hover:-translate-y-1 transition-ui disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
-                >
-                  <LogIn className="w-8 h-8 mb-2" />
-                  <span className="font-extrabold uppercase tracking-widest text-xs">Check In</span>
-                </button>
-                <button
-                  onClick={() => handleCheckAction('out')}
-                  disabled={!isPresent(todayStr, activeMember.seat)}
-                  className="flex flex-col items-center justify-center p-6 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:-translate-y-1 transition-ui disabled:opacity-40 disabled:hover:-translate-y-0 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow-md disabled:shadow-none active:scale-95"
-                >
-                  <LogOut className="w-8 h-8 mb-2" />
-                  <span className="font-extrabold uppercase tracking-widest text-xs">Check Out</span>
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

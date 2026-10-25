@@ -4,68 +4,73 @@ import { motion, HTMLMotionProps } from 'framer-motion';
 import { springQuick } from '@/lib/motion';
 
 export interface ButtonProps extends HTMLMotionProps<"button"> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'icon';
+  variant?: 'primary' | 'brand' | 'secondary' | 'danger' | 'ghost' | 'icon';
   size?: 'sm' | 'md' | 'lg';
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', children, ...props }, ref) => {
     
-    const baseClasses = "inline-flex items-center justify-center relative overflow-hidden focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+    const baseClasses = "inline-flex items-center justify-center relative overflow-hidden cursor-pointer disabled:cursor-not-allowed disabled:opacity-50";
 
-    // -600 fills, not -500: white on saffron-500 measured 2.68:1; saffron-600 gives 5.43:1.
+    // Ink is the primary action (design.md): one strong, neutral button per
+    // view, so the saffron brand colour stays free for state — the selected
+    // seat, the live indicator, the best-value plan. `brand` exists for the
+    // rare place the action *is* the brand moment.
     const variants = {
       primary: `
-        sheen
-        bg-[var(--saffron-600)] text-[var(--text-inverse)]
-        font-[var(--font-body)] font-[var(--weight-semibold)] tracking-[var(--tracking-wide)]
-        rounded-[var(--radius-sm)] border border-[var(--saffron-700)] shadow-[var(--shadow-sm)]
-        hover:bg-[var(--saffron-700)] hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5
-        transition-ui duration-200
+        bg-[var(--ink)] text-[var(--text-inverse)] font-medium
+        rounded-[var(--radius-sm)] shadow-[var(--shadow-xs)]
+        hover:bg-[var(--ink-hover)]
+        disabled:opacity-100 disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)] disabled:shadow-none
+        transition-ui
+      `,
+      brand: `
+        bg-[var(--saffron-600)] text-[var(--text-inverse)] font-medium
+        rounded-[var(--radius-sm)] shadow-[var(--shadow-xs)]
+        hover:bg-[var(--saffron-700)]
+        disabled:opacity-100 disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)] disabled:shadow-none
+        transition-ui
       `,
       secondary: `
-        bg-transparent text-[var(--saffron-700)]
-        border border-[var(--border-strong)] rounded-[var(--radius-sm)]
-        font-[var(--font-body)] font-[var(--weight-medium)]
-        hover:bg-[var(--saffron-50)] hover:border-[var(--saffron-600)]
-        transition-ui duration-200
+        bg-[var(--bg-surface)] text-[var(--text-primary)] font-medium
+        border border-[var(--border-default)] rounded-[var(--radius-sm)] shadow-[var(--shadow-xs)]
+        hover:bg-[var(--bg-muted)]
+        transition-ui
       `,
       danger: `
-        bg-[var(--ruby-50)] text-[var(--ruby-600)]
-        border border-[var(--ruby-200)] rounded-[var(--radius-sm)]
-        hover:bg-[var(--ruby-100)] hover:border-[var(--ruby-500)]
-        transition-ui duration-200
+        bg-[var(--bg-surface)] text-[var(--ruby-600)] font-medium
+        border border-[var(--ruby-200)] rounded-[var(--radius-sm)] shadow-[var(--shadow-xs)]
+        hover:bg-[var(--ruby-50)]
+        transition-ui
       `,
       ghost: `
         bg-transparent text-[var(--text-secondary)] border-none rounded-[var(--radius-sm)]
-        hover:bg-[var(--bg-overlay)] hover:text-[var(--text-primary)]
-        transition-colors duration-200
+        hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]
+        transition-ui
       `,
       icon: `
-        bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-[var(--shadow-xs)]
-        text-[var(--text-secondary)] rounded-full
-        hover:bg-[var(--bg-surface)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)] hover:shadow-[var(--shadow-sm)] hover:-translate-y-0.5
-        transition-ui duration-200 flex items-center justify-center
+        bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-[var(--shadow-xs)]
+        text-[var(--text-secondary)] rounded-[var(--radius-sm)]
+        hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]
+        transition-ui flex items-center justify-center
       `
     };
 
     const sizes = {
-      sm: "px-3 py-1.5 text-sm min-h-[32px]",
-      md: variant === 'icon' ? "w-10 h-10 min-w-[44px] min-h-[44px]" : "px-6 py-[12px] text-sm min-h-[44px]",
-      lg: "px-8 py-4 text-base min-h-[52px]",
+      sm: "gap-1.5 px-3 text-sm min-h-[34px] whitespace-nowrap",
+      md: variant === 'icon' ? "size-10" : "gap-2 px-4 text-sm min-h-[40px] whitespace-nowrap",
+      lg: "gap-2 px-5 text-base min-h-[48px] whitespace-nowrap",
     };
 
     // The icon variant doesn't use standard padding/size unless overridden
     const appliedSize = variant === 'icon' ? sizes.md : sizes[size];
     
-    // Remove the hover effect in the class for primary since framer-motion handles it natively or pseudo-elements might be tricky,
-    // actually class-based hover works fine with standard motion.button if we don't override scale.
-
     return (
       <motion.button
         ref={ref}
         className={cn(baseClasses, variants[variant], appliedSize, className)}
-        whileTap={{ transform: 'scale(0.96)' }}
+        whileTap={{ transform: 'scale(0.97)' }}
         transition={springQuick}
         {...props}
       >

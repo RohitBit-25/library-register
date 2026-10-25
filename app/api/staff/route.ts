@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isValidObjectId } from 'mongoose';
 import { apiError } from '@/lib/log';
 import { z } from 'zod';
 import dbConnect from '@/lib/mongodb';
@@ -90,6 +91,9 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: formatZodError(parsed.error) }, { status: 400 });
     }
     const { id, active } = parsed.data;
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: 'Invalid staff ID' }, { status: 400 });
+    }
 
     await dbConnect();
 

@@ -1,21 +1,31 @@
+import { twMerge } from 'tailwind-merge';
 import type { SeatStatus, Duration } from './types.ts';
 
 // ─── Date Utilities ─────────────────────────────────────────────
 
 /**
- * Calculate expiry date from join date and duration
+ * Calculate expiry date from join date and duration.
+ *
+ * Calendar months, clamped to the end of the target month: 31 Jan + 1 month
+ * is 28/29 Feb, not 3 March. The old version used Date#setMonth, which rolls
+ * the overflow into the next month — so a member joining on the 31st got up
+ * to three free days on every plan.
+ *
+ * Pure date arithmetic on the Y-M-D parts, so the result does not depend on
+ * the server's timezone either.
  */
 export function calcExpiry(joinDate: string, duration: Duration): string {
   if (!joinDate || !duration) return '';
-  const d = new Date(joinDate);
-  switch (duration) {
-    case '1M': d.setMonth(d.getMonth() + 1); break;
-    case '3M': d.setMonth(d.getMonth() + 3); break;
-    case '6M': d.setMonth(d.getMonth() + 6); break;
-    case '1Y': d.setFullYear(d.getFullYear() + 1); break;
-    default: return '';
-  }
-  return d.toISOString().split('T')[0];
+  const months = { '1M': 1, '3M': 3, '6M': 6, '1Y': 12 }[duration];
+  if (!months) return '';
+  const [y, m, d] = joinDate.split('-').map(Number);
+  if (!y || !m || !d) return '';
+  const total = (m - 1) + months;
+  const ty = y + Math.floor(total / 12);
+  const tm = total % 12; // 0-based
+  const lastDay = new Date(Date.UTC(ty, tm + 1, 0)).getUTCDate();
+  const td = Math.min(d, lastDay);
+  return `${ty}-${String(tm + 1).padStart(2, '0')}-${String(td).padStart(2, '0')}`;
 }
 
 /**
@@ -160,10 +170,15 @@ export const STATUS_COLORS: Record<SeatStatus, {
 // ─── Misc ───────────────────────────────────────────────────────
 
 /**
- * Merge class names (simple utility)
+ * Join class names, letting later Tailwind classes override earlier ones.
+ *
+ * This used to be a plain join, so a caller's `hidden` lost to a component's
+ * built-in `inline-flex` whenever Tailwind happened to emit inline-flex later
+ * in the stylesheet — overrides worked or failed by CSS source order, not by
+ * intent. tailwind-merge resolves the conflict in the caller's favour.
  */
 export function cn(...classes: (string | boolean | undefined | null)[]): string {
-  return classes.filter(Boolean).join(' ');
+  return twMerge(classes.filter(Boolean).join(' '));
 }
 
 /**

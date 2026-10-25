@@ -22,14 +22,15 @@ export interface BadgeProps extends HTMLMotionProps<"span"> {
 const badgeConfig: Record<BadgeVariant, { bg: string; border: string; text: string; defaultLabel: string }> = {
   active:   { bg: 'bg-[var(--emerald-50)]',  border: 'border-[var(--emerald-200)]',  text: 'text-[var(--emerald-600)]',  defaultLabel: 'Active' },
   expired:  { bg: 'bg-[var(--ruby-50)]',     border: 'border-[var(--ruby-200)]',     text: 'text-[var(--ruby-600)]',     defaultLabel: 'Expired' },
-  expiring: { bg: 'bg-[var(--marigold-50)]', border: 'border-[var(--marigold-200)]', text: 'text-[var(--marigold-700)]', defaultLabel: 'Expiring Soon' },
-  due:      { bg: 'bg-[var(--saffron-50)]',  border: 'border-[var(--saffron-200)]',  text: 'text-[var(--saffron-700)]',  defaultLabel: 'Fee Due' },
+  expiring: { bg: 'bg-[var(--marigold-50)]', border: 'border-[var(--marigold-200)]', text: 'text-[var(--marigold-700)]', defaultLabel: 'Expiring soon' },
+  due:      { bg: 'bg-[var(--saffron-50)]',  border: 'border-[var(--saffron-200)]',  text: 'text-[var(--saffron-700)]',  defaultLabel: 'Fee due' },
   vacant:   { bg: 'bg-[var(--bg-muted)]',    border: 'border-[var(--border-default)]', text: 'text-[var(--text-tertiary)]', defaultLabel: 'Vacant' },
-  pending:  { bg: 'bg-[var(--sapphire-50)]', border: 'border-[var(--sapphire-200)]', text: 'text-[var(--sapphire-600)]', defaultLabel: 'Pending' },
+    // Indigo, the same as "requested" on the public plan: pending is one colour everywhere.
+  pending:  { bg: 'bg-[var(--indigo-50)]',   border: 'border-[var(--indigo-400)]',  text: 'text-[var(--indigo-600)]',   defaultLabel: 'Pending' },
   // Shifts: neutral chip, meaning carried by the icon.
   morning:  { bg: 'bg-[var(--bg-muted)]',    border: 'border-[var(--border-default)]', text: 'text-[var(--text-secondary)]', defaultLabel: 'Morning' },
   evening:  { bg: 'bg-[var(--bg-muted)]',    border: 'border-[var(--border-default)]', text: 'text-[var(--text-secondary)]', defaultLabel: 'Evening' },
-  full:     { bg: 'bg-[var(--bg-muted)]',    border: 'border-[var(--border-default)]', text: 'text-[var(--text-secondary)]', defaultLabel: 'Full Day' },
+  full:     { bg: 'bg-[var(--bg-muted)]',    border: 'border-[var(--border-default)]', text: 'text-[var(--text-secondary)]', defaultLabel: 'Full day' },
 };
 
 // Shift variants carry an SVG icon rather than an emoji — screen readers
@@ -46,16 +47,16 @@ export function Badge({ variant, className, children, ...props }: BadgeProps) {
   return (
     <motion.span
       className={cn(
-        "inline-flex items-center gap-[var(--space-1)] px-[10px] py-[4px]",
-        "rounded-[var(--radius-full)] border-[1.5px]",
-        "font-[var(--font-body)] text-xs font-[var(--weight-semibold)]",
-        "tracking-[var(--tracking-widest)] uppercase",
+        // A register stamp, not a pill: sentence case, square-ish, hairline.
+        "inline-flex items-center gap-[var(--space-1)] px-2 py-0.5 whitespace-nowrap",
+        "rounded-[var(--radius-xs)] border",
+        "text-xs font-semibold",
         c.bg, c.border, c.text,
         className
       )}
       {...props}
     >
-      {Icon && <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />}
+      {Icon && <Icon className="size-3.5 shrink-0" aria-hidden="true" />}
       {children || c.defaultLabel}
     </motion.span>
   );

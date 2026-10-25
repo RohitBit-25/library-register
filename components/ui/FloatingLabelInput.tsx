@@ -50,7 +50,7 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
         {error && (
           <motion.span 
             initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
-            className="absolute -bottom-5 left-1 text-xs font-bold text-[var(--ruby-600)] tracking-wide"
+            className="absolute -bottom-5 left-1 text-xs font-bold text-[var(--ruby-600)]"
           >
             {error}
           </motion.span>

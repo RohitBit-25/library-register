@@ -66,50 +66,24 @@ const accentTokens: Record<string, { bg: string, text: string }> = {
 export default function StatCard({ value, label, accent, icon, onClick }: StatCardProps) {
   const tokens = accentTokens[accent];
   
+  // A register figure: label, number, and a small tinted icon beside the
+  // label. No hover lift or corner wash — it is a button, so it changes
+  // border on hover like every other button.
   return (
     <motion.button
-      whileHover={{ y: -3, scale: 1.01 }}
-      whileTap={{ transform: 'scale(0.98)' }}
+      whileTap={{ transform: 'scale(0.99)' }}
       onClick={onClick}
-      className={cn(
-        // `relative` + `overflow-hidden`: the corner overlay below is absolute
-        // and had no positioned ancestor, so it escaped the card entirely.
-        'relative overflow-hidden text-left w-full rounded-[var(--radius-lg)] border-[1.5px] border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-[var(--space-5)] shadow-[var(--shadow-sm)] cursor-pointer group transition-ui duration-300',
-        // --shadow-glow-saffron is `none` in this palette, so the old hover
-        // shadow did nothing.
-        'hover:border-[var(--saffron-500)] hover:shadow-[var(--shadow-lg)]'
-      )}
+      className="group w-full cursor-pointer rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 text-left transition-ui hover:border-[var(--border-strong)] sm:p-5 shadow-[var(--shadow-xs)]"
     >
-      {/* Hairline top highlight — reads as a lit edge on a light surface. */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent"
-      />
-
-      {/* Decorative corner wash, revealed on hover */}
-      <div className={cn(
-        'absolute top-0 right-0 w-20 h-20 rounded-bl-[60px] opacity-0 pointer-events-none transition-opacity duration-300 group-hover:opacity-100',
-        tokens.bg
-      )} />
-      
-      {/* Icon container */}
-      <div className={cn(
-        'w-10 h-10 rounded-xl flex items-center justify-center mb-3 relative z-10 shadow-sm transition-colors',
-        tokens.bg,
-        tokens.text
-      )}>
-        {icon}
-      </div>
-
-      {/* Number with animated counter */}
-      {/* `tabular` pins digit width so the number doesn't jitter as it counts */}
-      <p className="tabular font-display text-3xl font-semibold text-[var(--text-primary)] tracking-[var(--tracking-tight)] relative z-10">
-        <AnimatedCounter value={value} />
-      </p>
-      
-      {/* Label */}
-      <p className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)] mt-1 relative z-10">
+      <p className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+        <span className={cn('flex size-6 items-center justify-center rounded-[var(--radius-xs)] [&_svg]:h-3.5 [&_svg]:w-3.5', tokens.bg, tokens.text)} aria-hidden="true">
+          {icon}
+        </span>
         {label}
+      </p>
+      {/* `tabular` pins digit width so the number doesn't jitter as it counts */}
+      <p className="mt-3 font-display text-2xl font-semibold leading-none text-[var(--text-primary)] tabular sm:text-3xl">
+        <AnimatedCounter value={value} />
       </p>
     </motion.button>
   );

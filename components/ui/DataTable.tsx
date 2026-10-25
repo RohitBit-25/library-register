@@ -94,7 +94,7 @@ function DataTableRow<TData>({
       {renderSubComponent && (
         <AnimatePresence mode="wait">
           {isExpanded && (
-            <tr className="bg-gradient-to-b from-[var(--bg-base)]/50 to-transparent border-none">
+            <tr className="border-none bg-[var(--bg-base)]">
               <td colSpan={columnsLength} className="p-0 border-none">
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
@@ -151,7 +151,7 @@ export function DataTable<TData, TValue>({
       {/* ToolBar */}
       <div className="flex items-center justify-between">
         <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--text-tertiary)]" />
           <input
             aria-label={searchPlaceholder}
             placeholder={searchPlaceholder}
@@ -166,7 +166,7 @@ export function DataTable<TData, TValue>({
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] overflow-hidden shadow-[var(--shadow-sm)]">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left relative">
-            <thead className="text-xs text-[var(--text-secondary)] uppercase bg-[var(--bg-base)] border-b border-[var(--border-default)]">
+            <thead className="text-xs text-[var(--text-secondary)] bg-[var(--bg-base)] border-b border-[var(--border-default)]">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
@@ -189,10 +189,10 @@ export function DataTable<TData, TValue>({
                           {header.column.getCanSort() && (
                             <span className="text-[var(--text-tertiary)]">
                               {{
-                                asc: <ChevronUp className="w-4 h-4" />,
-                                desc: <ChevronDown className="w-4 h-4" />,
+                                asc: <ChevronUp className="size-4" />,
+                                desc: <ChevronDown className="size-4" />,
                               }[header.column.getIsSorted() as string] ?? (
-                                <ChevronsUpDown className="w-4 h-4" />
+                                <ChevronsUpDown className="size-4" />
                               )}
                             </span>
                           )}
@@ -247,7 +247,7 @@ export function DataTable<TData, TValue>({
             aria-label="Previous page"
             className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-ui cursor-pointer border border-transparent hover:border-[var(--border-subtle)]"
           >
-            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+            <ChevronLeft className="size-5" aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -256,7 +256,7 @@ export function DataTable<TData, TValue>({
             aria-label="Next page"
             className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] hover:shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-ui cursor-pointer border border-transparent hover:border-[var(--border-subtle)]"
           >
-            <ChevronRight className="h-5 w-5" aria-hidden="true" />
+            <ChevronRight className="size-5" aria-hidden="true" />
           </button>
         </div>
       </div>

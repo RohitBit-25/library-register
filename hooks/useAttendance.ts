@@ -34,8 +34,8 @@ export function useAttendance() {
     return history.find(h => h.date === dateStr);
   };
 
-  const markPresent = useCallback(async (dateStr: string, seat: number) => {
-    if (!isAdmin) return;
+  const markPresent = useCallback(async (dateStr: string, seat: number): Promise<boolean> => {
+    if (!isAdmin) return false;
 
     // Optimistic UI update
     const newHistory = history.map(h => 
@@ -47,20 +47,24 @@ export function useAttendance() {
 
     try {
       mutate(newHistory, false);
-      await fetch('/api/attendance', {
+      // fetch does not throw on 401/500 — without this check a rejected
+      // write looked like a success and then silently reverted.
+      const res = await fetch('/api/attendance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ date: dateStr, seat, present: true }),
       });
       mutate();
+      return res.ok;
     } catch (error) {
       console.error('Failed to mark present:', error);
       mutate();
+      return false;
     }
   }, [history, isAdmin, mutate]);
 
-  const markAbsent = useCallback(async (dateStr: string, seat: number) => {
-    if (!isAdmin) return;
+  const markAbsent = useCallback(async (dateStr: string, seat: number): Promise<boolean> => {
+    if (!isAdmin) return false;
 
     // Optimistic UI update
     const newHistory = history.map(h => 
@@ -69,32 +73,38 @@ export function useAttendance() {
 
     try {
       mutate(newHistory, false);
-      await fetch('/api/attendance', {
+      // fetch does not throw on 401/500 — without this check a rejected
+      // write looked like a success and then silently reverted.
+      const res = await fetch('/api/attendance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ date: dateStr, seat, present: false }),
       });
       mutate();
+      return res.ok;
     } catch (error) {
       console.error('Failed to mark absent:', error);
       mutate();
+      return false;
     }
   }, [history, isAdmin, mutate]);
 
-  const markAllPresent = useCallback(async (dateStr: string) => {
-    if (!isAdmin) return;
+  const markAllPresent = useCallback(async (dateStr: string): Promise<boolean> => {
+    if (!isAdmin) return false;
 
     const occupiedSeats = members.filter(m => !m.vacant).map(m => m.seat);
 
     try {
-      await fetch('/api/attendance', {
+      const res = await fetch('/api/attendance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ date: dateStr, seats: occupiedSeats, allPresent: true }),
       });
       mutate();
+      return res.ok;
     } catch (error) {
       console.error('Failed to mark all present:', error);
+      return false;
     }
   }, [isAdmin, members, mutate]);
 

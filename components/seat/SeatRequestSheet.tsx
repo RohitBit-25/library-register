@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { type Duration, type Member, type Shift } from '@/lib/types';
-import { cn } from '@/lib/utils';
+import { cn, todayISO } from '@/lib/utils';
+import { seatRow } from '@/lib/layoutConfig';
 import { AnimatePresence, motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import {
@@ -41,10 +42,9 @@ export default function SeatRequestSheet({
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
-  const [joinDate, setJoinDate] = useState(() => {
-    const d = new Date();
-    return d.toISOString().split('T')[0]; // default to today
-  });
+  // Local date, not toISOString(): that is UTC, so before 05:30 IST it
+  // defaulted the join date to yesterday.
+  const [joinDate, setJoinDate] = useState(todayISO);
   const [duration, setDuration] = useState<Duration>('3M');
   const [shift, setShift] = useState<Shift>('full');
   const [paymentMode, setPaymentMode] = useState<PaymentMode>('cash');
@@ -140,7 +140,7 @@ export default function SeatRequestSheet({
           setName('');
           setPhone('');
           setMessage('');
-          setJoinDate(new Date().toISOString().split('T')[0]);
+          setJoinDate(todayISO());
           setDuration('3M');
           setShift('full');
           setPaymentMode('cash');
@@ -184,7 +184,7 @@ export default function SeatRequestSheet({
 
   // Shared input classes
   const inputCls =
-    'w-full px-4 py-3 rounded-xl text-sm bg-[var(--bg-base)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]/40 focus:border-[var(--saffron-200)] transition-ui duration-200';
+    'w-full min-h-[44px] px-3.5 py-2.5 rounded-[var(--radius-sm)] text-base sm:text-sm bg-[var(--bg-surface)] border border-[var(--border-strong)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]/20 focus:border-[var(--saffron-600)] transition-ui';
 
   return (
     <AnimatePresence>
@@ -196,7 +196,7 @@ export default function SeatRequestSheet({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-md"
+            className="fixed inset-0 z-40 bg-[var(--text-primary)]/40"
             onClick={onClose}
           />
 
@@ -206,18 +206,18 @@ export default function SeatRequestSheet({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 30 }}
             transition={springUI}
-            className="fixed inset-0 z-[101] flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
             <div
               ref={dialogRef}
-              className="w-full max-w-[480px] max-h-[90vh] rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-2xl overflow-hidden flex flex-col"
+              className="w-full max-w-[480px] max-h-[90vh] rounded-[var(--radius-xl)] bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-[var(--shadow-floating)] overflow-hidden flex flex-col"
               onClick={e => e.stopPropagation()}
             >
               {!member.vacant ? (
                 /* ── Occupied State ──────────────────── */
                 <div className="p-6 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-[var(--ruby-50)] flex items-center justify-center mx-auto mb-4">
-                    <Armchair className="w-8 h-8 text-[var(--ruby-600)]" />
+                  <div className="size-16 rounded-2xl bg-[var(--ruby-50)] flex items-center justify-center mx-auto mb-4">
+                    <Armchair className="size-8 text-[var(--ruby-600)]" />
                   </div>
                   <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">
                     Seat #{member.seat} is Occupied
@@ -246,46 +246,36 @@ export default function SeatRequestSheet({
                     initial={{ transform: 'scale(0.92)', opacity: 0 }}
                     animate={{ transform: 'scale(1)', opacity: 1 }}
                     transition={{ ...springUI, delay: 0.1 }}
-                    className="w-20 h-20 rounded-full bg-[var(--emerald-50)] flex items-center justify-center mx-auto mb-5"
+                    className="size-20 rounded-full bg-[var(--emerald-50)] flex items-center justify-center mx-auto mb-5"
                   >
-                    <CheckCircle2 className="w-10 h-10 text-[var(--emerald-600)]" />
+                    <CheckCircle2 className="size-10 text-[var(--emerald-600)]" />
                   </motion.div>
                   <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">
-                    Request Submitted!
+                    Request sent
                   </h3>
                   <p className="text-sm text-[var(--text-secondary)]">
-                    Admin will verify and allot <span className="font-bold text-[var(--saffron-600)]">Seat #{member.seat}</span> to you shortly.
+                    The librarian will confirm your payment and allot seat <span className="font-semibold text-[var(--text-primary)]">{member.seat}</span>. Track it under My requests.
                   </p>
                 </motion.div>
               ) : (
                 /* ── Form ───────────────────────────── */
                 <>
                   {/* Dialog Header */}
-                  <div className="relative px-6 pt-6 pb-4 shrink-0">
-                    {/* Decorative gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-[var(--saffron-500)]/5 via-transparent to-transparent pointer-events-none rounded-t-3xl" />
-                    
-                    <div className="relative flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--saffron-500)] to-[var(--saffron-600,var(--saffron-500))] flex items-center justify-center shadow-lg">
-                          <span className="text-lg font-black text-[#1a1a16] font-mono">
-                            {String(member.seat).padStart(2, '0')}
-                          </span>
-                        </div>
-                        <div>
-                          <h3 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
-                            Request seat {member.seat}
-                          </h3>
-                          <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
-                            Fill details below to reserve this seat
-                          </p>
-                        </div>
+                  <div className="shrink-0 border-b border-[var(--border-default)] px-6 pb-4 pt-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="font-display text-lg font-semibold leading-tight text-[var(--text-primary)]">
+                          Request seat <span className="tabular">{member.seat}</span>
+                        </h3>
+                        <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                          {seatRow(member.seat)} · the librarian confirms and allots it.
+                        </p>
                       </div>
                       <button
                         onClick={onClose}
-                        className="cursor-pointer w-8 h-8 rounded-xl bg-[var(--bg-base)] border border-[var(--border-default)] flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-ui"
+                        aria-label="Close" className="cursor-pointer size-9 shrink-0 rounded-[var(--radius-sm)] flex items-center justify-center text-[var(--text-tertiary)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)] transition-ui"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="size-4" />
                       </button>
                     </div>
                   </div>
@@ -295,23 +285,23 @@ export default function SeatRequestSheet({
 
                     {/* ─── Payment Mode Toggle ─────────────── */}
                     <div>
-                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 block">
-                        Payment Mode
+                      <label className="text-sm font-medium text-[var(--text-primary)] mb-2 block">
+                        How will you pay?
                       </label>
-                      <div role="radiogroup" aria-label="Payment Mode" className="grid grid-cols-2 gap-2 p-1 bg-[var(--bg-base)] rounded-2xl border border-[var(--border-default)]">
+                      <div role="radiogroup" aria-label="Payment Mode" className="grid grid-cols-2 gap-0.5 rounded-[var(--radius-md)] bg-[var(--bg-muted)] p-0.5">
                         <button
                           type="button"
                           role="radio"
                           aria-checked={paymentMode === 'cash'}
                           onClick={() => setPaymentMode('cash')}
                           className={cn(
-                            'cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-ui duration-300',
+                            'cursor-pointer flex min-h-[40px] items-center justify-center gap-2 rounded-[var(--radius-sm)] text-sm font-medium transition-ui',
                             paymentMode === 'cash'
-                              ? 'bg-[var(--emerald-500)] text-[#1a1a16] shadow-lg'
-                              : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]',
+                              ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-sm)] ring-1 ring-[var(--border-default)]'
+                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
                           )}
                         >
-                          <Banknote className="w-4 h-4" />
+                          <Banknote className="size-4" />
                           Cash
                         </button>
                         <button
@@ -320,13 +310,13 @@ export default function SeatRequestSheet({
                           aria-checked={paymentMode === 'upi'}
                           onClick={() => setPaymentMode('upi')}
                           className={cn(
-                            'cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-ui duration-300',
+                            'cursor-pointer flex min-h-[40px] items-center justify-center gap-2 rounded-[var(--radius-sm)] text-sm font-medium transition-ui',
                             paymentMode === 'upi'
-                              ? 'bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-sm'
-                              : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]',
+                              ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--shadow-sm)] ring-1 ring-[var(--border-default)]'
+                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
                           )}
                         >
-                          <Smartphone className="w-4 h-4" />
+                          <Smartphone className="size-4" />
                           UPI / Online
                         </button>
                       </div>
@@ -335,21 +325,21 @@ export default function SeatRequestSheet({
                     {/* ─── Info Banner ──────────────────────── */}
                     {paymentMode === 'cash' ? (
                       <div className="p-4 rounded-xl border bg-[var(--emerald-50)] border-[var(--emerald-200)] flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-[var(--emerald-50)] flex items-center justify-center shrink-0 mt-0.5">
-                          <Banknote className="w-4 h-4 text-[var(--emerald-600)]" />
+                        <div className="size-8 rounded-lg bg-[var(--emerald-50)] flex items-center justify-center shrink-0 mt-0.5">
+                          <Banknote className="size-4 text-[var(--emerald-600)]" />
                         </div>
                         <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                           Please pay at the library counter. Admin will confirm your payment and allot the seat.
                         </p>
                       </div>
                     ) : (
-                      <div className="rounded-xl border border-[var(--sapphire-200)] bg-gradient-to-b from-[var(--sapphire-500)]/8 to-transparent overflow-hidden">
+                      <div className="rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-base)] overflow-hidden">
                         <div className="flex flex-col items-center py-5 px-4">
-                          <p className="text-xs font-black text-[var(--sapphire-600)] mb-3 uppercase tracking-[0.2em] flex items-center gap-2">
-                            <Smartphone className="w-4 h-4" />
+                          <p className="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
+                            <Smartphone className="size-4" />
                             Scan & Pay via UPI
                           </p>
-                          <div className="p-2.5 bg-white rounded-xl shadow-lg ring-4 ring-white/5 mb-3">
+                          <div className="p-2.5 bg-[var(--bg-surface)] rounded-[var(--radius-md)] border border-[var(--border-default)] mb-3">
                             <QRCodeSVG
                               value="upi://pay?pa=gangaur.972327@sbi&pn=Gangaur%20Library&cu=INR"
                               size={110}
@@ -366,8 +356,8 @@ export default function SeatRequestSheet({
 
                     {/* ─── Name ─────────────────────────────── */}
                     <div>
-                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <User className="w-4 h-4" />
+                      <label className="text-sm font-medium text-[var(--text-primary)] mb-2 flex items-center gap-1.5">
+                        <User className="size-4" />
                         Full Name <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div className="relative">
@@ -380,15 +370,15 @@ export default function SeatRequestSheet({
                           className={inputCls}
                         />
                         {nameValid && (
-                          <CheckCircle2 className="w-4 h-4 text-[var(--emerald-600)] absolute right-3 top-1/2 -translate-y-1/2" />
+                          <CheckCircle2 className="size-4 text-[var(--emerald-600)] absolute right-3 top-1/2 -translate-y-1/2" />
                         )}
                       </div>
                     </div>
 
                     {/* ─── Phone ────────────────────────────── */}
                     <div>
-                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <Phone className="w-4 h-4" />
+                      <label className="text-sm font-medium text-[var(--text-primary)] mb-2 flex items-center gap-1.5">
+                        <Phone className="size-4" />
                         Phone Number <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div className="relative">
@@ -407,15 +397,15 @@ export default function SeatRequestSheet({
                           className={cn(inputCls, 'font-mono')}
                         />
                         {phoneValid && (
-                          <CheckCircle2 className="w-4 h-4 text-[var(--emerald-600)] absolute right-3 top-1/2 -translate-y-1/2" />
+                          <CheckCircle2 className="size-4 text-[var(--emerald-600)] absolute right-3 top-1/2 -translate-y-1/2" />
                         )}
                       </div>
                     </div>
 
                     {/* ─── Date of Joining ──────────────────── */}
                     <div>
-                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <CalendarDays className="w-4 h-4" />
+                      <label className="text-sm font-medium text-[var(--text-primary)] mb-2 flex items-center gap-1.5">
+                        <CalendarDays className="size-4" />
                         Date of Joining <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <input
@@ -429,8 +419,8 @@ export default function SeatRequestSheet({
 
                     {/* ─── Duration ─────────────────────────── */}
                     <div>
-                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <CalendarDays className="w-4 h-4" />
+                      <label className="text-sm font-medium text-[var(--text-primary)] mb-2 flex items-center gap-1.5">
+                        <CalendarDays className="size-4" />
                         Membership Duration <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div role="radiogroup" aria-label="Membership Duration" className="grid grid-cols-2 gap-2">
@@ -444,8 +434,8 @@ export default function SeatRequestSheet({
                             className={cn(
                               'cursor-pointer rounded-xl border px-3 py-2.5 text-xs font-bold transition-colors',
                               duration === option.value
-                                ? 'border-[var(--saffron-500)] bg-[var(--saffron-500)] text-[#1a1a16]'
-                                : 'border-[var(--border-default)] bg-[var(--bg-base)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                                ? 'border-[var(--text-primary)] bg-[var(--bg-surface)] text-[var(--text-primary)] ring-1 ring-[var(--text-primary)]'
+                                : 'border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                             )}
                           >
                             {option.label}
@@ -456,8 +446,8 @@ export default function SeatRequestSheet({
 
                     {/* ─── Preferred Shift ───────────────────── */}
                     <div>
-                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <Clock className="w-4 h-4" />
+                      <label className="text-sm font-medium text-[var(--text-primary)] mb-2 flex items-center gap-1.5">
+                        <Clock className="size-4" />
                         Preferred Shift <span className="text-[var(--ruby-600)]">*</span>
                       </label>
                       <div role="radiogroup" aria-label="Preferred Shift" className="grid grid-cols-3 gap-2">
@@ -471,8 +461,8 @@ export default function SeatRequestSheet({
                             className={cn(
                               'cursor-pointer rounded-xl border px-2 py-2.5 text-xs font-bold transition-colors',
                               shift === option.value
-                                ? 'border-[var(--saffron-600)] bg-[var(--saffron-600)] text-[var(--text-inverse)]'
-                                : 'border-[var(--border-default)] bg-[var(--bg-base)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                                ? 'border-[var(--text-primary)] bg-[var(--bg-surface)] text-[var(--text-primary)] ring-1 ring-[var(--text-primary)]'
+                                : 'border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                             )}
                           >
                             {option.label}
@@ -484,8 +474,8 @@ export default function SeatRequestSheet({
                     {/* ─── UPI Reference ─────────────────────── */}
                     {paymentMode === 'upi' && (
                       <div>
-                        <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                          <Smartphone className="w-4 h-4" />
+                        <label className="text-sm font-medium text-[var(--text-primary)] mb-2 flex items-center gap-1.5">
+                          <Smartphone className="size-4" />
                           UPI Reference <span className="text-[var(--ruby-600)]">*</span>
                         </label>
                         <input
@@ -493,7 +483,7 @@ export default function SeatRequestSheet({
                           value={transactionId}
                           onChange={e => setTransactionId(e.target.value)}
                           placeholder="Enter transaction/reference ID"
-                          className={cn(inputCls, 'font-mono uppercase')}
+                          className={cn(inputCls, 'font-mono')}
                         />
                         {!paymentValid && (
                           <p className="mt-2 text-xs font-semibold text-[var(--ruby-600)]">
@@ -505,10 +495,10 @@ export default function SeatRequestSheet({
 
                     {/* ─── ID Document Upload ───────────────── */}
                     <div>
-                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <FileText className="w-4 h-4" />
+                      <label className="text-sm font-medium text-[var(--text-primary)] mb-2 flex items-center gap-1.5">
+                        <FileText className="size-4" />
                         ID Document
-                        <span className="font-normal normal-case tracking-normal text-[var(--text-tertiary)]">(Aadhaar / College ID)</span>
+                        <span className="font-normal normal-case text-[var(--text-tertiary)]">(Aadhaar / College ID)</span>
                       </label>
                       <input
                         ref={fileInputRef}
@@ -526,11 +516,11 @@ export default function SeatRequestSheet({
                           className="cursor-pointer w-full py-5 rounded-xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--bg-base)] text-[var(--text-tertiary)] hover:border-[var(--saffron-200)] hover:bg-[var(--saffron-50)] transition-ui duration-200 flex flex-col items-center gap-2.5"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-xl bg-[var(--saffron-50)] flex items-center justify-center">
-                              <Camera className="w-4 h-4 text-[var(--saffron-600)]" />
+                            <div className="size-9 rounded-xl bg-[var(--saffron-50)] flex items-center justify-center">
+                              <Camera className="size-4 text-[var(--saffron-600)]" />
                             </div>
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--bg-muted)]">
-                              <Upload className="h-4 w-4 text-[var(--text-secondary)]" aria-hidden="true" />
+                            <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--bg-muted)]">
+                              <Upload className="size-4 text-[var(--text-secondary)]" aria-hidden="true" />
                             </div>
                           </div>
                           <span className="text-xs font-medium">
@@ -542,26 +532,26 @@ export default function SeatRequestSheet({
                         </button>
                       ) : (
                         <div className="rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] p-3 flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-[var(--emerald-50)] flex items-center justify-center shrink-0">
+                          <div className="size-10 rounded-xl bg-[var(--emerald-50)] flex items-center justify-center shrink-0">
                             {documentUrl.startsWith('data:image') ? (
-                              <ImageIcon className="w-5 h-5 text-[var(--emerald-600)]" />
+                              <ImageIcon className="size-5 text-[var(--emerald-600)]" />
                             ) : (
-                              <FileText className="w-5 h-5 text-[var(--emerald-600)]" />
+                              <FileText className="size-5 text-[var(--emerald-600)]" />
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-bold text-[var(--text-primary)] truncate">{documentName}</p>
                             <p className="text-xs text-[var(--emerald-600)] flex items-center gap-1 mt-0.5">
-                              <CheckCircle2 className="w-4 h-4" /> Uploaded successfully
+                              <CheckCircle2 className="size-4" /> Uploaded successfully
                             </p>
                           </div>
                           <button
                             type="button"
                             onClick={removeDocument}
                             aria-label="Remove uploaded document"
-                            className="cursor-pointer w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] transition-ui"
+                            className="cursor-pointer size-8 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--ruby-600)] hover:bg-[var(--ruby-50)] transition-ui"
                           >
-                            <Trash2 className="w-4 h-4" aria-hidden="true" />
+                            <Trash2 className="size-4" aria-hidden="true" />
                           </button>
                         </div>
                       )}
@@ -569,9 +559,9 @@ export default function SeatRequestSheet({
 
                     {/* ─── Message ──────────────────────────── */}
                     <div>
-                      <label className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <MessageSquare className="w-4 h-4" />
-                        Message <span className="font-normal normal-case tracking-normal">(optional)</span>
+                      <label className="text-sm font-medium text-[var(--text-primary)] mb-2 flex items-center gap-1.5">
+                        <MessageSquare className="size-4" />
+                        Message <span className="font-normal normal-case">(optional)</span>
                       </label>
                       <textarea
                         value={message}
@@ -600,21 +590,21 @@ export default function SeatRequestSheet({
                       onClick={handleSubmit}
                       disabled={!isValid || loading}
                       className={cn(
-                        'cursor-pointer w-full py-3.5 rounded-2xl text-sm font-bold transition-ui duration-300 flex items-center justify-center gap-2.5 shadow-lg',
+                        'cursor-pointer w-full min-h-[48px] rounded-[var(--radius-sm)] border text-sm font-semibold transition-ui flex items-center justify-center gap-2.5',
                         isValid && !loading
-                          ? 'bg-gradient-to-r from-[var(--saffron-500)] to-[var(--saffron-600,var(--saffron-500))] text-[#1a1a16] hover: hover:shadow-xl active:scale-[0.98]'
-                          : 'bg-[var(--bg-muted)] text-[var(--text-tertiary)] cursor-not-allowed shadow-none',
+                          ? 'border-[var(--ink)] bg-[var(--ink)] text-[var(--text-inverse)] hover:bg-[var(--ink-hover)] active:scale-[0.98]'
+                          : 'border-[var(--border-default)] bg-[var(--bg-muted)] text-[var(--text-disabled)] cursor-not-allowed',
                       )}
                     >
                       {loading ? (
-                        <div className="w-5 h-5 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+                        <div className="size-5 border-2 border-current/30 border-t-current rounded-full animate-spin" />
                       ) : (
-                        <Send className="w-4 h-4" />
+                        <Send className="size-4" />
                       )}
-                      {loading ? 'Submitting...' : 'Submit Request'}
+                      {loading ? 'Sending…' : `Send request for seat ${member.seat}`}
                     </button>
                     <p className="text-center text-xs text-[var(--text-tertiary)] mt-2.5">
-                      Admin will verify and allot your seat after {paymentMode === 'upi' ? 'payment' : 'fee'} confirmation
+                      The librarian allots the seat once your {paymentMode === 'upi' ? 'UPI payment' : 'fee'} is confirmed.
                     </p>
                   </div>
                 </>

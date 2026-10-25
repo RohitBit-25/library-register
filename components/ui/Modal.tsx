@@ -54,7 +54,7 @@ export default function Modal({
     <dialog
       ref={dialogRef}
       onClose={onClose}
-      className="fixed inset-0 z-[var(--z-modal)] m-auto rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-xl)] backdrop:bg-[var(--bg-void)]/60 backdrop:backdrop-blur-md p-0 max-w-md w-full mx-4 sm:mx-auto animate-fade-in overflow-hidden"
+      className="fixed inset-0 z-50 m-auto rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-xl)] backdrop:bg-[var(--bg-void)]/60 backdrop: p-0 max-w-md w-full mx-4 sm:mx-auto animate-fade-in overflow-hidden"
     >
       <div className="relative z-10 p-6">
         <div className="flex items-start justify-between mb-3">
@@ -66,7 +66,7 @@ export default function Modal({
             className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] rounded-md"
             aria-label="Close dialog"
           >
-            <X className="w-5 h-5" />
+            <X className="size-5" />
           </button>
         </div>
         {description && (
@@ -90,7 +90,7 @@ export default function Modal({
               'text-[var(--text-inverse)]',
               confirmVariant === 'danger'
                 ? 'bg-[var(--ruby-600)] hover:bg-[var(--ruby-700)]'
-                : 'bg-[var(--saffron-600)] hover:bg-[var(--saffron-700)]',
+                : 'bg-[var(--ink)] hover:bg-[var(--ink-hover)]',
             )}
           >
             {confirmLabel}

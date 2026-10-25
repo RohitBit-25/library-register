@@ -1,13 +1,13 @@
 'use client';
 
 import { memo, useState } from 'react';
-import { type Member, type SeatStatus } from '@/lib/types';
-import { getSeatStatus, firstName, daysUntilExpiry, fmtDateShort, cn } from '@/lib/utils';
-import { Sun, Moon, Plus, Calendar as CalendarIcon, Clock } from 'lucide-react';
+import { type Member } from '@/lib/types';
+import { getSeatStatus, daysUntilExpiry, fmtDateShort, cn } from '@/lib/utils';
+import { Plus } from 'lucide-react';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 
 import { type FaceDir } from './SeatMap';
-import SeatAvatar from './SeatAvatar';
+import { STATUS_STYLE } from './statusStyle';
 import { springQuick } from '@/lib/motion';
 
 interface SeatTileProps {
@@ -19,211 +19,131 @@ interface SeatTileProps {
   /**
    * Outside the current filter.
    *
-   * The shift filter used to drop non-matching members from the array
-   * entirely, which on an absolutely-positioned floor plan punched holes in
-   * the room — a plan you read to find where a seat physically is, with a
-   * third of it missing. Dimming keeps the geometry intact and still answers
-   * "where are the morning seats" by showing them against everything else.
+   * Dimming keeps the geometry of the room intact and still answers "where
+   * are the morning seats" by showing them against everything else.
    */
   dimmed?: boolean;
 }
 
-// Flat, Light-Mode Optimized States
-const tileClass: Record<SeatStatus, string> = {
-  active: 'bg-white/90 backdrop-blur-[2px] border-[var(--border-default)] hover:border-[var(--emerald-400)] hover:bg-white text-[var(--text-primary)] shadow-sm',
-  expiring: 'bg-[var(--saffron-50)]/90 backdrop-blur-[2px] border-[var(--saffron-200)] hover:border-[var(--saffron-400)] text-[var(--saffron-800)] shadow-sm hover:bg-[var(--saffron-50)]',
-  expired: 'bg-[var(--ruby-50)]/90 backdrop-blur-[2px] border-[var(--ruby-200)] hover:border-[var(--ruby-400)] text-[var(--ruby-800)] shadow-sm hover:bg-[var(--ruby-50)]',
-  due: 'bg-[var(--marigold-50)]/90 backdrop-blur-[2px] border-[var(--marigold-200)] hover:border-[var(--marigold-400)] text-[var(--marigold-800)] shadow-sm hover:bg-[var(--marigold-50)]',
-  vacant: 'bg-[var(--bg-muted)]/80 backdrop-blur-[2px] border-[var(--border-default)] border-dashed opacity-80 hover:opacity-100 hover:bg-[var(--bg-surface)]/95 text-[var(--text-secondary)]',
-};
+function initials(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '·';
+  return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase();
+}
 
-function SeatTileInner({ member, onClick, compact = false, face, selected = false, dimmed = false }: SeatTileProps) {
+/**
+ * One seat on the admin plan.
+ *
+ * Three things at a glance and nothing else: the number, who (initials), and
+ * state (colour, plus days when the clock matters). It used to stack a
+ * progress ring, a coloured avatar disc, a clipped first name, a status edge
+ * stripe and a shift glyph into 56px — five signals competing in one square,
+ * which is most of why the plan read as noise. Name, phone and dates live in
+ * the hover card and the detail panel, where there is room for them.
+ */
+function SeatTileInner({ member, onClick, selected = false, dimmed = false }: SeatTileProps) {
   const [isHovered, setIsHovered] = useState(false);
   const status = getSeatStatus(member);
+  const s = STATUS_STYLE[status];
   const days = !member.vacant ? daysUntilExpiry(member.expiry) : Infinity;
 
-  // The shift glyph is the only thing distinguishing a morning seat from an
-  // evening one at a glance, so it is sized to be read, not decorated. The
-  // full-day pair drops a step because two glyphs share the width one takes.
-  const shiftIcon = member.shift === 'evening' ? (
-    <Moon className={cn(compact ? 'w-3.5 h-3.5' : 'w-4 h-4')} />
-  ) : member.shift === 'full' ? (
-    <span className="flex items-center gap-0.5">
-      <Sun className={cn(compact ? 'w-3 h-3' : 'w-3.5 h-3.5')} />
-      <Moon className={cn(compact ? 'w-3 h-3' : 'w-3.5 h-3.5')} />
-    </span>
-  ) : (
-    <Sun className={cn(compact ? 'w-3.5 h-3.5' : 'w-4 h-4')} />
-  );
 
   const ariaLabel = member.vacant
-    ? `Seat ${member.seat}, Vacant`
-    : `Seat ${member.seat}, ${member.name}, ${status === 'due' ? 'Fee Due' : status}`;
-
-  const ringRadius = compact ? 25 : 34; 
-  const circumference = 2 * Math.PI * ringRadius;
-  
-  let totalDays = 30;
-  if (!member.vacant && member.duration) {
-    if (member.duration === '1M') totalDays = 30;
-    else if (member.duration === '3M') totalDays = 90;
-    else if (member.duration === '6M') totalDays = 180;
-    else if (member.duration === '1Y') totalDays = 365;
-  }
-  
-  const progressPercent = Math.max(0, Math.min(100, (days / totalDays) * 100));
-  const dashoffset = circumference - (progressPercent / 100) * circumference;
-  
-  let ringStroke = 'stroke-[var(--emerald-500)]'; 
-  if (status === 'expiring') ringStroke = 'stroke-[var(--saffron-500)]';
-  if (status === 'expired' || status === 'due') ringStroke = 'stroke-[var(--ruby-500)]';
+    ? `Seat ${member.seat}, vacant — add a member`
+    : `Seat ${member.seat}, ${member.name}, ${s.label}`;
 
   return (
     <LazyMotion features={domAnimation}>
-      <div 
-        className="relative group w-full h-full"
-        // A tap on a touch screen synthesises mouseenter, so this popover
-        // used to appear on tap and stay there, covering the seat the user
-        // was opening. `pointerenter` carries the pointer type, so a mouse
-        // gets the preview and a finger goes straight to the detail panel.
+      <div
+        className="group relative h-full w-full"
+        // A tap synthesises mouseenter, so only a real mouse gets the preview;
+        // a finger goes straight to the detail panel.
         onPointerEnter={(e) => { if (e.pointerType === 'mouse') setIsHovered(true); }}
         onPointerLeave={() => setIsHovered(false)}
       >
         <button
+          type="button"
           onClick={() => !dimmed && onClick(member.seat)}
           data-seat={dimmed ? undefined : member.seat}
           tabIndex={dimmed ? -1 : undefined}
           aria-hidden={dimmed || undefined}
-          className={cn(
-            dimmed && 'seat-dimmed',
-            'relative flex flex-col items-center justify-between rounded-lg transition-ui duration-200 cursor-pointer z-10 w-full h-full border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2',
-            tileClass[status],
-            compact ? 'px-[3px] py-[3px]' : 'p-1.5',
-            selected ? 'ring-2 ring-[var(--saffron-500)] z-20 border-[var(--saffron-500)]' : ''
-          )}
           aria-label={ariaLabel}
+          aria-pressed={selected}
+          className={cn(
+            'relative z-10 flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-[9px] border shadow-[var(--shadow-xs)] transition-ui hover:shadow-[var(--shadow-md)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--plan-floor)]',
+            s.tint, s.border, s.text,
+            member.vacant
+              ? 'hover:border-[var(--saffron-600)]'
+              : 'hover:border-[var(--text-tertiary)]',
+            selected && 'ring-2 ring-[var(--text-primary)] ring-offset-2 ring-offset-[var(--plan-floor)]',
+            dimmed && 'seat-dimmed',
+          )}
         >
-          {/* Flat Status Edge Indicator */}
-          {face && !member.vacant && (
-            <div className={cn(
-              "absolute transition-colors duration-200",
-              status === 'active' ? 'bg-[var(--emerald-500)]' : 
-              status === 'expiring' ? 'bg-[var(--saffron-500)]' : 
-              status === 'due' ? 'bg-[var(--marigold-500)]' :
-              'bg-[var(--ruby-500)]',
-              face === 'up' && "bottom-0 left-0 right-0 h-1 rounded-b-md",
-              face === 'down' && "top-0 left-0 right-0 h-1 rounded-t-md",
-              face === 'left' && "right-0 top-0 bottom-0 w-1 rounded-r-md",
-              face === 'right' && "left-0 top-0 bottom-0 w-1 rounded-l-md"
-            )} />
-          )}
-
-          {!member.vacant && (
-            <svg className="absolute inset-0 w-full h-full -rotate-90 opacity-60">
-              <circle
-                cx="50%"
-                cy="50%"
-                r={ringRadius}
-                fill="transparent"
-                className="stroke-[var(--border-strong)]"
-                strokeWidth="2"
-              />
-              {status !== 'expired' && (
-                 <circle
-                  cx="50%"
-                  cy="50%"
-                  r={ringRadius}
-                  fill="transparent"
-                  className={ringStroke}
-                  strokeWidth="2"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={dashoffset}
-                />
-              )}
-            </svg>
-          )}
-
-          <span className={cn(
-            'font-mono font-bold self-start leading-none z-10 opacity-70 pl-0.5 pt-0.5 tracking-wider',
-            compact ? 'text-xs' : 'text-sm',
-            member.vacant ? 'text-[var(--text-secondary)]' : 'text-inherit'
-          )}>
-            {String(member.seat).padStart(2, '0')}
-          </span>
-
           {member.vacant ? (
-            <Plus className={cn('opacity-40 z-10 mt-0.5 transition-opacity group-hover:opacity-100 group-hover:text-[var(--saffron-600)]', compact ? 'w-4 h-4' : 'w-5 h-5')} />
+            <>
+              <span className="font-mono text-[15px] font-medium leading-none text-[var(--text-secondary)] tabular">
+                {member.seat}
+              </span>
+              <Plus
+                className="absolute right-1 top-1 size-3 text-[var(--saffron-600)] opacity-0 transition-opacity group-hover:opacity-100"
+                aria-hidden="true"
+              />
+            </>
           ) : (
-            <div className="flex flex-col items-center justify-center z-10 w-full overflow-hidden">
-              <div 
-                className={cn("transition-transform group-hover:scale-105", compact ? "mb-0.5" : "mb-1")}
-              >
-                <SeatAvatar
-                  name={member.name}
-                  seat={member.seat}
-                  size={compact ? 26 : 44}
-                />
-              </div>
-              {/* Only when there is room. In compact mode the name was being
-                  clipped to nothing by the fixed-height flex column, so it
-                  read as a rendering fault rather than information; the hover
-                  card below is where the name actually lives. */}
-              {!compact && (
-                <span className="shrink-0 font-bold w-full text-center tracking-tight overflow-hidden text-ellipsis whitespace-nowrap px-0.5 text-xs leading-normal pb-0.5">
-                  {firstName(member.name)}
+            <>
+              <span className="absolute left-1.5 top-1 font-mono text-[11px] font-medium leading-none tabular opacity-75">
+                {member.seat}
+              </span>
+              <span className="mt-1 text-[17px] font-semibold leading-none">
+                {initials(member.name)}
+              </span>
+              {/* Only the state that needs acting on gets a second mark — the
+                  chip colour already says active. Shift lives in the filter
+                  and the hover card; a dot repeated the colour. Expiring and
+                  fee-due tints sit close on the ramp, so each carries its own. */}
+              {status !== 'active' && (
+                <span className="mt-1 font-mono text-[11px] font-medium leading-none tabular">
+                  {status === 'due' && '₹ due'}
+                  {status === 'expiring' && `${days}d`}
+                  {status === 'expired' && `−${-days}d`}
                 </span>
               )}
-            </div>
+            </>
           )}
-
-          <div className={cn('flex items-center justify-center w-full gap-0.5 z-10 font-bold', compact ? 'text-[11px] leading-none mb-0.5' : 'text-xs leading-none mb-0.5')}>
-            {member.vacant ? (
-              <span className="font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity text-[var(--saffron-600)]">Add</span>
-            ) : (
-              <>
-                <span className="opacity-70">{shiftIcon}</span>
-                {status === 'expiring' && (
-                  <span className="text-[var(--saffron-700)] ml-0.5">{days}d</span>
-                )}
-                {status === 'expired' && (
-                  <span className="text-[var(--ruby-700)] ml-0.5">{-days}d</span>
-                )}
-              </>
-            )}
-          </div>
         </button>
 
-        {/* Clean Light Popover */}
         <AnimatePresence>
           {isHovered && !member.vacant && (
             <m.div
-              initial={{ opacity: 0, y: 6, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 4, scale: 0.98 }}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
               transition={springQuick}
-              style={{ transformOrigin: 'bottom center' }}
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-48 p-3 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-lg z-50 pointer-events-none"
+              className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-3 w-52 -translate-x-1/2 rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 shadow-[var(--shadow-floating)]"
             >
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="text-sm font-bold text-[var(--text-primary)] tracking-wide">{member.name}</h4>
-                    <p className="text-xs text-[var(--text-tertiary)] font-mono mt-0.5">#{String(member.seat).padStart(2, '0')} • {member.phone || 'No phone'}</p>
-                  </div>
-                  <div className={cn('w-2 h-2 rounded-full mt-1', status === 'active' ? 'bg-[var(--emerald-500)]' : status === 'expiring' ? 'bg-[var(--saffron-500)]' : 'bg-[var(--ruby-500)]')} />
-                </div>
-                
-                <div className="pt-2 border-t border-[var(--border-default)] flex flex-col gap-1.5 mt-1">
-                  <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)]">
-                    <CalendarIcon className="w-3 h-3 text-[var(--text-tertiary)]" />
-                    <span>Due: <span className="text-[var(--text-primary)]">{fmtDateShort(member.expiry)}</span> <span className="opacity-70">({days}d)</span></span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)]">
-                    <Clock className="w-3 h-3 text-[var(--text-tertiary)]" />
-                    <span className="capitalize text-[var(--text-primary)]">{member.shift} Shift</span>
-                  </div>
-                </div>
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-sm font-semibold leading-snug text-[var(--text-primary)]">{member.name}</p>
+                <span className="font-mono text-xs text-[var(--text-tertiary)] tabular">#{member.seat}</span>
               </div>
+              <p className="mt-0.5 font-mono text-xs text-[var(--text-tertiary)] tabular">{member.phone || 'No phone'}</p>
+              <dl className="mt-2.5 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 border-t border-[var(--border-default)] pt-2.5 text-xs">
+                <dt className="text-[var(--text-tertiary)]">State</dt>
+                <dd className="flex items-center gap-1.5 font-medium text-[var(--text-primary)]">
+                  <span className={cn('size-2 rounded-full', s.dot)} aria-hidden="true" />{s.label}
+                </dd>
+                <dt className="text-[var(--text-tertiary)]">Until</dt>
+                <dd className="font-medium text-[var(--text-primary)]">
+                  {fmtDateShort(member.expiry)}
+                  {Number.isFinite(days) && (
+                    <span className="ml-1 font-mono text-[var(--text-tertiary)] tabular">
+                      ({days >= 0 ? `${days}d left` : `${-days}d over`})
+                    </span>
+                  )}
+                </dd>
+                <dt className="text-[var(--text-tertiary)]">Shift</dt>
+                <dd className="font-medium capitalize text-[var(--text-primary)]">{member.shift === 'full' ? 'Full day' : member.shift}</dd>
+              </dl>
             </m.div>
           )}
         </AnimatePresence>
@@ -236,10 +156,7 @@ function SeatTileInner({ member, onClick, compact = false, face, selected = fals
  * Hand-written comparator, because 95 of these re-render on every map change.
  *
  * CAUTION: it lists the props it cares about, so any prop added to
- * SeatTileProps and not added here is silently ignored — React skips the
- * render and the new prop appears to do nothing at all. `dimmed` was added
- * for the shift filter and spent its first outing having no effect for
- * exactly this reason.
+ * SeatTileProps and not added here is silently ignored.
  */
 const SeatTile = memo(SeatTileInner, (prevProps, nextProps) => {
   const prev = prevProps.member;

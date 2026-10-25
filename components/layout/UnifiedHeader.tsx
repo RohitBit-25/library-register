@@ -1,83 +1,77 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Lock, Home, Armchair, Wind } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import Wordmark from '@/components/layout/Wordmark';
+import { cn } from '@/lib/utils';
 
+const LINKS = [
+  { href: '/browse', label: 'Seats' },
+  { href: '/landing#fees', label: 'Fees' },
+  { href: '/landing#facilities', label: 'Facilities' },
+  { href: '/my-requests', label: 'My requests' },
+];
+
+/**
+ * Public header: a floating bar detached from the page edges. Destinations
+ * that exist, the staff door as quiet text, and one primary action.
+ */
 export default function UnifiedHeader() {
   const pathname = usePathname();
 
   return (
-    <>
-      <header className="flex items-center justify-between gap-4 py-4 px-6 md:px-10 border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
-        {/* Logo and Brand */}
-        <div className="flex items-center gap-3">
-          {/* The library's own mark. This was a rotated square standing in
-              for a logo; the real one exists. Served through next/image so
-              the 1.5MB source is delivered as a resized WebP/AVIF — the file
-              on disk stops mattering for payload. */}
-          <Image
-            src="/logo-mark.png"
-            alt=""
-            aria-hidden="true"
-            width={80}
-            height={80}
-            priority
-            className="h-16 w-16 shrink-0 object-contain sm:h-20 sm:w-20 drop-shadow-sm"
-          />
-          <div className="leading-tight">
-            <p className="text-2xl font-black tracking-tight text-[var(--text-primary)] sm:text-3xl" style={{ fontFamily: 'var(--font-devanagari)' }}>
-              श्री गणगौर
-            </p>
-            <p className="text-sm font-bold text-[var(--text-secondary)] sm:text-base">
-              Shree Gangaur Study Library
-            </p>
-          </div>
-        </div>
+    <div className="sticky top-0 z-40 px-3 pt-3 sm:px-4">
+      <header className="mx-auto flex max-w-[1160px] items-center justify-between gap-3 rounded-full border border-[var(--border-default)] bg-[var(--bg-glass)] py-2 pl-3 pr-2 shadow-[var(--shadow-sm)] backdrop-blur-md">
+        <Link href="/landing" className="min-w-0 rounded-full" aria-label="Shree Gangaur Library — home">
+          <Wordmark size="sm" short />
+        </Link>
 
-        {/*
-          Five links, all `href="#"`, four of them naming sections that were
-          never built — About, Facilities, Rules, Contact. A student clicking
-          any of them stayed exactly where they were.
-
-          What is left points at things that exist. Emoji are gone with them:
-          a screen reader announces "🏠" as "house", and they sat at a
-          different optical weight from every other icon in the product.
-        */}
-        <nav aria-label="Main" className="hidden items-center gap-6 md:flex">
-          <Link
-            href="/landing"
-            aria-current={pathname === '/landing' ? 'page' : undefined}
-            className="flex items-center gap-1.5 border-b-2 border-transparent pb-1 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] aria-[current=page]:border-[var(--saffron-600)] aria-[current=page]:font-semibold aria-[current=page]:text-[var(--saffron-700)]"
-          >
-            <Home className="h-4 w-4" aria-hidden="true" /> Home
-          </Link>
-          <Link
-            href="/browse"
-            aria-current={pathname === '/browse' ? 'page' : undefined}
-            className="flex items-center gap-1.5 border-b-2 border-transparent pb-1 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] aria-[current=page]:border-[var(--saffron-600)] aria-[current=page]:font-semibold aria-[current=page]:text-[var(--saffron-700)]"
-          >
-            <Armchair className="h-4 w-4" aria-hidden="true" /> Seats
-          </Link>
-          <Link
-            href="/landing#facilities"
-            className="flex items-center gap-1.5 border-b-2 border-transparent pb-1 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
-          >
-            <Wind className="h-4 w-4" aria-hidden="true" /> Facilities
-          </Link>
+        <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
+          {LINKS.map((l) => {
+            const current = pathname === l.href;
+            return (
+              <Link
+                key={l.href}
+                href={l.href}
+                aria-current={current ? 'page' : undefined}
+                className={cn(
+                  'whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium transition-ui',
+                  current
+                    ? 'bg-[var(--bg-muted)] text-[var(--text-primary)]'
+                    : 'text-[var(--text-secondary)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]',
+                )}
+              >
+                {l.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* Staff sign-in lives on its own page rather than a dialog over the
-            public site — see app/admin/login. */}
-        <Link
-          href="/admin/login"
-          className="inline-flex min-h-[40px] cursor-pointer items-center gap-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 text-sm font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-xs)] transition-colors hover:border-[var(--saffron-600)] hover:text-[var(--saffron-700)]"
-        >
-          <Lock className="h-4 w-4" aria-hidden="true" />
-          Staff login
-        </Link>
+        <div className="flex items-center gap-1">
+          <Link
+            href="/my-requests"
+            className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] md:hidden"
+          >
+            Requests
+          </Link>
+          <Link
+            href="/admin/login"
+            className="hidden whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)] lg:inline-flex"
+          >
+            Staff
+          </Link>
+          {pathname !== '/browse' && (
+            <Link
+              href="/browse"
+              className="inline-flex min-h-[38px] items-center gap-1.5 whitespace-nowrap rounded-full bg-[var(--ink)] px-4 text-sm font-medium text-[var(--text-inverse)] shadow-[var(--shadow-xs)] transition-ui hover:bg-[var(--ink-hover)]"
+            >
+              Find a seat
+              <ArrowRight className="hidden size-3.5 sm:block" aria-hidden="true" />
+            </Link>
+          )}
+        </div>
       </header>
-    </>
+    </div>
   );
 }

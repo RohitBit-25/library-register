@@ -32,9 +32,9 @@ export default function DurationDonut({ data }: DurationDonutProps) {
     <div className="flex items-center gap-8">
       <div className="relative" style={{ width: size, height: size }}>
         {total === 0 ? (
-          <div className="w-full h-full rounded-full border-[24px] border-[var(--border-default)] flex items-center justify-center">
-            <span className="text-xs font-semibold text-[var(--text-tertiary)]">Empty</span>
-          </div>
+          // The centre label below already says 0 members; a second "Empty"
+          // label here was drawn on top of it.
+          <div className="h-full w-full rounded-full border-[24px] border-[var(--bg-muted)]" />
         ) : (
           <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
             {categories.map((cat, i) => {
@@ -71,8 +71,8 @@ export default function DurationDonut({ data }: DurationDonutProps) {
         
         {/* Center Text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-black text-[var(--text-primary)]">{total}</span>
-          <span className="text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">Members</span>
+          <span className="font-display text-2xl font-semibold leading-none text-[var(--text-primary)] tabular">{total}</span>
+          <span className="mt-1 text-xs text-[var(--text-tertiary)]">members</span>
         </div>
       </div>
       
@@ -80,7 +80,7 @@ export default function DurationDonut({ data }: DurationDonutProps) {
       <div className="flex flex-col gap-3">
         {categories.map(cat => (
           <div key={cat.key} className="flex items-center gap-3">
-            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: cat.color }} />
+            <div className="size-4 rounded-sm" style={{ backgroundColor: cat.color }} />
             <div className="flex flex-col">
               <span className="text-sm font-bold text-[var(--text-primary)] leading-none">{cat.label}</span>
               <span className="text-xs text-[var(--text-secondary)] mt-1">{data[cat.key] || 0} members</span>

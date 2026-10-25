@@ -63,9 +63,9 @@ export default function Receipt({
   const wa = whatsappHref(payment);
 
   return createPortal(
-    <div className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-[var(--bg-void)]/70 backdrop-blur-sm print:hidden"
+        className="absolute inset-0 bg-[var(--bg-void)]/70 print:hidden"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -88,7 +88,7 @@ export default function Receipt({
                 JK Circle, Kankroli · Rajsamand
               </p>
             </div>
-            <span className="rounded-md border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2 py-1 text-xs font-bold uppercase tracking-wider text-[var(--emerald-600)]">
+            <span className="rounded-md border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2 py-1 text-xs font-bold text-[var(--emerald-600)]">
               Paid
             </span>
           </div>
@@ -110,7 +110,7 @@ export default function Receipt({
           </dl>
 
           <div className="mt-4 flex items-baseline justify-between border-t border-[var(--border-default)] pt-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
+            <span className="text-xs font-bold text-[var(--text-tertiary)]">
               Amount paid
             </span>
             <span className="tabular font-display text-2xl font-semibold text-[var(--text-primary)]">
@@ -128,9 +128,9 @@ export default function Receipt({
           <button
             type="button"
             onClick={() => window.print()}
-            className="flex min-h-[40px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-[var(--saffron-700)] bg-[var(--saffron-600)] text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--saffron-700)]"
+            className="flex min-h-[40px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-[var(--ink)] bg-[var(--ink)] text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--ink-hover)]"
           >
-            <Printer className="h-4 w-4" aria-hidden="true" />
+            <Printer className="size-4" aria-hidden="true" />
             Print
           </button>
 
@@ -141,7 +141,7 @@ export default function Receipt({
               rel="noopener noreferrer"
               className="flex min-h-[40px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-[var(--emerald-200)] bg-[var(--emerald-50)] text-sm font-semibold text-[var(--emerald-600)] transition-ui hover:bg-[var(--emerald-100)]"
             >
-              <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              <MessageCircle className="size-4" aria-hidden="true" />
               WhatsApp
             </a>
           ) : (
@@ -154,9 +154,9 @@ export default function Receipt({
             type="button"
             onClick={onClose}
             aria-label="Close receipt"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-[var(--text-tertiary)] transition-ui hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]"
+            className="flex size-10 cursor-pointer items-center justify-center rounded-lg text-[var(--text-tertiary)] transition-ui hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]"
           >
-            <X className="h-5 w-5" aria-hidden="true" />
+            <X className="size-5" aria-hidden="true" />
           </button>
         </div>
       </div>

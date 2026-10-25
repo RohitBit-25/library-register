@@ -10,10 +10,11 @@ export interface CardProps extends HTMLMotionProps<"div"> {
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant = 'base', children, ...props }, ref) => {
     
+    // Static cards do not move on hover — only things you can press respond.
     const variants = {
-      base: "bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-[var(--shadow-sm)] hover:-translate-y-[2px] hover:shadow-[var(--shadow-md)] hover:border-[var(--border-strong)] transition-ui duration-300",
-      interactive: "bg-[var(--bg-elevated)] border border-[var(--border-subtle)] hover:border-[var(--saffron-500)] hover:shadow-[var(--shadow-md)] hover:-translate-y-[2px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] transition-ui duration-300 cursor-pointer",
-      glow: "bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-[var(--shadow-sm)] hover:-translate-y-[2px] hover:shadow-[var(--shadow-md)] hover:border-[var(--saffron-500)] transition-ui duration-300"
+      base: "bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-[var(--shadow-xs)]",
+      interactive: "bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-[var(--shadow-xs)] hover:shadow-[var(--shadow-md)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] transition-ui cursor-pointer",
+      glow: "bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-[var(--shadow-xs)]"
     };
 
     return (
@@ -24,7 +25,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
           variants[variant],
           className
         )}
-        {...(variant === 'interactive' ? { whileTap: { scale: 0.98 } } : {})}
+        {...(variant === 'interactive' ? { whileTap: { scale: 0.99 } } : {})}
         {...props}
       >
         {children}
@@ -42,7 +43,7 @@ export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDiv
 export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn("font-display text-lg font-semibold leading-none tracking-tight text-[var(--text-primary)]", className)}
+      className={cn("text-base font-semibold leading-tight text-[var(--text-primary)]", className)}
       {...props}
     />
   );
@@ -51,7 +52,7 @@ export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHead
 export function CardDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
-      className={cn("text-sm text-[var(--text-secondary)] font-[var(--font-body)] tracking-[var(--tracking-normal)]", className)}
+      className={cn("text-sm text-[var(--text-secondary)] font-[var(--font-body)]", className)}
       {...props}
     />
   );

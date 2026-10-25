@@ -1,3 +1,4 @@
+/* Hallmark · genre: modern-minimal · macrostructure: Workbench (admin) + Split hero with live product (public) · theme: custom (Coral register, saffron brand) · design-system: design.md · designed-as-app */
 @import "tailwindcss";
 
 /* Documentation must not generate utilities. Tailwind v4 auto-scans every
@@ -21,10 +22,9 @@
      (base, xs, sm, md, lg, xl, left, right, center, top, bottom...). */
   @theme inline {
     --font-devanagari: var(--font-devanagari-hindi), serif;
-    --font-display: var(--font-outfit), sans-serif;
-    --font-serif-display: var(--font-serif), Georgia, serif;
-    --font-body: var(--font-outfit), -apple-system, sans-serif;
-    --font-mono: var(--font-dm-mono), 'Cascadia Code', monospace;
+    --font-display: var(--font-geist), -apple-system, sans-serif;
+    --font-body: var(--font-geist), -apple-system, sans-serif;
+    --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
     --animate-shimmer: shimmer 1.6s infinite;
     --animate-content-show: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -96,21 +96,27 @@
        `python3 scripts/check-contrast.py` after any change.
        ═══════════════════════════════════════════════════════════ */
 
-    /* === BACKGROUND LAYERS === */
-    --bg-void:       #F6F4F0; /* page backdrop, warm paper */
-    --bg-base:       #FBFAF8; /* app canvas */
+    /* === BACKGROUND LAYERS ===
+       Crisp: white surfaces on a cool light-grey page. Depth comes from the
+       contrast between the two plus a soft shadow, not from tinted paper. */
+    --bg-void:       #F6F7F9; /* page */
+    --bg-base:       #F6F7F9; /* app canvas */
     --bg-surface:    #FFFFFF; /* cards, sheets */
     --bg-elevated:   #FFFFFF; /* modals, popovers */
-    --bg-overlay:    #E7E2DA; /* scrollbar thumb, dividers */
-    --bg-muted:      #F2EFEA; /* inset wells, table stripes */
-    --bg-glass:      rgba(255, 255, 255, 0.92);
-    --bg-glass-light: rgba(255, 255, 255, 0.96);
+    --bg-overlay:    #E4E7EC; /* scrollbar thumb, dividers */
+    --bg-muted:      #F2F4F7; /* inset wells, segmented tracks, table stripes */
+    --bg-glass:      rgba(255, 255, 255, 0.86);
+    --bg-glass-light: rgba(255, 255, 255, 0.94);
 
     /* === BORDERS & DIVIDERS === */
-    --border-subtle:  #EFEBE4; /* decorative only */
-    --border-default: #DFD9D0; /* card & panel edges */
-    --border-strong:  #948C82; /* 3.32:1 — inputs, focusable edges */
+    --border-subtle:  #EEF0F3; /* decorative only */
+    --border-default: #E4E7EC; /* card & panel edges */
+    --border-strong:  #7D8696; /* 3.67:1 — inputs, focusable edges */
     --border-glow:    #C86A12;
+
+    /* === INK BUTTON === the primary action is ink, saffron is the brand mark */
+    --ink:            #101828;
+    --ink-hover:      #1D2939;
 
     /* === SAFFRON — brand === */
     --saffron-50:  #FFF7ED;
@@ -174,30 +180,29 @@
     --weight-extrabold: 800;
 
     /* === TEXT === */
-    --text-primary:   #1C1917; /* 17.49:1 on white */
-    --text-secondary: #57534E; /*  7.63:1 */
-    --text-tertiary:  #6B6660; /*  5.68:1 white / 5.17:1 on bg-void */
-    --text-disabled:  #8A837C; /*  3.74:1 — disabled controls only */
+    --text-primary:   #101828; /* 17.75:1 on white */
+    --text-secondary: #475467; /*  7.69:1 */
+    --text-tertiary:  #5E6778; /*  5.70:1 white / 5.17:1 on bg-muted */
+    --text-disabled:  #98A2B3; /* disabled controls only */
     --text-inverse:   #FFFFFF;
     --text-accent:    #A65310; /*  5.43:1 */
     --text-link:      #A65310; /*  5.43:1 */
 
-    /* === GRADIENTS === */
-    --gradient-primary: linear-gradient(135deg, #C86A12 0%, #E5A716 100%);
-    --gradient-glow:    linear-gradient(135deg, #A65310 0%, #85410C 100%);
-    --gradient-surface: linear-gradient(160deg, #FFFFFF 0%, #FBFAF8 100%);
-    --gradient-glass:   linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(251,250,248,1) 100%);
+    /* === GRADIENTS ===
+       Retired. design.md bans gradient fills and gradient text; the names
+       stay so old call sites resolve to a flat colour instead of nothing. */
+    --gradient-primary: var(--saffron-600);
+    --gradient-glow:    var(--saffron-700);
+    --gradient-surface: var(--bg-surface);
+    --gradient-glass:   var(--bg-surface);
     --gradient-hero:    transparent;
-
-    --gradient-header-title: linear-gradient(to bottom, #1C1917, #44403C);
-    --gradient-header-tag:   linear-gradient(to right, var(--saffron-500), var(--saffron-600));
-
+    --gradient-header-title: var(--text-primary);
+    --gradient-header-tag:   var(--saffron-600);
     --gradient-jaali: transparent;
-
-    --gradient-emerald: linear-gradient(135deg, #16A34A, #15803D);
-    --gradient-ruby:    linear-gradient(135deg, #DC2626, #991B1B);
-    --gradient-amber:   linear-gradient(135deg, #C98A0B, #A16207);
-    --gradient-sapphire:linear-gradient(135deg, #0284C7, #0369A1);
+    --gradient-emerald: var(--emerald-600);
+    --gradient-ruby:    var(--ruby-600);
+    --gradient-amber:   var(--marigold-600);
+    --gradient-sapphire:var(--sapphire-600);
 
     /* === SPACING SCALE === */
     --space-0:   0px;
@@ -216,22 +221,26 @@
     --space-32:  128px;
 
     /* === RADIUS === */
-    --radius-xs:   4px;
+    /* Tailwind's rounded-* utilities read these, so this block sets the
+       shape of the whole app: soft, app-like corners. */
+    --radius-xs:   6px;
     --radius-sm:   8px;
-    --radius-md:   12px;
-    --radius-lg:   16px;
-    --radius-xl:   24px;
-    --radius-2xl:  32px;
-    --radius-3xl:  40px;
+    --radius-md:   10px;
+    --radius-lg:   12px;
+    --radius-xl:   16px;
+    --radius-2xl:  20px;
+    --radius-3xl:  24px;
     --radius-full: 9999px;
 
     /* === SHADOW SYSTEM === */
-    --shadow-xs:  0 1px 2px 0 rgba(28, 25, 23, 0.05);
-    --shadow-sm:  0 1px 3px 0 rgba(28, 25, 23, 0.10), 0 1px 2px -1px rgba(28, 25, 23, 0.10);
-    --shadow-md:  0 4px 6px -1px rgba(28, 25, 23, 0.10), 0 2px 4px -2px rgba(28, 25, 23, 0.08);
-    --shadow-lg:  0 10px 15px -3px rgba(28, 25, 23, 0.10), 0 4px 6px -4px rgba(28, 25, 23, 0.08);
-    --shadow-xl:  0 20px 25px -5px rgba(28, 25, 23, 0.10), 0 8px 10px -6px rgba(28, 25, 23, 0.08);
-    --shadow-floating: 0 10px 40px -10px rgba(28, 25, 23, 0.15);
+    /* Layered, cool, low-opacity — two shadows per level, the short one for
+       the contact edge and the long one for lift. */
+    --shadow-xs:  0 1px 2px 0 rgba(16, 24, 40, 0.05);
+    --shadow-sm:  0 1px 3px 0 rgba(16, 24, 40, 0.08), 0 1px 2px -1px rgba(16, 24, 40, 0.06);
+    --shadow-md:  0 4px 8px -2px rgba(16, 24, 40, 0.08), 0 2px 4px -2px rgba(16, 24, 40, 0.05);
+    --shadow-lg:  0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.04);
+    --shadow-xl:  0 20px 24px -4px rgba(16, 24, 40, 0.09), 0 8px 8px -4px rgba(16, 24, 40, 0.04);
+    --shadow-floating: 0 24px 48px -12px rgba(16, 24, 40, 0.20);
 
     --shadow-glow-saffron: none;
     --shadow-glow-emerald: none;
@@ -254,21 +263,21 @@
        incidental labels, 14px for body) rather than to what the ratio says.
        Everything from `base` up is untouched and still geometric. */
     --text-xs:   0.75rem;   /* 12px — captions, pills, table meta */
-    --text-sm:   0.875rem;  /* 14px — body text, the app's workhorse */
-    --text-base: 1.00rem;   /* 16px */
-    --text-md:   1.25rem;
-    --text-lg:   1.56rem;
-    --text-xl:   1.95rem;
-    --text-2xl:  2.44rem;
-    --text-3xl:  3.05rem;
-    --text-4xl:  3.81rem;
+    --text-sm:   0.875rem;  /* 14px — dense UI: tables, nav, controls */
+    --text-base: 1.00rem;   /* 16px — body */
+    --text-md:   1.125rem;  /* 18px */
+    --text-lg:   1.375rem;  /* 22px — card titles */
+    --text-xl:   1.75rem;   /* 28px — page titles */
+    --text-2xl:  2.25rem;   /* 36px — section heads */
+    --text-3xl:  3rem;      /* 48px */
+    --text-4xl:  3.75rem;   /* 60px — landing headline */
 
     --leading-tight:  1.2;
     --leading-snug:   1.35;
     --leading-normal: 1.55;
     --leading-relaxed:1.75;
 
-    --tracking-tight:  -0.04em; /* display floor from the craft standard */
+    --tracking-tight:  -0.025em; /* Geist display sets tight */
     --tracking-normal:  0em;
     --tracking-wide:    0.06em;
     --tracking-widest:  0.14em;
@@ -311,6 +320,17 @@
     --duration-slow:    280ms;
     --duration-lazy:    400ms;
 
+    /* === FLOOR PLAN ===
+       A drawing (design.md § Floor plan): cool floor, slate walls, light desks;
+       the seats carry the colour. */
+    --plan-floor:     #F4F5F7;
+    --plan-grid:      #ECEEF1;
+    --plan-wall:      #344054;
+    --plan-desk:      #E7EAEE;
+    --plan-desk-edge: #CDD3DB;
+    --plan-chair:     #B4BCC8;
+    --plan-window:    #7AA7D6;
+
     /* === LAYOUT === */
     --sidebar-width: 220px;
     --sidebar-margin: 16px;
@@ -336,8 +356,17 @@
     line-height: var(--leading-normal);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 350ms var(--ease-smooth), color 350ms var(--ease-smooth);
   }
+
+  /* Display headings are always roman (design.md). */
+  /* baseline-ui (ui-skills): headings balance, prose wraps pretty, and the
+     typeface's own spacing is left alone — no tracking overrides. */
+  h1, h2, h3, h4, .font-display { font-style: normal; text-wrap: balance; }
+  p, li, dd { text-wrap: pretty; }
+
+  /* Fixed bars sit above the iPhone home indicator. BottomNav already used
+     this class; it was never defined, so the tabs sat under the indicator. */
+  .pb-safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
   /* ═══════════════════════════════════════════════════════════════
      UTILITY CLASSES
@@ -396,7 +425,7 @@
   /* Focus Visibility — outline-offset keeps the ring measured against the
      page background, so it stays >=3:1 even on a saffron-filled button. */
   :focus-visible {
-    outline: 2px solid var(--saffron-600);
+    outline: 2px solid var(--saffron-500);
     outline-offset: 2px;
     border-radius: var(--radius-xs);
   }
@@ -435,9 +464,7 @@
     box-shadow: var(--shadow-sm);
     position: relative;
     overflow: hidden;
-    transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease, background 350ms var(--ease-smooth);
-    will-change: transform;
-    transform: translateZ(0);
+    transition: border-color var(--duration-fast) var(--ease-out);
   }
 
   .glass-elite, .glass-elite-panel {
@@ -450,11 +477,7 @@
     box-shadow: var(--shadow-md);
   }
 
-  .card-base:hover {
-    border-color: var(--border-strong);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-  }
+  .card-base:hover { border-color: var(--border-strong); }
 
   /* Skeleton Loading */
   .skeleton {
@@ -539,7 +562,7 @@
     font-size: var(--text-base);
     color: var(--text-tertiary);
     pointer-events: none;
-    transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 180ms var(--ease-out), color 180ms var(--ease-out);
     transform-origin: left top;
   }
 
@@ -580,7 +603,7 @@
 
   .DialogContent[data-state='open'],
   .PopoverContent[data-state='open'] {
-    animation: contentShow 250ms var(--ease-spring);
+    animation: contentShow 200ms var(--ease-out);
   }
   
   .DialogContent[data-state='closed'],
@@ -626,7 +649,9 @@
     overflow: hidden;
     isolation: isolate;
   }
+  /* Sheen sweep retired (design.md bans it); class kept as a no-op. */
   .sheen::after {
+    display: none;
     content: '';
     position: absolute;
     inset: 0;
@@ -667,11 +692,7 @@
     );
     pointer-events: none;
   }
-  .surface-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--border-strong);
-  }
+  .surface-lift:hover { border-color: var(--border-strong); }
 
   /* Focus ring that matches the brand without touching the outline used by
      :focus-visible (which is measured against the page, see above). */
@@ -739,10 +760,7 @@
      ungated :hover transform sticks after the finger lifts. Anything that
      MOVES on hover belongs behind this; colour-only hovers are fine ungated. */
   @media (hover: hover) and (pointer: fine) {
-    .hover-lift:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
+    .hover-lift:hover { box-shadow: var(--shadow-md); }
     .hover-press:active {
       transform: translateY(0) scale(0.99);
     }

@@ -38,7 +38,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
         { status: 400 }
       );
     }
-    const patch = parsedBody.data;
+    const { renewal, ...patch } = parsedBody.data;
 
     if (Object.keys(patch).length === 0) {
       return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
@@ -63,15 +63,19 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
 
     if (patch.fee === 'paid') {
       const current = await Member.findOne({ seat: seatId })
-        .select('duration fee name phone paymentMode')
+        .select('duration fee name phone paymentMode expiry')
         .lean<{
-          duration?: string; fee?: string; name?: string;
+          duration?: string; fee?: string; name?: string; expiry?: string;
           phone?: string; paymentMode?: 'upi' | 'cash' | null;
         } | null>();
 
-      // Only an actual transition counts. Re-saving an already-paid member
-      // must not look like a second payment.
-      if (current?.fee !== 'paid') {
+      // Two events are payments: the fee flipping due → paid, and a renewal.
+      // Renewals used to be missed whenever the previous term was already
+      // paid — the usual case — so every renewal fee was absent from
+      // Collections. A renewal only counts when the expiry actually moves, so
+      // the client's retry-on-5xx cannot record the same renewal twice.
+      const renewed = renewal === true && !!patch.expiry && patch.expiry !== current?.expiry;
+      if (current?.fee !== 'paid' || renewed) {
         const duration = patch.duration ?? current?.duration ?? '';
         paymentToRecord = {
           amount: planPrice(duration),

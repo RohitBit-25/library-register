@@ -56,14 +56,14 @@ export default function AuditLogsPage() {
   return (
     <div className="space-y-[var(--space-6)] max-w-5xl mx-auto py-6">
       <PageHeader
-        title="Activity Log"
-        icon={<Shield className="h-5 w-5" />}
+        title="Activity log"
+        icon={<Shield className="size-5" />}
         subtitle="Activity history and system logs for complete accountability."
       />
 
       <div className="relative mb-4">
         <Search
-          className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]"
+          className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--text-tertiary)]"
           aria-hidden="true"
         />
         <input
@@ -72,16 +72,16 @@ export default function AuditLogsPage() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by seat, action or staff member…"
           aria-label="Search the activity log"
-          className="min-h-[44px] w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] pl-10 pr-10 text-sm font-medium text-[var(--text-primary)] transition-ui placeholder:text-[var(--text-tertiary)] focus:border-[var(--saffron-500)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)]"
+          className="min-h-[44px] w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] pl-10 pr-10 text-sm font-medium text-[var(--text-primary)] transition-ui placeholder:text-[var(--text-tertiary)] focus:border-[var(--saffron-500)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-500)] shadow-[var(--shadow-xs)]"
         />
         {query && (
           <button
             type="button"
             onClick={() => setQuery('')}
             aria-label="Clear search"
-            className="absolute right-3 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded text-[var(--text-tertiary)] transition-ui hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+            className="absolute right-3 top-1/2 flex size-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded text-[var(--text-tertiary)] transition-ui hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
           >
-            <X className="h-4 w-4" aria-hidden="true" />
+            <X className="size-4" aria-hidden="true" />
           </button>
         )}
       </div>
@@ -95,7 +95,7 @@ export default function AuditLogsPage() {
       <Card variant="base" className="overflow-hidden">
         <div className="overflow-x-auto overflow-y-auto max-h-[calc(100vh-250px)] custom-scrollbar">
           <table className="w-full text-sm">
-            <thead className="sticky top-0 z-10 backdrop-blur-xl bg-[var(--bg-surface)]/90 border-b border-[var(--border-default)]">
+            <thead className="sticky top-0 z-10 bg-[var(--bg-surface)] border-b border-[var(--border-default)]">
               <tr>
                 <th className="text-left p-4 font-bold text-[var(--text-secondary)]">Action</th>
                 <th className="text-left p-4 font-bold text-[var(--text-secondary)]">Details</th>
@@ -115,10 +115,10 @@ export default function AuditLogsPage() {
                         plenty of activity and the search simply matched none
                         of it — the two states need different words and
                         different exits. */}
-                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">
+                    <div className="mx-auto mb-3 flex size-14 items-center justify-center rounded-2xl bg-[var(--bg-muted)]">
                       {query
-                        ? <Search className="h-7 w-7 text-[var(--text-tertiary)]" aria-hidden="true" />
-                        : <Activity className="h-7 w-7 text-[var(--text-tertiary)]" aria-hidden="true" />}
+                        ? <Search className="size-7 text-[var(--text-tertiary)]" aria-hidden="true" />
+                        : <Activity className="size-7 text-[var(--text-tertiary)]" aria-hidden="true" />}
                     </div>
                     {query ? (
                       <>
@@ -168,7 +168,7 @@ export default function AuditLogsPage() {
                     </td>
                     <td className="p-4 text-[var(--text-tertiary)] whitespace-nowrap text-xs">
                       <div className="flex items-center gap-1.5">
-                        <Clock className="w-4 h-4" />
+                        <Clock className="size-4" />
                         {new Date(log.timestamp).toLocaleString()}
                       </div>
                     </td>

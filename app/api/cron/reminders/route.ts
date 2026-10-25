@@ -9,7 +9,8 @@ import { sendExpiryReminder } from '@/lib/notify';
 export const dynamic = 'force-dynamic';
 
 /** Remind anyone expiring within this many days. */
-export const REMINDER_WINDOW_DAYS = 3;
+// Not exported: route modules may only export handlers and route config.
+const REMINDER_WINDOW_DAYS = 3;
 
 /**
  * GET /api/cron/reminders — daily expiry reminders. Trigger from Vercel Cron

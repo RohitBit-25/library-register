@@ -78,24 +78,24 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
           className
         )}
       >
-        <Search className="w-4 h-4 text-[var(--text-tertiary)] group-hover:text-[var(--sapphire-600)] transition-colors mr-3" />
+        <Search className="size-4 text-[var(--text-tertiary)] group-hover:text-[var(--sapphire-600)] transition-colors mr-3" />
         <span className="text-sm font-medium text-[var(--text-tertiary)] flex-1">
           Search name, phone, seat...
         </span>
         <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--bg-base)] border border-[var(--border-subtle)] text-xs font-mono text-[var(--text-tertiary)] opacity-80 group-hover:opacity-100 transition-opacity shadow-sm">
-          <Command className="w-4 h-4" /> K
+          <Command className="size-4" /> K
         </kbd>
       </button>
 
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-[999] flex items-start justify-center pt-[15vh]">
+          <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
             <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/30 backdrop-blur-md"
+              className="fixed inset-0 bg-[var(--text-primary)]/40"
             />
             
             <m.div
@@ -109,7 +109,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
               className="relative w-full max-w-xl mx-4 bg-[var(--bg-surface)] rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden border border-[var(--border-default)]"
             >
               <div className="flex items-center px-4 py-4 border-b border-[var(--border-subtle)]">
-                <Search className="w-5 h-5 text-[var(--sapphire-600)] mr-3 shrink-0" aria-hidden="true" />
+                <Search className="size-5 text-[var(--sapphire-600)] mr-3 shrink-0" aria-hidden="true" />
                 <input
                   id="global-search-input"
                   ref={inputRef}
@@ -128,15 +128,15 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
                   aria-label="Close search"
                   className="cursor-pointer p-1 rounded-full hover:bg-[var(--bg-base)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors ml-3 shrink-0"
                 >
-                  <X className="w-5 h-5" aria-hidden="true" />
+                  <X className="size-5" aria-hidden="true" />
                 </button>
               </div>
 
               <div className="max-h-[60vh] overflow-y-auto">
                 {query.trim() === '' ? (
                   <div className="p-8 pb-10 text-center flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full bg-[var(--sapphire-50)] flex items-center justify-center text-[var(--sapphire-600)] mb-4">
-                      <Command className="w-6 h-6" />
+                    <div className="size-12 rounded-full bg-[var(--sapphire-50)] flex items-center justify-center text-[var(--sapphire-600)] mb-4">
+                      <Command className="size-6" />
                     </div>
                     <p className="text-sm font-medium text-[var(--text-primary)]">Tip: Navigate faster</p>
                     <p className="text-xs text-[var(--text-tertiary)] mt-1">Search for a seat number directly or type a member&apos;s name.</p>
@@ -159,7 +159,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
                           className="w-full text-left px-4 py-3 hover:bg-[var(--bg-base)] rounded-xl transition-ui flex items-center justify-between group cursor-pointer"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-[var(--sapphire-50)] flex items-center justify-center text-[var(--sapphire-600)] font-mono font-bold border border-[var(--sapphire-200)] shadow-[var(--shadow-sm)] opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-ui">
+                            <div className="size-10 rounded-xl bg-[var(--sapphire-50)] flex items-center justify-center text-[var(--sapphire-600)] font-mono font-bold border border-[var(--sapphire-200)] shadow-[var(--shadow-sm)] opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-ui">
                               {String(member.seat).padStart(2, '0')}
                             </div>
                             <div>
@@ -167,7 +167,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
                                 {!member.vacant ? member.name : <span className="text-[var(--text-tertiary)] font-medium">Vacant</span>}
                               </p>
                               {!member.vacant && member.phone && (
-                                <p className="text-xs text-[var(--text-tertiary)] mt-0.5 tracking-wider">
+                                <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
                                   {member.phone}
                                 </p>
                               )}
@@ -184,7 +184,7 @@ export default function GlobalSearch({ onSelect, className }: GlobalSearchProps)
                   </ul>
                 ) : (
                   <div className="p-8 text-center text-[var(--text-tertiary)]">
-                    <Search className="w-8 h-8 opacity-30 mx-auto mb-3" />
+                    <Search className="size-8 opacity-30 mx-auto mb-3" />
                     <p className="text-sm font-medium">No results found for &quot;{debouncedQuery}&quot;</p>
                   </div>
                 )}

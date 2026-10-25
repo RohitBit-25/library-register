@@ -9,22 +9,25 @@
  */
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Transpile the TS sources we need into a temp dir, then import them.
-const out = mkdtempSync(join(tmpdir(), 'lib-selfcheck-'));
+// Inside the project, not the OS temp dir, so the compiled files can resolve
+// npm packages (lib/utils imports tailwind-merge) from node_modules.
+const cacheDir = join(root, 'node_modules', '.cache');
+mkdirSync(cacheDir, { recursive: true });
+const out = mkdtempSync(join(cacheDir, 'lib-selfcheck-'));
 writeFileSync(join(out, 'package.json'), '{"type":"module"}');
 // allowImportingTsExtensions + rewriteRelativeImportExtensions: the lib/ files
 // import each other with explicit .ts extensions (so plain Node can load them
 // in scripts/), and tsc rewrites those to .js on emit.
 execFileSync('npx', [
   'tsc', 'lib/csv.ts', 'lib/utils.ts', 'lib/types.ts', 'lib/seat-status.ts',
-  'lib/notify.ts', 'lib/log.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts', 'lib/motion.ts',
+  'lib/notify.ts', 'lib/log.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts', 'lib/deskLayout.ts', 'lib/motion.ts',
   '--outDir', out, '--module', 'esnext', '--target', 'es2020',
   '--moduleResolution', 'bundler', '--skipLibCheck',
   '--allowImportingTsExtensions', '--rewriteRelativeImportExtensions',
@@ -42,6 +45,9 @@ const { planPrice, monthlyValue, formatINR, formatINRCompact, PLAN_MONTHS, DEFAU
 
 const { nextSeatInDirection, getSeatPositionConfig, SEAT_ROWS, seatRow } =
   await import(pathToFileURL(join(out, 'layoutConfig.js')).href);
+
+const { deriveDeskRuns, allSeatSlots, seatPixel, SEAT_SIZE } =
+  await import(pathToFileURL(join(out, 'deskLayout.js')).href);
 
 const { projectMomentum, shouldDismissSheet } =
   await import(pathToFileURL(join(out, 'motion.js')).href);
@@ -95,6 +101,16 @@ check('calcExpiry adds the right span', () => {
   assert.equal(calcExpiry('2026-01-15', '3M'), '2026-04-15');
   assert.equal(calcExpiry('2026-01-15', '6M'), '2026-07-15');
   assert.equal(calcExpiry('2026-01-15', '1Y'), '2027-01-15');
+});
+
+check('calcExpiry clamps to the end of a short month', () => {
+  // setMonth overflow used to give 2026-03-03 here: three free days.
+  assert.equal(calcExpiry('2026-01-31', '1M'), '2026-02-28');
+  assert.equal(calcExpiry('2028-01-31', '1M'), '2028-02-29');
+  assert.equal(calcExpiry('2026-03-31', '1M'), '2026-04-30');
+  assert.equal(calcExpiry('2026-08-31', '6M'), '2027-02-28');
+  assert.equal(calcExpiry('2028-02-29', '1Y'), '2029-02-28');
+  assert.equal(calcExpiry('2026-11-30', '3M'), '2027-02-28');
 });
 
 check('calcExpiry returns empty for missing input', () => {
@@ -171,7 +187,11 @@ check('dates are local, not UTC — no overnight off-by-one', () => {
   // join dates a day early and the cron targeted the wrong cohort.
   const midnightIST = new Date(2026, 7, 14, 0, 30); // 14 Aug, 00:30 local
   assert.equal(todayLocalISO(midnightIST), '2026-08-14');
-  assert.notEqual(midnightIST.toISOString().split('T')[0], '2026-08-14');
+  // The UTC form only lands on the previous day east of UTC (IST, the
+  // library's zone); asserting it unconditionally failed on any machine west.
+  if (midnightIST.getTimezoneOffset() < 0) {
+    assert.notEqual(midnightIST.toISOString().split('T')[0], '2026-08-14');
+  }
 });
 
 check('addDaysISO crosses month and year boundaries', () => {
@@ -310,45 +330,50 @@ check('an upward flick keeps the sheet even from far down', () => {
   assert.equal(shouldDismissSheet(500, -800, 600), false);
 });
 
-// ─── Row bands: the plan and the list must agree ─────────────────
+// ─── Blocks: the plan and the list must agree ────────────────────
 
-check('every seat belongs to exactly one lettered row', () => {
+check('every seat belongs to exactly one lettered block', () => {
   const counts = new Map(SEAT_ROWS.map((r) => [r.label, 0]));
   for (let n = 1; n <= 95; n++) {
     const label = seatRow(n);
-    assert.ok(counts.has(label), `seat ${n} landed outside the row bands (${label})`);
+    assert.ok(counts.has(label), `seat ${n} landed outside the blocks (${label})`);
     counts.set(label, counts.get(label) + 1);
   }
-  // Every seat placed, none counted twice.
   assert.equal([...counts.values()].reduce((a, b) => a + b, 0), 95);
-  // And no band is empty — an empty run means the columns drifted.
   for (const [label, n] of counts) assert.ok(n > 0, `${label} has no seats`);
 });
 
-check('a row band matches the columns it is drawn at', () => {
-  // seatRow() is derived from the same grid columns the plan draws its labels
-  // from, so a seat in a band must sit inside that band's column range.
-  for (const row of SEAT_ROWS) {
-    for (let n = 1; n <= 95; n++) {
-      if (seatRow(n) !== row.label) continue;
-      const { x } = getSeatPositionConfig(n);
-      assert.ok(
-        x >= row.fromCol && x <= row.toCol,
-        `seat ${n} is labelled ${row.label} but sits at column ${x}`
-      );
+check('blocks run 1–95 with no gaps or overlaps', () => {
+  assert.equal(SEAT_ROWS[0].first, 1);
+  assert.equal(SEAT_ROWS[SEAT_ROWS.length - 1].last, 95);
+  for (let i = 1; i < SEAT_ROWS.length; i++) {
+    assert.equal(SEAT_ROWS[i].first, SEAT_ROWS[i - 1].last + 1,
+      `gap or overlap between ${SEAT_ROWS[i - 1].label} and ${SEAT_ROWS[i].label}`);
+  }
+});
+
+check('no desk is drawn through a seat', () => {
+  // The bug this guards: seats 71-75 faced down, so their derived desk ran
+  // across seat 52 and into the end of the 52-70 desk.
+  const seats = allSeatSlots().map((s) => ({ seat: s.seat, ...seatPixel(s.x, s.y) }));
+  for (const d of deriveDeskRuns()) {
+    for (const s of seats) {
+      const overlapX = Math.min(d.left + d.width, s.left + SEAT_SIZE) - Math.max(d.left, s.left);
+      const overlapY = Math.min(d.top + d.height, s.top + SEAT_SIZE) - Math.max(d.top, s.top);
+      assert.ok(overlapX <= 0 || overlapY <= 0, `desk ${d.id} overlaps seat ${s.seat}`);
     }
   }
 });
 
-check('row bands cover the full width of the room with no gaps', () => {
-  const sorted = [...SEAT_ROWS].sort((a, b) => a.fromCol - b.fromCol);
-  assert.equal(sorted[0].fromCol, 1, 'the first band must start at column 1');
-  assert.equal(sorted[sorted.length - 1].toCol, 14, 'the last band must reach column 14');
-  for (let i = 1; i < sorted.length; i++) {
-    assert.equal(
-      sorted[i].fromCol, sorted[i - 1].toCol + 1,
-      `gap or overlap between ${sorted[i - 1].label} and ${sorted[i].label}`
-    );
+check('no two desks overlap', () => {
+  const runs = deriveDeskRuns();
+  for (let i = 0; i < runs.length; i++) {
+    for (let j = i + 1; j < runs.length; j++) {
+      const a = runs[i], b = runs[j];
+      const ox = Math.min(a.left + a.width, b.left + b.width) - Math.max(a.left, b.left);
+      const oy = Math.min(a.top + a.height, b.top + b.height) - Math.max(a.top, b.top);
+      assert.ok(ox <= 0 || oy <= 0, `desks ${a.id} and ${b.id} overlap`);
+    }
   }
 });
 

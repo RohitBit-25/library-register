@@ -27,7 +27,6 @@ import PageHeader from '@/components/layout/PageHeader';
 function UrgencyStat({
   count,
   label,
-  gradient,
   iconBg,
   icon,
 }: {
@@ -38,21 +37,18 @@ function UrgencyStat({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="card-base rounded-xl border border-[var(--border-default)] bg-[var(--bg-glass)] p-3 flex items-center gap-3 shadow-[var(--shadow-sm)] min-w-0">
-      <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', iconBg)}>
+    <div className="rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 flex items-center gap-3 min-w-0 shadow-[var(--shadow-xs)]">
+      <div className={cn('size-9 rounded-xl flex items-center justify-center shrink-0', iconBg)}>
         {icon}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-lg font-extrabold text-[var(--text-primary)] leading-none truncate">
+        <div className="font-display text-xl font-semibold text-[var(--text-primary)] leading-none truncate tabular">
           {count}
         </div>
         <div className="text-xs font-medium text-[var(--text-tertiary)] mt-0.5 truncate">
           {label}
         </div>
       </div>
-      {count > 0 && (
-        <div className={cn('ml-auto w-1.5 h-8 rounded-full bg-gradient-to-b animate-pulse-subtle shrink-0', gradient)} />
-      )}
     </div>
   );
 }
@@ -156,7 +152,7 @@ export default function ExpiryPage() {
         return (
           <div
             className={cn(
-              'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-mono font-bold shrink-0 shadow-sm border',
+              'size-8 rounded-lg flex items-center justify-center text-xs font-mono font-bold shrink-0 shadow-sm border',
               isExpired
                 ? 'bg-[var(--ruby-50)] text-[var(--ruby-600)] border-[var(--ruby-200)]/50'
                 : dLeft <= 7
@@ -174,7 +170,7 @@ export default function ExpiryPage() {
       header: 'Member',
       cell: ({ row }) => (
         <div>
-          <div className="font-bold text-[var(--text-primary)] text-sm tracking-tight">{row.original.name}</div>
+          <div className="font-bold text-[var(--text-primary)] text-sm">{row.original.name}</div>
           {row.original.phone && (
             <div className="text-xs font-mono text-[var(--text-tertiary)] font-medium mt-0.5">
               {row.original.phone}
@@ -219,7 +215,7 @@ export default function ExpiryPage() {
           <div className="w-full max-w-[140px]">
             <span
               className={cn(
-                'text-xs uppercase font-black px-1.5 py-0.5 rounded-md whitespace-nowrap inline-block mb-1.5 tracking-wider',
+                'text-xs font-semibold px-1.5 py-0.5 rounded-md whitespace-nowrap inline-block mb-1.5',
                 isExpired || dLeft === 0
                   ? 'bg-[var(--ruby-50)] text-[var(--ruby-600)]'
                   : dLeft <= 7
@@ -263,9 +259,9 @@ export default function ExpiryPage() {
             <button
               onClick={() => handleWhatsApp(row.original)}
               aria-label={`Send a WhatsApp reminder to ${row.original.name}`}
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] text-[var(--emerald-600)] shadow-sm transition-ui hover:bg-[var(--emerald-100)] active:scale-95"
+              className="flex size-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] text-[var(--emerald-600)] shadow-sm transition-ui hover:bg-[var(--emerald-100)] active:scale-95"
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="size-4" />
             </button>
           </Tooltip>
           <Tooltip content={`Renew ${durationLabel((row.original.duration || '3M') as never)} — same plan`}>
@@ -274,7 +270,7 @@ export default function ExpiryPage() {
               aria-label={`Renew seat ${row.original.seat} for another ${durationLabel((row.original.duration || '3M') as never)}`}
               className="flex h-8 cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2.5 text-xs font-bold text-[var(--emerald-600)] shadow-sm transition-ui hover:bg-[var(--emerald-100)] active:scale-95"
             >
-              <RefreshCw className="h-4 w-4" aria-hidden="true" />
+              <RefreshCw className="size-4" aria-hidden="true" />
               Renew
             </button>
           </Tooltip>
@@ -282,9 +278,9 @@ export default function ExpiryPage() {
             <button
               onClick={() => handleOpenSeat(row.original.seat)}
               aria-label={`Open seat ${row.original.seat} to change the plan`}
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] text-[var(--text-secondary)] shadow-sm transition-ui hover:bg-[var(--bg-overlay)] hover:text-[var(--text-primary)] active:scale-95"
+              className="flex size-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] text-[var(--text-secondary)] shadow-sm transition-ui hover:bg-[var(--bg-overlay)] hover:text-[var(--text-primary)] active:scale-95"
             >
-              <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+              <SlidersHorizontal className="size-4" aria-hidden="true" />
             </button>
           </Tooltip>
           {/* Expired seats stay occupied until someone frees them (deliberate —
@@ -295,9 +291,9 @@ export default function ExpiryPage() {
               <button
                 onClick={() => setConfirmVacate(row.original)}
                 aria-label={`Vacate seat ${row.original.seat} — membership expired`}
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--ruby-200)] bg-[var(--ruby-50)] text-[var(--ruby-600)] shadow-sm transition-ui hover:bg-[var(--ruby-100)] active:scale-95"
+                className="flex size-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--ruby-200)] bg-[var(--ruby-50)] text-[var(--ruby-600)] shadow-sm transition-ui hover:bg-[var(--ruby-100)] active:scale-95"
               >
-                <Trash2 className="w-4 h-4" aria-hidden="true" />
+                <Trash2 className="size-4" aria-hidden="true" />
               </button>
             </Tooltip>
           )}
@@ -310,8 +306,8 @@ export default function ExpiryPage() {
     <div className="animate-fade-in max-w-6xl pb-24">
       {/* ── Header ─────────────────────────────────────────────── */}
       <PageHeader
-        title="Expiry Tracker"
-        icon={<CalendarSearch className="h-5 w-5" />}
+        title="Renewals"
+        icon={<CalendarSearch className="size-5" />}
         subtitle={
           showAll
             ? `All ${allOccupied.length} active memberships, soonest first.`
@@ -321,7 +317,7 @@ export default function ExpiryPage() {
           <button
             type="button"
             onClick={() => setShowAll((v) => !v)}
-            className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-xs font-bold text-[var(--text-secondary)] transition-ui hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+            className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-xs font-bold text-[var(--text-secondary)] transition-ui hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)] shadow-[var(--shadow-xs)]"
           >
             {showAll ? `Show only the next ${HORIZON_DAYS} days` : `Show all ${allOccupied.length} members`}
           </button>
@@ -335,28 +331,28 @@ export default function ExpiryPage() {
           label="Expired"
           gradient="from-[var(--ruby-500)] to-[var(--ruby-400)]"
           iconBg="bg-[var(--ruby-50)] text-[var(--ruby-600)]"
-          icon={<Flame className="w-4 h-4" />}
+          icon={<Flame className="size-4" />}
         />
         <UrgencyStat
           count={totalToday}
           label="Today"
           gradient="from-[var(--ruby-500)] to-[var(--ruby-400)]"
           iconBg="bg-[var(--ruby-50)] text-[var(--ruby-600)]"
-          icon={<AlertTriangle className="w-4 h-4" />}
+          icon={<AlertTriangle className="size-4" />}
         />
         <UrgencyStat
           count={totalWeek}
           label="This Week"
           gradient="from-[var(--saffron-500)] to-[var(--saffron-400)]"
           iconBg="bg-[var(--saffron-50)] text-[var(--saffron-700)]"
-          icon={<Clock className="w-4 h-4" />}
+          icon={<Clock className="size-4" />}
         />
         <UrgencyStat
           count={totalMonth}
           label="This Month"
           gradient="from-[var(--marigold-500)] to-[var(--marigold-400)]"
           iconBg="bg-[var(--marigold-50)] text-[var(--marigold-700)]"
-          icon={<CalendarDays className="w-4 h-4" />}
+          icon={<CalendarDays className="size-4" />}
         />
       </div>
 
@@ -368,17 +364,17 @@ export default function ExpiryPage() {
         renderSubComponent={(member) => (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
             <div className="flex flex-col">
-              <span className="text-[var(--text-tertiary)] text-xs uppercase font-bold tracking-widest mb-1 shadow-sm">Fee Status</span>
+              <span className="text-[var(--text-tertiary)] text-xs font-bold mb-1 shadow-sm">Fee Status</span>
               <span className={cn("font-medium", member.fee === 'due' ? 'text-[var(--ruby-600)]' : 'text-[var(--saffron-600)]')}>
                 {member.fee === 'due' ? 'Pending Payment' : 'Fully Paid'}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[var(--text-tertiary)] text-xs uppercase font-bold tracking-widest mb-1 shadow-sm">Contact Info</span>
+              <span className="text-[var(--text-tertiary)] text-xs font-bold mb-1 shadow-sm">Contact Info</span>
               <span className="font-mono text-[var(--text-primary)]">{member.phone || 'N/A'}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[var(--text-tertiary)] text-xs uppercase font-bold tracking-widest mb-1 shadow-sm">Joined</span>
+              <span className="text-[var(--text-tertiary)] text-xs font-bold mb-1 shadow-sm">Joined</span>
               <span className="font-mono text-[var(--text-secondary)]">{fmtDate(member.joinDate)}</span>
             </div>
           </div>
