@@ -53,14 +53,23 @@ export interface SeatRequest {
   transactionId?: string;
   paymentMode: 'upi' | 'cash';
   documentUrl?: string;
+  /** Staff list only: an ID was uploaded (fetch it from /api/requests/:id/document). */
+  hasDocument?: boolean;
   status: 'pending' | 'approved' | 'rejected' | 'waitlisted';
   createdAt: string | Date;
 }
 
 export type ToastType = 'success' | 'warning' | 'error';
 
+export interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+
 export interface ToastMessage {
   id: string;
   type: ToastType;
   message: string;
+  /** One button, e.g. Undo. The toast stays up longer when it has one. */
+  action?: ToastAction;
 }

@@ -125,7 +125,7 @@ function GroupLabel({ text, cx, y }: { text: string; cx: number; y: number }) {
   return (
     <g>
       <rect x={cx - w / 2} y={y} width={w} height="24" rx="12" fill="#2C3644" />
-      <text x={cx} y={y + 16} textAnchor="middle" fontSize="12" fontWeight="600" fill="#FFFFFF" fontFamily="var(--font-body)">
+      <text x={cx} y={y + 16} textAnchor="middle" fontSize="12" fontWeight="600" fill="#FFFFFF">
         {text}
       </text>
     </g>
@@ -140,6 +140,11 @@ const RoomDrawing = memo(function RoomDrawing() {
       height={CANVAS_H}
       viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`}
       aria-hidden="true"
+      // A presentation attribute cannot hold var(), so the font is set here.
+      // geometricPrecision: Chromium otherwise rasterised the labels at the
+      // plan's unscaled size and left them painted outside their pills once
+      // the plan was scaled down to fit.
+      style={{ fontFamily: 'var(--font-body)', textRendering: 'geometricPrecision' }}
     >
       <defs>
         <pattern id="floorTiles" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -164,7 +169,7 @@ const RoomDrawing = memo(function RoomDrawing() {
 
       {AC_CENTERS.map((cx) => <AirConditioner key={cx} cx={cx} />)}
       <Door />
-      <text x={DOOR.cx} y={CANVAS_H - 116} textAnchor="middle" fontSize="13" fontWeight="700" fill={C.door} fontFamily="var(--font-body)">
+      <text x={DOOR.cx} y={CANVAS_H - 116} textAnchor="middle" fontSize="13" fontWeight="700" fill={C.door}>
         ENTRANCE
       </text>
 
@@ -185,8 +190,7 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
   children: (face: FaceDir) => ReactNode;
   className?: string;
 }) {
-  // 21 and 22 are numbers, not seats: the database still holds rows for them
-  // from the old 95-seat layout, so the plan refuses to place them.
+  // A number not on the plan (a stray database row) is never drawn.
   if (!isSeat(seatNum)) return null;
   const { x, y, face } = getSeatPosition(seatNum);
 

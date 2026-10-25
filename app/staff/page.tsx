@@ -77,7 +77,7 @@ export default function StaffPage() {
         icon={<Users className="size-5" />}
         subtitle={
           <>
-            Each person signs in with their own PIN, so the activity log records who did what.
+            Each person signs in with their name and their own PIN, so the activity log records who did what.
             {staffName && <> You are signed in as <strong className="text-[var(--text-primary)]">{staffName}</strong>.</>}
           </>
         }
@@ -90,7 +90,7 @@ export default function StaffPage() {
               <form onSubmit={addStaff} className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="block">
-                    <span className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">Name</span>
+                    <span className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">Name <span className="font-normal text-[var(--text-tertiary)]">(they type this to sign in)</span></span>
                     <input
                       value={name}
                       onChange={e => setName(e.target.value)}

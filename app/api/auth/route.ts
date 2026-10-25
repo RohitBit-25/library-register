@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { logError } from '@/lib/log';
 import { encrypt, SESSION_COOKIE, SESSION_MAX_AGE_SECONDS } from '@/lib/auth-server';
 import { cookies } from 'next/headers';
-import { checkStaffPin } from '@/lib/pin-store';
+import { checkStaffLogin } from '@/lib/pin-store';
 import AuditLog from '@/models/AuditLog';
 import { consumeRateLimit, callerKey } from '@/lib/rate-limit';
 
@@ -11,19 +11,11 @@ export const dynamic = 'force-dynamic';
 /**
  * Attempts allowed per caller per 15 minutes, checked before the PIN is.
  *
- * The per-staff lockout in pin-store cannot tell which account a wrong PIN
- * was meant for — there is no username — so a failure counts against every
- * account. Left alone, anyone could lock the whole staff out of the system
- * for 15 minutes on repeat, without credentials.
- *
- * This limit means a single source burns its own quota long before it burns
- * the staff's. It does not stop a distributed attempt; that is a real
- * residual risk of PIN-only auth, and the reason `/setup` should be used to
- * move to per-staff PINs rather than one shared one.
- *
- * 12 in 15 minutes is far above what a human mistyping a 6-digit PIN needs,
- * and well below the 5 failures that trigger a staff lockout across a
- * realistic number of attackers.
+ * Sign-in takes a name and a PIN, so a wrong PIN only counts against the
+ * account it was aimed at (5 failures lock that account for 15 minutes).
+ * This limit sits in front: one source gets 12 tries in 15 minutes, far above
+ * what a person mistyping needs, so it cannot walk the PIN space or keep
+ * every account locked.
  */
 const LOGIN_LIMIT = 12;
 const LOGIN_WINDOW_SECONDS = 15 * 60;
@@ -42,19 +34,22 @@ export async function POST(request: Request) {
     );
   }
 
-  let pin: unknown;
+  let name: unknown, pin: unknown;
   try {
-    ({ pin } = await request.json());
+    ({ name, pin } = await request.json());
   } catch {
     return NextResponse.json({ success: false, error: 'Bad Request' }, { status: 400 });
   }
 
-  if (typeof pin !== 'string' || pin.length === 0) {
-    return NextResponse.json({ success: false, error: 'PIN is required' }, { status: 400 });
+  if (typeof name !== 'string' || name.trim().length === 0 || name.length > 40) {
+    return NextResponse.json({ success: false, error: 'Enter your name' }, { status: 400 });
+  }
+  if (typeof pin !== 'string' || pin.length === 0 || pin.length > 8) {
+    return NextResponse.json({ success: false, error: 'Enter your PIN' }, { status: 400 });
   }
 
   try {
-    const result = await checkStaffPin(pin);
+    const result = await checkStaffLogin(name, pin);
 
     if (!result.ok) {
       if (result.reason === 'locked') {
@@ -66,8 +61,10 @@ export async function POST(request: Request) {
           { status: 429, headers: { 'Retry-After': String(result.retryAfterSeconds) } }
         );
       }
+      // One message for an unknown name and a wrong PIN, so the form does
+      // not confirm which staff names exist.
       return NextResponse.json(
-        { success: false, error: `Invalid PIN. ${result.attemptsLeft} attempt(s) left.` },
+        { success: false, error: 'That name and PIN do not match.' },
         { status: 401 }
       );
     }

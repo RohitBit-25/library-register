@@ -6,7 +6,7 @@ import { isSeat, SEAT_COUNT } from './layoutConfig.ts';
 // ad-hoc `if (!data.seat)` checks, which let unbounded seat numbers, oversized
 // base64 uploads, and arbitrary $set payloads through.
 
-/** Seats in the hall: 93, numbered 1–95 with no 21 or 22 (lib/layoutConfig). */
+/** Seats in the hall: 95, numbered 1–95 (lib/layoutConfig). */
 export const TOTAL_SEATS = SEAT_COUNT;
 
 /** Max characters for a base64 data URI. 2MB binary ≈ 2.8MB base64. */
@@ -17,9 +17,15 @@ export const seatNumber = z.coerce
   .int('Seat must be a whole number')
   .min(1, 'Seat must be at least 1')
   .max(95, 'Seat must be at most 95')
-  // The numbering has gaps (no 21 or 22), so the range alone is not enough —
-  // every route that takes a seat rejects a number that is not on the plan.
+  // The plan is the authority, not the range: if a number ever leaves the
+  // plan, every route that takes a seat rejects it.
   .refine(isSeat, 'There is no seat with that number');
+
+/** For forms: any spacing allowed, exactly 10 digits required — the same
+ *  rule the API applies, so a typo is caught before the request is sent. */
+export const phoneInput = z
+  .string()
+  .refine((s) => s.replace(/\D/g, '').length === 10, 'Enter a 10-digit mobile number');
 
 export const phone = z
   .string()

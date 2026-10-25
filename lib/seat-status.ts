@@ -6,20 +6,29 @@ import type { Member, SeatStatus } from './types.ts';
 // /api/stats aggregation mirrors these exact rules. Business logic that lives
 // only in the client drifts from what the database reports.
 
-/** Local-midnight ISO date. Never use `new Date().toISOString()` — that is UTC,
- *  which rolls over at 05:30 IST and would mark seats expired a day early. */
+/**
+ * The library's clock. "Local" must mean India, not whatever machine runs the
+ * code: Vercel functions run in UTC, so `getDate()` there rolls over at 05:30
+ * IST — payments got yesterday's date and seats expired a day late overnight.
+ */
+export const LIBRARY_TZ = 'Asia/Kolkata';
+
+// en-CA formats as YYYY-MM-DD.
+const libraryDate = new Intl.DateTimeFormat('en-CA', {
+  timeZone: LIBRARY_TZ, year: 'numeric', month: '2-digit', day: '2-digit',
+});
+
+/** Today's date in the library's timezone, as YYYY-MM-DD. Never use
+ *  `new Date().toISOString()` (UTC) or `getDate()` (the host's zone). */
 export function todayLocalISO(now = new Date()): string {
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  return libraryDate.format(now);
 }
 
-/** Add days to a YYYY-MM-DD string, returning YYYY-MM-DD. */
+/** Add days to a YYYY-MM-DD string, returning YYYY-MM-DD. Pure calendar
+ *  arithmetic in UTC, so the host's timezone cannot shift the result. */
 export function addDaysISO(iso: string, days: number): string {
   const [y, m, d] = iso.split('-').map(Number);
-  const dt = new Date(y, m - 1, d + days);
-  return todayLocalISO(dt);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
 }
 
 /** Whole days from today until `expiry`. Negative = overdue. */

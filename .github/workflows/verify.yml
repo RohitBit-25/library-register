@@ -1,0 +1,22 @@
+# Runs the same gates as `npm run verify`, plus a production build, on every
+# push and pull request. No secrets needed: none of these touch a database.
+name: verify
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # lint, type-check, design tokens, contrast, self-checks
+      - run: npm run verify
+      # Catches build-only failures (e.g. a route file exporting a constant).
+      - run: npx next build

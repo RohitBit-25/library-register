@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
-// Rows for 21 and 22 survive from the 95-seat layout; they are not seats.
+// Only numbers on the plan are returned (lib/layoutConfig).
 import { SEAT_NUMBERS } from '@/lib/layoutConfig';
 import Member from '@/models/Member';
 import { verifyAdmin } from '@/lib/auth-server';

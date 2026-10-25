@@ -110,10 +110,11 @@ matching Tailwind step; no one-off pixel gaps.
 - `brand` variant (saffron) only where the action is itself the brand moment.
 
 ## Floor plan
-From the owner's seat-layout spec (2026-10-25). **93 seats, numbered 1–95;
-21 and 22 do not exist.** `SEAT_LAYOUT` in `lib/layoutConfig.ts` is the single
-source of truth — the plan, validation (`seatNumber` rejects 21/22), the
-members and stats APIs, seeding and every "N seats" line derive from it.
+From the owner's seat-layout spec (2026-10-25). **95 seats, numbered 1–95.**
+21 and 22 were missing from the spec; the owner placed them as a pair just
+right of the entrance door. `SEAT_LAYOUT` in `lib/layoutConfig.ts` is the
+single source of truth — the plan, validation (`seatNumber`), the members and
+stats APIs, seeding and every "N seats" line derive from it.
 
 | Group | Seats (reading order) | Chair |
 | --- | --- | --- |
@@ -124,6 +125,7 @@ members and stats APIs, seeding and every "N seats" line derive from it.
 | Column 5 | pairs 32\|20 … 23\|11 | outer left / outer right (facing) |
 | Right wall | 10 → 1 | left of desk |
 | Bottom row | 84 → 80 (left to right) | behind (above) |
+| By the door | 21, 22 (right of the door) | behind (above) |
 
 - Canvas 1600 × 1200; desks 84 × 70 on an 80px row pitch. Two AC units on the
   top wall, the door on the bottom wall. Palette: floor `#F3EFE6`, desk
@@ -147,8 +149,8 @@ members and stats APIs, seeding and every "N seats" line derive from it.
   (seat · group · state); legends show live counts.
 - Hover cards/tooltips inside the plan counter-scale via `--plan-scale`, so
   they read at true size at any zoom.
-- The database still has rows for 21 and 22 from the 95-seat layout; the APIs
-  filter them out (nothing was deleted).
+- The database rows for 21 and 22 (kept from the old layout) are live seats
+  again; nothing was deleted.
 
 ## Per-page allowances
 - Marketing page shows real photographs only, listed in `lib/photos.ts`

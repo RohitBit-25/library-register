@@ -31,7 +31,7 @@ interface AuthContextValue {
   /** Owners can manage staff; staff cannot. */
   isOwner: boolean;
   isLoading: boolean;
-  loginAsAdmin: (pin: string) => Promise<{ ok: boolean; error?: string }>;
+  loginAsAdmin: (name: string, pin: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
 }
 
@@ -79,8 +79,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [globalMutate]
   );
 
-  const loginAsAdmin = useCallback(async (pin: string) => {
-    const result = await loginAsAdminService(pin);
+  const loginAsAdmin = useCallback(async (name: string, pin: string) => {
+    const result = await loginAsAdminService(name, pin);
     if (result.ok) {
       await mutate();
       await invalidateAll();

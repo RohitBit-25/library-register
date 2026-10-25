@@ -27,8 +27,9 @@ const REMINDER_WINDOW_DAYS = 3;
  *    or skipped run meant that day's cohort was never reminded at all —
  *    silently. With a window, the next successful run catches them.
  *
- * 3. **Honest.** A member is only stamped if the send actually succeeded, so a
- *    provider outage doesn't silently mark everyone as notified.
+ * 3. **Honest.** A member is only stamped if a message actually went out. A
+ *    provider outage, or no provider at all (dry-run), stamps nobody — so the
+ *    day WhatsApp is connected, everyone due a reminder still gets one.
  */
 export async function GET(request: Request) {
   const cronSecret = process.env.CRON_SECRET;
@@ -59,7 +60,7 @@ export async function GET(request: Request) {
       $expr: { $ne: ['$reminderSentFor', '$expiry'] },
     }).lean<{ seat: number; name: string; phone: string; expiry: string }[]>();
 
-    const result = { eligible: candidates.length, sent: 0, skippedNoPhone: 0, failed: 0 };
+    const result = { eligible: candidates.length, sent: 0, dryRun: 0, skippedNoPhone: 0, failed: 0 };
 
     for (const m of candidates) {
       if (!m.phone) {
@@ -83,6 +84,13 @@ export async function GET(request: Request) {
         continue; // Deliberately not stamped — retried on the next run.
       }
 
+      // Logged, not delivered: stamping here used to record people as
+      // reminded when no message had been sent.
+      if (outcome.via === 'dry-run') {
+        result.dryRun++;
+        continue;
+      }
+
       await Member.updateOne(
         { seat: m.seat, expiry: m.expiry },
         { $set: { reminderSentFor: m.expiry, reminderSentAt: new Date() } }
@@ -90,12 +98,13 @@ export async function GET(request: Request) {
       result.sent++;
     }
 
-    if (result.sent > 0 || result.failed > 0) {
+    if (result.sent > 0 || result.failed > 0 || result.dryRun > 0) {
       await AuditLog.create({
         action: 'Automated Reminders',
         details:
           `Expiry reminders for ${today}..${windowEnd}: ` +
           `${result.sent} sent, ${result.failed} failed, ` +
+          (result.dryRun ? `${result.dryRun} not sent (no WhatsApp provider connected), ` : '') +
           `${result.skippedNoPhone} skipped (no phone).`,
       });
     }

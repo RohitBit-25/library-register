@@ -21,6 +21,7 @@ import assert from 'node:assert/strict';
 const BASE = process.env.BASE || 'http://localhost:3000';
 const SEAT = Number(process.env.SEAT || 95);
 const PIN = process.env.ADMIN_PIN || '';
+const NAME = process.env.ADMIN_NAME || 'Admin';
 
 let passed = 0, failed = 0;
 const results = [];
@@ -226,7 +227,7 @@ await check('rate limiter returns 429 with Retry-After after the 6th try', async
 // ─── Authenticated checks (only with ADMIN_PIN set) ───────────────
 
 if (PIN) {
-  const loginRes = await json('/api/auth', { pin: PIN });
+  const loginRes = await json('/api/auth', { name: NAME, pin: PIN });
   const cookie = loginRes.headers.get('set-cookie')?.split(';')[0];
 
   await check('correct PIN authenticates and sets an httpOnly cookie', () => {
@@ -333,16 +334,28 @@ if (PIN) {
 
 // ─── Login lockout ────────────────────────────────────────────────
 
-// Opt-in: this check locks every staff account for 15 minutes. The per-staff
-// counter cannot tell which account a wrong PIN was meant for, so a failure
-// counts against all of them — see the comment in app/api/auth. Running it by
-// default would lock the admin out of their own library, and would make the
-// suite fail on its own second run.
+await check('wrong PINs for an unknown name never lock real staff out', async () => {
+  for (let i = 0; i < 6; i++) {
+    const res = await json('/api/auth', { name: 'Nobody Here', pin: '000000' });
+    assert.equal(res.status, 401, `unknown name gave ${res.status}`);
+  }
+  if (PIN) {
+    const res = await json('/api/auth', { name: NAME, pin: PIN });
+    assert.equal(res.status, 200, 'the real account was locked by guesses at another name');
+  }
+});
+
+await check('sign-in needs a name', async () => {
+  const res = await json('/api/auth', { pin: PIN || '1234' });
+  assert.equal(res.status, 400);
+});
+
+// Opt-in: this locks the named account (Admin by default) for 15 minutes.
 if (process.env.CHECK_LOCKOUT === '1') {
 await check('wrong PIN is rejected and eventually locks out', async () => {
   let locked = false;
   for (let i = 0; i < 8; i++) {
-    const res = await json('/api/auth', { pin: '000000' });
+    const res = await json('/api/auth', { name: NAME, pin: '000000' });
     assert.equal(res.status === 200, false, 'a wrong PIN must never authenticate');
     assert.ok([401, 429].includes(res.status), `unexpected status ${res.status}`);
     if (res.status === 429) {
@@ -354,7 +367,7 @@ await check('wrong PIN is rejected and eventually locks out', async () => {
   assert.ok(locked, 'no lockout after 8 wrong PINs — brute force is unbounded');
 });
 } else {
-  console.log('\n  (set CHECK_LOCKOUT=1 to also test the PIN lockout — it locks staff out for 15 minutes)');
+  console.log(`\n  (set CHECK_LOCKOUT=1 to also test the PIN lockout — it locks ${NAME} out for 15 minutes)`);
 }
 
 console.log(`\n${passed} passed, ${failed} failed.\n`);

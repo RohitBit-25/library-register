@@ -9,13 +9,13 @@ const LINKS = [
   { href: '/browse', label: 'Seats', show: 'hidden md:inline-flex' },
   { href: '/landing#fees', label: 'Fees', show: 'hidden md:inline-flex' },
   { href: '/my-requests', label: 'My requests', show: 'inline-flex' },
-  { href: '/admin/login', label: 'Staff', show: 'hidden lg:inline-flex' },
 ];
 
 /**
  * The student pages' name plate: the logo, the name in the pixel face, and
  * the few places a student goes. Shared by /landing, /browse and /my-requests
- * so moving between them feels like one place. `wide` lines up with the
+ * so moving between them feels like one place. No staff link: visitors never
+ * see the staff door; staff use /admin/login directly (bookmark it). `wide` lines up with the
  * 1400px seat-plan page instead of the 1160px reading pages.
  */
 export default function UnifiedHeader({ wide = false }: { wide?: boolean }) {

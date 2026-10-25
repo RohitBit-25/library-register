@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
@@ -17,12 +17,22 @@ import Wordmark from '@/components/layout/Wordmark';
  * lockout can be stated in full rather than squeezed into a toast, and the
  * two halves of the product stop overlapping.
  *
- * All the security lives on the server and is unchanged — scrypt-hashed PINs,
- * a per-staff lockout after 5 failures, a per-caller rate limit before the
- * PIN is even checked, an httpOnly session cookie, and revocation on sign-out.
- * This page is only the door.
+ * Name + PIN. The name says who; the PIN proves it, so a wrong guess only
+ * counts against that one account. The security lives on the server —
+ * scrypt-hashed PINs, a per-account lockout after 5 failures, a per-caller
+ * rate limit, an httpOnly session cookie, revocation on sign-out. The page is
+ * linked from nowhere a student goes; staff bookmark it.
  */
+
+/** The last name that signed in on this device, so staff only type a PIN. */
+const NAME_KEY = 'gangaur-staff-name';
+const readName = () => { try { return localStorage.getItem(NAME_KEY) || ''; } catch { return ''; } };
+const noSubscribe = () => () => {};
 export default function AdminLoginPage() {
+  // Read after hydration ('' on the server), then overridable by typing.
+  const rememberedName = useSyncExternalStore(noSubscribe, readName, () => '');
+  const [typedName, setTypedName] = useState<string | null>(null);
+  const name = typedName ?? rememberedName;
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,6 +41,7 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
   const errorId = useId();
 
   /**
@@ -48,26 +59,27 @@ export default function AdminLoginPage() {
   }, [isAdmin, isLoading, next, router]);
 
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    (rememberedName ? inputRef : nameRef).current?.focus();
+  }, [rememberedName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!pin || isSubmitting) return;
+    if (!name.trim() || !pin || isSubmitting) return;
 
     setIsSubmitting(true);
     setError('');
-    const result = await loginAsAdmin(pin);
+    const result = await loginAsAdmin(name.trim(), pin);
     setIsSubmitting(false);
     setPin('');
 
     if (result.ok) {
+      try { localStorage.setItem(NAME_KEY, name.trim()); } catch { /* private mode */ }
       router.replace(next);
       return;
     }
     // The server already says how many attempts remain, or how long a
     // lockout has left. Show that rather than a generic failure.
-    setError(result.error || 'That PIN was not recognised.');
+    setError(result.error || 'That name and PIN do not match.');
     inputRef.current?.focus();
   };
 
@@ -88,10 +100,27 @@ export default function AdminLoginPage() {
             Sign in
           </h1>
           <p className="mb-6 mt-1.5 text-sm text-[var(--text-secondary)]">
-            Your PIN identifies you, so the activity log records who did what.
+            Your name and PIN, so the activity log records who did what.
           </p>
 
           <form onSubmit={handleSubmit} noValidate>
+            <label htmlFor="staff-name" className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">
+              Your name
+            </label>
+            <input
+              id="staff-name"
+              ref={nameRef}
+              type="text"
+              autoComplete="username"
+              autoCapitalize="words"
+              spellCheck={false}
+              maxLength={40}
+              value={name}
+              onChange={(e) => { setTypedName(e.target.value); setError(''); }}
+              aria-invalid={!!error}
+              className="mb-4 w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] px-4 py-3 text-base text-[var(--text-primary)] transition-ui focus:border-[var(--saffron-600)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]/20"
+              placeholder="As the owner added you"
+            />
             <label
               htmlFor="staff-pin"
               className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]"
@@ -104,9 +133,6 @@ export default function AdminLoginPage() {
               type="password"
               inputMode="numeric"
               autoComplete="current-password"
-              // Each staff member has their own PIN, so the log records who
-              // did what. checkStaffPin identifies the person from the PIN
-              // alone — there is no username to type.
               maxLength={8}
               value={pin}
               onChange={(e) => { setPin(e.target.value.replace(/\D/g, '')); setError(''); }}
@@ -128,7 +154,7 @@ export default function AdminLoginPage() {
 
             <button
               type="submit"
-              disabled={!pin || isSubmitting}
+              disabled={!name.trim() || !pin || isSubmitting}
               className="mt-5 flex min-h-[44px] w-full cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-[var(--ink)] bg-[var(--ink)] text-sm font-semibold text-[var(--text-inverse)] transition-ui hover:bg-[var(--ink-hover)] disabled:cursor-not-allowed disabled:border-[var(--border-default)] disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)]"
             >
               {isSubmitting && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}

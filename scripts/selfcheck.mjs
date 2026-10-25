@@ -9,7 +9,7 @@
  */
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, readdirSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -27,7 +27,7 @@ writeFileSync(join(out, 'package.json'), '{"type":"module"}');
 // in scripts/), and tsc rewrites those to .js on emit.
 execFileSync('npx', [
   'tsc', 'lib/csv.ts', 'lib/utils.ts', 'lib/types.ts', 'lib/seat-status.ts',
-  'lib/notify.ts', 'lib/log.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts', 'lib/deskLayout.ts', 'lib/motion.ts', 'lib/schemas.ts',
+  'lib/notify.ts', 'lib/log.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts', 'lib/deskLayout.ts', 'lib/motion.ts', 'lib/schemas.ts', 'lib/siteInfo.ts',
   '--outDir', out, '--module', 'esnext', '--target', 'es2020',
   '--moduleResolution', 'bundler', '--skipLibCheck',
   '--allowImportingTsExtensions', '--rewriteRelativeImportExtensions',
@@ -43,8 +43,10 @@ const { buildExpiryMessage, normalisePhone } =
 const { planPrice, monthlyValue, formatINR, formatINRCompact, PLAN_MONTHS, DEFAULT_PLAN_RATES } =
   await import(pathToFileURL(join(out, 'pricing.js')).href);
 
-const { nextSeatInDirection, getSeatPositionConfig, SEAT_GROUPS, SEAT_NUMBERS, isSeat, seatRow, partnerSeat, chairRect } =
+const { nextSeatInDirection, getSeatPositionConfig, SEAT_GROUPS, SEAT_NUMBERS, isSeat, seatRow, partnerSeat, chairRect, DOOR } =
   await import(pathToFileURL(join(out, 'layoutConfig.js')).href);
+
+const { UPI, upiPayLink } = await import(pathToFileURL(join(out, 'siteInfo.js')).href);
 
 const { allSeatSlots, DESK_W, DESK_H, ROOM } =
   await import(pathToFileURL(join(out, 'deskLayout.js')).href);
@@ -124,12 +126,7 @@ check('daysUntilExpiry sign is correct either side of today', () => {
   // in UTC, so between midnight and 05:30 IST it generated *yesterday* and
   // the check failed with -1 !== 0 — the very timezone bug todayLocalISO()
   // exists to prevent, reproduced inside its own test.
-  const iso = (offset) => {
-    const d = new Date();
-    d.setDate(d.getDate() + offset);
-    const p = (n) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
-  };
+  const iso = (offset) => addDaysISO(todayLocalISO(), offset);
   assert.equal(daysUntilExpiry(iso(0)), 0);
   assert.ok(daysUntilExpiry(iso(10)) > 0);
   assert.ok(daysUntilExpiry(iso(-10)) < 0);
@@ -182,17 +179,12 @@ check('a member with no expiry is never expired', () => {
   assert.equal(s.daysLeft, Infinity);
 });
 
-check('dates are local, not UTC — no overnight off-by-one', () => {
-  // todayISO() was `new Date().toISOString()`, which is UTC. In IST (+5:30)
-  // that returns YESTERDAY between 00:00 and 05:30 every day, so members got
-  // join dates a day early and the cron targeted the wrong cohort.
-  const midnightIST = new Date(2026, 7, 14, 0, 30); // 14 Aug, 00:30 local
-  assert.equal(todayLocalISO(midnightIST), '2026-08-14');
-  // The UTC form only lands on the previous day east of UTC (IST, the
-  // library's zone); asserting it unconditionally failed on any machine west.
-  if (midnightIST.getTimezoneOffset() < 0) {
-    assert.notEqual(midnightIST.toISOString().split('T')[0], '2026-08-14');
-  }
+check('dates are India dates on any host — no overnight off-by-one', () => {
+  // Absolute instants, so this holds on a UTC server (Vercel) and on a laptop
+  // in IST alike. 00:30 IST on 14 Aug is still 13 Aug in UTC.
+  assert.equal(todayLocalISO(new Date('2026-08-13T19:00:00Z')), '2026-08-14'); // 00:30 IST
+  assert.equal(todayLocalISO(new Date('2026-08-14T18:29:00Z')), '2026-08-14'); // 23:59 IST
+  assert.equal(todayLocalISO(new Date('2026-08-14T18:31:00Z')), '2026-08-15'); // 00:01 IST
 });
 
 check('addDaysISO crosses month and year boundaries', () => {
@@ -331,32 +323,66 @@ check('an upward flick keeps the sheet even from far down', () => {
   assert.equal(shouldDismissSheet(500, -800, 600), false);
 });
 
+// ─── UPI: one account, the right amount ──────────────────────────
+
+check('the UPI QR pays the library account the plan price, with a note', () => {
+  const link = upiPayLink(1900, 'Seat 41 3M');
+  const q = new URLSearchParams(link.replace('upi://pay?', ''));
+  assert.equal(UPI.id, 'gangaur.972327@sbi');
+  assert.equal(q.get('pa'), UPI.id);
+  assert.equal(q.get('am'), '1900.00');
+  assert.equal(q.get('cu'), 'INR');
+  assert.equal(q.get('tn'), 'Seat 41 3M');
+  assert.ok(!link.includes('+'), 'spaces must be %20 for UPI apps');
+  assert.equal(new URLSearchParams(upiPayLink(0, '').slice(10)).get('am'), null);
+});
+
+// ─── Routes: every page is either public or staff-only ───────────
+
+check('every page is on exactly one of the public / staff lists', () => {
+  const src = readFileSync(join(root, 'lib/routes.ts'), 'utf8');
+  const list = (name) => JSON.parse(src.match(new RegExp(`${name} = (\\[[^\\]]*\\])`))[1].replace(/'/g, '"').replace(/,\s*]/, ']'));
+  const pub = list('PUBLIC_ROUTES'), admin = list('ADMIN_ROUTES');
+  const pages = readdirSync(join(root, 'app'), { recursive: true })
+    .filter((f) => f.endsWith('page.tsx'))
+    .map((f) => '/' + f.replace(/\\/g, '/').replace(/\/?page\.tsx$/, ''))
+    .map((r) => (r === '/' ? r : r.replace(/\/$/, '')));
+  for (const p of pages) {
+    const n = Number(pub.includes(p)) + Number(admin.includes(p));
+    assert.equal(n, 1, `${p} must be in exactly one of PUBLIC_ROUTES / ADMIN_ROUTES (lib/routes.ts)`);
+  }
+});
+
 // ─── Blocks: the plan and the list must agree ────────────────────
 
-check('the hall has 93 seats: 1–95 without 21 and 22', () => {
-  assert.equal(SEAT_NUMBERS.length, 93);
-  assert.equal(isSeat(21), false);
-  assert.equal(isSeat(22), false);
-  assert.equal(isSeat(94), true);
-  for (let n = 1; n <= 95; n++) if (n !== 21 && n !== 22) assert.ok(isSeat(n), `seat ${n} missing`);
+check('the hall has 95 seats, 1–95, with 21 and 22 beside the door', () => {
+  assert.equal(SEAT_NUMBERS.length, 95);
+  for (let n = 1; n <= 95; n++) assert.ok(isSeat(n), `seat ${n} missing`);
+  const p = (n) => getSeatPositionConfig(n);
+  // Right of the door, 21 nearest it, on the bottom row's line.
+  assert.ok(p(21).x >= DOOR.cx + DOOR.w / 2, '21 is right of the door');
+  assert.ok(p(21).x < p(22).x && p(21).y === p(22).y, '21 then 22, one row');
+  assert.equal(p(21).y, p(80).y);
+  assert.equal(seatRow(21), 'By the door');
 });
 
 check('validation rejects numbers that are not seats', () => {
-  assert.equal(seatNumber.safeParse(20).success, true);
-  assert.equal(seatNumber.safeParse(21).success, false);
-  assert.equal(seatNumber.safeParse(22).success, false);
+  assert.equal(seatNumber.safeParse(21).success, true);
+  assert.equal(seatNumber.safeParse(22).success, true);
+  assert.equal(seatNumber.safeParse(0).success, false);
   assert.equal(seatNumber.safeParse(96).success, false);
 });
 
 check('every seat is in exactly one group, in the owner\'s order', () => {
   const all = SEAT_GROUPS.flatMap((g) => g.seats);
-  assert.equal(all.length, 93);
-  assert.equal(new Set(all).size, 93);
+  assert.equal(all.length, 95);
+  assert.equal(new Set(all).size, 95);
   for (const n of SEAT_NUMBERS) assert.ok(seatRow(n), `seat ${n} has no group`);
   const g = Object.fromEntries(SEAT_GROUPS.map((x) => [x.id, x.seats]));
   assert.deepEqual(g.leftWall, [95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85]);
   assert.deepEqual(g.rightWall, [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
   assert.deepEqual(g.bottomRow, [84, 83, 82, 81, 80]);
+  assert.deepEqual(g.doorRight, [21, 22]);
   assert.deepEqual(g.col3.slice(0, 2), [70, 61]);
   assert.deepEqual(g.col5.slice(-2), [23, 11]);
 });

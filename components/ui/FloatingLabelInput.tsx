@@ -11,6 +11,11 @@ export interface FloatingLabelInputProps
 
 export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInputProps>(
   ({ className, label, error, icon, ...props }, ref) => {
+    // The label was never tied to its input, so screen readers announced an
+    // unnamed field and tapping the label did not focus it.
+    const autoId = React.useId();
+    const id = props.id ?? autoId;
+    const errorId = `${id}-error`;
     return (
       <div className="relative w-full group">
         {icon && (
@@ -33,9 +38,13 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
           onBlur={props.onBlur}
           placeholder={label} // peer-placeholder-shown trick
           {...props}
+          id={id}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : props['aria-describedby']}
         />
         
         <label
+          htmlFor={id}
           className={cn(
             'pointer-events-none absolute left-4 transition-ui duration-300 transform font-medium select-none z-10',
             !!icon && 'left-11',
@@ -48,7 +57,8 @@ export const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLab
         </label>
 
         {error && (
-          <motion.span 
+          <motion.span
+            id={errorId}
             initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
             className="absolute -bottom-5 left-1 text-xs font-bold text-[var(--ruby-600)]"
           >

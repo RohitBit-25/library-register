@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { type Duration, type Member, type Shift } from '@/lib/types';
 import { cn, todayISO } from '@/lib/utils';
 import { seatRow } from '@/lib/layoutConfig';
+import { upiPayLink } from '@/lib/siteInfo';
+import { formatINR, planPrice } from '@/lib/pricing';
 import { AnimatePresence, motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import {
@@ -49,6 +51,12 @@ export default function SeatRequestSheet({
   const [shift, setShift] = useState<Shift>('full');
   const [paymentMode, setPaymentMode] = useState<PaymentMode>('cash');
   const [transactionId, setTransactionId] = useState('');
+  // null = not typed yet, so the box follows the plan price as the duration
+  // changes; once typed, the student's amount sticks. Empty = no amount in
+  // the QR, and the UPI app asks for one.
+  const [amountTyped, setAmountTyped] = useState<string | null>(null);
+  const amountText = amountTyped ?? String(planPrice(duration));
+  const amount = Number(amountText) || 0;
   const [documentUrl, setDocumentUrl] = useState('');
   const [documentName, setDocumentName] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -145,6 +153,7 @@ export default function SeatRequestSheet({
           setShift('full');
           setPaymentMode('cash');
           setTransactionId('');
+          setAmountTyped(null);
           setDocumentUrl('');
           setDocumentName('');
           onClose();
@@ -335,13 +344,29 @@ export default function SeatRequestSheet({
                     ) : (
                       <div className="border border-[var(--border-default)] bg-[var(--bg-base)] overflow-hidden">
                         <div className="flex flex-col items-center py-5 px-4">
+                          <label htmlFor="req-amount" className="mb-1.5 self-stretch text-sm font-medium text-[var(--text-primary)]">
+                            Amount (₹)
+                          </label>
+                          <input
+                            id="req-amount"
+                            type="text"
+                            inputMode="numeric"
+                            value={amountText}
+                            onChange={(e) => setAmountTyped(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                            className={cn(inputCls, 'mb-1.5 font-mono tabular')}
+                          />
+                          <p className="mb-4 self-stretch text-xs text-[var(--text-secondary)]">
+                            {duration} plan is {formatINR(planPrice(duration))}. Change it if the librarian told you a different amount.
+                          </p>
                           <p className="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
                             <Smartphone className="size-4" />
-                            Scan & Pay via UPI
+                            {amount > 0
+                              ? <>Scan to pay <span className="tabular">{formatINR(amount)}</span></>
+                              : 'Scan, then enter the amount in your UPI app'}
                           </p>
                           <div className="p-2.5 bg-[var(--bg-surface)] border border-[var(--border-default)] mb-3">
                             <QRCodeSVG
-                              value="upi://pay?pa=gangaur.972327@sbi&pn=Gangaur%20Library&cu=INR"
+                              value={upiPayLink(amount, `Seat ${member.seat} ${duration}`)}
                               size={110}
                               level="H"
                               className="block"

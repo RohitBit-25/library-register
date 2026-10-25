@@ -1,11 +1,11 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import useSWR, { mutate as globalMutate } from 'swr';
 
 /** What an admin action actually did — callers surface `error` to the user. */
 export type ActionResult =
-  | { ok: true }
+  | { ok: true; movedToWaitlist?: number }
   | { ok: false; status?: number; error?: string };
 import { type SeatRequest } from '@/lib/types';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,15 +14,29 @@ import { useAuth } from '@/hooks/useAuth';
 const USER_PHONE_KEY = 'library-user-phone';
 
 function getStoredUserPhone(): string {
-  if (typeof window === 'undefined') return '';
-  return localStorage.getItem(USER_PHONE_KEY) || '';
+  try { return localStorage.getItem(USER_PHONE_KEY) || ''; } catch { return ''; }
 }
 
+/** Digits only, so the lookup box can show it as typed (it holds 10 digits). */
 function setStoredUserPhone(phone: string): void {
-  if (typeof window === 'undefined') return;
-  if (phone) {
-    localStorage.setItem(USER_PHONE_KEY, phone);
-  }
+  const digits = phone.replace(/\D/g, '');
+  if (!digits) return;
+  try { localStorage.setItem(USER_PHONE_KEY, digits); } catch { /* private mode */ }
+}
+
+const subscribeStorage = (cb: () => void) => {
+  window.addEventListener('storage', cb);
+  return () => window.removeEventListener('storage', cb);
+};
+
+/**
+ * The saved phone, read so that hydration sees '' like the server did.
+ * Reading localStorage straight in render made the first client render differ
+ * from the server HTML, and React kept the server's `disabled` on My
+ * requests' Look up button — it never enabled for a returning student.
+ */
+function useStoredUserPhone(): string {
+  return useSyncExternalStore(subscribeStorage, getStoredUserPhone, () => '');
 }
 
 // ─── Fetcher ─────────────────────────────────────────────────────
@@ -47,7 +61,7 @@ export function useSeatRequests() {
   );
 
   // User: fetch own requests by phone
-  const storedPhone = getStoredUserPhone();
+  const storedPhone = useStoredUserPhone();
   const { data: userData, mutate: userMutate } = useSWR<SeatRequest[]>(
     !isAdmin && storedPhone ? `/api/requests/my?phone=${encodeURIComponent(storedPhone)}` : null,
     fetcher,
@@ -131,7 +145,7 @@ export function useSeatRequests() {
   // cheerfully reported "approved". They now report what actually happened.
   const setStatus = useCallback(async (
     id: string | number,
-    status: 'approved' | 'rejected'
+    status: 'approved' | 'rejected' | 'pending'
   ): Promise<ActionResult> => {
     if (!isAdmin) return { ok: false, error: 'Admin only' };
     try {
@@ -146,10 +160,11 @@ export function useSeatRequests() {
         return { ok: false, status: res.status, error: body.error };
       }
 
+      const body = await res.json().catch(() => ({}));
       // Approving allots a seat server-side, so the member list is now stale.
       mutate();
       if (status === 'approved') globalMutate('/api/members');
-      return { ok: true };
+      return { ok: true, movedToWaitlist: body.movedToWaitlist ?? 0 };
     } catch {
       return { ok: false, error: 'Network error. Check your connection.' };
     }
@@ -160,6 +175,10 @@ export function useSeatRequests() {
 
   const rejectRequest = useCallback(
     (id: string | number) => setStatus(id, 'rejected'), [setStatus]);
+
+  /** Undo a rejection: back to pending. (An approval is undone by vacating.) */
+  const reopenRequest = useCallback(
+    (id: string | number) => setStatus(id, 'pending'), [setStatus]);
 
   const deleteRequest = useCallback(async (id: string | number): Promise<ActionResult> => {
     if (!isAdmin) return { ok: false, error: 'Admin only' };
@@ -181,16 +200,16 @@ export function useSeatRequests() {
   // ─── Computed values ───────────────────────────────────────────
 
   const pendingCount = requests.filter(r => r.status === 'pending').length;
-  const storedUserPhone = getStoredUserPhone();
 
   return {
     requests,
     pendingCount,
-    storedUserPhone,
+    storedUserPhone: storedPhone.replace(/\D/g, '').slice(0, 10),
     addRequest,
     lookupByPhone,
     approveRequest,
     rejectRequest,
+    reopenRequest,
     deleteRequest,
     isLoading: isAdmin ? !adminData : (!userData && !!storedPhone),
   };

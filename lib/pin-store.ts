@@ -11,9 +11,6 @@ const KEYLEN = 64;
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MS = 15 * 60 * 1000;
 
-/** Guard on the login fan-out below — see checkStaffPin. */
-const MAX_ACTIVE_STAFF = 25;
-
 export const PIN_PATTERN = /^\d{4,8}$/;
 
 function hashPin(pin: string, salt?: string): string {
@@ -73,72 +70,84 @@ async function ensureSeeded(): Promise<void> {
 
 export type PinCheck =
   | { ok: true; staff: StaffIdentity }
-  | { ok: false; reason: 'invalid'; attemptsLeft: number }
+  | { ok: false; reason: 'invalid' }
   | { ok: false; reason: 'locked'; retryAfterSeconds: number };
 
+type StaffDoc = Awaited<ReturnType<typeof Staff.find>>[number];
+
+/** Burned when no account matches, so an unknown name takes as long as a
+ *  wrong PIN and timing does not reveal which names exist. */
+const DUMMY_HASH = hashPin('00000000');
+
 /**
- * Identify a staff member from a PIN alone.
+ * Try a PIN against specific accounts, with a lockout per account.
  *
- * Because each PIN is salted separately, there is no way to look one up — the
- * candidate is tested against each active staff hash in turn. scrypt is
- * deliberately slow, so this is capped: past MAX_ACTIVE_STAFF a login screen
- * that also asks *who you are* is the right shape, not a longer fan-out.
- *
- * Lockout is per-staff and persisted, so it survives the serverless cold
- * starts that would reset an in-memory counter.
+ * Sign-in used to identify staff from the PIN alone, testing it against every
+ * hash — so a wrong PIN had to count against *every* account, and anyone
+ * could lock the whole staff out with five guesses. Now a failure only counts
+ * against the account(s) it was aimed at.
  */
-export async function checkStaffPin(pin: string): Promise<PinCheck> {
-  await ensureSeeded();
-
-  const everyone = await Staff.find({ active: true })
-    .sort({ createdAt: 1 })
-    .limit(MAX_ACTIVE_STAFF);
-
+async function tryAccounts(accounts: StaffDoc[], pin: string): Promise<PinCheck> {
   const now = Date.now();
-  let sawLock: number | null = null;
+  if (accounts.length === 0) {
+    verifyPin(pin, DUMMY_HASH);
+    return { ok: false, reason: 'invalid' };
+  }
 
-  for (const s of everyone) {
+  for (const s of accounts) {
+    // Locked accounts are not even checked, so guessing cannot continue
+    // through a lockout.
+    if (s.lockedUntil && s.lockedUntil.getTime() > now) continue;
     if (!verifyPin(pin, s.pinHash)) continue;
-
-    // Right PIN — but this account may be locked out.
-    if (s.lockedUntil && s.lockedUntil.getTime() > now) {
-      return {
-        ok: false,
-        reason: 'locked',
-        retryAfterSeconds: Math.ceil((s.lockedUntil.getTime() - now) / 1000),
-      };
-    }
-
-    if (s.failedAttempts !== 0 || s.lockedUntil) {
-      await Staff.updateOne({ _id: s._id }, { $set: { failedAttempts: 0, lockedUntil: null } });
-    }
-    await Staff.updateOne({ _id: s._id }, { $set: { lastLoginAt: new Date() } });
-
+    await Staff.updateOne(
+      { _id: s._id },
+      { $set: { failedAttempts: 0, lockedUntil: null, lastLoginAt: new Date() } }
+    );
     return { ok: true, staff: { id: String(s._id), name: s.name, role: s.role } };
   }
 
-  // No match. Count the failure against every active account: the attacker is
-  // guessing at the whole library, and we cannot know which account they meant.
-  for (const s of everyone) {
+  let lockedFor = 0;
+  for (const s of accounts) {
+    if (s.lockedUntil && s.lockedUntil.getTime() > now) {
+      lockedFor = Math.max(lockedFor, Math.ceil((s.lockedUntil.getTime() - now) / 1000));
+      continue;
+    }
     const attempts = s.failedAttempts + 1;
-    const shouldLock = attempts >= MAX_ATTEMPTS;
-    if (shouldLock) sawLock = LOCKOUT_MS / 1000;
+    const lock = attempts >= MAX_ATTEMPTS;
+    if (lock) lockedFor = Math.max(lockedFor, LOCKOUT_MS / 1000);
     await Staff.updateOne(
       { _id: s._id },
-      {
-        $set: {
-          failedAttempts: shouldLock ? 0 : attempts,
-          lockedUntil: shouldLock ? new Date(now + LOCKOUT_MS) : null,
-        },
-      }
+      { $set: { failedAttempts: lock ? 0 : attempts, lockedUntil: lock ? new Date(now + LOCKOUT_MS) : null } }
     );
   }
+  return lockedFor > 0
+    ? { ok: false, reason: 'locked', retryAfterSeconds: lockedFor }
+    : { ok: false, reason: 'invalid' };
+}
 
-  if (sawLock !== null) {
-    return { ok: false, reason: 'locked', retryAfterSeconds: sawLock };
-  }
-  const worst = Math.min(...everyone.map((s) => MAX_ATTEMPTS - (s.failedAttempts + 1)));
-  return { ok: false, reason: 'invalid', attemptsLeft: Math.max(0, worst) };
+const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Active staff with this name, ignoring case and surrounding spaces. */
+function byName(name: string) {
+  return { active: true, name: { $regex: `^${escapeRegex(name.trim())}$`, $options: 'i' } };
+}
+
+/** Sign-in: the name says who, the PIN proves it. */
+export async function checkStaffLogin(name: string, pin: string): Promise<PinCheck> {
+  await ensureSeeded();
+  return tryAccounts(await Staff.find(byName(name)).limit(5), pin);
+}
+
+/** Re-check the signed-in person's own PIN (e.g. before changing it). */
+export async function checkStaffPinFor(staffId: string, pin: string): Promise<PinCheck> {
+  await dbConnect();
+  return tryAccounts(await Staff.find({ _id: staffId, active: true }), pin);
+}
+
+/** Names identify people at sign-in, so two active staff cannot share one. */
+export async function isNameTaken(name: string, exceptId?: string): Promise<boolean> {
+  await dbConnect();
+  return !!(await Staff.exists({ ...byName(name), ...(exceptId ? { _id: { $ne: exceptId } } : {}) }));
 }
 
 /** Change one staff member's PIN. Caller must have verified the current one. */
@@ -149,13 +158,6 @@ export async function setStaffPin(staffId: string, newPin: string): Promise<void
     { _id: staffId },
     { $set: { pinHash: hashPin(newPin), failedAttempts: 0, lockedUntil: null } }
   );
-}
-
-/** Reject a PIN already in use — two staff sharing one PIN is ambiguous. */
-export async function isPinTaken(pin: string): Promise<boolean> {
-  await dbConnect();
-  const everyone = await Staff.find({ active: true }).limit(MAX_ACTIVE_STAFF);
-  return everyone.some((s) => verifyPin(pin, s.pinHash));
 }
 
 export async function createStaff(

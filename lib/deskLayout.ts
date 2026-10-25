@@ -4,7 +4,7 @@ import type { FaceDir } from './layoutConfig.ts';
 // Desk geometry lives in lib/layoutConfig.ts with the seat table; this keeps
 // the helpers the plan and the self-check share.
 
-/** Seats in the hall (93 — numbers 1–95 without 21 and 22). */
+/** Seats in the hall (95, numbered 1–95). */
 export const TOTAL_SEATS = SEAT_COUNT;
 
 export interface SeatSlot {

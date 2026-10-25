@@ -9,6 +9,6 @@ function makeVacant(seat: number): Member {
 }
 
 export function getDefaultMembers(): Member[] {
-  // One vacant document per seat on the plan (93 — no 21 or 22).
+  // One vacant document per seat on the plan (95).
   return SEAT_NUMBERS.map(makeVacant);
 }

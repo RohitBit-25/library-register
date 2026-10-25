@@ -12,6 +12,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { MotionConfig } from 'framer-motion';
+import { PUBLIC_ROUTES } from '@/lib/routes';
 
 // ─── Public routes ──────────────────────────────────────────────
 //
@@ -28,7 +29,7 @@ import { MotionConfig } from 'framer-motion';
 // would have satisfied it was never granted by anything in the app — so
 // /browse and /my-requests redirected every real visitor straight back to
 // /landing, and the landing page's own "Choose Your Seat" button led nowhere.
-const PUBLIC_ROUTES = ['/landing', '/kiosk', '/browse', '/my-requests', '/admin/login'];
+// The list lives in lib/routes.ts, shared with proxy.ts.
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
   // Only the sidebar's "N due" badge needs numbers here. This used to call

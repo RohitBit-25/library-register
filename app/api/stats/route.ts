@@ -63,7 +63,7 @@ export async function GET() {
     };
 
     const [result] = await Member.aggregate([
-      // Only seats on the plan — rows for 21 and 22 survive from the old layout.
+      // Only seats on the plan (lib/layoutConfig).
       { $match: { seat: { $in: SEAT_NUMBERS } } },
       {
         $facet: {

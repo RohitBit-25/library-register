@@ -32,8 +32,56 @@ import PageHeader from '@/components/layout/PageHeader';
 
 type FilterTab = 'pending' | 'waitlisted' | 'approved' | 'rejected' | 'all';
 
+/**
+ * A request's uploaded ID, fetched only when staff ask for it.
+ *
+ * Opened through a blob: URL — Chrome refuses to open a data: URL in a new
+ * tab, so the old "View Document" link did nothing for PDFs.
+ */
+function RequestDocument({ id }: { id: string }) {
+  const [state, setState] = useState<{ status: 'idle' | 'loading' | 'error'; error?: string } | { status: 'ready'; dataUrl: string; blobUrl: string }>({ status: 'idle' });
+
+  const load = async () => {
+    setState({ status: 'loading' });
+    try {
+      const res = await fetch(`/api/requests/${encodeURIComponent(id)}/document`, { credentials: 'same-origin' });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || !body.documentUrl) throw new Error(body.error || 'Could not load the ID.');
+      const blob = await (await fetch(body.documentUrl)).blob();
+      const blobUrl = URL.createObjectURL(blob);
+      setState({ status: 'ready', dataUrl: body.documentUrl, blobUrl });
+    } catch (err) {
+      setState({ status: 'error', error: (err as Error).message });
+    }
+  };
+
+  return (
+    <div className="mb-3 px-3 py-2 rounded-[var(--radius-lg)] bg-[var(--sapphire-50)] border border-[var(--sapphire-200)]">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs font-bold text-[var(--sapphire-600)] flex items-center gap-1.5">
+          <FileText className="size-4" /> ID document submitted
+        </span>
+        {state.status === 'ready' ? (
+          <a href={state.blobUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-[var(--text-link)] underline flex items-center gap-1">
+            <ExternalLink className="size-4" aria-hidden="true" /> Open full size
+          </a>
+        ) : (
+          <button type="button" onClick={load} disabled={state.status === 'loading'} className="cursor-pointer text-xs font-semibold text-[var(--text-link)] underline disabled:cursor-wait disabled:opacity-60">
+            {state.status === 'loading' ? 'Loading…' : 'View ID'}
+          </button>
+        )}
+      </div>
+      {state.status === 'error' && <p className="mt-1.5 text-xs text-[var(--ruby-700)]">{state.error}</p>}
+      {state.status === 'ready' && state.dataUrl.startsWith('data:image') && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={state.dataUrl} alt="Uploaded ID document" className="mt-2 w-full max-h-48 object-contain rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)]" />
+      )}
+    </div>
+  );
+}
+
 export default function RequestsPage() {
-  const { requests, approveRequest, rejectRequest, deleteRequest } = useSeatRequests();
+  const { requests, approveRequest, rejectRequest, reopenRequest, deleteRequest } = useSeatRequests();
   const { addToast } = useToast();
   const router = useRouter();
   const [filter, setFilter] = useState<FilterTab>('pending');
@@ -61,7 +109,9 @@ export default function RequestsPage() {
     const result = await approveRequest(req.id);
 
     if (result.ok) {
-      addToast('success', `Seat #${req.seat} allotted to ${req.userName}`);
+      const moved = result.movedToWaitlist ?? 0;
+      addToast('success', `Seat #${req.seat} allotted to ${req.userName}`
+        + (moved ? `. ${moved} other request${moved === 1 ? '' : 's'} for it moved to the waitlist.` : ''));
       return;
     }
 
@@ -79,8 +129,15 @@ export default function RequestsPage() {
 
   const handleReject = async (id: string | number, seat: number) => {
     const result = await rejectRequest(id);
-    if (result.ok) addToast('warning', `Request for Seat #${seat} rejected`);
-    else addToast('error', result.error ?? 'Could not reject this request.');
+    if (!result.ok) return addToast('error', result.error ?? 'Could not reject this request.');
+    // One click, so one click back.
+    addToast('warning', `Request for Seat #${seat} rejected`, {
+      label: 'Undo',
+      onClick: async () => {
+        const undo = await reopenRequest(id);
+        addToast(undo.ok ? 'success' : 'error', undo.ok ? `Request for Seat #${seat} is pending again` : (undo.error ?? 'Could not undo.'));
+      },
+    });
   };
 
   const handleDelete = async (id: string | number) => {
@@ -245,41 +302,8 @@ export default function RequestsPage() {
                   )}
                 </div>
 
-                {/* Document Preview */}
-                {req.documentUrl && (
-                  <div className="mb-3 px-3 py-2 rounded-[var(--radius-lg)] bg-[var(--sapphire-50)] border border-[var(--sapphire-200)]">
-                    <span className="text-xs font-bold text-[var(--sapphire-600)] flex items-center gap-1.5 mb-2">
-                      <FileText className="size-4" /> ID Document Submitted
-                    </span>
-                    {req.documentUrl.startsWith('data:image') ? (
-                      <div className="relative group">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={req.documentUrl}
-                          alt="ID Document"
-                          className="w-full max-h-32 object-cover rounded-lg border border-[var(--border-default)]"
-                        />
-                        <a
-                          href={req.documentUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="absolute top-2 right-2 size-7 rounded-lg bg-[var(--text-primary)]/40 flex items-center justify-center text-[var(--text-inverse)] opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <ExternalLink className="size-4" />
-                        </a>
-                      </div>
-                    ) : (
-                      <a
-                        href={req.documentUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-[var(--text-link)] underline flex items-center gap-1"
-                      >
-                        <ExternalLink className="size-4" /> View Document
-                      </a>
-                    )}
-                  </div>
-                )}
+                {/* ID document: loaded on demand, not with the list */}
+                {req.hasDocument && <RequestDocument id={String(req.id)} />}
 
                 {/* Message */}
                 {req.message && (

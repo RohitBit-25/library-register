@@ -1,5 +1,6 @@
 /**
- * One-time seed: create the 93 vacant seat documents (1–95, no 21 or 22).
+ * Seed: create the 95 vacant seat documents (1–95), or add any that are
+ * missing from an existing database without touching the rest.
  *
  * Run with: npm run seed
  *
@@ -23,10 +24,17 @@ await mongoose.connect(uri);
 
 const existing = await Member.countDocuments();
 if (existing > 0 && !force) {
+  // Add only the seats the plan has and the database lacks (e.g. 21 and 22,
+  // placed by the door after launch). Existing members are never touched.
+  const have = new Set((await Member.find({}).select('seat').lean()).map((m) => m.seat));
+  const missing = getDefaultMembers().filter((m) => !have.has(m.seat));
+  if (missing.length) await Member.insertMany(missing);
   console.log(
-    `${existing} seat document(s) already exist — nothing to do.\n` +
-    'Pass --force to DELETE all members and reseed (destructive).'
+    missing.length
+      ? `Added ${missing.length} missing seat(s): ${missing.map((m) => m.seat).join(', ')}.`
+      : `${existing} seat document(s) already exist — nothing to add.`
   );
+  console.log('Pass --force to DELETE all members and reseed (destructive).');
   await mongoose.disconnect();
   process.exit(0);
 }

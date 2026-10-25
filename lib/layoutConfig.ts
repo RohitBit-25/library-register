@@ -14,15 +14,16 @@ export interface SeatPosition {
  * The reading hall, from the owner's seat-numbering data (2026-10-25).
  *
  * Every list runs top to bottom (columns) or left to right (bottom row);
- * pairs are [left desk, right desk]. Seats 21 and 22 do not exist — the hall
- * has 93 seats numbered 1–95.
+ * pairs are [left desk, right desk]. 95 seats, numbered 1–95. Seats 21 and
+ * 22 were missing from the first spec; the owner placed them on 2026-10-25
+ * as a pair just right of the entrance door.
  *
  *   ┌──────── AC ─────────────────── AC ─────────────────┐
  *   │95  79  70 61   52 42   32 20                 10   │
  *   │94  78  69 60   51 41   31 19                  9   │
  *   │ …   …   …       …       …                     …   │
  *   │85  71  62 53   43 33   23 11                  1   │
- *   │  84 83 82 81 80              [door]               │
+ *   │  84 83 82 81 80      [door] 21 22                 │
  *   └────────────────────────────────────────────────────┘
  */
 export const SEAT_LAYOUT = {
@@ -33,6 +34,8 @@ export const SEAT_LAYOUT = {
   col5Pairs: [[32, 20], [31, 19], [30, 18], [29, 17], [28, 16], [27, 15], [26, 14], [25, 13], [24, 12], [23, 11]],
   rightWall: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
   bottomRow: [84, 83, 82, 81, 80],
+  /** Left to right, starting next to the door. */
+  doorRight: [21, 22],
 } as const;
 
 // ─── Canvas geometry (px) ───────────────────────────────────────────
@@ -67,6 +70,8 @@ export const COLUMN_X = {
   rightWall: 1458,
 };
 export const BOTTOM_ROW = { x: 228, y: 1080 };
+/** 40px clear of the door's right edge (968), on the bottom row's line. */
+export const DOOR_RIGHT = { x: 1008, y: 1080 };
 /** Top-wall air conditioners (centre x) and the bottom-wall door. */
 export const AC_CENTERS = [422, 1238];
 export const DOOR = { cx: 880, w: 176 };
@@ -88,6 +93,7 @@ export const SEAT_GROUPS: SeatGroup[] = [
   { id: 'col5', label: 'Column 5', seats: SEAT_LAYOUT.col5Pairs.flat() },
   { id: 'rightWall', label: 'Right wall', seats: [...SEAT_LAYOUT.rightWall] },
   { id: 'bottomRow', label: 'Bottom row', seats: [...SEAT_LAYOUT.bottomRow] },
+  { id: 'doorRight', label: 'By the door', seats: [...SEAT_LAYOUT.doorRight] },
 ];
 
 interface SeatInfo extends SeatPosition {
@@ -118,9 +124,11 @@ const SEATS = new Map<number, SeatInfo>();
     SEATS.set(n, { x: COLUMN_X.rightWall, y: rowY(i), face: 'right', group: group('rightWall'), partner: null }));
   SEAT_LAYOUT.bottomRow.forEach((n, i) =>
     SEATS.set(n, { x: BOTTOM_ROW.x + i * DESK_W, y: BOTTOM_ROW.y, face: 'down', group: group('bottomRow'), partner: null }));
+  SEAT_LAYOUT.doorRight.forEach((n, i) =>
+    SEATS.set(n, { x: DOOR_RIGHT.x + i * DESK_W, y: DOOR_RIGHT.y, face: 'down', group: group('doorRight'), partner: null }));
 }
 
-/** Every real seat number, ascending (1–95 without 21 and 22). */
+/** Every seat number, ascending (1–95). */
 export const SEAT_NUMBERS: number[] = [...SEATS.keys()].sort((a, b) => a - b);
 export const SEAT_COUNT = SEAT_NUMBERS.length;
 

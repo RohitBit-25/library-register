@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
+import { ADMIN_ROUTES } from '@/lib/routes';
 
 /**
  * Server-side route protection.
@@ -15,11 +16,6 @@ import { jwtVerify } from 'jose';
  * authorization layer. Every API route still calls verifyAdmin() itself; this
  * is defence in depth for navigations.
  */
-
-const ADMIN_ROUTES = [
-  '/', '/members', '/analytics', '/requests', '/floorplan',
-  '/audit', '/export', '/attendance', '/expiry', '/setup', '/payments', '/staff',
-];
 
 /**
  * Signature check only — deliberately no database.

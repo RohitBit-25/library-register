@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-/** The student pages' footer: name, place and hours, the three doors. */
+/** The student pages' footer: name, place and hours, and where students go. */
 export default function PublicFooter() {
   return (
     <footer className="border-t-4 border-[var(--warm-ink)] bg-[var(--warm-ink)] text-[var(--warm-bg)]">
@@ -12,7 +12,6 @@ export default function PublicFooter() {
         <nav aria-label="Footer" className="flex gap-6 text-sm">
           <Link href="/browse" className="hover:underline">Seats</Link>
           <Link href="/my-requests" className="hover:underline">My requests</Link>
-          <Link href="/admin/login" className="hover:underline">Staff sign in</Link>
         </nav>
       </div>
     </footer>

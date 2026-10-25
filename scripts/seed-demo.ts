@@ -8,7 +8,7 @@
  * screen in this app is a view over real member records; pointing a data
  * generator at the live register is how a real library loses its register.
  *
- * The data is deliberately uneven: 71 of 93 seats taken, a handful expired, a
+ * The data is deliberately uneven: 71 of 95 seats taken, a handful expired, a
  * few overdue, attendance that dips on Sundays, and payments spread across
  * months. Even data hides exactly the layout problems a UI review is looking
  * for — every card the same width, every number the same digit count, no name
@@ -91,7 +91,7 @@ await Promise.all([
 ]);
 await Member.insertMany(getDefaultMembers());
 
-// 71 of 93 taken — a busy library with room to sell, which is the state the
+// 71 of 95 taken — a busy library with room to sell, which is the state the
 // dashboard is actually read in. A full house or an empty one hides the
 // middle-ground layout problems.
 const occupied = new Set<number>();

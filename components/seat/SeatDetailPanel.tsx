@@ -14,6 +14,7 @@ import { useForm, Controller, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FloatingLabelInput } from '@/components/ui/FloatingLabelInput';
+import { phoneInput } from '@/lib/schemas';
 
 const renewSchema = z.object({
   renewDate: z.string().min(1, 'Required'),
@@ -23,7 +24,7 @@ type RenewFormValues = z.infer<typeof renewSchema>;
 
 const editSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  phone: z.string().min(10, 'Valid phone required'),
+  phone: phoneInput,
   joinDate: z.string().min(1, 'Join date is required'),
   duration: z.enum(['1M', '3M', '6M', '1Y']),
   fee: z.enum(['paid', 'due']),
@@ -137,7 +138,7 @@ export default function SeatDetailPanel({
     const expiry = calcExpiry(data.joinDate, data.duration);
     onUpdate(member.seat, {
       name: data.name.trim(),
-      phone: data.phone.trim(),
+      phone: data.phone.replace(/\D/g, ''),
       joinDate: data.joinDate,
       duration: data.duration,
       expiry,

@@ -1,26 +1,38 @@
 'use client';
 
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { type Member } from '@/lib/types';
 import { calcExpiry, todayISO, cn } from '@/lib/utils';
-import { Zap, Upload, CheckCircle2, User, Phone as PhoneIcon } from 'lucide-react';
+import { Zap, User, Phone as PhoneIcon } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FloatingLabelInput } from '@/components/ui/FloatingLabelInput';
+import { phoneInput } from '@/lib/schemas';
+import { UPI, upiPayLink } from '@/lib/siteInfo';
+import { formatINR, planPrice } from '@/lib/pricing';
+import { addDaysISO } from '@/lib/seat-status';
+
+/** How far ahead a membership may start — someone paying today for Monday. */
+const MAX_DAYS_AHEAD = 7;
+
+/** What is stored when staff tick the ID box. */
+const ID_CHECKED = 'ID checked at desk';
 
 const addMemberSchema = z.object({
   seat: z.number().min(1, 'Seat is required'),
   name: z.string().min(1, 'Name is required'),
-  phone: z.string().min(10, 'Valid phone number is required'),
-  joinDate: z.string().min(1, 'Join date is required').refine(date => new Date(date) <= new Date(), {
-    message: 'Join date cannot be in the future',
-  }),
+  phone: phoneInput,
+  // ISO dates compare as strings. A start date up to a week ahead is allowed.
+  joinDate: z.string().min(1, 'Join date is required').refine(
+    (date) => date <= addDaysISO(todayISO(), MAX_DAYS_AHEAD),
+    { message: `Join date can be at most ${MAX_DAYS_AHEAD} days ahead` },
+  ),
   duration: z.enum(['1M', '3M', '6M', '1Y']),
   fee: z.enum(['paid', 'due']),
   paymentMode: z.enum(['upi', 'cash']),
-  documentStatus: z.string().min(1, 'Document is required'),
+  documentStatus: z.string().min(1, "Check the student's ID first"),
   termsAccepted: z.object({
     rules: z.boolean().refine(val => val === true, { message: 'Required' }),
     damage: z.boolean().refine(val => val === true, { message: 'Required' }),
@@ -58,6 +70,11 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
   const watchDuration = useWatch({ control, name: 'duration' });
   const watchPaymentMode = useWatch({ control, name: 'paymentMode' });
   const watchDocumentStatus = useWatch({ control, name: 'documentStatus' });
+  // Follows the plan price until staff type their own (e.g. a discount);
+  // empty puts no amount in the QR, so the student enters it in their app.
+  const [amountTyped, setAmountTyped] = useState<string | null>(null);
+  const amountText = amountTyped ?? String(planPrice(watchDuration));
+  const amount = Number(amountText) || 0;
 
   // Auto-select first vacant if available when vacantSeats changes
   useEffect(() => {
@@ -81,16 +98,10 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
     }
   }, [watchPaymentMode, setValue]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setValue('documentStatus', e.target.files[0].name, { shouldValidate: true });
-    }
-  };
-
   const handleFormSubmit = (data: AddMemberFormValues) => {
     onSubmit(data.seat, { 
       name: data.name.trim(), 
-      phone: data.phone, 
+      phone: data.phone.replace(/\D/g, ''), 
       shift: 'full', 
       joinDate: data.joinDate, 
       duration: data.duration, 
@@ -103,6 +114,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
   };
 
   const clearForm = () => {
+    setAmountTyped(null);
     reset({
       seat: vacantSeats[0] || -1,
       name: '',
@@ -178,6 +190,7 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           <FloatingLabelInput 
             label="Date of Joining" 
             type="date"
+            max={addDaysISO(todayISO(), MAX_DAYS_AHEAD)}
             error={errors.joinDate?.message}
             {...register('joinDate')}
           />
@@ -201,34 +214,23 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
           </FieldGroup>
         </div>
         
-        {/* Document Upload */}
+        {/* ID check. This was a file picker that only ever saved the file's
+            *name* — the image was never stored — so it promised a copy of the
+            ID that did not exist. Staff look at the ID; this records that. */}
         <div className="pt-2">
-          <FieldGroup label="Aadhar/Pan card" required error={errors.documentStatus?.message}>
-            <div className="relative border-2 border-dashed border-[var(--border-default)] rounded-xl p-8 hover:bg-[var(--bg-base)] transition-ui duration-200 text-center group cursor-pointer bg-surface/30">
-              <input 
-                type="file" 
-                onChange={handleFileChange}
-                accept="image/*,.pdf"
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+          <FieldGroup label="ID document" required error={errors.documentStatus?.message}>
+            <label className="flex items-start gap-4 cursor-pointer group rounded-xl border border-[var(--border-default)] p-4 hover:bg-[var(--bg-base)] transition-colors">
+              <input
+                type="checkbox"
+                checked={!!watchDocumentStatus}
+                onChange={(e) => setValue('documentStatus', e.target.checked ? ID_CHECKED : '', { shouldValidate: true })}
+                className="mt-1 size-5 rounded border-2 border-[var(--border-default)] accent-[var(--saffron-500)] cursor-pointer"
               />
-              {watchDocumentStatus ? (
-                <div className="flex flex-col items-center gap-2">
-                  <CheckCircle2 className="size-10 text-[var(--emerald-600)] shrink-0 drop-shadow-sm" />
-                  <span className="text-sm font-bold text-[var(--text-primary)]">{watchDocumentStatus}</span>
-                  <span className="text-xs font-semibold text-[var(--text-secondary)] group-hover:text-[var(--saffron-600)] transition-colors">Click to replace file</span>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center gap-3 text-[var(--text-secondary)] group-hover:text-[var(--saffron-600)] transition-colors">
-                  <div className="bg-[var(--bg-base)] p-3 rounded-full shadow-sm border border-[var(--border-default)] transition-transform group-hover:scale-110 duration-200">
-                    <Upload className="size-5 text-current" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold block text-[var(--saffron-600)] drop-shadow-sm">Add file</span>
-                    <span className="mt-1 block text-xs font-medium text-[var(--text-tertiary)]">JPEG, PNG, WebP or PDF · up to 2 MB</span>
-                  </div>
-                </div>
-              )}
-            </div>
+              <span className="text-sm leading-relaxed">
+                <span className="block font-medium text-[var(--text-primary)]">I have checked the student&apos;s ID at the desk</span>
+                <span className="mt-0.5 block text-[var(--text-secondary)]">Aadhaar, PAN or college ID. Seen in person — no copy is stored.</span>
+              </span>
+            </label>
           </FieldGroup>
         </div>
       </div>
@@ -259,16 +261,34 @@ export default function AddMemberForm({ vacantSeats, onSubmit, initialData }: Ad
         {watchPaymentMode === 'upi' && (
           <div className="bg-[var(--bg-base)] rounded-xl p-6 flex flex-col items-center justify-center border border-[var(--border-default)] mt-2 text-center animate-in fade-in zoom-in-95 duration-200 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 w-full h-1 bg-[var(--saffron-500)]" />
-            <p className="text-sm font-semibold text-[var(--text-primary)] mb-4">Scan to pay via UPI</p>
+            <label htmlFor="add-amount" className="mb-1.5 self-stretch text-left text-sm font-medium text-[var(--text-primary)]">
+              Amount (₹)
+            </label>
+            <input
+              id="add-amount"
+              type="text"
+              inputMode="numeric"
+              value={amountText}
+              onChange={(e) => setAmountTyped(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              className="mb-1.5 w-full min-h-[44px] rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] px-3.5 font-mono text-base tabular text-[var(--text-primary)] focus:border-[var(--saffron-600)] focus:outline-none focus:ring-2 focus:ring-[var(--saffron-600)]/20"
+            />
+            <p className="mb-4 self-stretch text-left text-xs text-[var(--text-secondary)]">
+              {watchDuration} plan is {formatINR(planPrice(watchDuration))}. Clear it to let the student enter the amount in their app.
+            </p>
+            <p className="text-sm font-semibold text-[var(--text-primary)] mb-4">
+              {amount > 0
+                ? <>Scan to pay <span className="tabular">{formatINR(amount)}</span> via UPI</>
+                : 'Scan, then enter the amount in the UPI app'}
+            </p>
             <div className="p-3 bg-[var(--bg-surface)] rounded-xl shadow-sm border border-black/5">
               <QRCodeCanvas 
-                value={`upi://pay?pa=9462572575@axl&pn=KAMLESH%20SINGH%20ASDLIYA&cu=INR`}
+                value={upiPayLink(amount, `Seat ${watchSeat} ${watchDuration}`)}
                 size={160}
                 level="H"
                 includeMargin={true}
               />
             </div>
-            <p className="text-xs font-bold text-[var(--text-secondary)] mt-4 px-4 py-1.5 bg-[var(--bg-surface)] border rounded-full drop-shadow-sm">UPI ID: 9462572575@axl</p>
+            <p className="text-xs font-bold text-[var(--text-secondary)] mt-4 px-4 py-1.5 bg-[var(--bg-surface)] border rounded-full drop-shadow-sm">UPI ID: {UPI.id}</p>
           </div>
         )}
       </div>

@@ -248,7 +248,6 @@ export function useMembers() {
     seats: number[],
     onError?: (msg: string) => void
   ) => {
-    const previousData = rawMembers ? [...rawMembers] : undefined;
 
     mutate(
       (current) => {
@@ -269,27 +268,30 @@ export function useMembers() {
         )
       );
 
-      const failures = results.filter(r => r.status === 'rejected');
+      // fetchWithRetry resolves on a 4xx (an expired session, a seat that
+      // changed underneath us), so a refused response counts as a failure too.
+      const failures = results.filter(r => r.status === 'rejected' || !r.value.ok);
       if (failures.length > 0) {
         throw new Error(`${failures.length} of ${seats.length} updates failed`);
       }
 
       mutate();
     } catch (err) {
-      if (previousData) mutate(previousData, false);
+      // Some seats may have gone through: reload what the server holds rather
+      // than restoring a snapshot that would hide them.
+      mutate();
 
       const msg = `Bulk payment update failed. ${(err as Error).message}`;
       setLastError({ message: msg, action: 'bulkMarkPaid', timestamp: Date.now() });
       onError?.(msg);
     }
-  }, [mutate, rawMembers]);
+  }, [mutate]);
 
   // ─── Bulk remove with rollback ───────────────────────────────
   const bulkRemove = useCallback(async (
     seats: number[],
     onError?: (msg: string) => void
   ) => {
-    const previousData = rawMembers ? [...rawMembers] : undefined;
 
     mutate(
       (current) => {
@@ -319,20 +321,24 @@ export function useMembers() {
         )
       );
 
-      const failures = results.filter(r => r.status === 'rejected');
+      // fetchWithRetry resolves on a 4xx (an expired session, a seat that
+      // changed underneath us), so a refused response counts as a failure too.
+      const failures = results.filter(r => r.status === 'rejected' || !r.value.ok);
       if (failures.length > 0) {
         throw new Error(`${failures.length} of ${seats.length} removals failed`);
       }
 
       mutate();
     } catch (err) {
-      if (previousData) mutate(previousData, false);
+      // Some seats may have gone through: reload what the server holds rather
+      // than restoring a snapshot that would hide them.
+      mutate();
 
       const msg = `Bulk remove failed. ${(err as Error).message}`;
       setLastError({ message: msg, action: 'bulkRemove', timestamp: Date.now() });
       onError?.(msg);
     }
-  }, [mutate, rawMembers]);
+  }, [mutate]);
 
   return {
     members,

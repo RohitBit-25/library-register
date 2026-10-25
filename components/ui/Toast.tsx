@@ -66,6 +66,15 @@ export default function ToastContainer({ toasts, onRemove }: ToastContainerProps
               <p className="text-sm font-[var(--font-body)] text-[var(--text-primary)] flex-1 leading-[1.5]">
                 {t.message}
               </p>
+              {t.action && (
+                <button
+                  type="button"
+                  onClick={() => { t.action!.onClick(); onRemove(t.id); }}
+                  className="shrink-0 cursor-pointer rounded-[var(--radius-sm)] px-2 py-1 text-sm font-semibold text-[var(--text-primary)] underline underline-offset-4 hover:bg-[var(--bg-muted)]"
+                >
+                  {t.action.label}
+                </button>
+              )}
               <button
                 onClick={() => onRemove(t.id)}
                 className="shrink-0 cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors p-1 -mr-1"

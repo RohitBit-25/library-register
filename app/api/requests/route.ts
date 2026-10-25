@@ -51,7 +51,13 @@ export async function GET() {
 
   try {
     await dbConnect();
-    const requests = await SeatRequest.find({}).sort({ createdAt: -1 }).lean<RequestRecord[]>();
+    // Everything except the uploaded ID itself (up to ~2.8MB each) — that is
+    // fetched one at a time from /api/requests/:id/document.
+    const requests = await SeatRequest.aggregate<RequestRecord>([
+      { $sort: { createdAt: -1 } },
+      { $addFields: { hasDocument: { $gt: [{ $strLenBytes: { $ifNull: ['$documentUrl', ''] } }, 0] } } },
+      { $project: { documentUrl: 0 } },
+    ]);
     return NextResponse.json(requests.map(serializeRequest), {
       headers: { 'Cache-Control': 'no-store' },
     });
@@ -245,6 +251,14 @@ export async function PATCH(request: Request) {
     req.status = 'approved';
     await req.save();
 
+    // Anyone else waiting on this seat can no longer get it. Left "pending",
+    // they sat in the queue looking actionable and the student was never told;
+    // on the waitlist, My requests says the seat went first and they are next.
+    const moved = await SeatRequest.updateMany(
+      { seat: req.seat, status: 'pending', _id: { $ne: req._id } },
+      { $set: { status: 'waitlisted' } }
+    );
+
     // Approval marks the fee paid, so it is a collection like any other. It
     // used to set fee: 'paid' without a ledger row, so every fee taken through
     // a student request was missing from Collections.
@@ -264,13 +278,15 @@ export async function PATCH(request: Request) {
     await AuditLog.create({
       user: session.name,
       action: 'Approved Request',
-      details: `Seat ${req.seat} allotted to ${req.userName} (${duration})`,
+      details: `Seat ${req.seat} allotted to ${req.userName} (${duration})`
+        + (moved.modifiedCount ? `; ${moved.modifiedCount} other request(s) moved to the waitlist` : ''),
       seat: req.seat,
     });
 
     return NextResponse.json({
       ...serializeRequest(req.toObject()),
       allottedMember: allotted,
+      movedToWaitlist: moved.modifiedCount,
     });
   } catch (error) {
     return apiError('PATCH /api/requests', 'Failed to update request', error);

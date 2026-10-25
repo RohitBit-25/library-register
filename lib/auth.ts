@@ -8,13 +8,14 @@
  * Removed with the role itself; see hooks/useAuth.tsx.
  */
 export async function loginAsAdminService(
+  name: string,
   pin: string
 ): Promise<{ ok: boolean; error?: string }> {
   try {
     const res = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pin }),
+      body: JSON.stringify({ name, pin }),
       credentials: 'same-origin',
     });
 

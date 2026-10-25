@@ -6,7 +6,7 @@ import dbConnect from '@/lib/mongodb';
 import Staff from '@/models/Staff';
 import AuditLog from '@/models/AuditLog';
 import { getSession } from '@/lib/auth-server';
-import { createStaff, isPinTaken, listStaff, PIN_PATTERN } from '@/lib/pin-store';
+import { createStaff, isNameTaken, listStaff, PIN_PATTERN } from '@/lib/pin-store';
 import { formatZodError } from '@/lib/schemas';
 
 export const dynamic = 'force-dynamic';
@@ -55,11 +55,10 @@ export async function POST(request: Request) {
     }
     const { name, pin, role } = parsed.data;
 
-    // The PIN is the only identifier at sign-in, so a duplicate would make
-    // both the login and the resulting audit trail ambiguous.
-    if (await isPinTaken(pin)) {
+    // The name is who signs in, so two active staff cannot share one.
+    if (await isNameTaken(name)) {
       return NextResponse.json(
-        { error: 'That PIN is already in use. Choose a different one.' },
+        { error: `Someone called ${name} already has access. Add a surname or initial.` },
         { status: 409 }
       );
     }
@@ -117,6 +116,17 @@ export async function PATCH(request: Request) {
             { status: 400 }
           );
         }
+      }
+    }
+
+    if (active) {
+      const target = await Staff.findById(id).select('name');
+      if (!target) return NextResponse.json({ error: 'Staff not found' }, { status: 404 });
+      if (await isNameTaken(target.name, id)) {
+        return NextResponse.json(
+          { error: `Someone else called ${target.name} already has access.` },
+          { status: 409 }
+        );
       }
     }
 

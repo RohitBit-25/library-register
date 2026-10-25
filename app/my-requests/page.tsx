@@ -14,24 +14,24 @@ export default function MyRequestsPage() {
   const { lookupByPhone, storedUserPhone, requests: autoRequests } = useSeatRequests();
   const router = useRouter();
 
-  const [phone, setPhone] = useState(storedUserPhone || '');
-  const [results, setResults] = useState<SeatRequest[] | null>(
-    autoRequests.length > 0 ? autoRequests : null
-  );
+  // null until the student types: until then the box shows the number they
+  // used last time, which only appears after hydration.
+  const [typed, setTyped] = useState<string | null>(null);
+  const phone = typed ?? storedUserPhone;
+  const [results, setResults] = useState<SeatRequest[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [searched, setSearched] = useState(!!storedUserPhone && autoRequests.length > 0);
 
   const handleSearch = useCallback(async () => {
     if (phone.length < 10) return;
     setLoading(true);
     const data = await lookupByPhone(phone);
     setResults(data);
-    setSearched(true);
     setLoading(false);
   }, [phone, lookupByPhone]);
 
   // If user already has auto-loaded data and hasn't searched yet, use it
   const displayResults = results ?? (autoRequests.length > 0 ? autoRequests : null);
+  const searched = displayResults !== null;
 
   const pendingCount = displayResults?.filter(r => r.status === 'pending').length ?? 0;
   const approvedCount = displayResults?.filter(r => r.status === 'approved').length ?? 0;
@@ -39,7 +39,7 @@ export default function MyRequestsPage() {
 
   const STATUS = {
     pending:    { label: 'Waiting for the desk', note: 'The librarian will check your payment and allot the seat.', text: 'text-[var(--indigo-600)]', Icon: Clock },
-    waitlisted: { label: 'On the waitlist', note: 'The seat was taken first. You are next in line when one frees up.', text: 'text-[var(--marigold-700)]', Icon: Clock },
+    waitlisted: { label: 'On the waitlist', note: 'This desk went to someone else first. You are on the waitlist — the librarian will offer you the next free desk.', text: 'text-[var(--marigold-700)]', Icon: Clock },
     approved:   { label: 'Seat allotted', note: 'Payment verified — the seat is yours from your joining date.', text: 'text-[var(--emerald-600)]', Icon: CheckCircle },
     rejected:   { label: 'Not approved', note: 'Please speak to the librarian at the desk.', text: 'text-[var(--ruby-600)]', Icon: XCircle },
   } as const;
@@ -69,9 +69,9 @@ export default function MyRequestsPage() {
               inputMode="numeric"
               autoComplete="tel-national"
               value={phone}
-              onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+              onChange={e => setTyped(e.target.value.replace(/\D/g, '').slice(0, 10))}
               placeholder="10-digit mobile number"
-              className="min-h-[52px] w-full bg-transparent pl-10 pr-3 font-pixel text-lg tracking-wider text-[var(--warm-ink)] tabular placeholder:font-body placeholder:text-base placeholder:tracking-normal placeholder:text-[var(--text-tertiary)] focus:outline-none focus-visible:bg-[var(--warm-tint)]"
+              className="min-h-[52px] w-full bg-transparent pl-10 pr-3 font-mono text-lg tracking-wider text-[var(--warm-ink)] tabular placeholder:font-body placeholder:text-base placeholder:tracking-normal placeholder:text-[var(--text-tertiary)] focus:outline-none focus-visible:bg-[var(--warm-tint)]"
             />
           </div>
           <PixelButton type="submit" disabled={phone.length < 10 || loading}>
