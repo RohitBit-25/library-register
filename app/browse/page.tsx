@@ -12,7 +12,7 @@ import Segmented from '@/components/ui/Segmented';
 import { Button } from '@/components/ui/Button';
 import { SeatSkeleton } from '@/components/ui/Skeleton';
 import { Check, Minus, Plus as PlusIcon, Maximize2, ArrowRight } from 'lucide-react';
-import { seatAmenities, seatRow } from '@/lib/layoutConfig';
+import { seatAmenities, seatRow, isSeat } from '@/lib/layoutConfig';
 import { cn } from '@/lib/utils';
 
 /** Below Tailwind's `lg`: no room for the side panel, so a tap goes straight to the form. */
@@ -30,10 +30,10 @@ function useIsNarrow() {
 
 const LEGEND = [
   // Same mats as the desks on the plan (components/seat/PublicSeatMap).
-  { label: 'Free', swatch: 'border-[var(--emerald-500)]/70 bg-[#DDF3E4]' },
-  { label: 'Your pick', swatch: 'border-[var(--saffron-700)] bg-[var(--saffron-600)]' },
-  { label: 'Requested', swatch: 'border-dashed border-[var(--saffron-400)] bg-[#FDE8D6]' },
-  { label: 'Taken', swatch: 'border-[#CFCAC3] bg-[#E6E3DF]' },
+  { label: 'Available', swatch: 'border-[var(--emerald-500)]/70 bg-[#DDF3E4]' },
+  { label: 'Selected', swatch: 'border-[var(--saffron-700)] bg-[var(--saffron-600)]' },
+  { label: 'Requested', swatch: 'border-dashed border-[var(--marigold-500)] bg-[#FEF3C7]' },
+  { label: 'Booked', swatch: 'border-[var(--ruby-300)] bg-[#FCE1E1]' },
 ];
 
 export default function BrowsePage() {
@@ -59,7 +59,7 @@ export default function BrowsePage() {
   // /browse?seat=41 — the landing page's plan links straight to a seat.
   useEffect(() => {
     const n = Number(new URLSearchParams(window.location.search).get('seat'));
-    if (n >= 1 && n <= 95) queueMicrotask(() => setSelectedSeat(n));
+    if (isSeat(n)) queueMicrotask(() => setSelectedSeat(n));
   }, []);
 
   const filtered = useMemo(() => {
@@ -132,7 +132,7 @@ export default function BrowsePage() {
             </h1>
             <p className="mt-1.5 text-sm text-[var(--text-secondary)]">
               {isLoading ? 'Loading the hall…' : (
-                <><span className="font-mono tabular text-[var(--text-primary)]">{freeCount}</span> of 95 free right now. Tap a green seat to request it.</>
+                <><span className="font-mono tabular text-[var(--text-primary)]">{freeCount}</span> of {members.length} free right now. Tap a green seat to request it.</>
               )}
             </p>
           </div>
@@ -187,12 +187,20 @@ export default function BrowsePage() {
             </div>
 
             <ul className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--text-secondary)]" aria-label="Legend">
-              {LEGEND.map((l) => (
-                <li key={l.label} className="flex items-center gap-1.5">
-                  <span className={cn('size-3 rounded-[3px] border', l.swatch)} aria-hidden="true" />
-                  {l.label}
-                </li>
-              ))}
+              {LEGEND.map((l) => {
+                // Live counts; "Selected" is your own pick, so it has none.
+                const n = l.label === 'Available' ? availableSeats.length
+                  : l.label === 'Requested' ? requestedSeats.size
+                  : l.label === 'Booked' ? members.length - freeCount
+                  : null;
+                return (
+                  <li key={l.label} className="flex items-center gap-1.5">
+                    <span className={cn('size-3 rounded-[3px] border', l.swatch)} aria-hidden="true" />
+                    {l.label}
+                    {n !== null && !isLoading && <span className="font-mono tabular text-[var(--text-tertiary)]">{n}</span>}
+                  </li>
+                );
+              })}
             </ul>
 
             {/* On a phone the plan shrinks past a usable tap size, so the same

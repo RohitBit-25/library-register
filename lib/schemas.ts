@@ -1,11 +1,13 @@
 import { z } from 'zod';
+import { isSeat, SEAT_COUNT } from './layoutConfig.ts';
 
 // ─── Shared API validation ──────────────────────────────────────
 // Every route body is parsed through one of these. Previously routes used
 // ad-hoc `if (!data.seat)` checks, which let unbounded seat numbers, oversized
 // base64 uploads, and arbitrary $set payloads through.
 
-export const TOTAL_SEATS = 95;
+/** Seats in the hall: 93, numbered 1–95 with no 21 or 22 (lib/layoutConfig). */
+export const TOTAL_SEATS = SEAT_COUNT;
 
 /** Max characters for a base64 data URI. 2MB binary ≈ 2.8MB base64. */
 const MAX_DOCUMENT_CHARS = 2_900_000;
@@ -14,7 +16,10 @@ export const seatNumber = z.coerce
   .number()
   .int('Seat must be a whole number')
   .min(1, 'Seat must be at least 1')
-  .max(TOTAL_SEATS, `Seat must be at most ${TOTAL_SEATS}`);
+  .max(95, 'Seat must be at most 95')
+  // The numbering has gaps (no 21 or 22), so the range alone is not enough —
+  // every route that takes a seat rejects a number that is not on the plan.
+  .refine(isSeat, 'There is no seat with that number');
 
 export const phone = z
   .string()

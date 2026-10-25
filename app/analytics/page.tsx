@@ -1,6 +1,7 @@
 'use client';
 
 import { STATUS_STYLE } from '@/components/seat/statusStyle';
+import { SEAT_COUNT } from '@/lib/layoutConfig';
 
 import { useMembers } from '@/hooks/useMembers';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
@@ -91,7 +92,7 @@ export default function DashboardPage() {
           actions={
             <div className="hidden items-center gap-2 rounded-lg bg-[var(--bg-muted)] px-3 py-1.5 text-xs font-semibold tabular text-[var(--text-secondary)] sm:flex">
               <TrendingUp className="size-4 text-[var(--emerald-600)]" aria-hidden="true" />
-              {Math.round((stats.occupied / 95) * 100)}% occupied
+              {Math.round((stats.occupied / SEAT_COUNT) * 100)}% occupied
             </div>
           }
         />

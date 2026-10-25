@@ -3,184 +3,213 @@
 export type FaceDir = 'up' | 'down' | 'left' | 'right';
 
 export interface SeatPosition {
-  /** Desk column, 1–10 — two per row (island), left to right. */
+  /** Desk top-left on the plan canvas, in px. */
   x: number;
-  /** Desk row within the island, 1–10, top to bottom. */
   y: number;
-  /** Which way the person sitting there faces. */
+  /** Which way the person sitting there faces (the chair is behind them). */
   face: FaceDir;
 }
 
-export interface WallDetail {
-  label: string;
-  /** First and last desk column (top/bottom walls) or desk row (side walls). */
-  start: number;
-  end: number;
-  wall: 'top' | 'bottom' | 'left' | 'right';
-  type: 'window' | 'ac';
-}
+/**
+ * The reading hall, from the owner's seat-numbering data (2026-10-25).
+ *
+ * Every list runs top to bottom (columns) or left to right (bottom row);
+ * pairs are [left desk, right desk]. Seats 21 and 22 do not exist — the hall
+ * has 93 seats numbered 1–95.
+ *
+ *   ┌──────── AC ─────────────────── AC ─────────────────┐
+ *   │95  79  70 61   52 42   32 20                 10   │
+ *   │94  78  69 60   51 41   31 19                  9   │
+ *   │ …   …   …       …       …                     …   │
+ *   │85  71  62 53   43 33   23 11                  1   │
+ *   │  84 83 82 81 80              [door]               │
+ *   └────────────────────────────────────────────────────┘
+ */
+export const SEAT_LAYOUT = {
+  leftWall: [95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85],
+  col2: [79, 78, 77, 76, 75, 74, 73, 72, 71],
+  col3Pairs: [[70, 61], [69, 60], [68, 59], [67, 58], [66, 57], [65, 56], [64, 55], [63, 54], [62, 53]],
+  col4Pairs: [[52, 42], [51, 41], [50, 40], [49, 39], [48, 38], [47, 37], [46, 36], [45, 35], [44, 34], [43, 33]],
+  col5Pairs: [[32, 20], [31, 19], [30, 18], [29, 17], [28, 16], [27, 15], [26, 14], [25, 13], [24, 12], [23, 11]],
+  rightWall: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+  bottomRow: [84, 83, 82, 81, 80],
+} as const;
+
+// ─── Canvas geometry (px) ───────────────────────────────────────────
+//
+// 1600 × 1200 canvas as specified. Column x-positions follow the drawing —
+// the spec's own numbers put Column 3 and Column 4 ten pixels apart, which
+// the drawing does not, and the spec says to adjust where needed.
+
+export const ROOM = { WIDTH: 1600, HEIGHT: 1200, WALL: 18 };
+export const DESK_W = 84;
+export const DESK_H = 70;
+/**
+ * Chairs sit beside their desks (left/right), so rows only need a hairline
+ * gap — the desks of a column read as one long table. A chair is 48px along
+ * the row, inside the 80px pitch, so neighbouring chairs never touch.
+ */
+export const CHAIR = { W: 48, D: 28, GAP: 4 };
+export const ROW_PITCH = 80;
+export const START_Y = 140;
 
 /**
- * The reading hall, as the owner drew it (2026-10-25).
- *
- * Five islands of desks, Row A to Row E, each two desks wide with the chairs
- * on the outside, so the two people at a row of the island sit facing each
- * other across the joined desks. Rows A–D are ten desks deep; Row E is eight
- * on the left and seven on the right, which is what brings the hall to 95.
- * The entrance is centred on the top wall; windows on both side walls and
- * the bottom wall; an air conditioner at each end of the bottom wall.
- *
- *   ROW A      ROW B      ROW C      ROW D      ROW E
- *    1 │11     21 │31     41 │51     61 │71     81 │89
- *    2 │12     22 │32     42 │52     62 │72     82 │90
- *    …          …          …          …          …
- *                                               88 │95
- *   10 │20     30 │40     50 │60     70 │80
- *
- * Numbering runs down the left column of an island, then down the right.
+ * Desk x-positions, laid out so every aisle between chair edges is the same
+ * 88px: wall desk + chair | chair + Column 2 | chair + table + chair (×3) |
+ * chair + wall desk, with 40px to each wall.
  */
-export const LAYOUT_CONFIG = {
-  /** Desk columns (5 islands × 2) and the deepest island's desk rows. */
-  COLS: 10,
-  ROWS: 10,
-  WALL_DETAILS: [
-    { label: 'Window', start: 2, end: 4, wall: 'left', type: 'window' },
-    { label: 'Window', start: 6, end: 8, wall: 'left', type: 'window' },
-    { label: 'Window', start: 2, end: 4, wall: 'right', type: 'window' },
-    { label: 'Window', start: 6, end: 8, wall: 'right', type: 'window' },
-    { label: 'Window', start: 4, end: 5, wall: 'bottom', type: 'window' },
-    { label: 'Window', start: 6, end: 7, wall: 'bottom', type: 'window' },
-    { label: 'AC', start: 1, end: 2, wall: 'bottom', type: 'ac' },
-    { label: 'AC', start: 9, end: 10, wall: 'bottom', type: 'ac' },
-  ] as WallDetail[],
-  /** The entrance sits over island C (desk columns 5–6). */
-  ENTRANCE_COLS: [5, 6] as const,
+export const COLUMN_X = {
+  leftWall: 58,
+  col2: 294,
+  col3: 498,
+  col4: 818,
+  col5: 1138,
+  rightWall: 1458,
 };
+export const BOTTOM_ROW = { x: 228, y: 1080 };
+/** Top-wall air conditioners (centre x) and the bottom-wall door. */
+export const AC_CENTERS = [422, 1238];
+export const DOOR = { cx: 880, w: 176 };
 
-/**
- * The islands, each one lettered row of the plan. `first`/`last` are seat
- * numbers; `leftCount` is how many desks run down the left column before the
- * numbering continues down the right.
- */
-export const SEAT_ROWS = [
-  { label: 'Row A', letter: 'A', first: 1, last: 20, leftCount: 10 },
-  { label: 'Row B', letter: 'B', first: 21, last: 40, leftCount: 10 },
-  { label: 'Row C', letter: 'C', first: 41, last: 60, leftCount: 10 },
-  { label: 'Row D', letter: 'D', first: 61, last: 80, leftCount: 10 },
-  { label: 'Row E', letter: 'E', first: 81, last: 95, leftCount: 8 },
-] as const;
+// ─── Seat table, built once from the lists above ────────────────────
 
-export type SeatRowLabel = (typeof SEAT_ROWS)[number]['label'];
-
-/** Which lettered row (island) a seat belongs to. */
-export function seatRow(n: number): SeatRowLabel {
-  const row = SEAT_ROWS.find((r) => n >= r.first && n <= r.last);
-  // Unreachable for seats 1–95; falling back keeps a bad seat number visible
-  // rather than dropping it out of the list entirely.
-  return (row ?? SEAT_ROWS[0]).label;
+export interface SeatGroup {
+  id: string;
+  label: string;
+  /** Seats in reading order: top to bottom, left to right within a pair. */
+  seats: number[];
 }
 
-/** Where each seat sits on the grid, and which way the person faces. */
+export const SEAT_GROUPS: SeatGroup[] = [
+  { id: 'leftWall', label: 'Left wall', seats: [...SEAT_LAYOUT.leftWall] },
+  { id: 'col2', label: 'Column 2', seats: [...SEAT_LAYOUT.col2] },
+  { id: 'col3', label: 'Column 3', seats: SEAT_LAYOUT.col3Pairs.flat() },
+  { id: 'col4', label: 'Column 4', seats: SEAT_LAYOUT.col4Pairs.flat() },
+  { id: 'col5', label: 'Column 5', seats: SEAT_LAYOUT.col5Pairs.flat() },
+  { id: 'rightWall', label: 'Right wall', seats: [...SEAT_LAYOUT.rightWall] },
+  { id: 'bottomRow', label: 'Bottom row', seats: [...SEAT_LAYOUT.bottomRow] },
+];
+
+interface SeatInfo extends SeatPosition {
+  group: SeatGroup;
+  /** The seat sharing the table, for the paired columns. */
+  partner: number | null;
+}
+
+const SEATS = new Map<number, SeatInfo>();
+{
+  const group = (id: string) => SEAT_GROUPS.find((g) => g.id === id)!;
+  const rowY = (i: number) => START_Y + i * ROW_PITCH;
+  SEAT_LAYOUT.leftWall.forEach((n, i) =>
+    SEATS.set(n, { x: COLUMN_X.leftWall, y: rowY(i), face: 'left', group: group('leftWall'), partner: null }));
+  // Column 2: chair on the left, facing right.
+  SEAT_LAYOUT.col2.forEach((n, i) =>
+    SEATS.set(n, { x: COLUMN_X.col2, y: rowY(i), face: 'right', group: group('col2'), partner: null }));
+  for (const [key, pairs] of [['col3', SEAT_LAYOUT.col3Pairs], ['col4', SEAT_LAYOUT.col4Pairs], ['col5', SEAT_LAYOUT.col5Pairs]] as const) {
+    pairs.forEach(([l, r], i) => {
+      const x = COLUMN_X[key];
+      // The pair faces each other across the joined table: the left desk's
+      // chair is on the outer left, the right desk's on the outer right.
+      SEATS.set(l, { x, y: rowY(i), face: 'right', group: group(key), partner: r });
+      SEATS.set(r, { x: x + DESK_W, y: rowY(i), face: 'left', group: group(key), partner: l });
+    });
+  }
+  SEAT_LAYOUT.rightWall.forEach((n, i) =>
+    SEATS.set(n, { x: COLUMN_X.rightWall, y: rowY(i), face: 'right', group: group('rightWall'), partner: null }));
+  SEAT_LAYOUT.bottomRow.forEach((n, i) =>
+    SEATS.set(n, { x: BOTTOM_ROW.x + i * DESK_W, y: BOTTOM_ROW.y, face: 'down', group: group('bottomRow'), partner: null }));
+}
+
+/** Every real seat number, ascending (1–95 without 21 and 22). */
+export const SEAT_NUMBERS: number[] = [...SEATS.keys()].sort((a, b) => a - b);
+export const SEAT_COUNT = SEAT_NUMBERS.length;
+
+/** The box a seat's chair occupies: behind the person, clear of the desk. */
+export function chairRect(n: number): { x: number; y: number; w: number; h: number } {
+  const s = SEATS.get(n);
+  if (!s) return { x: 0, y: 0, w: 0, h: 0 };
+  const { W, D, GAP } = CHAIR;
+  switch (s.face) {
+    case 'down': return { x: s.x + (DESK_W - W) / 2, y: s.y - GAP - D, w: W, h: D };
+    case 'up': return { x: s.x + (DESK_W - W) / 2, y: s.y + DESK_H + GAP, w: W, h: D };
+    case 'left': return { x: s.x + DESK_W + GAP, y: s.y + (DESK_H - W) / 2, w: D, h: W };
+    case 'right': return { x: s.x - GAP - D, y: s.y + (DESK_H - W) / 2, w: D, h: W };
+  }
+}
+
+/** True for a number that is a seat in the hall. */
+export function isSeat(n: number): boolean {
+  return SEATS.has(n);
+}
+
+/** Where a seat sits on the plan, and which way the person faces. */
 export function getSeatPositionConfig(n: number): SeatPosition {
-  const island = SEAT_ROWS.findIndex((r) => n >= r.first && n <= r.last);
-  if (island === -1) return { x: 1, y: 1, face: 'right' };
-  const r = SEAT_ROWS[island];
-  const i = n - r.first;
-  const onLeft = i < r.leftCount;
-  return {
-    x: island * 2 + (onLeft ? 1 : 2),
-    y: onLeft ? i + 1 : i - r.leftCount + 1,
-    // Chairs are on the outside of the island, so the left column faces
-    // right (towards its partner) and the right column faces left.
-    face: onLeft ? 'right' : 'left',
-  };
+  const s = SEATS.get(n);
+  return s ? { x: s.x, y: s.y, face: s.face } : { x: 0, y: 0, face: 'down' };
 }
 
-/**
- * How far off the travel line a candidate may sit, in grid cells.
- *
- * Up/down stay in their own column — any drift there jumps across an aisle
- * into the next island. Left/right may drift one row, so stepping across from
- * Row D into Row E's shorter right column still lands somewhere.
- */
-const MAX_DRIFT_ACROSS = 1;
-const MAX_DRIFT_ALONG_COLUMN = 0;
+export type SeatRowLabel = string;
+
+/** The group a seat belongs to, as named on the owner's plan. */
+export function seatRow(n: number): SeatRowLabel {
+  return SEATS.get(n)?.group.label ?? '';
+}
+
+/** The seat sharing a table with `n`, or null for single desks. */
+export function partnerSeat(n: number): number | null {
+  return SEATS.get(n)?.partner ?? null;
+}
 
 /**
  * The seat nearest to `from` in the given direction, or null at the edge.
  *
- * Arrow keys move the way the eye does — across the plan — not in seat-number
- * order, which jumps from the bottom of one column to the top of the next.
- * Candidates are ranked by distance along the travel axis first, then by
- * sideways offset.
+ * Measured on the plan, not by seat number, so the arrow keys move the way
+ * the eye does. Up/down stays within the same column; left/right stays on
+ * the same row band and crosses tables and aisles.
  */
 export function nextSeatInDirection(
   from: number,
   dir: FaceDir,
   seats: number[]
 ): number | null {
-  const origin = getSeatPositionConfig(from);
+  const o = SEATS.get(from);
+  if (!o) return null;
+  const ox = o.x + DESK_W / 2, oy = o.y + DESK_H / 2;
   const alongX = dir === 'left' || dir === 'right';
   const sign = dir === 'right' || dir === 'down' ? 1 : -1;
 
   let best: number | null = null;
   let bestScore = Infinity;
-
   for (const seat of seats) {
     if (seat === from) continue;
-    const p = getSeatPositionConfig(seat);
-    const travel = (alongX ? p.x - origin.x : p.y - origin.y) * sign;
+    const p = SEATS.get(seat);
+    if (!p) continue;
+    const px = p.x + DESK_W / 2, py = p.y + DESK_H / 2;
+    const travel = (alongX ? px - ox : py - oy) * sign;
     if (travel <= 0) continue;
-    const sideways = Math.abs(alongX ? p.y - origin.y : p.x - origin.x);
-    if (sideways > (alongX ? MAX_DRIFT_ACROSS : MAX_DRIFT_ALONG_COLUMN)) continue;
-    // Travel dominates; sideways only breaks ties within the same step.
+    const sideways = Math.abs(alongX ? py - oy : px - ox);
+    if (sideways > (alongX ? DESK_H / 2 : DESK_W / 2)) continue;
     const score = travel * 100 + sideways;
-    if (score < bestScore) {
-      bestScore = score;
-      best = seat;
-    }
+    if (score < bestScore) { bestScore = score; best = seat; }
   }
   return best;
 }
 
 /**
- * What is actually true about a seat's position, derived from the plan.
- *
- * Deliberately conservative: a seat is "next to a window" only when it is the
- * outer column against that wall, or the bottom desk under a bottom-wall
- * window — a claim a student can check by walking in.
+ * What is actually true about a seat's position, derived from the plan —
+ * only claims a student can check by walking in.
  */
 export function seatAmenities(n: number): string[] {
-  const { x, y } = getSeatPositionConfig(n);
-  const { COLS, WALL_DETAILS, ENTRANCE_COLS } = LAYOUT_CONFIG;
-  const island = SEAT_ROWS[Math.ceil(x / 2) - 1];
-  const deepest = x % 2 === 1 ? island.leftCount : island.last - island.first + 1 - island.leftCount;
+  const s = SEATS.get(n);
+  if (!s) return [];
+  const cx = s.x + DESK_W / 2;
   const out: string[] = [];
-
-  for (const d of WALL_DETAILS) {
-    let near = false;
-    if (d.wall === 'left') near = x === 1 && y >= d.start - 1 && y <= d.end + 1;
-    else if (d.wall === 'right') near = x === COLS && y >= d.start - 1 && y <= d.end + 1;
-    else if (d.wall === 'bottom') near = y >= deepest - 1 && x >= d.start && x <= d.end;
-    if (!near) continue;
-    const label = d.type === 'window' ? 'Next to a window' : 'Near the air conditioning';
-    if (!out.includes(label)) out.push(label);
+  if (s.y < START_Y + 2 * ROW_PITCH && AC_CENTERS.some((ac) => Math.abs(cx - ac) < 180)) {
+    out.push('Near the air conditioning');
   }
-
-  if (y <= 2 && x >= ENTRANCE_COLS[0] && x <= ENTRANCE_COLS[1]) out.push('Near the entrance');
-  else if (y >= 3) out.push('Away from the door');
-
-  const across = partnerSeat(n);
-  out.push(across ? `Shares a double desk with seat ${across}` : 'No one sitting opposite');
+  if (s.group.id === 'leftWall' || s.group.id === 'rightWall') out.push('Wall desk, facing the wall');
+  if (s.y + DESK_H > ROOM.HEIGHT - 260 && Math.abs(cx - DOOR.cx) < 320) out.push('Near the entrance');
+  if (s.partner) out.push(`Faces seat ${s.partner} across the table`);
+  else out.push('Single desk');
   return out;
-}
-
-/** The seat directly across the joined desk, or null (Row E's last left desk). */
-export function partnerSeat(n: number): number | null {
-  const island = SEAT_ROWS.find((r) => n >= r.first && n <= r.last);
-  if (!island) return null;
-  const i = n - island.first;
-  const rightCount = island.last - island.first + 1 - island.leftCount;
-  if (i < island.leftCount) return i < rightCount ? island.first + island.leftCount + i : null;
-  return island.first + (i - island.leftCount);
 }

@@ -2,16 +2,14 @@
 
 import React, { ReactNode, memo } from 'react';
 import {
-  LAYOUT_CONFIG,
   getSeatPositionConfig,
+  isSeat,
+  SEAT_NUMBERS,
   type FaceDir,
   type SeatPosition,
-  SEAT_ROWS,
+  ROOM, DESK_W, DESK_H, CHAIR, AC_CENTERS, DOOR,
+  chairRect, SEAT_GROUPS,
 } from '@/lib/layoutConfig';
-import {
-  ROOM, DESK_W, DESK_H, CHAIR_DEPTH, ISLAND_X, DESK_TOP,
-  seatPixel, islandCenter,
-} from '@/lib/deskLayout';
 
 // Types live in lib/layoutConfig (the data layer). Re-exported here because
 // several components already import them from this module.
@@ -23,114 +21,113 @@ export function getSeatPosition(n: number): SeatPosition {
 
 const { WIDTH: CANVAS_W, HEIGHT: CANVAS_H, WALL } = ROOM;
 
+/** The owner's palette for the plan (seat-layout spec, 2026-10-25). */
+const C = {
+  floor: '#F3EFE6',
+  floorLine: '#E9E3D6',
+  desk: '#DDB57A',
+  deskBorder: '#A67C3E',
+  chair: '#1F1F1F',
+  wall: '#D0D0D0',
+  wallBorder: '#888888',
+  door: '#6B3E26',
+  handle: '#C9A64A',
+};
+
 /** Local class joiner — SeatMap has no other reason to import from lib/utils. */
 function cnLocal(...v: (string | false | undefined)[]) {
   return v.filter(Boolean).join(' ');
 }
 
-// ─── The room ────────────────────────────────────────────────────────────────
+// ─── The room: walls, floor, AC, door, chairs ────────────────────────────────
 //
-// Drawn to the owner's reference (2026-10-25): a warm top-down reading hall —
-// tiled floor, wooden double door, windows looking onto greenery, wall AC
-// units, potted plants, and dark ROW pills over each island. All of it is one
-// static SVG in a single consistent hand, so nothing clashes; the desks and
-// chairs are HTML on top because they are the interactive part.
+// Static, so it is one SVG drawn once. Chairs are part of it: each sits in its
+// own clear space behind its desk (lib/layoutConfig chairRect), never under
+// the desk in front.
 
-/** Bottom-wall fixtures, centred on the aisles and islands they sit beside. */
-const AISLE = (a: number) => (ISLAND_X[a] + 2 * DESK_W + CHAIR_DEPTH + ISLAND_X[a + 1] - CHAIR_DEPTH) / 2;
-const BOTTOM_WINDOWS = [AISLE(1), AISLE(2)];
-const AC_UNITS = [islandCenter(0), islandCenter(4)];
-const PLANTS: [number, number][] = [
-  [80, 112], [CANVAS_W - 80, 112],
-  [70, CANVAS_H - 92], [CANVAS_W - 70, CANVAS_H - 92],
-  [AISLE(0), CANVAS_H - 70], [islandCenter(2), CANVAS_H - 70], [AISLE(3), CANVAS_H - 70],
-];
-/** Side windows span these desk rows (LAYOUT_CONFIG.WALL_DETAILS). */
-const SIDE_WINDOWS = LAYOUT_CONFIG.WALL_DETAILS
-  .filter((d) => d.type === 'window' && (d.wall === 'left' || d.wall === 'right'))
-  .map((d) => ({
-    wall: d.wall,
-    top: DESK_TOP + (d.start - 1) * DESK_H - 8,
-    height: (d.end - d.start + 1) * DESK_H + 16,
-  }));
-
-function Plant({ x, y }: { x: number; y: number }) {
-  const leaves = Array.from({ length: 9 }, (_, i) => i * 40);
+/** Top-down office chair, drawn facing down (backrest at the top) in a W×D box. */
+function ChairShape({ n }: { n: number }) {
+  const r = chairRect(n);
+  const face = getSeatPositionConfig(n).face;
+  const rot = { down: 0, left: 90, up: 180, right: -90 }[face];
+  const { W, D } = CHAIR;
   return (
-    <g transform={`translate(${x} ${y})`}>
-      <ellipse cx="2" cy="4" rx="21" ry="19" fill="#000" opacity="0.10" />
-      <circle r="17" fill="#8A5A33" />
-      <circle r="13" fill="#5E3B20" />
-      {leaves.map((a) => (
-        <ellipse key={a} cx="0" cy="-15" rx="7" ry="17" fill={a % 80 === 0 ? '#3F7D34' : '#2F6A28'} transform={`rotate(${a})`} />
-      ))}
-      {leaves.map((a) => (
-        <ellipse key={`i${a}`} cx="0" cy="-9" rx="4.5" ry="10" fill="#5C9E45" transform={`rotate(${a + 20})`} />
-      ))}
-    </g>
-  );
-}
-
-function Window({ x, y, w, h }: { x: number; y: number; w: number; h: number }) {
-  const vertical = h > w;
-  const panes = vertical ? Math.max(2, Math.round(h / 52)) : Math.max(2, Math.round(w / 46));
-  return (
-    <g>
-      <rect x={x} y={y} width={w} height={h} rx="3" fill="#2B2F33" />
-      <rect x={x + 4} y={y + 4} width={w - 8} height={h - 8} fill="url(#glass)" />
-      {Array.from({ length: panes - 1 }, (_, i) => {
-        const t = (i + 1) / panes;
-        return vertical
-          ? <rect key={i} x={x + 4} y={y + 4 + t * (h - 8) - 1.5} width={w - 8} height="3" fill="#2B2F33" />
-          : <rect key={i} x={x + 4 + t * (w - 8) - 1.5} y={y + 4} width="3" height={h - 8} fill="#2B2F33" />;
-      })}
-      {vertical
-        ? <rect x={x + w / 2 - 1} y={y + 4} width="2" height={h - 8} fill="#2B2F33" />
-        : <rect x={x + 4} y={y + h / 2 - 1} width={w - 8} height="2" fill="#2B2F33" />}
+    <g transform={`translate(${r.x + r.w / 2} ${r.y + r.h / 2}) rotate(${rot})`}>
+      {/* soft floor shadow */}
+      <rect x={-W / 2 + 1} y={-D / 2 + 3} width={W} height={D} rx="9" fill="#000" opacity="0.13" />
+      {/* armrests */}
+      <rect x={-W / 2} y={-D / 2 + 8} width="7" height={D - 9} rx="3.5" fill={C.chair} />
+      <rect x={W / 2 - 7} y={-D / 2 + 8} width="7" height={D - 9} rx="3.5" fill={C.chair} />
+      {/* seat cushion */}
+      <rect x={-W / 2 + 6} y={-D / 2 + 6} width={W - 12} height={D - 6} rx="6" fill="#303030" />
+      <rect x={-W / 2 + 10} y={-D / 2 + 10} width={W - 20} height={D - 14} rx="4" fill="#3A3A3A" />
+      {/* backrest */}
+      <rect x={-W / 2 + 2} y={-D / 2} width={W - 4} height="10" rx="5" fill={C.chair} />
+      <rect x={-W / 2 + 7} y={-D / 2 + 2.5} width={W - 14} height="2.5" rx="1.25" fill="#4A4A4A" />
     </g>
   );
 }
 
 function AirConditioner({ cx }: { cx: number }) {
-  const w = 150, h = 44, x = cx - w / 2, y = CANVAS_H - WALL - h - 4;
+  const w = 200, h = 62, x = cx - w / 2, y = WALL - 4;
   return (
     <g>
-      {[-42, -14, 14, 42].map((dx, i) => (
-        <path
-          key={dx}
-          d={`M ${cx + dx * 0.6} ${y - 6} q ${dx * 0.18} -26 ${dx * 0.45} -56`}
-          stroke="#8EC3EA" strokeWidth="5" strokeLinecap="round" fill="none" opacity={0.55 - i * 0.04}
-        />
-      ))}
-      <rect x={x + 2} y={y + 4} width={w} height={h} rx="10" fill="#000" opacity="0.10" />
-      <rect x={x} y={y} width={w} height={h} rx="10" fill="#FBFBFA" stroke="#D5D5D2" />
-      <rect x={x + 10} y={y + h - 14} width={w - 20} height="6" rx="3" fill="#E4E4E1" />
-      <rect x={x + 10} y={y + h - 12} width={w - 20} height="1.5" fill="#BDBDB9" />
-      <circle cx={x + w - 18} cy={y + 12} r="2" fill="#7CC4F0" />
-      <circle cx={x + w - 26} cy={y + 12} r="2" fill="#B9B9B5" />
+      <path
+        d={`M ${x + 22} ${y + h} L ${x - 4} ${y + h + 46} L ${x + w + 4} ${y + h + 46} L ${x + w - 22} ${y + h} Z`}
+        fill="url(#airflow)"
+      />
+      <rect x={x + 2} y={y + 5} width={w} height={h} rx="8" fill="#000" opacity="0.12" />
+      <rect x={x} y={y} width={w} height={h} rx="8" fill="#FCFCFC" stroke="#CFCFCF" />
+      <rect x={x + 6} y={y + 6} width={w - 12} height={h - 28} rx="5" fill="#F4F4F3" />
+      <rect x={x + 14} y={y + h - 16} width={w - 28} height="7" rx="3.5" fill="#2B2B2B" />
+      <rect x={x + w - 34} y={y + 12} width="14" height="3" rx="1.5" fill="#2F6FD8" />
     </g>
   );
 }
 
 function Door() {
-  const w = 176, x = CANVAS_W / 2 - w / 2, y = 2, h = 116;
+  const { cx, w } = DOOR, h = 104, x = cx - w / 2, y = CANVAS_H - h;
   return (
     <g>
-      <rect x={x + 3} y={y + 6} width={w} height={h} rx="3" fill="#000" opacity="0.14" />
-      <rect x={x} y={y} width={w} height={h} rx="3" fill="#4E2A14" />
-      <rect x={x + 8} y={y + 10} width={w - 16} height={h - 18} fill="#6B3A1D" />
+      <rect x={x - 4} y={y - 6} width={w + 8} height={h + 6} rx="3" fill="#000" opacity="0.14" />
+      <rect x={x} y={y} width={w} height={h} rx="3" fill={C.door} />
+      <rect x={x} y={y} width={w} height="10" rx="2" fill="#4E2C1A" />
       {[0, 1].map((i) => {
-        const lx = x + 12 + i * ((w - 24) / 2 + 2);
-        const lw = (w - 24) / 2 - 2;
+        const lx = x + 10 + i * ((w - 20) / 2 + 1);
+        const lw = (w - 20) / 2 - 1;
         return (
           <g key={i}>
-            <rect x={lx} y={y + 14} width={lw} height={h - 26} rx="2" fill="url(#doorWood)" />
-            <rect x={lx + 9} y={y + 24} width={lw - 18} height={h - 48} rx="3" fill="none" stroke="#5A2F16" strokeWidth="3" />
-            <rect x={i === 0 ? lx + lw - 10 : lx + 5} y={y + h / 2 - 12} width="5" height="22" rx="2.5" fill="#D6A93F" />
+            <rect x={lx} y={y + 16} width={lw} height={h - 22} rx="2" fill="#7A4A2E" />
+            <rect x={lx + 8} y={y + 26} width={lw - 16} height={h - 46} rx="3" fill="none" stroke="#5A3420" strokeWidth="3" />
+            <rect x={i === 0 ? lx + lw - 9 : lx + 4} y={y + 40} width="5" height="24" rx="2.5" fill={C.handle} />
           </g>
         );
       })}
-      <rect x={x - 6} y={y + h - 4} width={w + 12} height="8" rx="2" fill="#3E200F" />
+    </g>
+  );
+}
+
+/**
+ * A pill over each group, named as on the owner's spec. Centred over the
+ * group's top row; the bottom row's sits above its chairs.
+ */
+const GROUP_LABELS = SEAT_GROUPS.map((g) => {
+  const pos = g.seats.map((n) => getSeatPositionConfig(n));
+  const top = Math.min(...pos.map((p) => p.y));
+  const row = pos.filter((p) => p.y === top);
+  const cx = (Math.min(...row.map((p) => p.x)) + Math.max(...row.map((p) => p.x)) + DESK_W) / 2;
+  const chairsAbove = pos.some((p) => p.face === 'down');
+  return { id: g.id, text: g.label.toUpperCase(), cx, y: top - 34 - (chairsAbove ? CHAIR.D + CHAIR.GAP : 0) };
+});
+
+function GroupLabel({ text, cx, y }: { text: string; cx: number; y: number }) {
+  const w = text.length * 8 + 26;
+  return (
+    <g>
+      <rect x={cx - w / 2} y={y} width={w} height="24" rx="12" fill="#2C3644" />
+      <text x={cx} y={y + 16} textAnchor="middle" fontSize="12" fontWeight="600" fill="#FFFFFF" fontFamily="var(--font-body)">
+        {text}
+      </text>
     </g>
   );
 }
@@ -145,82 +142,39 @@ const RoomDrawing = memo(function RoomDrawing() {
       aria-hidden="true"
     >
       <defs>
-        <pattern id="tiles" width="56" height="56" patternUnits="userSpaceOnUse">
-          <rect width="56" height="56" fill="#EFE8DC" />
-          <path d="M56 0H0V56" fill="none" stroke="#E2D9CA" strokeWidth="1.5" />
+        <pattern id="floorTiles" width="40" height="40" patternUnits="userSpaceOnUse">
+          <rect width="40" height="40" fill={C.floor} />
+          <path d="M40 0H0V40" fill="none" stroke={C.floorLine} strokeWidth="1" />
         </pattern>
-        <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#9DBF86" />
-          <stop offset="0.55" stopColor="#5F8A4C" />
-          <stop offset="1" stopColor="#3F6B35" />
-        </linearGradient>
-        <linearGradient id="doorWood" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#8A4B26" />
-          <stop offset="1" stopColor="#6E3A1C" />
+        {/* Soft darkening where the floor meets the walls, for depth. */}
+        <radialGradient id="vignette" cx="0.5" cy="0.5" r="0.75">
+          <stop offset="0.62" stopColor="#5A4A30" stopOpacity="0" />
+          <stop offset="1" stopColor="#5A4A30" stopOpacity="0.10" />
+        </radialGradient>
+        <linearGradient id="airflow" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#BFE0F7" stopOpacity="0.85" />
+          <stop offset="1" stopColor="#BFE0F7" stopOpacity="0" />
         </linearGradient>
       </defs>
 
-      {/* Walls, then the floor inset inside them. */}
-      <rect width={CANVAS_W} height={CANVAS_H} rx="10" fill="#D4CEC4" />
-      <rect x={WALL} y={WALL} width={CANVAS_W - 2 * WALL} height={CANVAS_H - 2 * WALL} rx="4" fill="url(#tiles)" />
-      <rect x={WALL} y={WALL} width={CANVAS_W - 2 * WALL} height={CANVAS_H - 2 * WALL} rx="4" fill="none" stroke="#BDB6AA" strokeWidth="2" />
+      <rect width={CANVAS_W} height={CANVAS_H} rx="6" fill={C.wall} stroke={C.wallBorder} strokeWidth="3" />
+      <rect x={WALL} y={WALL} width={CANVAS_W - 2 * WALL} height={CANVAS_H - 2 * WALL} fill="url(#floorTiles)" stroke={C.wallBorder} strokeWidth="2" />
 
-      {SIDE_WINDOWS.map((w, i) => (
-        <Window key={i} x={w.wall === 'left' ? 4 : CANVAS_W - 40} y={w.top} w={36} h={w.height} />
-      ))}
-      {BOTTOM_WINDOWS.map((cx) => (
-        <Window key={cx} x={cx - 95} y={CANVAS_H - 60} w={190} h={56} />
-      ))}
-      {AC_UNITS.map((cx) => <AirConditioner key={cx} cx={cx} />)}
+      <rect x={WALL} y={WALL} width={CANVAS_W - 2 * WALL} height={CANVAS_H - 2 * WALL} fill="url(#vignette)" />
+
+      {AC_CENTERS.map((cx) => <AirConditioner key={cx} cx={cx} />)}
       <Door />
-      {PLANTS.map(([x, y]) => <Plant key={`${x}-${y}`} x={x} y={y} />)}
+      <text x={DOOR.cx} y={CANVAS_H - 116} textAnchor="middle" fontSize="13" fontWeight="700" fill={C.door} fontFamily="var(--font-body)">
+        ENTRANCE
+      </text>
 
-      {SEAT_ROWS.map((r, i) => {
-        const cx = islandCenter(i), w = 84, h = 28, y = DESK_TOP - 46;
-        return (
-          <g key={r.letter}>
-            <rect x={cx - w / 2} y={y} width={w} height={h} rx={h / 2} fill="#2C3644" />
-            <text x={cx} y={y + h / 2 + 4.5} textAnchor="middle" fontSize="13" fontWeight="600" fill="#FFFFFF" fontFamily="var(--font-body)">
-              ROW {r.letter}
-            </text>
-          </g>
-        );
-      })}
+      {SEAT_NUMBERS.map((n) => <ChairShape key={n} n={n} />)}
+      {GROUP_LABELS.map((l) => <GroupLabel key={l.id} {...l} />)}
     </svg>
   );
 });
 
-// ─── A seat: desk + chair ────────────────────────────────────────────────────
-
-/** Office chair, drawn facing up; rotated to face the desk. */
-function Chair({ face }: { face: FaceDir }) {
-  const rot = { up: 0, right: 90, down: 180, left: -90 }[face];
-  // Sits outside the desk on the side away from the direction faced.
-  const pos: React.CSSProperties = face === 'right'
-    ? { left: -CHAIR_DEPTH - 4, top: (DESK_H - 44) / 2 }
-    : face === 'left'
-      ? { right: -CHAIR_DEPTH - 4, top: (DESK_H - 44) / 2 }
-      : face === 'down'
-        ? { top: -CHAIR_DEPTH - 4, left: (DESK_W - 44) / 2 }
-        : { bottom: -CHAIR_DEPTH - 4, left: (DESK_W - 44) / 2 };
-  const horizontal = face === 'left' || face === 'right';
-  return (
-    <svg
-      className="pointer-events-none absolute"
-      style={{ ...pos, width: horizontal ? 26 : 44, height: horizontal ? 44 : 26 }}
-      viewBox={horizontal ? '0 0 26 44' : '0 0 44 26'}
-      aria-hidden="true"
-    >
-      <g transform={horizontal ? `translate(13 22) rotate(${rot}) translate(-22 -13)` : `translate(22 13) rotate(${rot}) translate(-22 -13)`}>
-        <rect x="2" y="15" width="40" height="9" rx="4.5" fill="#15181C" />
-        <rect x="6" y="3" width="32" height="15" rx="5" fill="#2A2F35" />
-        <rect x="9" y="5" width="26" height="9" rx="3.5" fill="#363C44" />
-        <rect x="0" y="9" width="5" height="13" rx="2.5" fill="#15181C" />
-        <rect x="39" y="9" width="5" height="13" rx="2.5" fill="#15181C" />
-      </g>
-    </svg>
-  );
-}
+// ─── A seat: the desk, with the state mat on it ──────────────────────────────
 
 export const SeatMapWrapper = memo(function SeatMapWrapper({
   seatNum,
@@ -231,34 +185,32 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
   children: (face: FaceDir) => ReactNode;
   className?: string;
 }) {
+  // 21 and 22 are numbers, not seats: the database still holds rows for them
+  // from the old 95-seat layout, so the plan refuses to place them.
+  if (!isSeat(seatNum)) return null;
   const { x, y, face } = getSeatPosition(seatNum);
-  const { left, top } = seatPixel(x, y);
-  // The seam side of the desk — where the two halves of an island meet, and
-  // where the power sockets are in the reference.
-  const seamRight = face === 'right';
 
   return (
     <div
-      className={`absolute hover:z-30 focus-within:z-30 ${className}`}
-      style={{ left, top, width: DESK_W, height: DESK_H }}
+      className={`group/desk absolute transition-transform duration-150 ease-out hover:z-30 focus-within:z-30 [@media(hover:hover)]:hover:-translate-y-0.5 ${className}`}
+      style={{ left: x, top: y, width: DESK_W, height: DESK_H }}
       data-seat={seatNum}
     >
-      <Chair face={face} />
-      {/* Desk top: light oak with a darker front edge and a hairline seam. */}
+      {/* Lift shadow, faded in on hover (opacity only — no layout). */}
       <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 rounded-[3px] opacity-0 shadow-[0_8px_16px_rgba(60,40,15,0.28)] transition-opacity duration-150 group-hover/desk:opacity-100"
+        aria-hidden="true"
+      />
+      {/* Desk top: oak with a fine grain, a lit top edge and a darker front lip. */}
+      <div
+        className="pointer-events-none absolute inset-0 rounded-[3px]"
         style={{
-          background: 'linear-gradient(160deg, #EBCB99 0%, #E2B97F 55%, #D8AC6F 100%)',
-          boxShadow: 'inset 0 0 0 1px #C0935A, inset 0 -3px 0 #B98A50',
+          background: `repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 2px, rgba(120,80,30,0.05) 2px 6px), linear-gradient(180deg, #E6C38C 0%, ${C.desk} 55%, #D4A96A 100%)`,
+          boxShadow: `inset 0 0 0 1.5px ${C.deskBorder}, inset 0 1.5px 0 rgba(255,255,255,0.45), inset 0 -5px 0 #C99A5B, 0 2px 3px rgba(60,40,15,0.18)`,
         }}
         aria-hidden="true"
       />
-      <span
-        className="pointer-events-none absolute top-1/2 h-4 w-[7px] -translate-y-1/2 rounded-[2px] bg-[#F7F5F0] shadow-[0_0_0_1px_#B9A487]"
-        style={seamRight ? { right: 3 } : { left: 3 }}
-        aria-hidden="true"
-      />
-      <div className="absolute inset-[7px]">
+      <div className="absolute inset-x-[7px] top-[5px] bottom-[9px]">
         {children(face)}
       </div>
     </div>
@@ -267,10 +219,7 @@ export const SeatMapWrapper = memo(function SeatMapWrapper({
 
 // ─── Fit-to-container ────────────────────────────────────────────────────────
 
-/**
- * Smallest the plan may shrink to while seats stay tappable. Read-only
- * previews pass their own floor.
- */
+/** Smallest the plan may shrink to while seats stay tappable. */
 const MIN_SCALE = 0.42;
 
 /**
@@ -283,13 +232,11 @@ type FitMode = 'width' | 'both';
 function useFitToWidth(mode: FitMode = 'width', minScale = MIN_SCALE) {
   const outerRef = React.useRef<HTMLDivElement>(null);
   const [scale, setScale] = React.useState(1);
-  /** True when the room is wider than the screen even at the floor. */
   const [overflows, setOverflows] = React.useState(false);
 
   React.useEffect(() => {
     const el = outerRef.current;
     if (!el) return;
-
     const measure = () => {
       const available = el.clientWidth - 24;
       const byWidth = available / CANVAS_W;
@@ -299,7 +246,6 @@ function useFitToWidth(mode: FitMode = 'width', minScale = MIN_SCALE) {
       setScale(Math.min(1, Math.max(minScale, exact)));
       setOverflows(exact < minScale);
     };
-
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
@@ -328,13 +274,57 @@ export function SeatMapContainer({
   const { outerRef, scale: fitted, overflows } = useFitToWidth(fit, minScale);
   const scale = scaleProp ?? fitted;
 
+  // Drag to pan, for a mouse, when the plan is larger than its box (zoomed in
+  // or on a small screen). Touch already scrolls natively. A drag that moved
+  // more than a few pixels swallows the click it ends with, so panning never
+  // opens a seat by accident.
+  const [canPan, setCanPan] = React.useState(false);
+  const drag = React.useRef<{ x: number; y: number; left: number; top: number; moved: boolean } | null>(null);
+  const swallowClick = React.useRef(false);
+  React.useEffect(() => {
+    const el = outerRef.current;
+    if (!el) return;
+    const check = () => setCanPan(el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [outerRef, scale]);
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!canPan || e.pointerType !== 'mouse' || e.button !== 0) return;
+    const el = outerRef.current!;
+    drag.current = { x: e.clientX, y: e.clientY, left: el.scrollLeft, top: el.scrollTop, moved: false };
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d) return;
+    const dx = e.clientX - d.x, dy = e.clientY - d.y;
+    if (!d.moved && Math.hypot(dx, dy) < 5) return;
+    d.moved = true;
+    const el = outerRef.current!;
+    el.scrollLeft = d.left - dx;
+    el.scrollTop = d.top - dy;
+  };
+  const endDrag = () => {
+    if (drag.current?.moved) swallowClick.current = true;
+    drag.current = null;
+  };
+
   return (
     <div
       ref={outerRef}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerLeave={endDrag}
+      onClickCapture={(e) => {
+        if (swallowClick.current) { e.stopPropagation(); e.preventDefault(); swallowClick.current = false; }
+      }}
       className={cnLocal(
         'relative w-full overflow-auto custom-scrollbar',
+        canPan && 'cursor-grab active:cursor-grabbing',
         !frameless && 'rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 shadow-[var(--shadow-sm)] sm:p-4',
-        // Fitting both axes measures this element's height, so it needs one.
         (frameless || fit === 'both') && 'h-full',
       )}
     >
@@ -346,7 +336,11 @@ export function SeatMapContainer({
       >
         <div
           className="relative"
-          style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: CANVAS_W, height: CANVAS_H }}
+          style={{
+            transform: `scale(${scale})`, transformOrigin: 'top left', width: CANVAS_W, height: CANVAS_H,
+            // Lets hover cards inside the plan counter-scale to true size.
+            ['--plan-scale' as string]: scale,
+          }}
         >
           <RoomDrawing />
           <div className="absolute inset-0">

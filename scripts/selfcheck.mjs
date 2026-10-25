@@ -27,7 +27,7 @@ writeFileSync(join(out, 'package.json'), '{"type":"module"}');
 // in scripts/), and tsc rewrites those to .js on emit.
 execFileSync('npx', [
   'tsc', 'lib/csv.ts', 'lib/utils.ts', 'lib/types.ts', 'lib/seat-status.ts',
-  'lib/notify.ts', 'lib/log.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts', 'lib/deskLayout.ts', 'lib/motion.ts',
+  'lib/notify.ts', 'lib/log.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts', 'lib/deskLayout.ts', 'lib/motion.ts', 'lib/schemas.ts',
   '--outDir', out, '--module', 'esnext', '--target', 'es2020',
   '--moduleResolution', 'bundler', '--skipLibCheck',
   '--allowImportingTsExtensions', '--rewriteRelativeImportExtensions',
@@ -43,11 +43,12 @@ const { buildExpiryMessage, normalisePhone } =
 const { planPrice, monthlyValue, formatINR, formatINRCompact, PLAN_MONTHS, DEFAULT_PLAN_RATES } =
   await import(pathToFileURL(join(out, 'pricing.js')).href);
 
-const { nextSeatInDirection, getSeatPositionConfig, SEAT_ROWS, seatRow, partnerSeat } =
+const { nextSeatInDirection, getSeatPositionConfig, SEAT_GROUPS, SEAT_NUMBERS, isSeat, seatRow, partnerSeat, chairRect } =
   await import(pathToFileURL(join(out, 'layoutConfig.js')).href);
 
-const { allSeatSlots, seatPixel, DESK_W, DESK_H, CHAIR_DEPTH, ROOM } =
+const { allSeatSlots, DESK_W, DESK_H, ROOM } =
   await import(pathToFileURL(join(out, 'deskLayout.js')).href);
+const { seatNumber } = await import(pathToFileURL(join(out, 'schemas.js')).href);
 
 const { projectMomentum, shouldDismissSheet } =
   await import(pathToFileURL(join(out, 'motion.js')).href);
@@ -332,58 +333,63 @@ check('an upward flick keeps the sheet even from far down', () => {
 
 // ─── Blocks: the plan and the list must agree ────────────────────
 
-check('every seat belongs to exactly one lettered row', () => {
-  const counts = new Map(SEAT_ROWS.map((r) => [r.label, 0]));
-  for (let n = 1; n <= 95; n++) {
-    const label = seatRow(n);
-    assert.ok(counts.has(label), `seat ${n} landed outside the rows (${label})`);
-    counts.set(label, counts.get(label) + 1);
+check('the hall has 93 seats: 1–95 without 21 and 22', () => {
+  assert.equal(SEAT_NUMBERS.length, 93);
+  assert.equal(isSeat(21), false);
+  assert.equal(isSeat(22), false);
+  assert.equal(isSeat(94), true);
+  for (let n = 1; n <= 95; n++) if (n !== 21 && n !== 22) assert.ok(isSeat(n), `seat ${n} missing`);
+});
+
+check('validation rejects numbers that are not seats', () => {
+  assert.equal(seatNumber.safeParse(20).success, true);
+  assert.equal(seatNumber.safeParse(21).success, false);
+  assert.equal(seatNumber.safeParse(22).success, false);
+  assert.equal(seatNumber.safeParse(96).success, false);
+});
+
+check('every seat is in exactly one group, in the owner\'s order', () => {
+  const all = SEAT_GROUPS.flatMap((g) => g.seats);
+  assert.equal(all.length, 93);
+  assert.equal(new Set(all).size, 93);
+  for (const n of SEAT_NUMBERS) assert.ok(seatRow(n), `seat ${n} has no group`);
+  const g = Object.fromEntries(SEAT_GROUPS.map((x) => [x.id, x.seats]));
+  assert.deepEqual(g.leftWall, [95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85]);
+  assert.deepEqual(g.rightWall, [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
+  assert.deepEqual(g.bottomRow, [84, 83, 82, 81, 80]);
+  assert.deepEqual(g.col3.slice(0, 2), [70, 61]);
+  assert.deepEqual(g.col5.slice(-2), [23, 11]);
+});
+
+check('columns read top to bottom, pairs left then right', () => {
+  const p = (n) => getSeatPositionConfig(n);
+  assert.ok(p(95).y < p(85).y, 'left wall: 95 at the top');
+  assert.ok(p(10).y < p(1).y, 'right wall: 10 at the top');
+  assert.ok(p(70).x < p(61).x && p(70).y === p(61).y, '70 | 61 share a row');
+  assert.ok(p(84).x < p(80).x, 'bottom row runs 84 → 80');
+  assert.equal(partnerSeat(52), 42);
+  assert.equal(partnerSeat(11), 23);
+  assert.equal(partnerSeat(79), null);
+  assert.equal(p(95).face, 'left');
+  assert.equal(p(1).face, 'right');
+  assert.equal(p(79).face, 'right', 'Column 2 chairs on the left');
+  assert.equal(p(84).face, 'down', 'bottom row chairs behind, towards the room');
+});
+
+check('paired tables face each other: chairs on the outer left and right', () => {
+  for (const [l, r] of [[70, 61], [62, 53], [52, 42], [43, 33], [32, 20], [23, 11]]) {
+    assert.equal(getSeatPositionConfig(l).face, 'right', `${l} faces its partner`);
+    assert.equal(getSeatPositionConfig(r).face, 'left', `${r} faces its partner`);
+    const cl = chairRect(l), cr = chairRect(r);
+    assert.ok(cl.x + cl.w <= getSeatPositionConfig(l).x, `${l}'s chair is left of its desk`);
+    assert.ok(cr.x >= getSeatPositionConfig(r).x + DESK_W, `${r}'s chair is right of its desk`);
   }
-  assert.deepEqual([...counts.values()], [20, 20, 20, 20, 15]);
 });
 
-check('rows run 1–95 with no gaps or overlaps', () => {
-  assert.equal(SEAT_ROWS[0].first, 1);
-  assert.equal(SEAT_ROWS[SEAT_ROWS.length - 1].last, 95);
-  for (let i = 1; i < SEAT_ROWS.length; i++) {
-    assert.equal(SEAT_ROWS[i].first, SEAT_ROWS[i - 1].last + 1);
-  }
-});
-
-check('numbering matches the owner\'s drawing', () => {
-  // Down the left column of an island, then down the right.
-  const at = (n) => { const p = getSeatPositionConfig(n); return [p.x, p.y]; };
-  assert.deepEqual(at(1), [1, 1]);
-  assert.deepEqual(at(10), [1, 10]);
-  assert.deepEqual(at(11), [2, 1]);
-  assert.deepEqual(at(20), [2, 10]);
-  assert.deepEqual(at(41), [5, 1]);
-  assert.deepEqual(at(80), [8, 10]);
-  assert.deepEqual(at(81), [9, 1]);
-  assert.deepEqual(at(88), [9, 8]);
-  assert.deepEqual(at(89), [10, 1]);
-  assert.deepEqual(at(95), [10, 7]);
-});
-
-check('the two seats of an island row face each other across the desk', () => {
-  for (const [l, r] of [[1, 11], [10, 20], [21, 31], [61, 71], [81, 89], [87, 95]]) {
-    assert.equal(partnerSeat(l), r);
-    assert.equal(partnerSeat(r), l);
-    assert.equal(getSeatPositionConfig(l).face, 'right');
-    assert.equal(getSeatPositionConfig(r).face, 'left');
-  }
-  assert.equal(partnerSeat(88), null, 'Row E has one more desk on the left');
-});
-
-check('no two desks (with their chairs) overlap, and all sit inside the walls', () => {
-  const boxes = allSeatSlots().map((s) => {
-    const { left, top } = seatPixel(s.x, s.y);
-    const chairLeft = s.face === 'right' ? CHAIR_DEPTH + 4 : 0;
-    const chairRight = s.face === 'left' ? CHAIR_DEPTH + 4 : 0;
-    return { seat: s.seat, l: left - chairLeft, r: left + DESK_W + chairRight, t: top, b: top + DESK_H };
-  });
+check('no two desks overlap, and all sit inside the walls', () => {
+  const boxes = allSeatSlots().map((s) => ({ seat: s.seat, l: s.x, r: s.x + DESK_W, t: s.y, b: s.y + DESK_H }));
   for (const a of boxes) {
-    assert.ok(a.l > ROOM.WALL && a.r < ROOM.WIDTH - ROOM.WALL && a.b < ROOM.HEIGHT - ROOM.WALL, `seat ${a.seat} is outside the room`);
+    assert.ok(a.l > ROOM.WALL && a.r < ROOM.WIDTH - ROOM.WALL && a.t > ROOM.WALL && a.b < ROOM.HEIGHT - ROOM.WALL, `seat ${a.seat} is outside the room`);
   }
   for (let i = 0; i < boxes.length; i++) {
     for (let j = i + 1; j < boxes.length; j++) {
@@ -395,33 +401,47 @@ check('no two desks (with their chairs) overlap, and all sit inside the walls', 
   }
 });
 
-// ─── Seat map keyboard navigation ────────────────────────────────
-const ALL_SEATS = Array.from({ length: 95 }, (_, i) => i + 1);
-
-check('arrow nav moves down a column one seat at a time', () => {
-  assert.equal(nextSeatInDirection(1, 'down', ALL_SEATS), 2);
-  assert.equal(nextSeatInDirection(15, 'up', ALL_SEATS), 14);
+check('every chair has its own clear space — never under a desk or another chair', () => {
+  // The bug this guards: a 6px row gap left each chair hidden under the
+  // desk in front of it, with only a sliver of black showing.
+  const desks = allSeatSlots().map((d) => ({ seat: d.seat, l: d.x, r: d.x + DESK_W, t: d.y, b: d.y + DESK_H }));
+  const chairs = SEAT_NUMBERS.map((n) => { const c = chairRect(n); return { seat: n, l: c.x, r: c.x + c.w, t: c.y, b: c.y + c.h }; });
+  const hit = (a, b) => Math.min(a.r, b.r) - Math.max(a.l, b.l) > 0 && Math.min(a.b, b.b) - Math.max(a.t, b.t) > 0;
+  for (const c of chairs) {
+    assert.ok(c.l > ROOM.WALL && c.r < ROOM.WIDTH - ROOM.WALL && c.t > ROOM.WALL && c.b < ROOM.HEIGHT - ROOM.WALL, `chair ${c.seat} is outside the room`);
+    for (const d of desks) assert.ok(!hit(c, d), `chair ${c.seat} is under desk ${d.seat}`);
+    for (const o of chairs) if (o.seat !== c.seat) assert.ok(!hit(c, o), `chairs ${c.seat} and ${o.seat} overlap`);
+  }
 });
 
-check('arrow nav crosses the desk, then the aisle', () => {
-  assert.equal(nextSeatInDirection(1, 'right', ALL_SEATS), 11);
-  assert.equal(nextSeatInDirection(11, 'right', ALL_SEATS), 21);
-  assert.equal(nextSeatInDirection(21, 'left', ALL_SEATS), 11);
+// ─── Seat map keyboard navigation ────────────────────────────────
+const ALL_SEATS = SEAT_NUMBERS;
+
+check('arrow nav moves down a column one seat at a time', () => {
+  assert.equal(nextSeatInDirection(95, 'down', ALL_SEATS), 94);
+  assert.equal(nextSeatInDirection(61, 'down', ALL_SEATS), 60);
+  assert.equal(nextSeatInDirection(1, 'up', ALL_SEATS), 2);
+});
+
+check('arrow nav crosses the table, then the aisle', () => {
+  assert.equal(nextSeatInDirection(70, 'right', ALL_SEATS), 61);
+  assert.equal(nextSeatInDirection(61, 'right', ALL_SEATS), 52);
+  assert.equal(nextSeatInDirection(95, 'right', ALL_SEATS), 79);
 });
 
 check('arrow nav stops at the edge instead of wrapping', () => {
-  assert.equal(nextSeatInDirection(1, 'up', ALL_SEATS), null);
-  assert.equal(nextSeatInDirection(1, 'left', ALL_SEATS), null);
-  assert.equal(nextSeatInDirection(89, 'right', ALL_SEATS), null);
-  assert.equal(nextSeatInDirection(88, 'down', ALL_SEATS), null, 'down stays in its column');
-  assert.equal(nextSeatInDirection(95, 'down', ALL_SEATS), null, 'down stays in its column');
+  assert.equal(nextSeatInDirection(95, 'up', ALL_SEATS), null);
+  assert.equal(nextSeatInDirection(95, 'left', ALL_SEATS), null);
+  assert.equal(nextSeatInDirection(10, 'right', ALL_SEATS), null);
+  assert.equal(nextSeatInDirection(1, 'down', ALL_SEATS), null);
 });
 
 check('arrow nav only considers seats that are rendered', () => {
   // With a filter applied the map renders a subset; nav must not focus a seat
   // that is not on screen.
-  assert.equal(nextSeatInDirection(1, 'down', [1, 5, 9]), 5);
-  assert.equal(nextSeatInDirection(1, 'down', [1]), null);
+  // Right wall runs 10 (top) down to 1.
+  assert.equal(nextSeatInDirection(10, 'down', [10, 6, 2]), 6);
+  assert.equal(nextSeatInDirection(10, 'down', [10]), null);
 });
 
 check('short dates keep the year when it is not this year', () => {

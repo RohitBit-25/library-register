@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
+// Rows for 21 and 22 survive from the 95-seat layout; they are not seats.
+import { SEAT_NUMBERS } from '@/lib/layoutConfig';
 import Member from '@/models/Member';
 import { verifyAdmin } from '@/lib/auth-server';
 
@@ -16,7 +18,7 @@ export async function GET() {
       // idempotent, and two concurrent cold-start requests both saw an empty
       // collection and both inserted — the second threw on the unique index.
       // Reminder bookkeeping is server-side only — the client never reads it.
-      const members = await Member.find({})
+      const members = await Member.find({ seat: { $in: SEAT_NUMBERS } })
         .select('-reminderSentFor -reminderSentAt -lastPaymentAt -lastPaymentAmount -__v')
         .sort({ seat: 1 })
         .lean();
@@ -24,7 +26,7 @@ export async function GET() {
     }
 
     // Anonymous / user role: occupancy only. Never names, phones, or dates.
-    const members = await Member.find({})
+    const members = await Member.find({ seat: { $in: SEAT_NUMBERS } })
       .select('seat vacant shift')
       .sort({ seat: 1 })
       .lean();

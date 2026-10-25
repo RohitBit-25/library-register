@@ -12,7 +12,7 @@ const APPS_SCRIPT_TEMPLATE = `// -----------------------------------------------
 // -----------------------------------------------------
 
 const ADMIN_EMAIL = "admin@gangaurlibrary.com"; // <-- CHANGE THIS
-const TOTAL_SEATS = 95;
+const TOTAL_SEATS = 93; // seats 1–95, there is no 21 or 22
 
 function onFormSubmit(e) {
   try {

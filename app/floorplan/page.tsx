@@ -238,7 +238,7 @@ export default function FloorPlanPage() {
 
       {/* ── Legend ───────────────────────────────────────────────── */}
       <footer className="flex shrink-0 justify-center border-t border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
-        <SeatLegend />
+        <SeatLegend members={members} />
       </footer>
 
       {selectedSeat !== null && (

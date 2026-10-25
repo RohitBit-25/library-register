@@ -4,6 +4,7 @@ import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
 import SeatRequest from '@/models/SeatRequest';
 import Member from '@/models/Member';
+import { SEAT_NUMBERS } from '@/lib/layoutConfig';
 import Payment from '@/models/Payment';
 import { planPrice } from '@/lib/pricing';
 import AuditLog from '@/models/AuditLog';
@@ -111,7 +112,7 @@ export async function POST(request: Request) {
 
     let status: 'pending' | 'waitlisted' = 'pending';
     if (seatTaken) {
-      const vacantSeats = await Member.countDocuments({ vacant: true });
+      const vacantSeats = await Member.countDocuments({ vacant: true, seat: { $in: SEAT_NUMBERS } });
       if (vacantSeats > 0) {
         return NextResponse.json(
           { error: 'That seat is no longer available. Please pick another.' },

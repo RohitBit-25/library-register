@@ -1,4 +1,5 @@
 import type { Member } from './types.ts';
+import { SEAT_NUMBERS } from './layoutConfig.ts';
 
 function makeVacant(seat: number): Member {
   return {
@@ -8,6 +9,6 @@ function makeVacant(seat: number): Member {
 }
 
 export function getDefaultMembers(): Member[] {
-  // Generate 95 completely vacant seats
-  return Array.from({ length: 95 }, (_, i) => makeVacant(i + 1));
+  // One vacant document per seat on the plan (93 — no 21 or 22).
+  return SEAT_NUMBERS.map(makeVacant);
 }

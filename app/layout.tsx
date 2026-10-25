@@ -29,7 +29,7 @@ const tiroDevanagari = Tiro_Devanagari_Hindi({
 
 export const metadata: Metadata = {
   title: "Shree Gangaur Study Library",
-  description: "Manage 95 library seats — registration, renewals, attendance, and analytics. Built for Gangaur Library.",
+  description: "Manage 93 library seats — registration, renewals, attendance, and analytics. Built for Gangaur Library.",
   keywords: ["library", "seat management", "registration", "attendance"],
   manifest: "/manifest.json",
   appleWebApp: {

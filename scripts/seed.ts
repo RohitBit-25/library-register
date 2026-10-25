@@ -1,5 +1,5 @@
 /**
- * One-time seed: create the 95 vacant seat documents.
+ * One-time seed: create the 93 vacant seat documents (1–95, no 21 or 22).
  *
  * Run with: npm run seed
  *

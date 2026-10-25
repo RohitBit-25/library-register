@@ -320,6 +320,32 @@
     --duration-slow:    280ms;
     --duration-lazy:    400ms;
 
+    /* === WARM (landing page) ===
+       The public landing's student-first palette: cream paper, brown ink,
+       saffron/marigold accents. Checked by scripts/check-contrast.py. */
+    --warm-bg:          #FFFAF3;
+    --warm-band:        #FFF3E2;
+    --warm-tint:        #FFF1DF;
+    --warm-tint-2:      #FCE6C9;
+    --warm-line:        #F0E1CC;
+    --warm-line-strong: #EBD9C2;
+    --warm-step-line:   #F3DFC4;
+    --warm-dot:         #FBEBD6;
+    --warm-ink:         #2B1A0E; /* 15.25:1 on warm-band */
+    --warm-ink-hover:   #3D2817;
+    --warm-ink-2:       #5A4636; /*  8.11:1 on warm-band */
+    --warm-ink-3:       #7A5E48; /*  5.44:1 on warm-band */
+    --warm-on-saffron:  #FFE1B8; /*  4.32:1 on saffron-600, 24px+ text only */
+
+    /* === PIXEL (landing page) === colours sampled from the owner's art */
+    --px-wood:      #C9813F;
+    --px-wood-dark: #A9652B;
+    --px-shadow:    #E7CFA9;
+    --px-navy:      #24439B;
+    --px-green:     #3E8A3A;
+    --px-hud:       #1F2A1C;
+    --px-hud-text:  #9BE37C; /* on --px-hud */
+
     /* === FLOOR PLAN ===
        A drawing (design.md § Floor plan): cool floor, slate walls, light desks;
        the seats carry the colour. */
@@ -367,6 +393,39 @@
   /* Fixed bars sit above the iPhone home indicator. BottomNav already used
      this class; it was never defined, so the tabs sat under the indicator. */
   .pb-safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+  /* ── Pixel UI (landing page) ─────────────────────────────────────
+     Borders drawn with four offset shadows, which leaves the corner pixels
+     empty — the notched 8-bit frame of the owner's pixel-art kit — and a
+     stepped drop shadow. Elements need ~4px of margin for the frame. */
+  .px-box {
+    box-shadow: 4px 0 0 0 var(--warm-ink), -4px 0 0 0 var(--warm-ink),
+                0 4px 0 0 var(--warm-ink), 0 -4px 0 0 var(--warm-ink);
+  }
+  .px-raised {
+    box-shadow: 4px 0 0 0 var(--warm-ink), -4px 0 0 0 var(--warm-ink),
+                0 4px 0 0 var(--warm-ink), 0 -4px 0 0 var(--warm-ink),
+                4px 8px 0 0 var(--px-shadow), 8px 4px 0 0 var(--px-shadow),
+                8px 8px 0 0 var(--px-shadow);
+  }
+  .px-btn { transition: transform 80ms var(--ease-out), box-shadow 80ms var(--ease-out); }
+  .px-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 4px 0 0 0 var(--warm-ink), -4px 0 0 0 var(--warm-ink),
+                0 4px 0 0 var(--warm-ink), 0 -4px 0 0 var(--warm-ink);
+  }
+  /* Wood floor planks under the hall scene. */
+  .px-planks {
+    background-color: var(--px-wood);
+    background-image:
+      linear-gradient(0deg, var(--px-wood-dark) 4px, transparent 4px),
+      linear-gradient(90deg, var(--px-wood-dark) 4px, transparent 4px);
+    background-size: 100% 28px, 160px 28px;
+  }
+
+  /* A seat brought into view (search, ?seat= links, arrow keys) stops with
+     room around it instead of flush against the viewport edge. */
+  [data-seat] { scroll-margin: 32px; }
 
   /* ═══════════════════════════════════════════════════════════════
      UTILITY CLASSES

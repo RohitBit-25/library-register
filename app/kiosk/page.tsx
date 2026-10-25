@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import { Delete, ArrowRight, ArrowLeft, LogIn, LogOut } from 'lucide-react';
 import Wordmark from '@/components/layout/Wordmark';
+import { isSeat } from '@/lib/layoutConfig';
 import { cn } from '@/lib/utils';
 
 /**
@@ -45,7 +46,7 @@ export default function KioskPage() {
     setSeatInput('');
     const m = members.find((x) => x.seat === n && !x.vacant);
     if (!m) {
-      addToast('error', n >= 1 && n <= 95 ? `Seat ${n} has no member.` : 'Seats are numbered 1 to 95.');
+      addToast('error', isSeat(n) ? `Seat ${n} has no member.` : `There is no seat ${n}.`);
       return;
     }
     setActiveSeat(n);

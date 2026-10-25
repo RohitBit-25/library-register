@@ -47,6 +47,15 @@ CHECKS = [
     ("--text-tertiary",  "--bg-surface", 4.5),
     ("--text-tertiary",  "--bg-void",    4.5),
     ("--text-tertiary",  "--bg-muted",   4.5),
+    # Landing page warm palette (app/landing/page.tsx).
+    ("--warm-ink",       "--warm-band",  4.5),
+    ("--warm-ink-2",     "--warm-band",  4.5),
+    ("--warm-ink-3",     "--warm-band",  4.5),
+    ("--warm-ink-3",     "--warm-bg",    4.5),
+    ("--saffron-700",    "--warm-band",  4.5),
+    ("--warm-on-saffron", "--saffron-600", 3.0),  # large Devanagari line only
+    ("--px-hud-text",    "--px-hud",     4.5),
+    ("--text-inverse",   "--px-navy",    4.5),
     ("--text-accent",    "--bg-surface", 4.5),
     ("--text-link",      "--bg-surface", 4.5),
     ("--text-inverse",   "--saffron-600", 4.5),   # primary button

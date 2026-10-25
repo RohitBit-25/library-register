@@ -2,10 +2,9 @@
 
 import { useEffect, useRef } from 'react';
 import { animate, stagger, utils } from 'animejs';
-import { LAYOUT_CONFIG, getSeatPositionConfig } from '@/lib/layoutConfig';
+import { ROOM, getSeatPositionConfig } from '@/lib/layoutConfig';
 
-const { COLS, ROWS } = LAYOUT_CONFIG;
-const CENTRE = { x: (COLS + 1) / 2, y: (ROWS + 1) / 2 };
+const CENTRE = { x: ROOM.WIDTH / 2, y: ROOM.HEIGHT / 2 };
 
 /** How far a seat sits from the middle of the room. */
 function distanceFromCentre(seat: number): number {

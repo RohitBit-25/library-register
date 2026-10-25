@@ -77,7 +77,7 @@ function SeatTileInner({ member, onClick, selected = false, dimmed = false }: Se
             member.vacant
               ? 'border-transparent bg-transparent text-[#5B3A1A] hover:border-[#9C7040] hover:bg-[#FFFDF8]/55'
               : cn(s.tint, s.border, s.text, 'shadow-[0_1px_2px_rgba(80,50,20,0.25)] hover:brightness-[0.98]'),
-            selected && 'ring-2 ring-[var(--ink)] ring-offset-2 ring-offset-[#E2B97F]',
+            selected && 'ring-[3px] ring-[var(--saffron-500)] ring-offset-2 ring-offset-[#DDB57A]',
             dimmed && 'seat-dimmed',
           )}
         >
@@ -121,8 +121,14 @@ function SeatTileInner({ member, onClick, selected = false, dimmed = false }: Se
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={springQuick}
-              className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-3 w-52 -translate-x-1/2 rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 shadow-[var(--shadow-floating)]"
+              className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2"
             >
+              {/* Counter-scaled so the card reads at true size however far
+                  the plan is zoomed out (SeatMapContainer sets --plan-scale). */}
+              <div
+                className="w-52 origin-bottom rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 shadow-[var(--shadow-floating)]"
+                style={{ transform: 'scale(calc(1 / var(--plan-scale, 1)))' }}
+              >
               <div className="flex items-start justify-between gap-2">
                 <p className="text-sm font-semibold leading-snug text-[var(--text-primary)]">{member.name}</p>
                 <span className="font-mono text-xs text-[var(--text-tertiary)] tabular">#{member.seat}</span>
@@ -145,6 +151,7 @@ function SeatTileInner({ member, onClick, selected = false, dimmed = false }: Se
                 <dt className="text-[var(--text-tertiary)]">Shift</dt>
                 <dd className="font-medium capitalize text-[var(--text-primary)]">{member.shift === 'full' ? 'Full day' : member.shift}</dd>
               </dl>
+              </div>
             </m.div>
           )}
         </AnimatePresence>

@@ -64,7 +64,7 @@ export default function UnifiedHeader() {
           {pathname !== '/browse' && (
             <Link
               href="/browse"
-              className="inline-flex min-h-[38px] items-center gap-1.5 whitespace-nowrap rounded-full bg-[var(--ink)] px-4 text-sm font-medium text-[var(--text-inverse)] shadow-[var(--shadow-xs)] transition-ui hover:bg-[var(--ink-hover)]"
+              className="inline-flex min-h-[38px] items-center gap-1.5 whitespace-nowrap rounded-full bg-[var(--saffron-600)] px-4 text-sm font-semibold text-[var(--text-inverse)] shadow-[var(--shadow-xs)] transition-ui hover:bg-[var(--saffron-700)]"
             >
               Find a seat
               <ArrowRight className="hidden size-3.5 sm:block" aria-hidden="true" />

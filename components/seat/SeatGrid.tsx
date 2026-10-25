@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { type Member, type Shift } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import SeatTile from './SeatTile';
@@ -111,6 +111,23 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
 
   const occupiedCount = useMemo(() => members.filter(m => !m.vacant).length, [members]);
 
+  // A seat chosen from search (or a ?seat= link) may be off-screen on a long
+  // plan: bring it into view. `nearest` means a seat already visible — the
+  // usual case after a click — does not move at all.
+  //
+  // Waits for the detail drawer to finish opening: on desktop it narrows the
+  // page, the plan rescales, and a seat scrolled to any earlier lands
+  // off-screen again.
+  useEffect(() => {
+    if (selectedSeat == null) return;
+    const id = window.setTimeout(() => {
+      const el = document.querySelector<HTMLElement>(`button[data-seat="${selectedSeat}"]`);
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      el?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+    }, 450);
+    return () => window.clearTimeout(id);
+  }, [selectedSeat]);
+
   // One predicate, two presentations. A list is not a spatial reference, so
   // removing rows there is right; a floor plan is, so removing tiles there
   // leaves holes in a drawing of a real room. The plan dims instead.
@@ -197,7 +214,7 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
                 {STATUS_FILTER_LABEL[statusFilter]}
               </span>
             ) : (
-              <SeatLegend className="hidden sm:flex" />
+              <SeatLegend className="hidden sm:flex" members={members} />
             )}
           </div>
         </div>
@@ -244,13 +261,21 @@ export default function SeatGrid({ members, onSeatClick, selectedSeat, statusFil
 }
 
 /** The key to the plan's colours, from the same table the tiles use. */
-export function SeatLegend({ className }: { className?: string }) {
+export function SeatLegend({ className, members }: { className?: string; members?: Member[] }) {
+  // Live counts beside each colour, when the caller has the members.
+  const counts = useMemo(() => {
+    if (!members) return null;
+    const c: Record<string, number> = {};
+    for (const m of members) { const k = getSeatState(m).status; c[k] = (c[k] ?? 0) + 1; }
+    return c;
+  }, [members]);
   return (
     <ul className={cn('flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs text-[var(--text-secondary)]', className)} aria-label="Legend">
       {STATUS_ORDER.map((k) => (
         <li key={k} className="flex items-center gap-1.5 whitespace-nowrap">
           <span className={cn('size-2.5 rounded-[3px] border', STATUS_STYLE[k].swatch)} aria-hidden="true" />
           {STATUS_STYLE[k].label}
+          {counts && <span className="font-mono tabular text-[var(--text-tertiary)]">{counts[k] ?? 0}</span>}
         </li>
       ))}
     </ul>

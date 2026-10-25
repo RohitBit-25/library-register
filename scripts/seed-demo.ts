@@ -8,7 +8,7 @@
  * screen in this app is a view over real member records; pointing a data
  * generator at the live register is how a real library loses its register.
  *
- * The data is deliberately uneven: 71 of 95 seats taken, a handful expired, a
+ * The data is deliberately uneven: 71 of 93 seats taken, a handful expired, a
  * few overdue, attendance that dips on Sundays, and payments spread across
  * months. Even data hides exactly the layout problems a UI review is looking
  * for — every card the same width, every number the same digit count, no name
@@ -22,6 +22,7 @@ import SeatRequest from '../models/SeatRequest.ts';
 import AuditLog from '../models/AuditLog.ts';
 import { getDefaultMembers } from '../lib/defaultData.ts';
 import { planPrice } from '../lib/pricing.ts';
+import { SEAT_NUMBERS } from '../lib/layoutConfig.ts';
 
 const uri = process.env.MONGODB_URI;
 if (!uri) {
@@ -90,11 +91,11 @@ await Promise.all([
 ]);
 await Member.insertMany(getDefaultMembers());
 
-// 71 of 95 taken — a busy library with room to sell, which is the state the
+// 71 of 93 taken — a busy library with room to sell, which is the state the
 // dashboard is actually read in. A full house or an empty one hides the
 // middle-ground layout problems.
 const occupied = new Set<number>();
-while (occupied.size < 71) occupied.add(int(1, 95));
+while (occupied.size < 71) occupied.add(SEAT_NUMBERS[int(0, SEAT_NUMBERS.length - 1)]);
 
 const payments: Record<string, unknown>[] = [];
 let n = 0;
@@ -169,7 +170,7 @@ for (let d = 44; d >= 0; d--) {
 }
 await Attendance.insertMany(attendance);
 
-const vacantSeats = [...Array(95).keys()].map((i) => i + 1).filter((s) => !occupied.has(s));
+const vacantSeats = SEAT_NUMBERS.filter((s) => !occupied.has(s));
 await SeatRequest.insertMany([
   {
     seat: vacantSeats[0], userName: 'Mansi Dadhich', userPhone: '9784512360',
@@ -206,7 +207,7 @@ await AuditLog.insertMany([
 
 console.log(
   `Demo data seeded into "${dbName}":\n` +
-  `  ${occupied.size} occupied, ${95 - occupied.size} vacant\n` +
+  `  ${occupied.size} occupied, ${SEAT_NUMBERS.length - occupied.size} vacant\n` +
   `  ${payments.length} payments, ${attendance.length} days of attendance\n` +
   `  4 seat requests, 5 audit rows`
 );

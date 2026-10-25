@@ -17,10 +17,25 @@ chosen by the owner on 2026-10-24 over an earlier editorial pass that read as
 dull. White surfaces on a cool grey page, near-black ink, one family, soft
 layered shadows, saffron kept for brand moments.
 
+## Public landing page (exception, 2026-10-25)
+The owner rejected the SaaS and warm versions as generic and chose **their own
+pixel-art kit** for `/landing` only. The art lives in `public/landing/`
+(`hall.png`, `student.png`, `desk.png`, `desks-row.png`; originals kept at the
+repo root). Pixelify Sans is the display face (next/font, loaded in the page,
+nowhere else); body stays Geist. Surfaces are cream (`--warm-*`) with hard
+pixel boxes: `.px-box` (2px ink border + hard offset shadow), `.px-raised`,
+`.px-btn` (presses down on :active), `.px-planks` (wood floor under the art);
+colours come from `--px-*` tokens (wood, navy badge, green bullets, dark HUD
+chip). No rounded corners, no gradients, no soft shadows on this page. Voice is
+short and bilingual (Hindi speech bubble on the student). Seat counts and per-day
+fees are computed, never typed. Real-world details (phone, WhatsApp,
+address/map, reviews, photos) live in `lib/siteInfo.ts` / `lib/photos.ts` and
+their sections stay hidden until filled.
+
 ## Macrostructure family
-- Marketing (`/landing`): **split hero with the live product** — promise left,
-  the real seat plan in an elevated card right; then figures, three steps,
-  pricing cards, a facilities spec sheet, photos (when added), an ink CTA band.
+- Marketing (`/landing`): pixel scene page — headline + HUD seat count beside
+  the student; the hall on planks with facility tags; one desk; price tags;
+  a dialogue box of three steps; FAQ; a closing desk row on planks.
 - Public app (`/browse`, `/my-requests`, `/kiosk`): the plan or form is the page.
 - Admin: **Workbench** — page title + one line of context, then the working
   surface (plan, table, form). No hero, no enrichment.
@@ -89,20 +104,45 @@ matching Tailwind step; no one-off pixel gaps.
 - `brand` variant (saffron) only where the action is itself the brand moment.
 
 ## Floor plan
-Drawn to the owner's reference image (2026-10-25), illustrated top-down:
-- Five islands, **Row A–E**, two desks wide with black chairs on the outside,
-  so the two people at an island row face each other across joined desks.
-- Numbering runs down the left column, then the right: A 1–10 | 11–20,
-  B 21–30 | 31–40, C 41–50 | 51–60, D 61–70 | 71–80, E 81–88 | 89–95.
-- Room: tiled cream floor, grey walls, wooden double door centred on the top
-  wall, windows on both side walls and the bottom wall, an AC unit at each end
-  of the bottom wall, potted plants, dark ROW pills over each island.
-- Desks are light oak; a seat's state is a **desk mat** on the wood with the
-  number on it. Public: green free, orange your pick, peach (dashed) requested,
-  grey taken. Admin: the status colours from `statusStyle.ts`; vacant is bare
-  wood.
-- Everything is drawn in code (`components/seat/SeatMap.tsx`, geometry in
-  `lib/layoutConfig.ts` + `lib/deskLayout.ts`). No image sprites.
+From the owner's seat-layout spec (2026-10-25). **93 seats, numbered 1–95;
+21 and 22 do not exist.** `SEAT_LAYOUT` in `lib/layoutConfig.ts` is the single
+source of truth — the plan, validation (`seatNumber` rejects 21/22), the
+members and stats APIs, seeding and every "N seats" line derive from it.
+
+| Group | Seats (reading order) | Chair |
+| --- | --- | --- |
+| Left wall | 95 → 85 (top to bottom) | right of desk |
+| Column 2 | 79 → 71 | left of desk |
+| Column 3 | pairs 70\|61 … 62\|53 | outer left / outer right (facing) |
+| Column 4 | pairs 52\|42 … 43\|33 | outer left / outer right (facing) |
+| Column 5 | pairs 32\|20 … 23\|11 | outer left / outer right (facing) |
+| Right wall | 10 → 1 | left of desk |
+| Bottom row | 84 → 80 (left to right) | behind (above) |
+
+- Canvas 1600 × 1200; desks 84 × 70 on an 80px row pitch. Two AC units on the
+  top wall, the door on the bottom wall. Palette: floor `#F3EFE6`, desk
+  `#DDB57A`, desk border `#A67C3E`, chair `#1F1F1F`, wall `#D0D0D0`, wall
+  border `#888888`, door `#6B3E26`, handle `#C9A64A`.
+- Paired tables (Columns 3–5) **face each other**: the left desk's chair on
+  the outer left, the right desk's on the outer right. Column 2 chairs on the
+  left; wall desks' chairs on the room side; the bottom row's behind it.
+- Every chair is fully visible in its own space (`chairRect`), never under a
+  desk or another chair — enforced by self-checks.
+- A seat's state is a mat on the desk with the number. Public: Available
+  green, Selected orange, Requested yellow (dashed), Booked red. Admin: the
+  status colours from `statusStyle.ts`; vacant is bare wood.
+- Canvas details: dark pills naming each group (LEFT WALL, COLUMN 2–5, RIGHT
+  WALL, BOTTOM ROW), an ENTRANCE label at the door, oak grain on desks, soft
+  floor shading at the walls.
+- Interaction: desks lift 2px on hover (pointer devices only); the selected
+  seat gets a saffron ring; drag to pan when the plan overflows its box (a
+  drag never opens a seat); a seat picked from search or a `?seat=` link
+  scrolls into view with 32px margin; the student plan has a hover tooltip
+  (seat · group · state); legends show live counts.
+- Hover cards/tooltips inside the plan counter-scale via `--plan-scale`, so
+  they read at true size at any zoom.
+- The database still has rows for 21 and 22 from the 95-seat layout; the APIs
+  filter them out (nothing was deleted).
 
 ## Per-page allowances
 - Marketing page shows real photographs only, listed in `lib/photos.ts`

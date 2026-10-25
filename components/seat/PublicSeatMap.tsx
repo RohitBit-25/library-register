@@ -5,6 +5,7 @@ import { type Member } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { SeatMapContainer, SeatMapWrapper } from './SeatMap';
 import { Check } from 'lucide-react';
+import { seatRow } from '@/lib/layoutConfig';
 
 /**
  * The floor plan as a student sees it.
@@ -34,8 +35,10 @@ function PublicSeatTileInner({
   dimmed: boolean;
 }) {
   const disabled = !vacant || requested || dimmed;
+  const state = !vacant ? 'Booked' : requested ? 'Request pending' : 'Available — click to request';
 
   return (
+    <div className="group/tip relative h-full w-full">
     <button
       type="button"
       data-seat={seat}
@@ -46,7 +49,7 @@ function PublicSeatTileInner({
           ? requested
             ? `Seat ${seat}, request already sent`
             : `Seat ${seat}, available — tap to request`
-          : `Seat ${seat}, taken`
+          : `Seat ${seat}, booked`
       }
       aria-pressed={selected}
       className={cn(
@@ -57,15 +60,32 @@ function PublicSeatTileInner({
         // Free: the one state a student is looking for, so the one with colour.
         vacant && !requested && !selected && 'cursor-pointer border-[var(--emerald-500)]/70 bg-[#DDF3E4] text-[var(--emerald-700)] shadow-[0_1px_2px_rgba(80,50,20,0.25)] hover:bg-[#C9EBD5]',
         // Already asked for: hatched, so it reads as "on hold", not "free".
-        requested && 'cursor-not-allowed border-dashed border-[var(--saffron-400)] bg-[#FDE8D6] text-[var(--saffron-800)]',
+        requested && 'cursor-not-allowed border-dashed border-[var(--marigold-500)] bg-[#FEF3C7] text-[var(--marigold-800)]',
         // Taken: recedes into the floor.
-        !vacant && 'cursor-not-allowed border-[#CFCAC3] bg-[#E6E3DF] text-[#6E6760]',
-        selected && 'border-[var(--saffron-700)] bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-[0_2px_6px_rgba(120,60,10,0.35)]',
+        !vacant && 'cursor-not-allowed border-[var(--ruby-300)] bg-[#FCE1E1] text-[var(--ruby-800)]',
+        selected && 'border-[var(--saffron-700)] bg-[var(--saffron-600)] text-[var(--text-inverse)] shadow-[0_2px_6px_rgba(120,60,10,0.35)] ring-[3px] ring-[var(--saffron-500)]/40 ring-offset-2 ring-offset-[#DDB57A]',
       )}
     >
       <span className="text-[20px] font-semibold leading-none tabular">{seat}</span>
       {selected && <Check className="mt-1 size-3.5" aria-hidden="true" />}
     </button>
+    {/* Hover tooltip for a mouse: the seat, where it is, what you can do.
+        Counter-scaled to stay readable at any zoom. Hidden from touch, where
+        a tap goes straight to the request. */}
+    {!dimmed && (
+      <span
+        className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-1.5 hidden -translate-x-1/2 [@media(hover:hover)]:block"
+        aria-hidden="true"
+      >
+        <span
+          className="block origin-bottom whitespace-nowrap rounded-[var(--radius-sm)] bg-[var(--ink)] px-2.5 py-1.5 text-xs font-medium text-[var(--text-inverse)] opacity-0 shadow-[var(--shadow-md)] transition-opacity duration-150 group-hover/tip:opacity-100"
+          style={{ transform: 'scale(calc(1 / var(--plan-scale, 1)))' }}
+        >
+          Seat {seat} · {seatRow(seat)} · {state}
+        </span>
+      </span>
+    )}
+    </div>
   );
 }
 

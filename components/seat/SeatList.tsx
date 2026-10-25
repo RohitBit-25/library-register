@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { type Member } from '@/lib/types';
 import { cn, firstName } from '@/lib/utils';
 import { getSeatState } from '@/lib/seat-status';
-import { SEAT_ROWS, seatRow } from '@/lib/layoutConfig';
+import { SEAT_GROUPS } from '@/lib/layoutConfig';
 import { STATUS_STYLE } from './statusStyle';
 import { Sun, Moon, SunMoon, Plus } from 'lucide-react';
 
@@ -31,13 +31,11 @@ export default function SeatList({
   selectedSeat?: number | null;
 }) {
   const grouped = useMemo(() => {
-    const byRow = new Map(SEAT_ROWS.map((r) => [r.label, [] as Member[]]));
-    for (const m of [...members].sort((a, b) => a.seat - b.seat)) {
-      byRow.get(seatRow(m.seat))?.push(m);
-    }
-    return SEAT_ROWS
-      .map((r) => ({ label: r.label, seats: byRow.get(r.label) ?? [] }))
-      .filter((r) => r.seats.length > 0);
+    // Same groups, in the same reading order, as the plan.
+    const bySeat = new Map(members.map((m) => [m.seat, m]));
+    return SEAT_GROUPS
+      .map((g) => ({ label: g.label, seats: g.seats.map((n) => bySeat.get(n)).filter((m): m is Member => !!m) }))
+      .filter((g) => g.seats.length > 0);
   }, [members]);
 
   return (

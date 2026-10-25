@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
+import { SEAT_NUMBERS } from '@/lib/layoutConfig';
 import Member from '@/models/Member';
 import Attendance from '@/models/Attendance';
 import Payment from '@/models/Payment';
@@ -62,6 +63,8 @@ export async function GET() {
     };
 
     const [result] = await Member.aggregate([
+      // Only seats on the plan — rows for 21 and 22 survive from the old layout.
+      { $match: { seat: { $in: SEAT_NUMBERS } } },
       {
         $facet: {
           occupancy: [{ $group: { _id: '$vacant', n: { $sum: 1 } } }],

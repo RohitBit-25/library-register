@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/log';
 import dbConnect from '@/lib/mongodb';
+import { SEAT_NUMBERS } from '@/lib/layoutConfig';
 import Member from '@/models/Member';
 import Payment from '@/models/Payment';
 import Attendance from '@/models/Attendance';
@@ -37,7 +38,7 @@ export async function GET(request: Request) {
     const param = url.searchParams.get('date');
     const date = param && /^\d{4}-\d{2}-\d{2}$/.test(param) ? param : todayLocalISO();
 
-    const members = await Member.find({})
+    const members = await Member.find({ seat: { $in: SEAT_NUMBERS } })
       .select('vacant expiry fee duration')
       .lean<{ vacant: boolean; expiry: string; fee: string; duration: string }[]>();
 

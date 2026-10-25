@@ -15,6 +15,7 @@ import { getSeatStatus, cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserPlus } from 'lucide-react';
 import PageHeader from '@/components/layout/PageHeader';
+import { isSeat } from '@/lib/layoutConfig';
 import { Button } from '@/components/ui/Button';
 import { STATUS_STYLE } from '@/components/seat/statusStyle';
 import { useSearchParams } from 'next/navigation';
@@ -39,7 +40,7 @@ export default function SeatGridContent() {
     const seatParam = searchParams.get('seat');
     if (seatParam) {
       const seatNum = parseInt(seatParam, 10);
-      if (seatNum >= 1 && seatNum <= 95) {
+      if (isSeat(seatNum)) {
         return seatNum;
       }
     }
@@ -53,7 +54,7 @@ export default function SeatGridContent() {
     const seatParam = searchParams.get('seat');
     if (seatParam) {
       const seatNum = parseInt(seatParam, 10);
-      if (seatNum >= 1 && seatNum <= 95 && seatNum !== selectedSeat) {
+      if (isSeat(seatNum) && seatNum !== selectedSeat) {
         // queueMicrotask prevents the synchronous setState cascade warning
         queueMicrotask(() => setSelectedSeat(seatNum));
       }
