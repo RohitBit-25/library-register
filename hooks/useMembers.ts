@@ -95,6 +95,19 @@ export function useMembers() {
 
   const members = useMemo(() => Array.isArray(rawMembers) ? rawMembers : [], [rawMembers]);
   const isError = !!swrError || !!lastError;
+  /**
+   * The list could not be loaded at all — nothing to show. Distinct from
+   * `isError`, which also fires when a save fails over data that is fine.
+   * Pages must show this as an error: rendered as an empty list it read as
+   * "no free seats" / "0 members", which was simply untrue.
+   */
+  const loadFailed = !!swrError && rawMembers === undefined;
+  const retry = useCallback(() => { mutate(); }, [mutate]);
+  /** Show a change on screen without saving it (for held actions — see
+   *  useUndoable). `retry()` puts the server's version back. */
+  const preview = useCallback((seat: number, patch: Partial<Member>) => {
+    mutate((cur) => cur?.map((m) => (m.seat === seat ? { ...m, ...patch } : m)), false);
+  }, [mutate]);
 
   // ─── Clear error ──────────────────────────────────────────────
   const clearError = useCallback(() => setLastError(null), []);
@@ -342,8 +355,28 @@ export function useMembers() {
     }
   }, [mutate]);
 
+  // ─── Move a member to another desk ───────────────────────────
+  const move = useCallback(async (from: number, to: number, onError?: (msg: string) => void) => {
+    try {
+      const res = await fetch('/api/members/move', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from, to }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || `Server returned ${res.status}`);
+      return true;
+    } catch (err) {
+      onError?.(`Couldn't move seat ${from} to ${to}. ${(err as Error).message}`);
+      return false;
+    } finally {
+      mutate();
+    }
+  }, [mutate]);
+
   return {
     members,
+    move,
     update,
     vacate,
     add,
@@ -353,6 +386,9 @@ export function useMembers() {
     bulkRemove,
     isLoading,
     isError,
+    loadFailed,
+    retry,
+    preview,
     lastError,
     clearError,
   };

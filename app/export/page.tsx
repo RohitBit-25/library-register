@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import PageHeader from '@/components/layout/PageHeader';
 import { springUI } from '@/lib/motion';
+import MembersLoadError from '@/components/seat/MembersLoadError';
 
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -235,6 +236,7 @@ export default function ExportPage() {
             </div>
           ) : undefined}
         />
+        <MembersLoadError />
       </motion.div>
 
       {/* Full Backup Card */}

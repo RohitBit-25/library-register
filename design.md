@@ -23,12 +23,16 @@ pixel-art kit**. It now covers every student page — `/landing`, `/browse`
 (and its request form), `/my-requests`, `/kiosk` — through shared pieces:
 `UnifiedHeader` (name plate), `PublicFooter`, `PixelButton`
 (`components/pixel/`), and `Segmented pixel`. The staff side keeps the crisp
-system but shares the voice: page titles, the wordmark and the
-login title use `font-pixel`, and the active sidebar item carries a saffron
-edge. Staff figures stay in Geist: Pixelify's 5 reads as S at small sizes. The art lives in `public/landing/`
-(`hall.png`, `student.png`, `desk.png`, `desks-row.png`; originals kept at the
-repo root). Pixelify Sans is the display face (`--font-pixelify` from the root layout,
-used as `font-pixel`); body and tables stay Geist. Surfaces are cream (`--warm-*`) with hard
+system; its active sidebar item carries a saffron edge. The art lives in
+`public/landing/` (`hall.png`, `student.png`, `desk.png`, `desks-row.png`;
+originals kept at the repo root).
+
+**Text is never pixelated.** A pixel font (Pixelify Sans) was tried and removed
+on the owner's request (2026-10-25): its 5 read as S, so "Desk 5" looked like
+"Desk S". All text is Geist — headings `font-display` bold with
+`tracking-tight` at large sizes, sentence case (all-caps only on small labels
+and badges). The pixel look lives in the art and the frames, not the letters.
+Surfaces are cream (`--warm-*`) with hard
 pixel boxes: `.px-box` (4px ink frame), `.px-raised` (frame + hard offset shadow),
 `.px-btn` (presses down on :active), `.px-planks` (wood floor under the art);
 colours come from `--px-*` tokens (wood, navy badge, green bullets, dark HUD
@@ -38,10 +42,48 @@ fees are computed, never typed. Real-world details (phone, WhatsApp,
 address/map, reviews, photos) live in `lib/siteInfo.ts` / `lib/photos.ts` and
 their sections stay hidden until filled.
 
+## Landing: Royal crest (2026-10-30)
+The owner supplied a navy-and-gold emblem (`public/brand/emblem.png`, cut from
+"Shree Ganguar Library Emblem.png" — the artwork misspells the name, so only
+the emblem is used and the name is always real text) and chose the **Royal
+crest** direction for `/landing`. The other student pages keep the pixel
+identity above; the landing keeps the pixel art as framed illustrations.
+
+- **Colour:** navy `--brand-navy` grounds (hero, passes, contact); cream
+  `--warm-bg` reads; gold (`--brand-gold-light` rules and fills, `--brand-gold`
+  24px+ lettering, `--brand-gold-deep` small text). Text on navy uses
+  `--crest-on-navy` / `--crest-on-navy-2`. One radial gold glow is allowed,
+  behind the emblem only.
+- **Type:** Instrument Serif (`font-editorial`, roman only) for large headings,
+  set big and tight; Geist for everything else; Cinzel (`font-brand`, digits
+  from Geist — Cinzel's 1 reads as I) only in the name lockup; Tiro for
+  Devanagari lines.
+- **Shapes (2026-10-30, after the owner found the first crest pass flat):**
+  rounded, layered, physical — the high-end-visual-design skill's rules.
+  Cards are double bezels (`.bezel` tray + `.bezel-core`, 2rem radius);
+  buttons are pills with the arrow in its own circle (`.pill-btn`,
+  `components/landing/PillLink`); small pill labels (`.eyebrow`) above
+  section headings; a faint fixed film grain (`.grain`).
+- **Navigation:** the landing has its own floating glass pill
+  (`components/landing/IslandNav`) with a full-screen sheet on phones; the
+  other student pages keep `UnifiedHeader`.
+- **Motion (play once on view, off under reduced motion):** sections fade up
+  and sharpen (`.reveal`, staggered by `--i`, `--ease-premium`); the emblem
+  rises (anime.js clip reveal); the free-desk count runs up; the day bar fills;
+  icons drop in; facilities drift past in a marquee; step scenes act out
+  their step.
+
 ## Macrostructure family
-- Marketing (`/landing`): pixel scene page — headline + HUD seat count beside
-  the student; the hall on planks with facility tags; one desk; price tags;
-  a dialogue box of three steps; FAQ; a closing desk row on planks.
+- Marketing (`/landing`): **Crest** — editorial split hero on navy (large
+  serif promise, live count chip, pills; hall art and emblem card laid over
+  each other) with a facility marquee; an asymmetric bento of the hall (art,
+  one desk, the day 6 AM–10 PM, facilities, your desk, today's count); navy
+  passes as bezel cards (best value in gold); three pixel step scenes; visit
+  card beside the FAQ; closing row of desks. Added 2026-10-30: a live hall
+  map (`LiveHall` — every desk drawn from `lib/layoutConfig` coordinates, gold
+  where free, one link to the plan), an "every pass includes" strip, cursor
+  spotlight rims on bezel cards (`data-spotlight`), pointer parallax on the
+  hero cards, and the landing's own navy footer (`LandingFooter`).
 - Public app (`/browse`, `/my-requests`, `/kiosk`): the plan or form is the page.
 - Admin: **Workbench** — page title + one line of context, then the working
   surface (plan, table, form). No hero, no enrichment.
@@ -77,6 +119,17 @@ step numbers, the active nav icon, focus rings. The primary action is ink.
 - Scale: 12 / 14 / 16 / 18 / 22 / 28 / 36 / 48 / 60 px (`--text-xs` … `--text-4xl`);
   landing headline 44–64px.
 - **Tiro Devanagari Hindi** only where श्री गणगौर is shown.
+- **Noto Sans Devanagari** sits after Geist in `--font-body`/`--font-display`
+  so Hindi UI text renders in a matching sans.
+
+## Language (2026-10-27)
+- Student pages (landing, browse + request form, my-requests, kiosk) have a
+  हिंदी / English toggle, named in the language it switches to. Staff pages
+  stay English.
+- Strings live in `lib/i18n.ts`, keyed by the English text; use `t()` from
+  `hooks/useLang`. A missing entry shows English, never a key name.
+- Placeholders (`{n}`, `{name}`) must survive translation — `npm test` checks.
+- Plurals are separate keys (`… 1 day …` and `… {n} days …`), not string math.
 
 ## Spacing
 4-point scale, `--space-1` (4px) … `--space-32` (128px). Use tokens or the
@@ -163,6 +216,10 @@ stats APIs, seeding and every "N seats" line derive from it.
 - The accent and its placement rules.
 - Button shape, radius, padding rhythm.
 - Page header pattern: 28px title, one-line 15px subtitle, actions right.
+- Modals are Radix `Dialog` (Escape, focus trap, focus back to the opener),
+  never a hand-made overlay.
+- `npm run check:ui` passes: no serious axe issues, no sideways scroll, no
+  tap target under 24×24 px, no console errors, at 390 and 1280 px.
 
 ## What pages MAY differ on
 - Working-surface composition (plan / table / form / chart).

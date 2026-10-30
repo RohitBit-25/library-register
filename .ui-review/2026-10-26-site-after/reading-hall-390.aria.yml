@@ -1,0 +1,237 @@
+- alert
+- banner:
+  - text: Shree Gangaur Library Staff desk
+  - button "Sign out"
+- main:
+  - heading "Reading hall" [level=1]
+  - paragraph: Monday, 26 October · 71 of 95 seats taken
+  - button "Search name, phone, seat..."
+  - 'button "Free now: 24. Show only these seats on the plan"': Free now 24
+  - 'button "Fee due: 7. Show only these seats on the plan"': Fee due 7
+  - 'button "Expiring this week: 2. Show only these seats on the plan"': Expiring this week 2
+  - 'button "Expired: 6. Show only these seats on the plan"': Expired 6
+  - group "View":
+    - button "Plan"
+    - button "List" [pressed]
+  - group "Shift":
+    - button "All shifts" [pressed]
+    - button "Morning"
+    - button "Evening"
+  - heading "Left wall 8 of 11 taken" [level=3]
+  - list:
+    - listitem:
+      - button "Seat 95, Trisha Chittora, expired": 95 Trisha Expired
+    - listitem:
+      - button "Seat 94, Rajat Vyas, active": 94 Rajat Active
+    - listitem:
+      - button "Seat 93, Snehal Bhandari, active": 93 Snehal Active
+    - listitem:
+      - button "Seat 92, Ayush Bagora, active": 92 Ayush Active
+    - listitem:
+      - button "Seat 91, vacant": 91 Vacant
+    - listitem:
+      - button "Seat 90, Pallavi Katara, active": 90 Pallavi Active
+    - listitem:
+      - button "Seat 89, Nakul Menaria, expired": 89 Nakul Expired
+    - listitem:
+      - button "Seat 88, Swati Ojha, expired": 88 Swati Expired
+    - listitem:
+      - button "Seat 87, vacant": 87 Vacant
+    - listitem:
+      - button "Seat 86, vacant": 86 Vacant
+    - listitem:
+      - button "Seat 85, Kunal Dhakad, due": 85 Kunal Fee due
+  - heading "Column 2 6 of 9 taken" [level=3]
+  - list:
+    - listitem:
+      - button "Seat 79, Gaurav Solanki, active": 79 Gaurav Active
+    - listitem:
+      - button "Seat 78, Isha Ranawat, active": 78 Isha Active
+    - listitem:
+      - button "Seat 77, vacant": 77 Vacant
+    - listitem:
+      - button "Seat 76, Prateek Bapna, active": 76 Prateek Active
+    - listitem:
+      - button "Seat 75, Sanya Lodha, active": 75 Sanya Active
+    - listitem:
+      - button "Seat 74, Abhishek Charan, active": 74 Abhish. Active
+    - listitem:
+      - button "Seat 73, vacant": 73 Vacant
+    - listitem:
+      - button "Seat 72, Kritika Vyas, active": 72 Kritika Active
+    - listitem:
+      - button "Seat 71, vacant": 71 Vacant
+  - heading "Column 3 13 of 18 taken" [level=3]
+  - list:
+    - listitem:
+      - button "Seat 70, Dhruv Sompura, expired": 70 Dhruv Expired
+    - listitem:
+      - button "Seat 61, Bhoomika Shaktawat, active": 61 Bhoomi. Active
+    - listitem:
+      - button "Seat 69, vacant": 69 Vacant
+    - listitem:
+      - button "Seat 60, Jatin Maheshwari, active": 60 Jatin Active
+    - listitem:
+      - button "Seat 68, vacant": 68 Vacant
+    - listitem:
+      - button "Seat 59, Khushi Rawal, active": 59 Khushi Active
+    - listitem:
+      - button "Seat 67, Vaishnavi Audichya, expiring": 67 Vaishn. Expiring
+    - listitem:
+      - button "Seat 58, Rahul Meghwal, active": 58 Rahul Active
+    - listitem:
+      - button "Seat 66, Nitesh Kumawat, active": 66 Nitesh Active
+    - listitem:
+      - button "Seat 57, vacant": 57 Vacant
+    - listitem:
+      - button "Seat 65, Aishwarya Bohra, active": 65 Aishwa. Active
+    - listitem:
+      - button "Seat 56, Palak Agarwal, due": 56 Palak Fee due
+    - listitem:
+      - button "Seat 64, Pankaj Damor, active": 64 Pankaj Active
+    - listitem:
+      - button "Seat 55, vacant": 55 Vacant
+    - listitem:
+      - button "Seat 63, Muskan Qureshi, due": 63 Muskan Fee due
+    - listitem:
+      - button "Seat 54, vacant": 54 Vacant
+    - listitem:
+      - button "Seat 62, Siddharth Nagar, active": 62 Siddha. Active
+    - listitem:
+      - button "Seat 53, Shubham Mundra, active": 53 Shubham Active
+  - heading "Column 4 14 of 20 taken" [level=3]
+  - list:
+    - listitem:
+      - button "Seat 52, Aditi Vaishnav, active": 52 Aditi Active
+    - listitem:
+      - button "Seat 42, Mohit Sen, active": 42 Mohit Active
+    - listitem:
+      - button "Seat 51, Naveen Jat, active": 51 Naveen Active
+    - listitem:
+      - button "Seat 41, vacant": 41 Vacant
+    - listitem:
+      - button "Seat 50, Ridhima Pandya, active": 50 Ridhima Active
+    - listitem:
+      - button "Seat 40, vacant": 40 Vacant
+    - listitem:
+      - button "Seat 49, Tushar Bhavsar, due": 49 Tushar Fee due
+    - listitem:
+      - button "Seat 39, Simran Kaur Bhatia, active": 39 Simran Active
+    - listitem:
+      - button "Seat 48, Gauri Shrimali, active": 48 Gauri Active
+    - listitem:
+      - button "Seat 38, Raghav Dashora, active": 38 Raghav Active
+    - listitem:
+      - button "Seat 47, Ankit Choubisa, active": 47 Ankit Active
+    - listitem:
+      - button "Seat 37, vacant": 37 Vacant
+    - listitem:
+      - button "Seat 46, Preeti Sanadhya, due": 46 Preeti Fee due
+    - listitem:
+      - button "Seat 36, vacant": 36 Vacant
+    - listitem:
+      - button "Seat 45, Lokesh Teli, active": 45 Lokesh Active
+    - listitem:
+      - button "Seat 35, Neha Bhanawat, due": 35 Neha Fee due
+    - listitem:
+      - button "Seat 44, Anushka Soni, active": 44 Anushka Active
+    - listitem:
+      - button "Seat 34, Deepak Regar, active": 34 Deepak Active
+    - listitem:
+      - button "Seat 43, vacant": 43 Vacant
+    - listitem:
+      - button "Seat 33, vacant": 33 Vacant
+  - heading "Column 5 14 of 20 taken" [level=3]
+  - list:
+    - listitem:
+      - button "Seat 32, Sakshi Joshi, due": 32 Sakshi Fee due
+    - listitem:
+      - button "Seat 20, Karan Salvi, active": 20 Karan Active
+    - listitem:
+      - button "Seat 31, vacant": 31 Vacant
+    - listitem:
+      - button "Seat 19, vacant": 19 Vacant
+    - listitem:
+      - button "Seat 30, Arjun Kalal, active": 30 Arjun Active
+    - listitem:
+      - button "Seat 18, vacant": 18 Vacant
+    - listitem:
+      - button "Seat 29, Tanya Mehta, active": 29 Tanya Active
+    - listitem:
+      - button "Seat 17, vacant": 17 Vacant
+    - listitem:
+      - button "Seat 28, Vikram Gurjar, active": 28 Vikram Active
+    - listitem:
+      - button "Seat 16, vacant": 16 Vacant
+    - listitem:
+      - button "Seat 27, Sneha Dangi, active": 27 Sneha Active
+    - listitem:
+      - button "Seat 15, Anjali Bhatt, active": 15 Anjali Active
+    - listitem:
+      - button "Seat 26, Manish Lohar, active": 26 Manish Active
+    - listitem:
+      - button "Seat 14, Devendra Singh Chundawat, active": 14 Devend. Active
+    - listitem:
+      - button "Seat 25, Divya Chouhan, active": 25 Divya Active
+    - listitem:
+      - button "Seat 13, vacant": 13 Vacant
+    - listitem:
+      - button "Seat 24, Sahil Khatri, active": 24 Sahil Active
+    - listitem:
+      - button "Seat 12, Ishita Trivedi, active": 12 Ishita Active
+    - listitem:
+      - button "Seat 23, Ritika Nagda, active": 23 Ritika Active
+    - listitem:
+      - button "Seat 11, Yash Kothari, active": 11 Yash Active
+  - heading "Right wall 9 of 10 taken" [level=3]
+  - list:
+    - listitem:
+      - button "Seat 10, Meenakshi Purohit, active": 10 Meenak. Active
+    - listitem:
+      - button "Seat 9, Rohit Suthar, active": 9 Rohit Active
+    - listitem:
+      - button "Seat 8, Kavya Menaria, expired": 8 Kavya Expired
+    - listitem:
+      - button "Seat 7, Chandraprakash Rathore, active": 7 Chandr. Active
+    - listitem:
+      - button "Seat 6, Nikita Jain, active": 6 Nikita Active
+    - listitem:
+      - button "Seat 5, Bhavesh Paliwal, active": 5 Bhavesh Active
+    - listitem:
+      - button "Seat 4, Om Vyas, active": 4 Om Active
+    - listitem:
+      - button "Seat 3, Priya Rathore, active": 3 Priya Active
+    - listitem:
+      - button "Seat 2, Aarav Sharma, active": 2 Aarav Active
+    - listitem:
+      - button "Seat 1, vacant": 1 Vacant
+  - heading "Bottom row 5 of 5 taken" [level=3]
+  - list:
+    - listitem:
+      - button "Seat 84, Riya Sukhwal, active": 84 Riya Active
+    - listitem:
+      - button "Seat 83, Hemant Gehlot, active": 83 Hemant Active
+    - listitem:
+      - button "Seat 82, Aarushi Kumbhat, active": 82 Aarushi Active
+    - listitem:
+      - button "Seat 81, Vishal Banjara, active": 81 Vishal Active
+    - listitem:
+      - button "Seat 80, Mahima Tak, active": 80 Mahima Active
+  - heading "By the door 2 of 2 taken" [level=3]
+  - list:
+    - listitem:
+      - button "Seat 21, Pooja Ameta, expired": 21 Pooja Expired
+    - listitem:
+      - button "Seat 22, Harshvardhan Sisodiya, expiring": 22 Harshv. Expiring
+- navigation "Admin":
+  - link "Seats":
+    - /url: /
+  - link "Requests":
+    - /url: /requests
+  - link "Members":
+    - /url: /members
+  - link "Fees":
+    - /url: /payments
+  - link "Reports":
+    - /url: /analytics
+- region "Notifications"

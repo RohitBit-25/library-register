@@ -1,0 +1,27 @@
+- alert
+- banner:
+  - text: Shree Gangaur Library Staff desk
+  - button "Sign out"
+- main:
+  - heading "Staff" [level=1]
+  - paragraph:
+    - text: Each person signs in with their name and their own PIN, so the activity log records who did what. You are signed in as
+    - strong: Admin
+    - text: .
+  - button "Add staff member"
+  - list:
+    - listitem:
+      - paragraph: Admin You
+      - paragraph: Owner · last signed in 26 Oct 2026
+- navigation "Admin":
+  - link "Seats":
+    - /url: /
+  - link "Requests":
+    - /url: /requests
+  - link "Members":
+    - /url: /members
+  - link "Fees":
+    - /url: /payments
+  - link "Reports":
+    - /url: /analytics
+- region "Notifications"

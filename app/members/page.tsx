@@ -3,6 +3,7 @@
 import { todayISO } from '@/lib/utils';
 
 import { useMembers } from '@/hooks/useMembers';
+import { useUndoable } from '@/hooks/useUndoable';
 import { useToast } from '@/hooks/useToast';
 import MemberTable from '@/components/member/MemberTable';
 import Modal from '@/components/ui/Modal';
@@ -10,16 +11,19 @@ import { toCsv } from '@/lib/csv';
 import { useState } from 'react';
 import PageHeader from '@/components/layout/PageHeader';
 import { Users } from 'lucide-react';
+import MembersLoadError from '@/components/seat/MembersLoadError';
 
 export default function MembersPage() {
-  const { members, update, vacate, bulkMarkPaid, bulkRemove } = useMembers();
+  const { members, update, vacate, bulkMarkPaid, bulkRemove, preview, retry } = useMembers();
+  const hold = useUndoable();
   const { addToast } = useToast();
   const [confirmRemove, setConfirmRemove] = useState<number | null>(null);
   const [confirmBulkRemove, setConfirmBulkRemove] = useState<number[] | null>(null);
 
   const handleMarkPaid = (seat: number) => {
-    update(seat, { fee: 'paid' }, (msg) => addToast('error', msg));
-    addToast('success', `Seat ${seat} — fee marked as paid`);
+    preview(seat, { fee: 'paid' });
+    hold(`paid-${seat}`, `Seat ${seat} — fee marked as paid`,
+      () => update(seat, { fee: 'paid' }, (msg) => addToast('error', msg)), retry);
   };
 
   const handleMarkDue = (seat: number) => {
@@ -95,6 +99,7 @@ export default function MembersPage() {
         icon={<Users className="size-5" />}
         subtitle={`${members.filter(m => !m.vacant).length} members · ${members.filter(m => m.vacant).length} vacant`}
       />
+      <MembersLoadError />
 
       <MemberTable
         members={members}

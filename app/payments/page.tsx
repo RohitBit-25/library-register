@@ -10,12 +10,15 @@ import { addDaysISO } from '@/lib/seat-status';
 import { formatINR } from '@/lib/pricing';
 import { toCsv } from '@/lib/csv';
 import { type Duration } from '@/lib/types';
-import { IndianRupee, Receipt as ReceiptIcon, Download, Wallet, Smartphone, Banknote } from 'lucide-react';
+import { IndianRupee, Receipt as ReceiptIcon, Download, Wallet, Smartphone, Banknote, MessageCircle } from 'lucide-react';
 import PageHeader from '@/components/layout/PageHeader';
 
-type RangeKey = '7d' | '30d' | '90d' | 'month';
+type RangeKey = 'today' | '7d' | '30d' | '90d' | 'month';
 
 const RANGES: { key: RangeKey; label: string }[] = [
+  // End-of-day close: today's cash and UPI, to check against the drawer and
+  // the UPI app before going home.
+  { key: 'today', label: 'Today' },
   { key: '7d', label: 'Last 7 days' },
   { key: '30d', label: 'Last 30 days' },
   { key: 'month', label: 'This month' },
@@ -24,6 +27,7 @@ const RANGES: { key: RangeKey; label: string }[] = [
 
 function rangeFor(key: RangeKey): { from: string; to: string } {
   const to = todayISO();
+  if (key === 'today') return { from: to, to };
   if (key === 'month') return { from: to.slice(0, 8) + '01', to };
   const days = key === '7d' ? 6 : key === '30d' ? 29 : 89;
   return { from: addDaysISO(to, -days), to };
@@ -150,6 +154,19 @@ export default function PaymentsPage() {
                   {formatINR(p.amount)}
                 </span>
 
+                {p.memberPhone && (
+                  <a
+                    href={`https://wa.me/91${p.memberPhone.replace(/\D/g, '').slice(-10)}?text=${encodeURIComponent(
+                      `Shree Gangaur Library — receipt\n${formatINR(p.amount)} received for seat ${p.seat} (${durationLabel((p.duration || '') as Duration)}) on ${fmtDate(p.date)}.\nThank you!`,
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Send ${p.memberName} the receipt on WhatsApp`}
+                    className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-[var(--emerald-200)] bg-[var(--emerald-50)] text-[var(--emerald-700)] transition-ui hover:bg-[var(--emerald-100)]"
+                  >
+                    <MessageCircle className="size-4" aria-hidden="true" />
+                  </a>
+                )}
                 <button
                   onClick={() => setReceipt(p)}
                   aria-label={`Receipt for ${p.memberName}, seat ${p.seat}`}

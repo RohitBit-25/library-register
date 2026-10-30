@@ -8,7 +8,7 @@ import { type Member, type Duration, type SeatStatus } from '@/lib/types';
 import { getSeatStatus, fmtDate, durationLabel, calcExpiry, todayISO, renewalStartDate, cn, daysUntilExpiry } from '@/lib/utils';
 import BottomSheet from '@/components/ui/BottomSheet';
 import Modal from '@/components/ui/Modal';
-import { Phone, Calendar, Clock, X, RefreshCw, Trash2, CreditCard, MessageCircle, Copy, Pencil, Save, XCircle } from 'lucide-react';
+import { Phone, Calendar, Clock, X, RefreshCw, Trash2, CreditCard, MessageCircle, Copy, Pencil, Save, XCircle, ArrowRightLeft } from 'lucide-react';
 import { LazyMotion, domAnimation, m } from 'framer-motion';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { z } from 'zod';
@@ -42,6 +42,9 @@ interface SeatDetailPanelProps {
   onRenew: (seat: number, joinDate: string, duration: Duration, amount?: number) => void;
   onRemove: (seat: number) => void;
   onUpdate?: (seat: number, patch: Partial<Member>) => void;
+  /** Move the member to a free desk; `vacantSeats` lists the choices. */
+  onMove?: (from: number, to: number) => void;
+  vacantSeats?: number[];
   isMobile: boolean;
   readonly?: boolean;
 }
@@ -70,10 +73,14 @@ export default function SeatDetailPanel({
   onRenew,
   onRemove,
   onUpdate,
+  onMove,
+  vacantSeats = [],
   isMobile,
   readonly = false,
 }: SeatDetailPanelProps) {
   const [renewMode, setRenewMode] = useState(false);
+  const [moveTo, setMoveTo] = useState<number | null>(null);
+  const [moveOpen, setMoveOpen] = useState(false);
   // null until typed: follows the chosen plan's price.
   const [renewAmountTyped, setRenewAmountTyped] = useState<string | null>(null);
   const [editMode, setEditMode] = useState(false);
@@ -391,6 +398,45 @@ export default function SeatDetailPanel({
                       <MessageCircle className="size-4" aria-hidden="true" />
                       Send a WhatsApp reminder
                     </a>
+                  )}
+
+                  {/* Shifting a member used to be vacate + re-add, which re-recorded
+                      their fee as a new payment. */}
+                  {onMove && vacantSeats.length > 0 && (
+                    moveOpen ? (
+                      <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] p-3">
+                        <label htmlFor="move-to" className="text-xs font-bold text-[var(--text-secondary)]">Move {member.name.split(' ')[0]} to</label>
+                        <div className="mt-1.5 flex gap-2">
+                          <select
+                            id="move-to"
+                            value={moveTo ?? ''}
+                            onChange={(e) => setMoveTo(Number(e.target.value) || null)}
+                            className="min-h-[44px] flex-1 rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--bg-surface)] px-3 text-sm text-[var(--text-primary)]"
+                          >
+                            <option value="">Pick a free desk…</option>
+                            {vacantSeats.map((s) => <option key={s} value={s}>Seat {s} · {seatRow(s)}</option>)}
+                          </select>
+                          <button
+                            type="button"
+                            disabled={!moveTo}
+                            onClick={() => { if (moveTo) { onMove(member.seat, moveTo); setMoveOpen(false); setMoveTo(null); onClose(); } }}
+                            className="min-h-[44px] cursor-pointer rounded-[var(--radius-sm)] border border-[var(--ink)] bg-[var(--ink)] px-4 text-sm font-semibold text-[var(--text-inverse)] disabled:cursor-not-allowed disabled:border-[var(--border-default)] disabled:bg-[var(--bg-muted)] disabled:text-[var(--text-disabled)]"
+                          >
+                            Move
+                          </button>
+                        </div>
+                        <button type="button" onClick={() => { setMoveOpen(false); setMoveTo(null); }} className="mt-2 cursor-pointer text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">Cancel</button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setMoveOpen(true)}
+                        className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] py-2.5 text-sm font-bold text-[var(--text-secondary)] transition-ui hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)] shadow-[var(--shadow-xs)]"
+                      >
+                        <ArrowRightLeft className="size-4" aria-hidden="true" />
+                        Move to another desk
+                      </button>
+                    )
                   )}
 
                   <div className="border-t border-[var(--border-subtle)] pt-2">

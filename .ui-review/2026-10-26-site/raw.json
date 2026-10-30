@@ -1,0 +1,568 @@
+{
+ "routes": {
+  "/landing @390": {
+   "file": "landing-390.png",
+   "axe": [],
+   "small": [
+    "a \"Seats\" 37x20",
+    "a \"My requests\" 79x20"
+   ],
+   "overflow": 0,
+   "errors": []
+  },
+  "/browse @390": {
+   "file": "browse-390.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/my-requests @390": {
+   "file": "my-requests-390.png",
+   "axe": [],
+   "small": [
+    "a \"Seats\" 37x20",
+    "a \"My requests\" 79x20"
+   ],
+   "overflow": 0,
+   "errors": []
+  },
+  "/kiosk @390": {
+   "file": "kiosk-390.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/admin/login @390": {
+   "file": "admin-login-390.png",
+   "axe": [],
+   "small": [
+    "a \"Back to the library\" 145x20",
+    "a \"Find a seat\" 61x16"
+   ],
+   "overflow": 0,
+   "errors": []
+  },
+  "/ @390": {
+   "file": "reading-hall-390.png",
+   "axe": [
+    {
+     "id": "heading-order",
+     "impact": "moderate",
+     "help": "Heading levels should only increase by one",
+     "n": 1,
+     "targets": [
+      "section:nth-child(1) > h3"
+     ]
+    }
+   ],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/requests @390": {
+   "file": "requests-390.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/members @390": {
+   "file": "members-390.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/payments @390": {
+   "file": "payments-390.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/expiry @390": {
+   "file": "expiry-390.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/attendance @390": {
+   "file": "attendance-390.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/analytics @390": {
+   "file": "analytics-390.png",
+   "axe": [
+    {
+     "id": "definition-list",
+     "impact": "serious",
+     "help": "<dl> elements must only directly contain properly-ordered <dt> and <dd> groups, <script>, <template> or <div> elements",
+     "n": 1,
+     "targets": [
+      "dl"
+     ]
+    },
+    {
+     "id": "dlitem",
+     "impact": "serious",
+     "help": "<dt> and <dd> elements must be contained by a <dl>",
+     "n": 2,
+     "targets": [
+      ".p-\\[var\\(--space-4\\)\\].text-left[type=\"button\"] > dt",
+      ".p-\\[var\\(--space-4\\)\\].text-left[type=\"button\"] > dd"
+     ]
+    }
+   ],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/audit @390": {
+   "file": "audit-390.png",
+   "axe": [
+    {
+     "id": "scrollable-region-focusable",
+     "impact": "serious",
+     "help": "Scrollable region must have keyboard access",
+     "n": 1,
+     "targets": [
+      ".overflow-x-auto"
+     ]
+    }
+   ],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/staff @390": {
+   "file": "staff-390.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/setup @390": {
+   "file": "setup-390.png",
+   "axe": [
+    {
+     "id": "color-contrast",
+     "impact": "serious",
+     "help": "Elements must meet minimum color contrast ratio thresholds",
+     "n": 1,
+     "targets": [
+      ".mt-6"
+     ]
+    },
+    {
+     "id": "link-in-text-block",
+     "impact": "serious",
+     "help": "Links must be distinguishable without relying on color",
+     "n": 1,
+     "targets": [
+      ".hover\\:underline"
+     ]
+    },
+    {
+     "id": "scrollable-region-focusable",
+     "impact": "serious",
+     "help": "Scrollable region must have keyboard access",
+     "n": 1,
+     "targets": [
+      ".max-h-\\[400px\\]"
+     ]
+    }
+   ],
+   "small": [
+    "a \"Google Forms\" 109x20"
+   ],
+   "overflow": 0,
+   "errors": []
+  },
+  "/floorplan @390": {
+   "file": "floorplan-390.png",
+   "axe": [
+    {
+     "id": "color-contrast",
+     "impact": "serious",
+     "help": "Elements must meet minimum color contrast ratio thresholds",
+     "n": 9,
+     "targets": [
+      ".border-\\[var\\(--emerald-500\\)\\]\\/45.text-\\[var\\(--emerald-700\\)\\][data-seat=\"74\"] > .mt-1.text-\\[11px\\].opacity-80",
+      "button[aria-label=\"Seat 75, Sanya Lodha, Active\"] > .mt-1.text-\\[11px\\].opacity-80",
+      "button[aria-label=\"Seat 76, Prateek Bapna, Active\"] > .mt-1.text-\\[11px\\].opacity-80",
+      "button[aria-label=\"Seat 78, Isha Ranawat, Active\"] > .mt-1.text-\\[11px\\].opacity-80"
+     ]
+    },
+    {
+     "id": "landmark-main-is-top-level",
+     "impact": "moderate",
+     "help": "Main landmark should not be contained in another landmark",
+     "n": 1,
+     "targets": [
+      ".min-h-0"
+     ]
+    },
+    {
+     "id": "landmark-no-duplicate-main",
+     "impact": "moderate",
+     "help": "Document should not have more than one main landmark",
+     "n": 1,
+     "targets": [
+      ".min-h-dvh"
+     ]
+    },
+    {
+     "id": "landmark-unique",
+     "impact": "moderate",
+     "help": "Landmarks should have a unique role or role/label/title (i.e. accessible name) combination",
+     "n": 1,
+     "targets": [
+      ".min-h-dvh"
+     ]
+    }
+   ],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/export @390": {
+   "file": "export-390.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/landing @1280": {
+   "file": "landing-1280.png",
+   "axe": [],
+   "small": [
+    "a \"Seats\" 37x20",
+    "a \"My requests\" 79x20"
+   ],
+   "overflow": 0,
+   "errors": []
+  },
+  "/browse @1280": {
+   "file": "browse-1280.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/my-requests @1280": {
+   "file": "my-requests-1280.png",
+   "axe": [],
+   "small": [
+    "a \"Seats\" 37x20",
+    "a \"My requests\" 79x20"
+   ],
+   "overflow": 0,
+   "errors": []
+  },
+  "/kiosk @1280": {
+   "file": "kiosk-1280.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/admin/login @1280": {
+   "file": "admin-login-1280.png",
+   "axe": [],
+   "small": [
+    "a \"Back to the library\" 145x20",
+    "a \"Find a seat\" 61x16"
+   ],
+   "overflow": 0,
+   "errors": []
+  },
+  "/ @1280": {
+   "file": "reading-hall-1280.png",
+   "axe": [
+    {
+     "id": "color-contrast",
+     "impact": "serious",
+     "help": "Elements must meet minimum color contrast ratio thresholds",
+     "n": 56,
+     "targets": [
+      "button[aria-label=\"Seat 2, Aarav Sharma, Active\"] > .text-\\[11px\\].opacity-80.mt-1",
+      "button[aria-label=\"Seat 3, Priya Rathore, Active\"] > .text-\\[11px\\].opacity-80.mt-1",
+      "button[aria-label=\"Seat 4, Om Vyas, Active\"] > .text-\\[11px\\].opacity-80.mt-1",
+      ".border-\\[var\\(--emerald-500\\)\\]\\/45.text-\\[var\\(--emerald-700\\)\\][data-seat=\"5\"] > .text-\\[11px\\].opacity-80.mt-1"
+     ]
+    }
+   ],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/requests @1280": {
+   "file": "requests-1280.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/members @1280": {
+   "file": "members-1280.png",
+   "axe": [
+    {
+     "id": "empty-table-header",
+     "impact": "minor",
+     "help": "Table header text should not be empty",
+     "n": 1,
+     "targets": [
+      ".w-10:nth-child(9)"
+     ]
+    }
+   ],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/payments @1280": {
+   "file": "payments-1280.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/expiry @1280": {
+   "file": "expiry-1280.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/attendance @1280": {
+   "file": "attendance-1280.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/analytics @1280": {
+   "file": "analytics-1280.png",
+   "axe": [
+    {
+     "id": "definition-list",
+     "impact": "serious",
+     "help": "<dl> elements must only directly contain properly-ordered <dt> and <dd> groups, <script>, <template> or <div> elements",
+     "n": 1,
+     "targets": [
+      "dl"
+     ]
+    },
+    {
+     "id": "dlitem",
+     "impact": "serious",
+     "help": "<dt> and <dd> elements must be contained by a <dl>",
+     "n": 2,
+     "targets": [
+      ".p-\\[var\\(--space-4\\)\\].text-left[type=\"button\"] > dt",
+      ".p-\\[var\\(--space-4\\)\\].text-left[type=\"button\"] > dd"
+     ]
+    }
+   ],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/audit @1280": {
+   "file": "audit-1280.png",
+   "axe": [
+    {
+     "id": "scrollable-region-focusable",
+     "impact": "serious",
+     "help": "Scrollable region must have keyboard access",
+     "n": 1,
+     "targets": [
+      ".overflow-x-auto"
+     ]
+    }
+   ],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/staff @1280": {
+   "file": "staff-1280.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/setup @1280": {
+   "file": "setup-1280.png",
+   "axe": [
+    {
+     "id": "color-contrast",
+     "impact": "serious",
+     "help": "Elements must meet minimum color contrast ratio thresholds",
+     "n": 1,
+     "targets": [
+      ".mt-6"
+     ]
+    },
+    {
+     "id": "link-in-text-block",
+     "impact": "serious",
+     "help": "Links must be distinguishable without relying on color",
+     "n": 1,
+     "targets": [
+      ".hover\\:underline"
+     ]
+    },
+    {
+     "id": "scrollable-region-focusable",
+     "impact": "serious",
+     "help": "Scrollable region must have keyboard access",
+     "n": 1,
+     "targets": [
+      ".max-h-\\[400px\\]"
+     ]
+    }
+   ],
+   "small": [
+    "a \"Google Forms\" 109x20"
+   ],
+   "overflow": 0,
+   "errors": []
+  },
+  "/floorplan @1280": {
+   "file": "floorplan-1280.png",
+   "axe": [
+    {
+     "id": "color-contrast",
+     "impact": "serious",
+     "help": "Elements must meet minimum color contrast ratio thresholds",
+     "n": 56,
+     "targets": [
+      "button[aria-label=\"Seat 2, Aarav Sharma, Active\"] > .mt-1.text-\\[11px\\].opacity-80",
+      "button[aria-label=\"Seat 3, Priya Rathore, Active\"] > .mt-1.text-\\[11px\\].opacity-80",
+      "button[aria-label=\"Seat 4, Om Vyas, Active\"] > .mt-1.text-\\[11px\\].opacity-80",
+      ".border-\\[var\\(--emerald-500\\)\\]\\/45.text-\\[var\\(--emerald-700\\)\\][data-seat=\"5\"] > .mt-1.text-\\[11px\\].opacity-80"
+     ]
+    },
+    {
+     "id": "landmark-main-is-top-level",
+     "impact": "moderate",
+     "help": "Main landmark should not be contained in another landmark",
+     "n": 1,
+     "targets": [
+      ".min-h-0"
+     ]
+    },
+    {
+     "id": "landmark-no-duplicate-main",
+     "impact": "moderate",
+     "help": "Document should not have more than one main landmark",
+     "n": 1,
+     "targets": [
+      ".min-h-dvh"
+     ]
+    },
+    {
+     "id": "landmark-unique",
+     "impact": "moderate",
+     "help": "Landmarks should have a unique role or role/label/title (i.e. accessible name) combination",
+     "n": 1,
+     "targets": [
+      ".min-h-dvh"
+     ]
+    }
+   ],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  },
+  "/export @1280": {
+   "file": "export-1280.png",
+   "axe": [],
+   "small": [],
+   "overflow": 0,
+   "errors": []
+  }
+ },
+ "probes": {
+  "tabLanding": [
+   "a \"Shree Gangaur Library — home\" ring=true onscreen=true",
+   "a \"Seats\" ring=true onscreen=true",
+   "a \"Fees\" ring=true onscreen=true",
+   "a \"My requests\" ring=true onscreen=true",
+   "a \"Find my seat ▶\" ring=true onscreen=true",
+   "a \"See fees\" ring=true onscreen=true",
+   "a \"See the seat plan ▶\" ring=true onscreen=false",
+   "a \"1 Month pass, ₹700. Pick a s\" ring=true onscreen=false",
+   "a \"3 Months pass, ₹1,900. Pick \" ring=true onscreen=false",
+   "a \"6 Months pass, ₹3,600. Pick \" ring=true onscreen=false",
+   "a \"1 Year pass, ₹6,600. Pick a \" ring=true onscreen=false",
+   "a \"Claim your desk ▶\" ring=true onscreen=false",
+   "a \"Seats\" ring=true onscreen=false",
+   "a \"My requests\" ring=true onscreen=false"
+  ],
+  "tabBrowse": [
+   "a \"Shree Gangaur Library — home\" ring=true onscreen=true",
+   "a \"Seats\" ring=true onscreen=true",
+   "a \"Fees\" ring=true onscreen=true",
+   "a \"My requests\" ring=true onscreen=true",
+   "button \"Any shift\" ring=true onscreen=true",
+   "button \"Morning\" ring=true onscreen=true",
+   "button \"Evening\" ring=true onscreen=true",
+   "button \"Zoom out\" ring=true onscreen=true",
+   "button \"Fit the whole room on screen\" ring=true onscreen=true",
+   "button \"Zoom in\" ring=true onscreen=true",
+   "button \"Seat 1, available — tap to r\" ring=true onscreen=true",
+   "button \"Seat 13, available — tap to \" ring=true onscreen=true",
+   "button \"Seat 16, available — tap to \" ring=true onscreen=true",
+   "button \"Seat 17, available — tap to \" ring=true onscreen=true",
+   "button \"Seat 18, available — tap to \" ring=true onscreen=true",
+   "button \"Seat 19, available — tap to \" ring=true onscreen=true"
+  ],
+  "sheetOpenFocus": "INPUT req-name",
+  "sheetDialogRole": "no role=dialog",
+  "sheetFocusEscapes": 26,
+  "focusAfterClose": "BUTTON \"55\"",
+  "browseErrorText": "Pick a free desk\n\nFree 0 / 0\nTap a green desk to request it.\n\nAny shift\nMorning\nEvening\nENTRANCE\nLEFT WALL\nCOLUMN 2\nCOLUMN 3\nCOLUMN 4\nCOLUMN 5\nRIGHT WALL\nBOTTOM ROW\nBY THE DOOR\n\nScroll sideways to see the rest of the hall\n\nAvailable\n0\nSelected\nRequested\n0\nBooked\n0\nFree desks 0\n\nNo free seats right n",
+  "landingErrorHud": "Seats free 0 / 95",
+  "myRequestsErrorText": "My requests\n\nEnter the phone number you used when you asked for a seat.\n\nPhone number\nLook up\n\nNo requests for this number\n\nCheck the number, or pick a free seat to send one.",
+  "reducedMotion/landing": [],
+  "reducedMotion/browse": [],
+  "reducedMotion/attendance": [
+   "Animation",
+   "Animation",
+   "Animation",
+   "Animation",
+   "Animation",
+   "Animation",
+   "Animation",
+   "Animation"
+  ],
+  "eventTimingBrowse": [
+   "pointerup:48ms",
+   "click:48ms",
+   "pointerup:24ms",
+   "click:24ms",
+   "pointerup:24ms",
+   "click:24ms"
+  ],
+  "eventTimingHall": [
+   "pointerup:24ms",
+   "click:24ms",
+   "pointerup:24ms",
+   "click:24ms"
+  ],
+  "eventTimingMembers": [
+   "pointerup:56ms",
+   "click:56ms",
+   "keydown:32ms",
+   "keydown:32ms"
+  ]
+ }
+}

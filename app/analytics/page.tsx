@@ -17,9 +17,11 @@ import { formatINR, getPlanRates } from '@/lib/pricing';
 import { cn } from '@/lib/utils';
 import { Users, UserMinus, AlertTriangle, CalendarX, Check, RefreshCw, TrendingUp, IndianRupee } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
 import { springUI } from '@/lib/motion';
+import ForecastCard from '@/components/charts/ForecastCard';
 
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },
@@ -152,7 +154,7 @@ export default function DashboardPage() {
               value={formatINR(stats.revenue.outstanding)}
               tone={stats.revenue.outstanding > 0 ? 'warn' : 'ok'}
               hint={`${stats.withDues} member${stats.withDues === 1 ? '' : 's'} owing`}
-              onClick={() => router.push('/members?filter=due')}
+              href="/members?filter=due"
             />
             <MoneyStat
               label="Collected (30d)"
@@ -180,6 +182,10 @@ export default function DashboardPage() {
             />
           </dl>
         </Card>
+      </motion.div>
+
+      <motion.div variants={itemVariants} className="mb-[var(--space-6)]">
+        <ForecastCard />
       </motion.div>
 
       {/* Alert banner */}
@@ -458,40 +464,45 @@ function MoneyStat({
   value,
   hint,
   tone = 'neutral',
-  onClick,
+  href,
 }: {
   label: string;
   value: string;
   hint?: string;
   tone?: 'neutral' | 'ok' | 'warn';
-  onClick?: () => void;
+  href?: string;
 }) {
   const toneClass =
     tone === 'warn' ? 'text-[var(--marigold-700)]'
     : tone === 'ok' ? 'text-[var(--emerald-600)]'
     : 'text-[var(--text-primary)]';
 
-  const Wrapper = onClick ? 'button' : 'div';
-
+  // A <dl> may only hold dt/dd (or divs of them), so a clickable cell is a
+  // div with its value as a link stretched over the whole cell.
   return (
-    <Wrapper
-      {...(onClick ? { onClick, type: 'button' as const } : {})}
+    <div
       className={cn(
-        'bg-[var(--bg-surface)] p-[var(--space-4)] text-left',
-        onClick && 'cursor-pointer transition-colors hover:bg-[var(--bg-muted)]'
+        'relative bg-[var(--bg-surface)] p-[var(--space-4)] text-left',
+        href && 'transition-colors hover:bg-[var(--bg-muted)] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-inset has-[:focus-visible]:ring-[var(--saffron-500)]'
       )}
     >
       <dt className="text-xs font-bold text-[var(--text-tertiary)]">
         {label}
       </dt>
       <dd>
-        <span className={cn('tabular mt-1 block font-display text-xl font-semibold', toneClass)}>
-          {value}
-        </span>
+        {href ? (
+          <Link href={href} className={cn('tabular mt-1 block font-display text-xl font-semibold outline-none after:absolute after:inset-0', toneClass)}>
+            {value}
+          </Link>
+        ) : (
+          <span className={cn('tabular mt-1 block font-display text-xl font-semibold', toneClass)}>
+            {value}
+          </span>
+        )}
         {hint && (
           <span className="mt-0.5 block text-xs text-[var(--text-tertiary)]">{hint}</span>
         )}
       </dd>
-    </Wrapper>
+    </div>
   );
 }

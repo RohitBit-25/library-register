@@ -1,0 +1,24 @@
+- banner:
+  - link "Shree Gangaur Library — home":
+    - /url: /landing
+    - text: Gangaur
+  - navigation "Main":
+    - link "My requests":
+      - /url: /my-requests
+- main:
+  - heading "My requests" [level=1]
+  - paragraph: Enter the phone number you used when you asked for a seat.
+  - text: Phone number
+  - textbox "Phone number":
+    - /placeholder: 10-digit mobile number
+  - button "Look up" [disabled]
+- contentinfo:
+  - paragraph: Shree Gangaur Library · श्री गणगौर
+  - paragraph: Rajsamand, Rajasthan · 6 AM – 10 PM daily
+  - navigation "Footer":
+    - link "Seats":
+      - /url: /browse
+    - link "My requests":
+      - /url: /my-requests
+- region "Notifications"
+- alert

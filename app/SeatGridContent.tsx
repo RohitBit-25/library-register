@@ -2,6 +2,10 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useMembers } from '@/hooks/useMembers';
+import { useUndoable } from '@/hooks/useUndoable';
+import LoadError from '@/components/ui/LoadError';
+import TodayCard from '@/components/seat/TodayCard';
+import CountUp from '@/components/ui/CountUp';
 import { useToast } from '@/hooks/useToast';
 import SeatGrid, { type StatusFilter } from '@/components/seat/SeatGrid';
 import SeatDetailPanel from '@/components/seat/SeatDetailPanel';
@@ -23,7 +27,8 @@ import { springUI } from '@/lib/motion';
 import Link from 'next/link';
 
 export default function SeatGridContent() {
-  const { members, update, vacate, renew, add, isLoading } = useMembers();
+  const { members, update, vacate, renew, add, move, isLoading, loadFailed, retry, preview } = useMembers();
+  const hold = useUndoable();
   const { isAdmin } = useAuth();
   const { addToast } = useToast();
   const searchParams = useSearchParams();
@@ -106,9 +111,11 @@ export default function SeatGridContent() {
   };
 
   // Handlers
+  // Held for 5 s with Undo (useUndoable): one click, one click back.
   const handleMarkPaid = (seat: number) => {
-    update(seat, { fee: 'paid' }, (msg) => addToast('error', msg));
-    addToast('success', `Payment confirmed for Seat ${seat}`);
+    preview(seat, { fee: 'paid' });
+    hold(`paid-${seat}`, `Seat ${seat} marked paid`,
+      () => update(seat, { fee: 'paid' }, (msg) => addToast('error', msg)), retry);
   };
 
   const handleMarkDue = (seat: number) => {
@@ -121,13 +128,22 @@ export default function SeatGridContent() {
     addToast('success', `Membership extended for Seat ${seat}`);
   };
 
+  const handleMove = async (from: number, to: number) => {
+    const name = members.find((m) => m.seat === from)?.name.split(' ')[0] ?? 'Member';
+    if (await move(from, to, (msg) => addToast('error', msg))) {
+      addToast('success', `${name} moved from seat ${from} to seat ${to}`);
+      setSelectedSeat(to);
+    }
+  };
   const handleRemove = (seat: number) => {
-    vacate(seat, (msg) => addToast('error', msg)).then((waiting) => {
-      if (waiting.length) {
-        addToast('warning', `${waiting.length} on the waitlist — ${waiting[0].userName} is first.`);
-      }
-    });
-    addToast('success', `Seat ${seat} is now vacant`);
+    preview(seat, { vacant: true, name: '', phone: '', fee: '', expiry: '', joinDate: '', duration: '' } as Partial<Member>);
+    hold(`vacate-${seat}`, `Seat ${seat} is now vacant`, () => {
+      vacate(seat, (msg) => addToast('error', msg)).then((waiting) => {
+        if (waiting.length) {
+          addToast('warning', `${waiting.length} on the waitlist — ${waiting[0].userName} is first.`);
+        }
+      });
+    }, retry);
   };
 
   const handleUpdate = (seat: number, patch: Partial<Member>) => {
@@ -165,6 +181,8 @@ export default function SeatGridContent() {
           actions={<GlobalSearch onSelect={seat => setSelectedSeat(seat)} className="relative z-20 w-full sm:w-[300px]" />}
         />
 
+        <TodayCard />
+
         {/* The day's register. Each count is also a filter for the plan —
             "who do I need to deal with today, and where are they sitting" is
             the question this screen is opened to answer. */}
@@ -196,7 +214,7 @@ export default function SeatGridContent() {
                   {c.label}
                 </span>
                 <span className={cn('font-display text-xl font-semibold leading-none tabular', c.value === 0 ? 'text-[var(--text-tertiary)]' : 'text-[var(--text-primary)]')}>
-                  {c.value}
+                  <CountUp value={c.value} />
                 </span>
                 {on && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-[var(--text-primary)]" aria-hidden="true" />}
               </button>
@@ -205,7 +223,9 @@ export default function SeatGridContent() {
         </div>
 
         <section className="relative mb-8">
-            {isLoading ? (
+            {loadFailed ? (
+              <LoadError what="the seat plan" onRetry={retry} />
+            ) : isLoading ? (
               <div className="grid grid-cols-4 gap-5 rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-8 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 shadow-[var(--shadow-xs)]">
                 {Array.from({ length: 40 }).map((_, i) => (
                   <SeatSkeleton key={i} />
@@ -306,6 +326,8 @@ export default function SeatGridContent() {
                       onMarkDue={handleMarkDue}
                       onRenew={handleRenew}
                       onRemove={handleRemove}
+                      onMove={handleMove}
+                      vacantSeats={vacantSeats}
                       isMobile={isMobile}
                       readonly={true}
                     />
@@ -330,6 +352,8 @@ export default function SeatGridContent() {
                     onRenew={handleRenew}
                     onRemove={handleRemove}
                     onUpdate={handleUpdate}
+                    onMove={handleMove}
+                    vacantSeats={vacantSeats}
                     isMobile={isMobile}
                   />
                 )}

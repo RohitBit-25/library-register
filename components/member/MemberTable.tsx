@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { type Member, type SeatStatus } from '@/lib/types';
 import { getSeatStatus, fmtDateShort, firstName, cn } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
@@ -33,7 +33,8 @@ interface MemberTableProps {
 }
 
 type SortField = 'seat' | 'name' | 'expiry' | 'joinDate';
-type FilterType = 'all' | SeatStatus | 'morning' | 'evening';
+type FilterType = 'members' | 'all' | SeatStatus | 'morning' | 'evening';
+const FILTER_VALUES: FilterType[] = ['members', 'all', 'active', 'expiring', 'expired', 'due', 'vacant', 'morning', 'evening'];
 
 function SortIcon({ field, currentField, asc }: { field: SortField; currentField: SortField; asc: boolean }) {
   if (field !== currentField) return null;
@@ -54,7 +55,13 @@ export default function MemberTable({
 }: MemberTableProps) {
   const { addToast } = useToast();
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<FilterType>('all');
+  // Members first: "All" used to interleave 24 vacant rows between members.
+  const [filter, setFilter] = useState<FilterType>('members');
+  // /members?filter=due — the dashboard's Today card links straight to a list.
+  useEffect(() => {
+    const f = new URLSearchParams(window.location.search).get('filter') as FilterType | null;
+    if (f && FILTER_VALUES.includes(f)) queueMicrotask(() => setFilter(f));
+  }, []);
   const [sortField, setSortField] = useState<SortField>('seat');
   const [sortAsc, setSortAsc] = useState(true);
   const [selected, setSelected] = useState<Set<number>>(new Set());
@@ -88,7 +95,9 @@ export default function MemberTable({
       );
     }
 
-    if (filter !== 'all') {
+    if (filter === 'members') {
+      result = result.filter(m => !m.vacant);
+    } else if (filter !== 'all') {
       if (filter === 'morning' || filter === 'evening') {
         result = result.filter(m => !m.vacant && (m.shift === filter || m.shift === 'full'));
       } else {
@@ -137,7 +146,7 @@ export default function MemberTable({
   };
 
   const filters: { value: FilterType; label: string }[] = [
-    { value: 'all', label: 'All' },
+    { value: 'members', label: 'Members' },
     { value: 'active', label: 'Active' },
     { value: 'expiring', label: 'Expiring' },
     { value: 'expired', label: 'Expired' },
@@ -145,6 +154,7 @@ export default function MemberTable({
     { value: 'vacant', label: 'Vacant' },
     { value: 'morning', label: 'Morning' },
     { value: 'evening', label: 'Evening' },
+    { value: 'all', label: 'All desks' },
   ];
 
   return (
@@ -368,7 +378,30 @@ export default function MemberTable({
                         <Plus className="size-4" aria-hidden="true" /> Add
                       </Link>
                     ) : (
-                      <Badge variant={status} />
+                      <div className="flex items-center gap-2">
+                        <Badge variant={status} />
+                        {/* The one action each status asks for, without opening a menu. */}
+                        {status === 'due' && (
+                          <button
+                            type="button"
+                            onClick={() => onMarkPaid(m.seat)}
+                            aria-label={`Mark seat ${m.seat} paid`}
+                            className="inline-flex min-h-[26px] cursor-pointer items-center rounded-md border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2 text-xs font-bold text-[var(--emerald-700)] transition-ui hover:bg-[var(--emerald-100)]"
+                          >
+                            Mark paid
+                          </button>
+                        )}
+                        {(status === 'expired' || status === 'expiring') && (
+                          <button
+                            type="button"
+                            onClick={() => onRenew(m.seat)}
+                            aria-label={`Renew seat ${m.seat}`}
+                            className="inline-flex min-h-[26px] cursor-pointer items-center rounded-md border border-[var(--saffron-200)] bg-[var(--saffron-50)] px-2 text-xs font-bold text-[var(--saffron-700)] transition-ui hover:bg-[var(--saffron-100)]"
+                          >
+                            Renew
+                          </button>
+                        )}
+                      </div>
                     )}
                   </td>
                   <td className="p-3">

@@ -247,6 +247,31 @@ await check('a student\'s UPI amount is what approval records', async () => {
   await call('/api/members/12', { method: 'DELETE', cookie: owner });
 });
 
+console.log('\nMoving a member');
+await check('move carries the member, frees the old desk, records no payment, moves today\'s check-in', async () => {
+  await call('/api/members/30', { method: 'PATCH', cookie: owner, body: { name: 'Mover Joshi', phone: '9888877771', joinDate: today, duration: '3M', expiry: '2099-01-01', fee: 'paid', paymentMode: 'upi', vacant: false } });
+  await call('/api/attendance', { method: 'POST', cookie: owner, body: { date: today, seat: 30, present: true } });
+  const pay0 = await db.collection('payments').countDocuments({});
+  const r = await call('/api/members/move', { method: 'POST', cookie: owner, body: { from: 30, to: 31 } });
+  assert.equal(r.status, 200, JSON.stringify(r.json));
+  const a = await member(30), b = await member(31);
+  assert.equal(a.vacant, true); assert.equal(a.name, '');
+  assert.equal(b.vacant, false); assert.equal(b.name, 'Mover Joshi'); assert.equal(b.expiry, '2099-01-01'); assert.equal(b.fee, 'paid');
+  assert.equal(await db.collection('payments').countDocuments({}), pay0, 'a move must not record a payment');
+  const att = await db.collection('attendances').findOne({ date: today });
+  assert.ok(att.seats.includes(31) && !att.seats.includes(30), 'check-in did not follow');
+  assert.ok(await db.collection('auditlogs').findOne({ action: 'Moved Member', seat: 31 }));
+});
+await check('move refuses a taken desk (409), an empty source (404) and the same desk (400)', async () => {
+  await call('/api/members/32', { method: 'PATCH', cookie: owner, body: { name: 'Sitter', phone: '9888877772', vacant: false } });
+  assert.equal((await call('/api/members/move', { method: 'POST', cookie: owner, body: { from: 31, to: 32 } })).status, 409);
+  assert.equal((await member(31)).name, 'Mover Joshi', 'a refused move must change nothing');
+  assert.equal((await call('/api/members/move', { method: 'POST', cookie: owner, body: { from: 30, to: 33 } })).status, 404);
+  assert.equal((await call('/api/members/move', { method: 'POST', cookie: owner, body: { from: 31, to: 31 } })).status, 400);
+  assert.equal((await call('/api/members/move', { method: 'POST', body: { from: 31, to: 33 } })).status, 401);
+  for (const s of [31, 32]) await call(`/api/members/${s}`, { method: 'DELETE', cookie: owner });
+});
+
 console.log('\nFull library → waitlist');
 await check('a full library queues a request, and vacating surfaces the queue', async () => {
   await db.collection('members').updateMany({}, { $set: { vacant: false, name: 'Filler', phone: '9000000002', fee: 'paid', expiry: '2099-01-01' } });

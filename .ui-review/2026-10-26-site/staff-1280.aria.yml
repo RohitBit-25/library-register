@@ -1,0 +1,61 @@
+- alert
+- complementary:
+  - text: Shree Gangaur Library Staff desk
+  - navigation "Admin":
+    - paragraph: Desk
+    - list:
+      - listitem:
+        - link "Seats":
+          - /url: /
+      - listitem:
+        - link "Requests 2 pending":
+          - /url: /requests
+      - listitem:
+        - link "Members 12 with fees due":
+          - /url: /members
+      - listitem:
+        - link "Collections":
+          - /url: /payments
+      - listitem:
+        - link "Renewals":
+          - /url: /expiry
+      - listitem:
+        - link "Attendance":
+          - /url: /attendance
+    - paragraph: Records
+    - list:
+      - listitem:
+        - link "Analytics":
+          - /url: /analytics
+      - listitem:
+        - link "Activity log":
+          - /url: /audit
+      - listitem:
+        - link "Export":
+          - /url: /export
+    - paragraph: Setup
+    - list:
+      - listitem:
+        - link "Full floor plan":
+          - /url: /floorplan
+      - listitem:
+        - link "Staff":
+          - /url: /staff
+      - listitem:
+        - link "Check-in kiosk":
+          - /url: /kiosk
+  - paragraph: Admin
+  - paragraph: Mon, 26 Oct
+  - button "Sign out"
+- main:
+  - heading "Staff" [level=1]
+  - paragraph:
+    - text: Each person signs in with their name and their own PIN, so the activity log records who did what. You are signed in as
+    - strong: Admin
+    - text: .
+  - button "Add staff member"
+  - list:
+    - listitem:
+      - paragraph: Admin You
+      - paragraph: Owner · last signed in 26 Oct 2026
+- region "Notifications"

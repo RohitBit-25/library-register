@@ -203,21 +203,42 @@ export function nextSeatInDirection(
   return best;
 }
 
+/** Facts a student can pick a desk by — each one checkable by walking in. */
+export type SeatFeature = 'ac' | 'wall' | 'door' | 'shared' | 'single';
+
+export const SEAT_FEATURE_LABEL: Record<SeatFeature, string> = {
+  ac: 'Near AC',
+  wall: 'Wall desk',
+  door: 'Near the door',
+  shared: 'Shared table',
+  single: 'Single desk',
+};
+
+/** The features of a seat, derived from where it sits on the plan. */
+export function seatFeatures(n: number): SeatFeature[] {
+  const s = SEATS.get(n);
+  if (!s) return [];
+  const cx = s.x + DESK_W / 2;
+  const out: SeatFeature[] = [];
+  if (s.y < START_Y + 2 * ROW_PITCH && AC_CENTERS.some((ac) => Math.abs(cx - ac) < 180)) out.push('ac');
+  if (s.group.id === 'leftWall' || s.group.id === 'rightWall') out.push('wall');
+  if (s.y + DESK_H > ROOM.HEIGHT - 260 && Math.abs(cx - DOOR.cx) < 320) out.push('door');
+  out.push(s.partner ? 'shared' : 'single');
+  return out;
+}
+
 /**
- * What is actually true about a seat's position, derived from the plan —
- * only claims a student can check by walking in.
+ * What is actually true about a seat's position, in words — the same facts as
+ * seatFeatures(), so the filter chips and the desk panel cannot disagree.
  */
 export function seatAmenities(n: number): string[] {
   const s = SEATS.get(n);
   if (!s) return [];
-  const cx = s.x + DESK_W / 2;
-  const out: string[] = [];
-  if (s.y < START_Y + 2 * ROW_PITCH && AC_CENTERS.some((ac) => Math.abs(cx - ac) < 180)) {
-    out.push('Near the air conditioning');
-  }
-  if (s.group.id === 'leftWall' || s.group.id === 'rightWall') out.push('Wall desk, facing the wall');
-  if (s.y + DESK_H > ROOM.HEIGHT - 260 && Math.abs(cx - DOOR.cx) < 320) out.push('Near the entrance');
-  if (s.partner) out.push(`Faces seat ${s.partner} across the table`);
-  else out.push('Single desk');
-  return out;
+  return seatFeatures(n).map((f) => ({
+    ac: 'Near the air conditioning',
+    wall: 'Wall desk, facing the wall',
+    door: 'Near the entrance',
+    shared: `Faces seat ${s.partner} across the table`,
+    single: 'Single desk',
+  })[f]);
 }

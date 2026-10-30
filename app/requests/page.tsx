@@ -16,6 +16,7 @@ import {
   XCircle,
   Phone,
   MessageSquare,
+  MessageCircle,
   Armchair,
   Filter,
   Trash2,
@@ -91,6 +92,13 @@ export default function RequestsPage() {
     if (filter === 'all') return requests;
     return requests.filter(r => r.status === filter);
   }, [requests, filter]);
+
+  /** Pending requests per desk — more than one means staff must choose. */
+  const wanted = useMemo(() => {
+    const c = new Map<number, number>();
+    for (const r of requests) if (r.status === 'pending') c.set(r.seat, (c.get(r.seat) ?? 0) + 1);
+    return c;
+  }, [requests]);
 
   const counts = useMemo(() => {
     let pending = 0, waitlisted = 0, approved = 0, rejected = 0;
@@ -255,6 +263,12 @@ export default function RequestsPage() {
                           <Armchair className="size-4" />
                           Seat #{req.seat}
                         </span>
+                        {req.status === 'pending' && (wanted.get(req.seat) ?? 0) > 1 && (
+                          // Approving one moves the others to the waitlist.
+                          <span className="rounded-md bg-[var(--marigold-50)] px-1.5 py-0.5 text-xs font-bold text-[var(--marigold-800)]">
+                            {wanted.get(req.seat)} students want this desk
+                          </span>
+                        )}
                         <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1">
                           <Phone className="size-4" />
                           {req.userPhone}
@@ -271,9 +285,20 @@ export default function RequestsPage() {
                     </div>
                   </div>
 
-                  <span className="text-xs font-mono text-[var(--text-tertiary)] whitespace-nowrap">
-                    {fmtDate(req.createdAt.toString().split('T')[0])}
-                  </span>
+                  <div className="flex shrink-0 flex-col items-end gap-2">
+                    <span className="text-xs font-mono text-[var(--text-tertiary)] whitespace-nowrap">
+                      {fmtDate(req.createdAt.toString().split('T')[0])}
+                    </span>
+                    {/* Reach the student without copying the number anywhere. */}
+                    <div className="flex gap-1.5">
+                      <a href={`tel:${req.userPhone}`} aria-label={`Call ${req.userName}`} className="flex size-9 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--border-default)] text-[var(--text-secondary)] transition-ui hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]">
+                        <Phone className="size-4" aria-hidden="true" />
+                      </a>
+                      <a href={`https://wa.me/91${req.userPhone}`} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp ${req.userName}`} className="flex size-9 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--emerald-200)] bg-[var(--emerald-50)] text-[var(--emerald-700)] transition-ui hover:bg-[var(--emerald-100)]">
+                        <MessageCircle className="size-4" aria-hidden="true" />
+                      </a>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Payment Info */}

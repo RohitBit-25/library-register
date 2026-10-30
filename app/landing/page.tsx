@@ -1,21 +1,31 @@
 'use client';
 
-/* Hallmark · genre: playful · macrostructure: custom (bespoke) — the owner's pixel-art kit as the page's world
- * theme: custom pixel (cream, wood, ink; Geist throughout — the pixel font was dropped for legibility) · enrichment: owner's own pixel art
- * nav: custom pixel bar · footer: Ft2 inline */
+/* Hallmark · pre-emit critique: P5 H5 E4 S5 R4 V5
+ * Hallmark · macrostructure: Crest (bespoke) — editorial split hero · asymmetric bento · bezel cards
+ * genre: luxury-heritage · tone: royal, warm · vibe: editorial luxury (high-end-visual-design)
+ * theme: custom — owner's emblem (navy #0B2141 · gold #E3B455/#A86F1C · cream #FFFAF3) · Instrument Serif + Geist (+ Cinzel lockup)
+ * nav: island pill (IslandNav) · footer: PublicFooter (shared) · design.md § Landing: Royal crest */
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { ArrowUpRight, Check } from 'lucide-react';
 import { useMembers } from '@/hooks/useMembers';
 import { formatINR, monthlyValue, planPrice, PLAN_MONTHS } from '@/lib/pricing';
 import { PHOTOS } from '@/lib/photos';
-import { SITE_INFO } from '@/lib/siteInfo';
+import { SITE_INFO, fmtPhone } from '@/lib/siteInfo';
 import { SEAT_COUNT } from '@/lib/layoutConfig';
 import { cn } from '@/lib/utils';
-import PixelButton from '@/components/pixel/PixelButton';
-import UnifiedHeader from '@/components/layout/UnifiedHeader';
-import PublicFooter from '@/components/layout/PublicFooter';
+import FindSeatBar from '@/components/pixel/FindSeatBar';
+import StepScenes from '@/components/pixel/StepScenes';
+import IslandNav from '@/components/landing/IslandNav';
+import CrestHero from '@/components/landing/CrestHero';
+import HallBento from '@/components/landing/HallBento';
+import PillLink from '@/components/landing/PillLink';
+import Reveal from '@/components/landing/Reveal';
+import LiveHall from '@/components/landing/LiveHall';
+import LandingFooter from '@/components/landing/LandingFooter';
+import { useLang } from '@/hooks/useLang';
 
 /** Every figure comes from lib/pricing.ts — no rupee amount is written here. */
 const PLANS = [
@@ -30,15 +40,6 @@ const BEST_VALUE = (Object.keys(PLAN_MONTHS) as (keyof typeof PLAN_MONTHS)[])
 
 const perDay = (d: string) => Math.round(monthlyValue(d) / 30);
 
-// The library's own claims.
-const FACILITIES = ['AC hall', 'High-speed Wi-Fi', 'CCTV', 'RO water', 'Silent zone'];
-
-const STEPS = [
-  'Pick a green desk on the live seat plan.',
-  'Send your name and phone number. No account needed.',
-  'Pay at the desk by UPI or cash. The seat is yours.',
-];
-
 const FAQ = [
   { q: 'Do I need an account?', a: 'No. Request a seat with your name and phone number, then check it any time under My requests.' },
   { q: 'Timings?', a: 'Open from 6:00 AM to 10:00 PM, every day.' },
@@ -46,266 +47,202 @@ const FAQ = [
   { q: 'How do I pay?', a: 'At the desk, by UPI or cash. Nothing is charged on this website.' },
 ];
 
+// True of every pass: the same desk promise and the hall's own facilities.
+const INCLUDED = ['A reserved desk', 'Your choice of shift', 'AC hall', 'High-speed Wi-Fi', 'RO water', 'CCTV'];
+
+const display = 'font-editorial text-[clamp(2.8rem,7vw,5.5rem)] leading-[0.95] tracking-[-0.02em] [overflow-wrap:anywhere]';
+const stagger = (i: number) => ({ '--i': i }) as React.CSSProperties;
+
 export default function LandingPage() {
-  const { members, isLoading } = useMembers();
-  const free = useMemo(() => members.filter((m) => m.vacant).length, [members]);
+  const { members, isLoading, loadFailed } = useMembers();
+  const freeSeats = useMemo(() => new Set(members.filter((m) => m.vacant).map((m) => m.seat)), [members]);
+  const free = freeSeats.size;
   const total = members.length || SEAT_COUNT;
-  const px = 'font-display';
-  const contact = SITE_INFO.phone || SITE_INFO.whatsapp || SITE_INFO.address || SITE_INFO.mapsUrl;
+  const live = !isLoading && !loadFailed;
+  const { t } = useLang();
+  const contact = SITE_INFO.phones?.length || SITE_INFO.whatsapp || SITE_INFO.address || SITE_INFO.mapsUrl;
+
+  // Cards marked data-spotlight light their rim where the pointer is.
+  useEffect(() => {
+    if (!window.matchMedia('(hover: hover)').matches) return;
+    const move = (e: PointerEvent) => {
+      const el = (e.target as Element | null)?.closest<HTMLElement>('[data-spotlight]');
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      el.style.setProperty('--my', `${e.clientY - r.top}px`);
+    };
+    document.addEventListener('pointermove', move, { passive: true });
+    return () => document.removeEventListener('pointermove', move);
+  }, []);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[var(--warm-bg)] text-[var(--warm-ink)]">
-      <UnifiedHeader />
+    <div className="relative flex min-h-dvh flex-col bg-[var(--warm-bg)] text-[var(--warm-ink)]">
+      <a href="#main" className="sr-only z-50 rounded-full bg-[var(--brand-gold-light)] px-5 py-3 font-semibold text-[var(--brand-navy)] focus:not-sr-only focus:fixed focus:left-4 focus:top-4">{t('Skip to content')}</a>
+      <div className="grain" aria-hidden="true" />
+      <IslandNav />
 
-      <main className="flex-1">
-        {/* ── Hero: the promise, and the student who keeps it ── */}
-        <section className="mx-auto grid max-w-[1160px] grid-cols-1 items-center gap-8 px-4 pb-10 pt-12 sm:px-6 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:pt-16">
-          <div>
-            {/* HUD readout: the one live number a visitor came for. */}
-            <p
-              className={cn(px, 'px-box m-1 inline-flex items-center gap-3 bg-[var(--px-hud)] px-4 py-2 text-base font-semibold text-[var(--px-hud-text)]')}
-              aria-live="polite"
-            >
-              <span className="size-2.5 bg-[var(--px-hud-text)]" aria-hidden="true" />
-              {isLoading ? 'Loading…' : `Seats free ${free} / ${total}`}
+      <main id="main" className="flex-1">
+        <CrestHero free={free} total={total} isLoading={isLoading} loadFailed={loadFailed} />
+
+        <HallBento free={free} live={live} />
+
+        <LiveHall freeSeats={freeSeats} live={live} />
+
+        {/* ── Passes, on navy ── */}
+        <Reveal id="fees" className="scroll-mt-24 bg-[var(--brand-navy)] text-[var(--crest-on-navy)]">
+          <div className="mx-auto max-w-[1240px] px-4 py-24 sm:px-6 lg:py-36">
+            <p className="reveal eyebrow eyebrow--light" style={stagger(0)}>{t('Passes')}</p>
+            <h2 className={cn(display, 'reveal mt-6')} style={stagger(1)}>{t('Pick your pass.')}</h2>
+            <p className="reveal mt-5 max-w-[52ch] text-lg text-[var(--crest-on-navy-2)]" style={stagger(2)}>
+              {t('From about ₹{d} a day. One reserved desk for the whole plan — paid at the desk, by UPI or cash.', { d: perDay(BEST_VALUE) })}
             </p>
 
-            <h1 className={cn(px, 'mt-7 text-[3rem] font-bold tracking-tight leading-[0.95] sm:text-[4.25rem] lg:text-[5rem]')}>
-              Your desk is waiting.
-            </h1>
-            <p className="mt-6 max-w-[44ch] text-md leading-relaxed text-[var(--warm-ink-2)]">
-              {SEAT_COUNT} reserved desks in one cool, quiet hall in Rajsamand.
-              Pick yours on the live seat plan and start tomorrow.
-            </p>
-
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <PixelButton href="/browse">Find my seat ▶</PixelButton>
-              <PixelButton href="#fees" tone="cream">See fees</PixelButton>
-            </div>
-          </div>
-
-          {/* The reading student, with a speech bubble that says the hours. */}
-          <div className="relative mx-auto w-full max-w-[420px]">
-            <div className={cn(px, 'px-raised relative z-10 mx-auto mb-2 w-fit bg-[var(--bg-surface)] px-5 py-3 text-center')}>
-              <p className="font-devanagari text-lg leading-snug">रोज़ सुबह 6 से रात 10 बजे तक</p>
-              <p className="text-base font-semibold">Open 6 AM – 10 PM daily</p>
-              {/* bubble tail, two pixel steps */}
-              <span className="absolute -bottom-[12px] left-1/2 h-2 w-4 -translate-x-1/2 bg-[var(--warm-ink)]" aria-hidden="true" />
-              <span className="absolute -bottom-[20px] left-1/2 h-2 w-2 -translate-x-1/2 bg-[var(--warm-ink)]" aria-hidden="true" />
-            </div>
-            <Image
-              src="/landing/student.png"
-              alt="A student reading on a chair"
-              width={1254}
-              height={1254}
-              priority
-              sizes="(min-width: 1024px) 420px, 80vw"
-              className="mx-auto h-auto w-[78%]"
-            />
-            <span className="mx-auto -mt-6 block h-4 w-1/2 bg-[var(--px-shadow)]" aria-hidden="true" />
-          </div>
-        </section>
-
-        {/* ── The hall: your own art, on a wooden floor ── */}
-        <section className="mt-6">
-          <div className="mx-auto max-w-[1160px] px-4 sm:px-6">
-            <h2 className={cn(px, 'text-[2.25rem] font-bold tracking-tight leading-tight sm:text-[3rem]')}>{SEAT_COUNT} desks. One quiet hall.</h2>
-          </div>
-          <div className="relative mt-6">
-            <div className="px-planks absolute inset-x-0 bottom-0 h-[38%]" aria-hidden="true" />
-            <div className="relative mx-auto max-w-[1100px] px-4 sm:px-6">
-              <Image
-                src="/landing/hall.png"
-                alt="Students studying at the library's wooden desks, with the Shree Gangaur Library sign"
-                width={1536}
-                height={1024}
-                sizes="(min-width: 1100px) 1052px, 100vw"
-                className="h-auto w-full"
-              />
-            </div>
-          </div>
-          <div className="border-t-4 border-[var(--warm-ink)] bg-[var(--px-wood-dark)] px-4 py-5">
-            <ul className="mx-auto flex max-w-[1160px] flex-wrap justify-center gap-4" aria-label="Facilities">
-              {FACILITIES.map((f) => (
-                <li key={f} className={cn(px, 'px-box m-1 bg-[var(--warm-bg)] px-4 py-1.5 text-base font-semibold')}>
-                  {f}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        {/* ── One desk, all yours ── */}
-        <section className="mx-auto grid max-w-[1160px] items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:py-24">
-          <Image
-            src="/landing/desk.png"
-            alt="A single wooden study desk with a plant, a notebook and a blue chair"
-            width={1536}
-            height={1024}
-            sizes="(min-width: 1024px) 560px, 100vw"
-            className="mx-auto h-auto w-full max-w-[560px]"
-          />
-          <div>
-            <h2 className={cn(px, 'text-[2.25rem] font-bold tracking-tight leading-tight sm:text-[3rem]')}>One desk. All yours.</h2>
-            <ul className="mt-6 space-y-4 text-md text-[var(--warm-ink-2)]">
-              {[
-                'Reserved for you for your whole plan.',
-                'Come for the morning, the evening, or the full day.',
-                'You choose the exact desk — by the wall, near the AC, or at a shared table.',
-              ].map((t) => (
-                <li key={t} className="flex gap-3">
-                  <span className={cn(px, 'mt-0.5 text-lg font-bold text-[var(--px-green)]')} aria-hidden="true">■</span>
-                  {t}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-8">
-              <PixelButton href="/browse">See the seat plan ▶</PixelButton>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Fees, as price tags ── */}
-        <section id="fees" className="scroll-mt-6 border-y-4 border-[var(--warm-ink)] bg-[var(--warm-band)]">
-          <div className="mx-auto max-w-[1160px] px-4 py-20 sm:px-6 lg:py-24">
-            <h2 className={cn(px, 'text-[2.25rem] font-bold tracking-tight leading-tight sm:text-[3rem]')}>Pick your pass.</h2>
-            <p className="mt-3 max-w-[52ch] text-md text-[var(--warm-ink-2)]">
-              From about ₹{perDay(BEST_VALUE)} a day. One reserved desk for the whole plan — paid at the desk, by UPI or cash.
-            </p>
-
-            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              {PLANS.map(({ duration, label }) => {
+            <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {PLANS.map(({ duration, label }, i) => {
                 const best = duration === BEST_VALUE;
                 return (
                   <Link
                     key={duration}
                     href="/browse"
                     aria-label={`${label} pass, ${formatINR(planPrice(duration))}. Pick a seat`}
-                    className={cn(
-                      'px-btn px-raised relative m-1 flex flex-col bg-[var(--bg-surface)] p-6',
-                      best && 'bg-[var(--warm-tint)]',
-                    )}
+                    data-spotlight
+                    className="reveal bezel bezel--dark group block rounded-[2rem] focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-gold-light)]"
+                    style={stagger(i + 2)}
                   >
-                    {best && (
-                      <span className={cn(px, 'px-box absolute -top-4 right-4 bg-[var(--px-navy)] px-3 py-0.5 text-sm font-semibold uppercase text-[var(--text-inverse)]')}>
-                        ★ Best value
+                    <div className={cn('bezel-core flex h-full flex-col p-7 transition-transform duration-500 ease-[var(--ease-premium)] group-hover:-translate-y-1', best ? 'bezel-core--gold text-[var(--brand-navy)]' : 'bezel-core--dark')}>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={cn('text-sm font-semibold uppercase tracking-[0.16em]', best ? 'text-[var(--brand-navy)]' : 'text-[var(--brand-gold-light)]')}>{t(label)}</span>
+                        {best && <span className="rounded-full bg-[var(--brand-navy)] px-3 py-1 text-xs font-bold text-[var(--crest-on-navy)]">{t('★ Best value')}</span>}
+                      </div>
+                      <span className="mt-10 font-editorial text-[3.6rem] leading-none tabular">{formatINR(planPrice(duration))}</span>
+                      <span className={cn('mt-3 text-sm tabular', best ? 'text-[var(--brand-navy)]/75' : 'text-[var(--crest-on-navy-2)]')}>
+                        {t('{m} a month · about ₹{d} a day', { m: formatINR(monthlyValue(duration)), d: perDay(duration) })}
                       </span>
-                    )}
-                    <span className={cn(px, 'text-xl font-semibold')}>{label}</span>
-                    <span className={cn(px, 'mt-4 text-[2.75rem] font-bold tracking-tight leading-none tabular')}>{formatINR(planPrice(duration))}</span>
-                    <span className="mt-3 text-sm text-[var(--warm-ink-2)] tabular">
-                      {formatINR(monthlyValue(duration))} a month · about ₹{perDay(duration)} a day
-                    </span>
-                    <span className={cn(px, 'mt-6 text-base font-semibold text-[var(--saffron-700)]')}>Pick a seat ▶</span>
+                      <span className="mt-10 flex items-center justify-between border-t border-current/15 pt-5 text-base font-semibold">
+                        {t('Pick a seat')}
+                        <span className={cn('pill-btn__icon transition-transform duration-500 ease-[var(--ease-premium)] group-hover:translate-x-1 group-hover:-translate-y-px', best ? 'bg-[var(--brand-navy)] text-[var(--crest-on-navy)]' : 'bg-[var(--brand-gold-light)] text-[var(--brand-navy)]')} aria-hidden="true">
+                          <ArrowUpRight className="size-[18px]" strokeWidth={1.5} />
+                        </span>
+                      </span>
+                    </div>
                   </Link>
                 );
               })}
             </div>
-          </div>
-        </section>
 
-        {/* ── How to join: one dialogue box, the student as the portrait ── */}
-        <section className="mx-auto max-w-[1000px] px-4 py-20 sm:px-6 lg:py-24">
-          <h2 className={cn(px, 'text-[2.25rem] font-bold tracking-tight leading-tight sm:text-[3rem]')}>Joining takes a minute.</h2>
-          <div className="px-raised m-1 mt-10 flex flex-col gap-6 bg-[var(--bg-surface)] p-6 sm:flex-row sm:items-center sm:p-8">
-            <div className="px-box mx-auto shrink-0 bg-[var(--warm-tint)] p-2 sm:mx-0">
-              <Image src="/landing/student.png" alt="" width={1254} height={1254} sizes="120px" className="size-28 object-contain" />
+            {/* What every pass gets — the same for all four. */}
+            <div className="reveal mt-8 flex flex-col gap-4 rounded-[1.5rem] px-6 py-5 shadow-[inset_0_0_0_1px_rgb(246_238_223/0.12)] lg:flex-row lg:items-center lg:gap-8" style={stagger(6)}>
+              <p className="shrink-0 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--brand-gold-light)]">{t('Every pass includes')}</p>
+              <ul className="flex flex-wrap gap-x-6 gap-y-2">
+                {INCLUDED.map((x) => (
+                  <li key={x} className="flex items-center gap-2 text-[15px] text-[var(--crest-on-navy)]">
+                    <Check className="size-4 text-[var(--brand-gold-light)]" strokeWidth={1.75} aria-hidden="true" />{t(x)}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ol className="space-y-4">
-              {STEPS.map((s, i) => (
-                <li key={s} className="flex items-baseline gap-4 text-md">
-                  <span className={cn(px, 'w-10 shrink-0 whitespace-nowrap text-xl font-bold text-[var(--saffron-700)]')}>{i + 1} ▸</span>
-                  <span>{s}</span>
-                </li>
-              ))}
-            </ol>
           </div>
-        </section>
+        </Reveal>
 
-        {/* ── Photos: only once real ones are added in lib/photos.ts ── */}
+        {/* ── How to join: three pixel scenes ── */}
+        <Reveal className="mx-auto max-w-[1240px] px-4 py-24 sm:px-6 lg:py-36">
+          <p className="reveal eyebrow eyebrow--dark" style={stagger(0)}>{t('Three steps')}</p>
+          <h2 className={cn(display, 'reveal mt-6 text-[var(--brand-navy)]')} style={stagger(1)}>{t('Joining takes a minute.')}</h2>
+          <StepScenes className="mt-16" />
+        </Reveal>
+
+        {/* ── Photos and reviews: only once real ones are filled in ── */}
         {PHOTOS.length > 0 && (
-          <section className="mx-auto max-w-[1160px] px-4 pb-20 sm:px-6">
-            <div className="grid gap-6 md:grid-cols-3">
+          <section className="mx-auto max-w-[1240px] px-4 pb-24 sm:px-6">
+            <div className="grid gap-5 md:grid-cols-3">
               {PHOTOS.slice(0, 3).map((p) => (
-                <figure key={p.src} className="px-box relative m-1 aspect-[4/3] overflow-hidden bg-[var(--warm-band)]">
-                  <Image src={p.src} alt={p.alt} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
-                </figure>
+                <figure key={p.src} className="bezel"><div className="bezel-core relative aspect-[4/3]"><Image src={p.src} alt={p.alt} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" /></div></figure>
               ))}
             </div>
           </section>
         )}
-
-        {/* ── Reviews / contact: only what is filled in lib/siteInfo.ts ── */}
         {SITE_INFO.reviews.length > 0 && (
-          <section className="mx-auto max-w-[1160px] px-4 pb-20 sm:px-6">
-            <div className="grid gap-6 md:grid-cols-3">
+          <section className="mx-auto max-w-[1240px] px-4 pb-24 sm:px-6">
+            <div className="grid gap-5 md:grid-cols-3">
               {SITE_INFO.reviews.slice(0, 3).map((r) => (
-                <figure key={r.name} className="px-raised m-1 bg-[var(--bg-surface)] p-6">
-                  <blockquote className="text-md leading-relaxed">“{r.quote}”</blockquote>
-                  <figcaption className={cn(px, 'mt-4 text-base font-semibold')}>
-                    {r.name}{r.note && <span className="text-[var(--warm-ink-3)]"> · {r.note}</span>}
-                  </figcaption>
+                <figure key={r.name} className="bezel">
+                  <div className="bezel-core p-7">
+                    <blockquote className="font-editorial text-2xl leading-snug text-[var(--brand-navy)]">“{r.quote}”</blockquote>
+                    <figcaption className="mt-4 text-sm font-semibold">{r.name}{r.note && <span className="text-[var(--warm-ink-3)]"> · {r.note}</span>}</figcaption>
+                  </div>
                 </figure>
               ))}
             </div>
           </section>
         )}
-        {contact && (
-          <section className="mx-auto max-w-[1160px] px-4 pb-20 sm:px-6">
-            <div className="px-raised m-1 flex flex-col gap-5 bg-[var(--bg-surface)] p-6 md:flex-row md:items-center md:justify-between">
-              <div>
-                <h2 className={cn(px, 'text-2xl font-bold')}>Come and see the hall</h2>
-                {SITE_INFO.address && <p className="mt-1 text-[15px] text-[var(--warm-ink-2)]">{SITE_INFO.address}</p>}
-              </div>
-              <div className="flex flex-wrap gap-4">
-                {SITE_INFO.whatsapp && <PixelButton href={`https://wa.me/${SITE_INFO.whatsapp}`}>WhatsApp</PixelButton>}
-                {SITE_INFO.phone && <PixelButton href={`tel:${SITE_INFO.phone}`} tone="cream">Call</PixelButton>}
-                {SITE_INFO.mapsUrl && <PixelButton href={SITE_INFO.mapsUrl} tone="cream">Map</PixelButton>}
-              </div>
-            </div>
-          </section>
-        )}
 
-        {/* ── Good to know: plain questions, plain answers ── */}
-        <section className="border-t-4 border-[var(--warm-ink)] bg-[var(--bg-surface)]">
-          <div className="mx-auto max-w-[1160px] px-4 py-16 sm:px-6">
-            <h2 className={cn(px, 'text-[2rem] font-bold tracking-tight leading-tight')}>Good to know</h2>
-            <dl className="mt-8 grid gap-x-12 gap-y-7 sm:grid-cols-2">
-              {FAQ.map(({ q, a }) => (
-                <div key={q}>
-                  <dt className={cn(px, 'text-lg font-semibold')}>{q}</dt>
-                  <dd className="mt-1.5 text-[15px] leading-relaxed text-[var(--warm-ink-2)]">{a}</dd>
+        {/* ── Visit, beside the plain answers ── */}
+        <Reveal className="border-t border-[var(--brand-navy)]/10 bg-[var(--bg-surface)]">
+          <div className="mx-auto grid max-w-[1240px] gap-12 px-4 py-24 sm:px-6 lg:grid-cols-12 lg:py-32">
+            {contact && (
+              <div className="reveal bezel lg:col-span-5" style={stagger(0)}>
+                <div className="bezel-core h-full bg-[var(--brand-navy)] p-8 text-[var(--crest-on-navy)] sm:p-10">
+                  <span className="flex size-20 items-center justify-center rounded-full bg-[var(--warm-bg)] shadow-[0_0_0_2px_var(--brand-gold),0_0_0_6px_var(--brand-navy),0_0_0_7px_var(--brand-gold-light)]">
+                    <Image src="/brand/emblem.png" alt="" width={897} height={606} sizes="60px" className="mt-1 h-auto w-[72%]" />
+                  </span>
+                  <h2 className="mt-8 font-editorial text-[2.6rem] leading-none">{t('Come and see the hall')}</h2>
+                  {SITE_INFO.address && <p className="mt-4 text-[15px] leading-relaxed text-[var(--crest-on-navy-2)]">{SITE_INFO.address}</p>}
+                  {/* Numbers written out too: many visitors copy them into WhatsApp. */}
+                  <p className="mt-4 flex flex-wrap gap-x-5 text-[15px] font-semibold">
+                    {SITE_INFO.phones?.map((p) => (
+                      <a key={p} href={`tel:+91${p}`} className="inline-flex min-h-[44px] items-center tabular hover:text-[var(--brand-gold-light)]">{fmtPhone(p)}</a>
+                    ))}
+                  </p>
+                  {SITE_INFO.email && <a href={`mailto:${SITE_INFO.email}`} className="inline-flex min-h-[44px] items-center break-all text-[15px] text-[var(--crest-on-navy-2)] hover:text-[var(--brand-gold-light)]">{SITE_INFO.email}</a>}
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    {SITE_INFO.whatsapp && <PillLink href={`https://wa.me/${SITE_INFO.whatsapp}`}>WhatsApp</PillLink>}
+                    {SITE_INFO.phones?.[0] && <PillLink href={`tel:+91${SITE_INFO.phones[0]}`} tone={SITE_INFO.whatsapp ? 'ghost-light' : 'gold'}>{t('Call')}</PillLink>}
+                    {SITE_INFO.mapsUrl && <PillLink href={SITE_INFO.mapsUrl} tone="ghost-light">{t('Map')}</PillLink>}
+                  </div>
                 </div>
-              ))}
-            </dl>
+              </div>
+            )}
+
+            <div className={cn('min-w-0', contact ? 'lg:col-span-7 lg:pl-8' : 'lg:col-span-12')}>
+              <h2 className={cn(display, 'reveal text-[var(--brand-navy)]')} style={stagger(1)}>{t('Good to know')}</h2>
+              <dl className="mt-10">
+                {FAQ.map(({ q, a }, i) => (
+                  <div key={q} className="reveal grid gap-2 border-t border-[var(--brand-navy)]/12 py-6 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] sm:gap-8" style={stagger(i + 2)}>
+                    <dt className="text-lg font-semibold text-[var(--brand-navy)]">{t(q)}</dt>
+                    <dd className="text-[15px] leading-relaxed text-[var(--warm-ink-2)]">{t(a)}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
-        </section>
+        </Reveal>
 
         {/* ── Closing: a row of empty desks, waiting ── */}
-        <section className="overflow-hidden bg-[var(--warm-band)] pt-16">
-          <div className="mx-auto max-w-[1160px] px-4 text-center sm:px-6">
-            <h2 className={cn(px, 'text-[2.25rem] font-bold tracking-tight leading-tight sm:text-[3rem]')}>
-              {isLoading || free === 0 ? 'Your desk is waiting.' : `${free} desks are free today.`}
+        <Reveal className="overflow-hidden bg-[var(--warm-band)] pt-24 lg:pt-32">
+          <div className="mx-auto max-w-[1240px] px-4 text-center sm:px-6">
+            <h2 className={cn(display, 'reveal mx-auto max-w-[16ch] text-[var(--brand-navy)]')} style={stagger(0)}>
+              {isLoading || free === 0 ? t('Your desk is waiting.') : t('{free} desks are free today.', { free })}
             </h2>
-            <div className="mt-7">
-              <PixelButton href="/browse">Claim your desk ▶</PixelButton>
+            <div className="reveal mt-10" style={stagger(1)}>
+              <PillLink href="/browse" tone="navy">{t('Claim your desk')}</PillLink>
             </div>
           </div>
-          <div className="relative mt-10">
-            <div className="px-planks absolute inset-x-0 bottom-0 h-[30%]" aria-hidden="true" />
-            <Image
-              src="/landing/desks-row.png"
-              alt="A row of empty study desks with blue chairs"
-              width={2112}
-              height={744}
-              sizes="(min-width: 1200px) 1160px, 100vw"
-              className="relative mx-auto h-auto w-full max-w-[1160px] px-4"
-            />
-          </div>
-        </section>
+          <Image
+            src="/landing/desks-row.png"
+            alt="A row of empty study desks with blue chairs"
+            width={2112}
+            height={744}
+            sizes="(min-width: 1240px) 1160px, 100vw"
+            className="reveal relative mx-auto mt-16 h-auto w-full max-w-[1160px] px-4"
+            style={stagger(2)}
+          />
+        </Reveal>
       </main>
 
-      <PublicFooter />
+      {/* Room for the phone action bar, so it never covers the footer. */}
+      <div className="bg-[var(--brand-navy-deep)] pb-24 md:pb-0"><LandingFooter /></div>
+      <FindSeatBar watchId="hero-cta" free={isLoading || loadFailed ? null : free} />
     </div>
   );
 }

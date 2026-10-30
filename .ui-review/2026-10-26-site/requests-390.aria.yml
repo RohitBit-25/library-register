@@ -1,0 +1,30 @@
+- alert
+- banner:
+  - text: Shree Gangaur Library Staff desk
+  - button "Sign out"
+- main:
+  - heading "Requests 2 new" [level=1]
+  - paragraph: Review and verify payments for seat requests.
+  - button "Pending 2"
+  - button "Waitlist 1"
+  - button "Approved"
+  - button "Rejected 1"
+  - button "All 4"
+  - text: "1 Mansi Dadhich Pending Seat #1 9784512360 26 Oct 2026 3 Months · Morning 26 Oct 2026 UPI Payment Paid ₹1,900 Ref: T2508131147 Preparing for RAS mains, need a morning seat near a window."
+  - button "Approve and allot"
+  - button "Reject"
+  - text: "13 Yuvraj Shaktawat Pending Seat #13 9928374615 28 Oct 2026 6 Months · Full Day 26 Oct 2026 Cash Payment Verify cash received at counter"
+  - button "Approve and allot"
+  - button "Reject"
+- navigation "Admin":
+  - link "Seats":
+    - /url: /
+  - link "Requests":
+    - /url: /requests
+  - link "Members":
+    - /url: /members
+  - link "Fees":
+    - /url: /payments
+  - link "Reports":
+    - /url: /analytics
+- region "Notifications"

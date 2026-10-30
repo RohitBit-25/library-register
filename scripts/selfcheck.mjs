@@ -27,7 +27,7 @@ writeFileSync(join(out, 'package.json'), '{"type":"module"}');
 // in scripts/), and tsc rewrites those to .js on emit.
 execFileSync('npx', [
   'tsc', 'lib/csv.ts', 'lib/utils.ts', 'lib/types.ts', 'lib/seat-status.ts',
-  'lib/notify.ts', 'lib/log.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts', 'lib/deskLayout.ts', 'lib/motion.ts', 'lib/schemas.ts', 'lib/siteInfo.ts',
+  'lib/notify.ts', 'lib/log.ts', 'lib/pricing.ts', 'lib/layoutConfig.ts', 'lib/deskLayout.ts', 'lib/motion.ts', 'lib/schemas.ts', 'lib/siteInfo.ts', 'lib/i18n.ts',
   '--outDir', out, '--module', 'esnext', '--target', 'es2020',
   '--moduleResolution', 'bundler', '--skipLibCheck',
   '--allowImportingTsExtensions', '--rewriteRelativeImportExtensions',
@@ -43,9 +43,10 @@ const { buildExpiryMessage, normalisePhone } =
 const { planPrice, monthlyValue, formatINR, formatINRCompact, PLAN_MONTHS, DEFAULT_PLAN_RATES } =
   await import(pathToFileURL(join(out, 'pricing.js')).href);
 
-const { nextSeatInDirection, getSeatPositionConfig, SEAT_GROUPS, SEAT_NUMBERS, isSeat, seatRow, partnerSeat, chairRect, DOOR } =
+const { nextSeatInDirection, getSeatPositionConfig, SEAT_GROUPS, SEAT_NUMBERS, isSeat, seatRow, partnerSeat, chairRect, DOOR, seatFeatures, seatAmenities } =
   await import(pathToFileURL(join(out, 'layoutConfig.js')).href);
 
+const { translate, HI_ENTRIES } = await import(pathToFileURL(join(out, 'i18n.js')).href);
 const { UPI, upiPayLink } = await import(pathToFileURL(join(out, 'siteInfo.js')).href);
 
 const { allSeatSlots, DESK_W, DESK_H, ROOM } =
@@ -569,6 +570,35 @@ check('logInfo is level info and goes through the same shape', () => {
   assert.equal(entry.level, 'info');
   assert.equal(entry.seat, 7);
   assert.match(entry.reqId, /^[0-9a-f]{8}$/);
+});
+
+check('every desk is exactly one of shared or single, and partners agree', () => {
+  for (const seat of SEAT_NUMBERS) {
+    const f = seatFeatures(seat);
+    assert.equal(f.filter((x) => x === 'shared' || x === 'single').length, 1, `desk ${seat}`);
+    assert.equal(f.includes('shared'), partnerSeat(seat) != null, `desk ${seat}`);
+  }
+});
+
+check('desks 21 and 22 sit by the door; the wall rows read as wall desks', () => {
+  assert.ok(seatFeatures(21).includes('door'));
+  assert.ok(seatFeatures(22).includes('door'));
+  for (const g of SEAT_GROUPS.filter((g) => g.id === 'leftWall' || g.id === 'rightWall')) {
+    for (const seat of g.seats) assert.ok(seatFeatures(seat).includes('wall'), `desk ${seat}`);
+  }
+  assert.equal(seatAmenities(21).length, seatFeatures(21).length);
+  assert.deepEqual(seatFeatures(999), []);
+});
+
+check('every Hindi entry keeps its placeholders', () => {
+  const ph = (s) => (s.match(/\{\w+\}/g) ?? []).sort().join();
+  for (const [en, hi] of HI_ENTRIES) assert.equal(ph(hi), ph(en), en);
+});
+
+check('translate fills placeholders and falls back to English', () => {
+  assert.equal(translate('en', 'Welcome, {name}!', { name: 'Asha' }), 'Welcome, Asha!');
+  assert.equal(translate('hi', 'Welcome, {name}!', { name: 'Asha' }), 'स्वागत है, Asha!');
+  assert.equal(translate('hi', 'No such string {x}', { x: 1 }), 'No such string 1');
 });
 
 console.log(`\n${n} checks passed.\n`);

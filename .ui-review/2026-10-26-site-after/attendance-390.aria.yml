@@ -1,0 +1,106 @@
+- alert
+- banner:
+  - text: Shree Gangaur Library Staff desk
+  - button "Sign out"
+- main:
+  - heading "Attendance" [level=1]
+  - paragraph: Track daily member check-ins and history.
+  - button "Today"
+  - button "History"
+  - heading "Weekly Summary" [level=2]
+  - paragraph: 70%
+  - paragraph: Avg this week
+  - paragraph: 70%
+  - paragraph: Best · Monday
+  - paragraph: 70%
+  - paragraph: Low · Monday
+  - paragraph: Check-ins
+  - text: 50 / 71
+  - paragraph: Turnout
+  - text: 70%
+  - button "Mark all present"
+  - heading "Occupied Seats List" [level=2]
+  - paragraph: Tap a seat tile to toggle check-in.
+  - button "2 Aarav"
+  - button "3 Priya"
+  - button "4 Om"
+  - button "5 Bhavesh"
+  - button "6 Nikita"
+  - button "7 Chandr."
+  - button "8 Kavya"
+  - button "9 Rohit"
+  - button "10 Meenak."
+  - button "11 Yash"
+  - button "12 Ishita"
+  - button "14 Devend."
+  - button "15 Anjali"
+  - button "20 Karan"
+  - button "21 Pooja"
+  - button "22 Harshv."
+  - button "23 Ritika"
+  - button "24 Sahil"
+  - button "25 Divya"
+  - button "26 Manish"
+  - button "27 Sneha"
+  - button "28 Vikram"
+  - button "29 Tanya"
+  - button "30 Arjun"
+  - button "32 Sakshi"
+  - button "34 Deepak"
+  - button "35 Neha"
+  - button "38 Raghav"
+  - button "39 Simran"
+  - button "42 Mohit"
+  - button "44 Anushka"
+  - button "45 Lokesh"
+  - button "46 Preeti"
+  - button "47 Ankit"
+  - button "48 Gauri"
+  - button "49 Tushar"
+  - button "50 Ridhima"
+  - button "51 Naveen"
+  - button "52 Aditi"
+  - button "53 Shubham"
+  - button "56 Palak"
+  - button "58 Rahul"
+  - button "59 Khushi"
+  - button "60 Jatin"
+  - button "61 Bhoomi."
+  - button "62 Siddha."
+  - button "63 Muskan"
+  - button "64 Pankaj"
+  - button "65 Aishwa."
+  - button "66 Nitesh"
+  - button "67 Vaishn."
+  - button "70 Dhruv"
+  - button "72 Kritika"
+  - button "74 Abhish."
+  - button "75 Sanya"
+  - button "76 Prateek"
+  - button "78 Isha"
+  - button "79 Gaurav"
+  - button "80 Mahima"
+  - button "81 Vishal"
+  - button "82 Aarushi"
+  - button "83 Hemant"
+  - button "84 Riya"
+  - button "85 Kunal"
+  - button "88 Swati"
+  - button "89 Nakul"
+  - button "90 Pallavi"
+  - button "92 Ayush"
+  - button "93 Snehal"
+  - button "94 Rajat"
+  - button "95 Trisha"
+- navigation "Admin":
+  - link "Seats":
+    - /url: /
+  - link "Requests":
+    - /url: /requests
+  - link "Members":
+    - /url: /members
+  - link "Fees":
+    - /url: /payments
+  - link "Reports":
+    - /url: /analytics
+- region "Notifications"

@@ -88,7 +88,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-[380px]">
         <Link
           href="/landing"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] transition-ui hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
+          className="mb-6 inline-flex min-h-[44px] items-center gap-2 text-sm font-medium text-[var(--text-secondary)] transition-ui hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--saffron-500)]"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Back to the library

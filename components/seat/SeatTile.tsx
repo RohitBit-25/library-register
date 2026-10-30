@@ -96,7 +96,7 @@ function SeatTileInner({ member, onClick, selected = false, dimmed = false }: Se
               <span className="text-[19px] font-semibold leading-none tabular">
                 {member.seat}
               </span>
-              <span className="mt-1 text-[11px] font-semibold leading-none opacity-80">
+              <span className="mt-1 text-[11px] font-semibold leading-none">
                 {initials(member.name)}
               </span>
               {/* Only the state that needs acting on gets a second mark — the

@@ -2,7 +2,7 @@
  * Realistic demo data, for reviewing the interface against something that
  * looks like a working library.
  *
- * Run with: node --env-file=.env scripts/seed-demo.ts
+ * Run with: MONGODB_URI=mongodb://127.0.0.1:27017/gangaur_demo npm run seed:demo
  *
  * REFUSES to run unless the database name contains "demo" or "scratch". Every
  * screen in this app is a view over real member records; pointing a data
@@ -23,6 +23,7 @@ import AuditLog from '../models/AuditLog.ts';
 import { getDefaultMembers } from '../lib/defaultData.ts';
 import { planPrice } from '../lib/pricing.ts';
 import { SEAT_NUMBERS } from '../lib/layoutConfig.ts';
+import { todayLocalISO } from '../lib/seat-status.ts';
 
 const uri = process.env.MONGODB_URI;
 if (!uri) {
@@ -74,7 +75,9 @@ const rand = () => {
 const pick = <T,>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
 const int = (lo: number, hi: number) => lo + Math.floor(rand() * (hi - lo + 1));
 
-const TODAY = new Date('2026-08-13T00:00:00Z');
+// Today in India, so expiring / overdue / active land the way they would in a
+// real library this week. DEMO_TODAY=YYYY-MM-DD pins it for repeatable shots.
+const TODAY = new Date(`${process.env.DEMO_TODAY || todayLocalISO()}T00:00:00Z`);
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 const shift = (days: number) => {
   const d = new Date(TODAY);
@@ -129,7 +132,7 @@ for (const seatNum of [...occupied].sort((a, b) => a - b)) {
       fee, vacant: false,
       shift: rand() < 0.34 ? 'morning' : rand() < 0.6 ? 'evening' : 'full',
       paymentMode: mode, termsAccepted: true,
-      documentStatus: rand() < 0.7 ? 'Aadhaar on file' : '',
+      documentStatus: 'ID checked at desk',
     },
   });
 
@@ -176,7 +179,7 @@ await SeatRequest.insertMany([
     seat: vacantSeats[0], userName: 'Mansi Dadhich', userPhone: '9784512360',
     message: 'Preparing for RAS mains, need a morning seat near a window.',
     joinDate: iso(TODAY), duration: '3M', shift: 'morning',
-    transactionId: 'T2508131147', paymentMode: 'upi', status: 'pending',
+    transactionId: 'T2508131147', paymentMode: 'upi', amount: 1900, status: 'pending',
   },
   {
     seat: vacantSeats[1], userName: 'Yuvraj Shaktawat', userPhone: '9928374615',
@@ -187,7 +190,7 @@ await SeatRequest.insertMany([
     seat: vacantSeats[2], userName: 'Ekta Somani', userPhone: '9660123478',
     message: 'Can I switch to evening later?', joinDate: iso(shift(1)),
     duration: '1M', shift: 'evening', transactionId: 'T2508129903',
-    paymentMode: 'upi', status: 'approved',
+    paymentMode: 'upi', status: 'rejected',
   },
   {
     seat: [...occupied][3], userName: 'Farhan Sheikh', userPhone: '9829911204',
@@ -198,7 +201,7 @@ await SeatRequest.insertMany([
 ]);
 
 await AuditLog.insertMany([
-  { user: 'Rohit', action: 'Approved Request', details: 'Seat 34 allotted to Ekta Somani (1M)', seat: 34 },
+  { user: 'Rohit', action: 'Rejected Request', details: `Seat ${vacantSeats[2]} request from Ekta Somani`, seat: vacantSeats[2] },
   { user: 'Rohit', action: 'Marked Paid', details: 'Seat 12: fee', seat: 12 },
   { user: 'Rohit', action: 'Renewed Member', details: 'Seat 7 renewed for 3M', seat: 7 },
   { user: 'Rohit', action: 'Vacated Seat', details: 'Seat 61 was vacated.', seat: 61 },

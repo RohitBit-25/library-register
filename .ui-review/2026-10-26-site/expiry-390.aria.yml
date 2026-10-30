@@ -1,0 +1,150 @@
+- alert
+- banner:
+  - text: Shree Gangaur Library Staff desk
+  - button "Sign out"
+- main:
+  - heading "Renewals" [level=1]
+  - paragraph: 32 ending within 30 days, or already past.
+  - button "Show all 71 members"
+  - text: 6 Expired 0 Today 2 This Week 24 This Month
+  - textbox "Search seat, name..."
+  - table:
+    - rowgroup:
+      - row "Seat Member Urgency / Status Expiry Date Actions":
+        - columnheader "Seat"
+        - columnheader "Member"
+        - columnheader "Urgency / Status"
+        - columnheader "Expiry Date"
+        - columnheader "Actions"
+    - rowgroup:
+      - 'row "88 Swati Ojha 9298635387 35d overdue Urgency: 35d overdue 21 Sept 2026 Send a WhatsApp reminder to Swati Ojha Renew seat 88 for another 3 Months Open seat 88 to change the plan Vacate seat 88 — membership expired"':
+        - cell "88"
+        - cell "Swati Ojha 9298635387"
+        - 'cell "35d overdue Urgency: 35d overdue"':
+          - text: 35d overdue
+          - 'img "Urgency: 35d overdue"'
+        - cell "21 Sept 2026"
+        - cell "Send a WhatsApp reminder to Swati Ojha Renew seat 88 for another 3 Months Open seat 88 to change the plan Vacate seat 88 — membership expired":
+          - button "Send a WhatsApp reminder to Swati Ojha"
+          - button "Renew seat 88 for another 3 Months": Renew
+          - button "Open seat 88 to change the plan"
+          - button "Vacate seat 88 — membership expired"
+      - 'row "21 Pooja Ameta 9143207490 15d overdue Urgency: 15d overdue 11 Oct 2026 Send a WhatsApp reminder to Pooja Ameta Renew seat 21 for another 3 Months Open seat 21 to change the plan Vacate seat 21 — membership expired"':
+        - cell "21"
+        - cell "Pooja Ameta 9143207490"
+        - 'cell "15d overdue Urgency: 15d overdue"':
+          - text: 15d overdue
+          - 'img "Urgency: 15d overdue"'
+        - cell "11 Oct 2026"
+        - cell "Send a WhatsApp reminder to Pooja Ameta Renew seat 21 for another 3 Months Open seat 21 to change the plan Vacate seat 21 — membership expired":
+          - button "Send a WhatsApp reminder to Pooja Ameta"
+          - button "Renew seat 21 for another 3 Months": Renew
+          - button "Open seat 21 to change the plan"
+          - button "Vacate seat 21 — membership expired"
+      - 'row "8 Kavya Menaria 9990843582 13d overdue Urgency: 13d overdue 13 Oct 2026 Send a WhatsApp reminder to Kavya Menaria Renew seat 8 for another 1 Year Open seat 8 to change the plan Vacate seat 8 — membership expired"':
+        - cell "8"
+        - cell "Kavya Menaria 9990843582"
+        - 'cell "13d overdue Urgency: 13d overdue"':
+          - text: 13d overdue
+          - 'img "Urgency: 13d overdue"'
+        - cell "13 Oct 2026"
+        - cell "Send a WhatsApp reminder to Kavya Menaria Renew seat 8 for another 1 Year Open seat 8 to change the plan Vacate seat 8 — membership expired":
+          - button "Send a WhatsApp reminder to Kavya Menaria"
+          - button "Renew seat 8 for another 1 Year": Renew
+          - button "Open seat 8 to change the plan"
+          - button "Vacate seat 8 — membership expired"
+      - 'row "89 Nakul Menaria 9404985726 12d overdue Urgency: 12d overdue 14 Oct 2026 Send a WhatsApp reminder to Nakul Menaria Renew seat 89 for another 6 Months Open seat 89 to change the plan Vacate seat 89 — membership expired"':
+        - cell "89"
+        - cell "Nakul Menaria 9404985726"
+        - 'cell "12d overdue Urgency: 12d overdue"':
+          - text: 12d overdue
+          - 'img "Urgency: 12d overdue"'
+        - cell "14 Oct 2026"
+        - cell "Send a WhatsApp reminder to Nakul Menaria Renew seat 89 for another 6 Months Open seat 89 to change the plan Vacate seat 89 — membership expired":
+          - button "Send a WhatsApp reminder to Nakul Menaria"
+          - button "Renew seat 89 for another 6 Months": Renew
+          - button "Open seat 89 to change the plan"
+          - button "Vacate seat 89 — membership expired"
+      - 'row "70 Dhruv Sompura 9510085511 10d overdue Urgency: 10d overdue 16 Oct 2026 Send a WhatsApp reminder to Dhruv Sompura Renew seat 70 for another 1 Year Open seat 70 to change the plan Vacate seat 70 — membership expired"':
+        - cell "70"
+        - cell "Dhruv Sompura 9510085511"
+        - 'cell "10d overdue Urgency: 10d overdue"':
+          - text: 10d overdue
+          - 'img "Urgency: 10d overdue"'
+        - cell "16 Oct 2026"
+        - cell "Send a WhatsApp reminder to Dhruv Sompura Renew seat 70 for another 1 Year Open seat 70 to change the plan Vacate seat 70 — membership expired":
+          - button "Send a WhatsApp reminder to Dhruv Sompura"
+          - button "Renew seat 70 for another 1 Year": Renew
+          - button "Open seat 70 to change the plan"
+          - button "Vacate seat 70 — membership expired"
+      - 'row "95 Trisha Chittora 9411414283 6d overdue Urgency: 6d overdue 20 Oct 2026 Send a WhatsApp reminder to Trisha Chittora Renew seat 95 for another 6 Months Open seat 95 to change the plan Vacate seat 95 — membership expired"':
+        - cell "95"
+        - cell "Trisha Chittora 9411414283"
+        - 'cell "6d overdue Urgency: 6d overdue"':
+          - text: 6d overdue
+          - 'img "Urgency: 6d overdue"'
+        - cell "20 Oct 2026"
+        - cell "Send a WhatsApp reminder to Trisha Chittora Renew seat 95 for another 6 Months Open seat 95 to change the plan Vacate seat 95 — membership expired":
+          - button "Send a WhatsApp reminder to Trisha Chittora"
+          - button "Renew seat 95 for another 6 Months": Renew
+          - button "Open seat 95 to change the plan"
+          - button "Vacate seat 95 — membership expired"
+      - 'row "67 Vaishnavi Audichya 9971485329 4d left Urgency: 4d left 30 Oct 2026 Send a WhatsApp reminder to Vaishnavi Audichya Renew seat 67 for another 3 Months Open seat 67 to change the plan"':
+        - cell "67"
+        - cell "Vaishnavi Audichya 9971485329"
+        - 'cell "4d left Urgency: 4d left"':
+          - text: 4d left
+          - 'img "Urgency: 4d left"'
+        - cell "30 Oct 2026"
+        - cell "Send a WhatsApp reminder to Vaishnavi Audichya Renew seat 67 for another 3 Months Open seat 67 to change the plan":
+          - button "Send a WhatsApp reminder to Vaishnavi Audichya"
+          - button "Renew seat 67 for another 3 Months": Renew
+          - button "Open seat 67 to change the plan"
+      - 'row "22 Harshvardhan Sisodiya 9149732983 7d left Urgency: 7d left 2 Nov 2026 Send a WhatsApp reminder to Harshvardhan Sisodiya Renew seat 22 for another 6 Months Open seat 22 to change the plan"':
+        - cell "22"
+        - cell "Harshvardhan Sisodiya 9149732983"
+        - 'cell "7d left Urgency: 7d left"':
+          - text: 7d left
+          - 'img "Urgency: 7d left"'
+        - cell "2 Nov 2026"
+        - cell "Send a WhatsApp reminder to Harshvardhan Sisodiya Renew seat 22 for another 6 Months Open seat 22 to change the plan":
+          - button "Send a WhatsApp reminder to Harshvardhan Sisodiya"
+          - button "Renew seat 22 for another 6 Months": Renew
+          - button "Open seat 22 to change the plan"
+      - 'row "25 Divya Chouhan 9348608803 8d left Urgency: 8d left 3 Nov 2026 Send a WhatsApp reminder to Divya Chouhan Renew seat 25 for another 6 Months Open seat 25 to change the plan"':
+        - cell "25"
+        - cell "Divya Chouhan 9348608803"
+        - 'cell "8d left Urgency: 8d left"':
+          - text: 8d left
+          - 'img "Urgency: 8d left"'
+        - cell "3 Nov 2026"
+        - cell "Send a WhatsApp reminder to Divya Chouhan Renew seat 25 for another 6 Months Open seat 25 to change the plan":
+          - button "Send a WhatsApp reminder to Divya Chouhan"
+          - button "Renew seat 25 for another 6 Months": Renew
+          - button "Open seat 25 to change the plan"
+      - 'row "47 Ankit Choubisa 9459244346 8d left Urgency: 8d left 3 Nov 2026 Send a WhatsApp reminder to Ankit Choubisa Renew seat 47 for another 6 Months Open seat 47 to change the plan"':
+        - cell "47"
+        - cell "Ankit Choubisa 9459244346"
+        - 'cell "8d left Urgency: 8d left"':
+          - text: 8d left
+          - 'img "Urgency: 8d left"'
+        - cell "3 Nov 2026"
+        - cell "Send a WhatsApp reminder to Ankit Choubisa Renew seat 47 for another 6 Months Open seat 47 to change the plan":
+          - button "Send a WhatsApp reminder to Ankit Choubisa"
+          - button "Renew seat 47 for another 6 Months": Renew
+          - button "Open seat 47 to change the plan"
+  - text: Showing 1 to 10 of 32 entries
+  - button "Previous page" [disabled]
+  - button "Next page"
+- navigation "Admin":
+  - link "Seats":
+    - /url: /
+  - link "Requests":
+    - /url: /requests
+  - link "Members":
+    - /url: /members
+  - link "Fees":
+    - /url: /payments
+  - link "Reports":
+    - /url: /analytics
+- region "Notifications"

@@ -1,0 +1,79 @@
+- alert
+- complementary:
+  - text: Shree Gangaur Library Staff desk
+  - navigation "Admin":
+    - paragraph: Desk
+    - list:
+      - listitem:
+        - link "Seats":
+          - /url: /
+      - listitem:
+        - link "Requests 2 pending":
+          - /url: /requests
+      - listitem:
+        - link "Members 12 with fees due":
+          - /url: /members
+      - listitem:
+        - link "Collections":
+          - /url: /payments
+      - listitem:
+        - link "Renewals":
+          - /url: /expiry
+      - listitem:
+        - link "Attendance":
+          - /url: /attendance
+    - paragraph: Records
+    - list:
+      - listitem:
+        - link "Analytics":
+          - /url: /analytics
+      - listitem:
+        - link "Activity log":
+          - /url: /audit
+      - listitem:
+        - link "Export":
+          - /url: /export
+    - paragraph: Setup
+    - list:
+      - listitem:
+        - link "Full floor plan":
+          - /url: /floorplan
+      - listitem:
+        - link "Staff":
+          - /url: /staff
+      - listitem:
+        - link "Check-in kiosk":
+          - /url: /kiosk
+  - paragraph: Admin
+  - paragraph: Mon, 26 Oct
+  - button "Sign out"
+- main:
+  - heading "Export" [level=1]
+  - paragraph: Download members, attendance, and request data.
+  - heading "Full Database Backup" [level=2]
+  - paragraph: All members, attendance records, and requests in a single JSON file.
+  - text: 95 seats 45 attendance days 4 requests
+  - button "Download Full Backup"
+  - heading "Export by Category" [level=3]
+  - heading "Members" [level=3]
+  - paragraph: 71 active members • 24 vacant seats
+  - button "CSV"
+  - button "JSON"
+  - heading "Attendance" [level=3]
+  - paragraph: 45 days of records • Last 30 days
+  - button "CSV"
+  - button "JSON"
+  - heading "Seat Requests" [level=3]
+  - paragraph: 4 total • 2 pending
+  - button "CSV"
+  - button "JSON"
+  - heading "Quick Summary" [level=3]
+  - paragraph: "71"
+  - paragraph: Active members
+  - paragraph: "24"
+  - paragraph: Vacant seats
+  - paragraph: "2"
+  - paragraph: Pending requests
+  - paragraph: "45"
+  - paragraph: Attendance days
+- region "Notifications"

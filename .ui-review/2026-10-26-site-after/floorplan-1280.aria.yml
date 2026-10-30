@@ -1,0 +1,117 @@
+- alert
+- main:
+  - button "Back to seats": Seats
+  - heading "Floor plan" [level=1]
+  - paragraph: 71 occupied · 24 free · 15 need attention
+  - group "Shift":
+    - button "All shifts" [pressed]
+    - button "Morning"
+    - button "Evening"
+  - group "Zoom":
+    - button "Zoom out"
+    - button "Fit the whole room on screen" [pressed]: Fit
+    - button "Show the plan at full size": 1:1
+    - button "Zoom in"
+  - main:
+    - button "Seat 1, vacant — add a member": "1"
+    - button "Seat 2, Aarav Sharma, Active": 2 AS
+    - button "Seat 3, Priya Rathore, Active": 3 PR
+    - button "Seat 4, Om Vyas, Active": 4 OV
+    - button "Seat 5, Bhavesh Paliwal, Active": 5 BP
+    - button "Seat 6, Nikita Jain, Active": 6 NJ
+    - button "Seat 7, Chandraprakash Rathore, Active": 7 CR
+    - button "Seat 8, Kavya Menaria, Expired": 8 KM −13
+    - button "Seat 9, Rohit Suthar, Active": 9 RS
+    - button "Seat 10, Meenakshi Purohit, Active": 10 MP
+    - button "Seat 11, Yash Kothari, Active": 11 YK
+    - button "Seat 12, Ishita Trivedi, Active": 12 IT
+    - button "Seat 13, vacant — add a member": "13"
+    - button "Seat 14, Devendra Singh Chundawat, Active": 14 DC
+    - button "Seat 15, Anjali Bhatt, Active": 15 AB
+    - button "Seat 16, vacant — add a member": "16"
+    - button "Seat 17, vacant — add a member": "17"
+    - button "Seat 18, vacant — add a member": "18"
+    - button "Seat 19, vacant — add a member": "19"
+    - button "Seat 20, Karan Salvi, Active": 20 KS
+    - button "Seat 21, Pooja Ameta, Expired": 21 PA −15
+    - button "Seat 22, Harshvardhan Sisodiya, Expiring": 22 HS 7d
+    - button "Seat 23, Ritika Nagda, Active": 23 RN
+    - button "Seat 24, Sahil Khatri, Active": 24 SK
+    - button "Seat 25, Divya Chouhan, Active": 25 DC
+    - button "Seat 26, Manish Lohar, Active": 26 ML
+    - button "Seat 27, Sneha Dangi, Active": 27 SD
+    - button "Seat 28, Vikram Gurjar, Active": 28 VG
+    - button "Seat 29, Tanya Mehta, Active": 29 TM
+    - button "Seat 30, Arjun Kalal, Active": 30 AK
+    - button "Seat 31, vacant — add a member": "31"
+    - button "Seat 32, Sakshi Joshi, Fee due": 32 SJ ₹
+    - button "Seat 33, vacant — add a member": "33"
+    - button "Seat 34, Deepak Regar, Active": 34 DR
+    - button "Seat 35, Neha Bhanawat, Fee due": 35 NB ₹
+    - button "Seat 36, vacant — add a member": "36"
+    - button "Seat 37, vacant — add a member": "37"
+    - button "Seat 38, Raghav Dashora, Active": 38 RD
+    - button "Seat 39, Simran Kaur Bhatia, Active": 39 SB
+    - button "Seat 40, vacant — add a member": "40"
+    - button "Seat 41, vacant — add a member": "41"
+    - button "Seat 42, Mohit Sen, Active": 42 MS
+    - button "Seat 43, vacant — add a member": "43"
+    - button "Seat 44, Anushka Soni, Active": 44 AS
+    - button "Seat 45, Lokesh Teli, Active": 45 LT
+    - button "Seat 46, Preeti Sanadhya, Fee due": 46 PS ₹
+    - button "Seat 47, Ankit Choubisa, Active": 47 AC
+    - button "Seat 48, Gauri Shrimali, Active": 48 GS
+    - button "Seat 49, Tushar Bhavsar, Fee due": 49 TB ₹
+    - button "Seat 50, Ridhima Pandya, Active": 50 RP
+    - button "Seat 51, Naveen Jat, Active": 51 NJ
+    - button "Seat 52, Aditi Vaishnav, Active": 52 AV
+    - button "Seat 53, Shubham Mundra, Active": 53 SM
+    - button "Seat 54, vacant — add a member": "54"
+    - button "Seat 55, vacant — add a member": "55"
+    - button "Seat 56, Palak Agarwal, Fee due": 56 PA ₹
+    - button "Seat 57, vacant — add a member": "57"
+    - button "Seat 58, Rahul Meghwal, Active": 58 RM
+    - button "Seat 59, Khushi Rawal, Active": 59 KR
+    - button "Seat 60, Jatin Maheshwari, Active": 60 JM
+    - button "Seat 61, Bhoomika Shaktawat, Active": 61 BS
+    - button "Seat 62, Siddharth Nagar, Active": 62 SN
+    - button "Seat 63, Muskan Qureshi, Fee due": 63 MQ ₹
+    - button "Seat 64, Pankaj Damor, Active": 64 PD
+    - button "Seat 65, Aishwarya Bohra, Active": 65 AB
+    - button "Seat 66, Nitesh Kumawat, Active": 66 NK
+    - button "Seat 67, Vaishnavi Audichya, Expiring": 67 VA 4d
+    - button "Seat 68, vacant — add a member": "68"
+    - button "Seat 69, vacant — add a member": "69"
+    - button "Seat 70, Dhruv Sompura, Expired": 70 DS −10
+    - button "Seat 71, vacant — add a member": "71"
+    - button "Seat 72, Kritika Vyas, Active": 72 KV
+    - button "Seat 73, vacant — add a member": "73"
+    - button "Seat 74, Abhishek Charan, Active": 74 AC
+    - button "Seat 75, Sanya Lodha, Active": 75 SL
+    - button "Seat 76, Prateek Bapna, Active": 76 PB
+    - button "Seat 77, vacant — add a member": "77"
+    - button "Seat 78, Isha Ranawat, Active": 78 IR
+    - button "Seat 79, Gaurav Solanki, Active": 79 GS
+    - button "Seat 80, Mahima Tak, Active": 80 MT
+    - button "Seat 81, Vishal Banjara, Active": 81 VB
+    - button "Seat 82, Aarushi Kumbhat, Active": 82 AK
+    - button "Seat 83, Hemant Gehlot, Active": 83 HG
+    - button "Seat 84, Riya Sukhwal, Active": 84 RS
+    - button "Seat 85, Kunal Dhakad, Fee due": 85 KD ₹
+    - button "Seat 86, vacant — add a member": "86"
+    - button "Seat 87, vacant — add a member": "87"
+    - button "Seat 88, Swati Ojha, Expired": 88 SO −35
+    - button "Seat 89, Nakul Menaria, Expired": 89 NM −12
+    - button "Seat 90, Pallavi Katara, Active": 90 PK
+    - button "Seat 91, vacant — add a member": "91"
+    - button "Seat 92, Ayush Bagora, Active": 92 AB
+    - button "Seat 93, Snehal Bhandari, Active": 93 SB
+    - button "Seat 94, Rajat Vyas, Active": 94 RV
+    - button "Seat 95, Trisha Chittora, Expired": 95 TC −6
+  - list "Legend":
+    - listitem: Active 56
+    - listitem: Expiring 2
+    - listitem: Fee due 7
+    - listitem: Expired 6
+    - listitem: Vacant 24
+- region "Notifications"

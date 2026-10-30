@@ -1,0 +1,313 @@
+- alert
+- banner:
+  - text: Shree Gangaur Library Staff desk
+  - button "Sign out"
+- main:
+  - heading "Members" [level=1]
+  - paragraph: 71 members · 24 vacant
+  - searchbox "Search members by name, phone or seat"
+  - button "All"
+  - button "Active"
+  - button "Expiring"
+  - button "Expired"
+  - button "Fee Due"
+  - button "Vacant"
+  - button "Morning"
+  - button "Evening"
+  - text: "#01 Vacant"
+  - link "Add":
+    - /url: /?seat=1
+  - checkbox "Select Aarav Sharma"
+  - text: "#02 Aarav Sharma Active EXP: 21 Dec"
+  - button "Actions for Aarav Sharma"
+  - checkbox "Select Priya Rathore"
+  - text: "#03 Priya Rathore Active EXP: 11 Nov"
+  - button "Actions for Priya Rathore"
+  - checkbox "Select Om Vyas"
+  - text: "#04 Om Vyas Active EXP: 18 Nov"
+  - button "Actions for Om Vyas"
+  - checkbox "Select Bhavesh Paliwal"
+  - text: "#05 Bhavesh Paliwal Active EXP: 21 Jan 2027"
+  - button "Actions for Bhavesh Paliwal"
+  - checkbox "Select Nikita Jain"
+  - text: "#06 Nikita Jain Active EXP: 19 Nov"
+  - button "Actions for Nikita Jain"
+  - checkbox "Select Chandraprakash Rathore"
+  - text: "#07 Chandraprakash Rathore Active EXP: 5 Jan 2027"
+  - button "Actions for Chandraprakash Rathore"
+  - checkbox "Select Kavya Menaria"
+  - text: "#08 Kavya Menaria Expired EXP: 13 Oct"
+  - button "Actions for Kavya Menaria"
+  - checkbox "Select Rohit Suthar"
+  - text: "#09 Rohit Suthar Active EXP: 16 Dec"
+  - button "Actions for Rohit Suthar"
+  - checkbox "Select Meenakshi Purohit"
+  - text: "#10 Meenakshi Purohit Active EXP: 11 Jan 2027"
+  - button "Actions for Meenakshi Purohit"
+  - checkbox "Select Yash Kothari"
+  - text: "#11 Yash Kothari Active EXP: 4 Jan 2027"
+  - button "Actions for Yash Kothari"
+  - checkbox "Select Ishita Trivedi"
+  - text: "#12 Ishita Trivedi Active EXP: 24 Dec"
+  - button "Actions for Ishita Trivedi"
+  - text: "#13 Vacant"
+  - link "Add":
+    - /url: /?seat=13
+  - checkbox "Select Devendra Singh Chundawat"
+  - text: "#14 Devendra Singh Chundawat Active EXP: 18 Apr 2027"
+  - button "Actions for Devendra Singh Chundawat"
+  - checkbox "Select Anjali Bhatt"
+  - text: "#15 Anjali Bhatt Active EXP: 17 Jan 2027"
+  - button "Actions for Anjali Bhatt"
+  - text: "#16 Vacant"
+  - link "Add":
+    - /url: /?seat=16
+  - text: "#17 Vacant"
+  - link "Add":
+    - /url: /?seat=17
+  - text: "#18 Vacant"
+  - link "Add":
+    - /url: /?seat=18
+  - text: "#19 Vacant"
+  - link "Add":
+    - /url: /?seat=19
+  - checkbox "Select Karan Salvi"
+  - text: "#20 Karan Salvi Active EXP: 10 Dec"
+  - button "Actions for Karan Salvi"
+  - checkbox "Select Pooja Ameta"
+  - text: "#21 Pooja Ameta Expired EXP: 11 Oct"
+  - button "Actions for Pooja Ameta"
+  - checkbox "Select Harshvardhan Sisodiya"
+  - text: "#22 Harshvardhan Sisodiya Expiring soon EXP: 2 Nov"
+  - button "Actions for Harshvardhan Sisodiya"
+  - checkbox "Select Ritika Nagda"
+  - text: "#23 Ritika Nagda Active EXP: 5 Mar 2027"
+  - button "Actions for Ritika Nagda"
+  - checkbox "Select Sahil Khatri"
+  - text: "#24 Sahil Khatri Active EXP: 8 Nov"
+  - button "Actions for Sahil Khatri"
+  - checkbox "Select Divya Chouhan"
+  - text: "#25 Divya Chouhan Active EXP: 3 Nov"
+  - button "Actions for Divya Chouhan"
+  - checkbox "Select Manish Lohar"
+  - text: "#26 Manish Lohar Active EXP: 19 Nov"
+  - button "Actions for Manish Lohar"
+  - checkbox "Select Sneha Dangi"
+  - text: "#27 Sneha Dangi Active EXP: 22 Nov"
+  - button "Actions for Sneha Dangi"
+  - checkbox "Select Vikram Gurjar"
+  - text: "#28 Vikram Gurjar Active EXP: 14 Jan 2027"
+  - button "Actions for Vikram Gurjar"
+  - checkbox "Select Tanya Mehta"
+  - text: "#29 Tanya Mehta Active EXP: 9 Jan 2027"
+  - button "Actions for Tanya Mehta"
+  - checkbox "Select Arjun Kalal"
+  - text: "#30 Arjun Kalal Active EXP: 1 Apr 2027"
+  - button "Actions for Arjun Kalal"
+  - text: "#31 Vacant"
+  - link "Add":
+    - /url: /?seat=31
+  - checkbox "Select Sakshi Joshi"
+  - text: "#32 Sakshi Joshi Fee due EXP: 27 Nov"
+  - button "Actions for Sakshi Joshi"
+  - text: "#33 Vacant"
+  - link "Add":
+    - /url: /?seat=33
+  - checkbox "Select Deepak Regar"
+  - text: "#34 Deepak Regar Active EXP: 2 Jan 2027"
+  - button "Actions for Deepak Regar"
+  - checkbox "Select Neha Bhanawat"
+  - text: "#35 Neha Bhanawat Fee due EXP: 6 Nov"
+  - button "Actions for Neha Bhanawat"
+  - text: "#36 Vacant"
+  - link "Add":
+    - /url: /?seat=36
+  - text: "#37 Vacant"
+  - link "Add":
+    - /url: /?seat=37
+  - checkbox "Select Raghav Dashora"
+  - text: "#38 Raghav Dashora Active EXP: 11 Jan 2027"
+  - button "Actions for Raghav Dashora"
+  - checkbox "Select Simran Kaur Bhatia"
+  - text: "#39 Simran Kaur Bhatia Active EXP: 30 Nov"
+  - button "Actions for Simran Kaur Bhatia"
+  - text: "#40 Vacant"
+  - link "Add":
+    - /url: /?seat=40
+  - text: "#41 Vacant"
+  - link "Add":
+    - /url: /?seat=41
+  - checkbox "Select Mohit Sen"
+  - text: "#42 Mohit Sen Active EXP: 28 Nov"
+  - button "Actions for Mohit Sen"
+  - text: "#43 Vacant"
+  - link "Add":
+    - /url: /?seat=43
+  - checkbox "Select Anushka Soni"
+  - text: "#44 Anushka Soni Active EXP: 21 Nov"
+  - button "Actions for Anushka Soni"
+  - checkbox "Select Lokesh Teli"
+  - text: "#45 Lokesh Teli Active EXP: 15 Jan 2027"
+  - button "Actions for Lokesh Teli"
+  - checkbox "Select Preeti Sanadhya"
+  - text: "#46 Preeti Sanadhya Fee due EXP: 7 Nov"
+  - button "Actions for Preeti Sanadhya"
+  - checkbox "Select Ankit Choubisa"
+  - text: "#47 Ankit Choubisa Active EXP: 3 Nov"
+  - button "Actions for Ankit Choubisa"
+  - checkbox "Select Gauri Shrimali"
+  - text: "#48 Gauri Shrimali Active EXP: 4 Nov"
+  - button "Actions for Gauri Shrimali"
+  - checkbox "Select Tushar Bhavsar"
+  - text: "#49 Tushar Bhavsar Fee due EXP: 24 Feb 2027"
+  - button "Actions for Tushar Bhavsar"
+  - checkbox "Select Ridhima Pandya"
+  - text: "#50 Ridhima Pandya Active EXP: 20 Jan 2027"
+  - button "Actions for Ridhima Pandya"
+  - checkbox "Select Naveen Jat"
+  - text: "#51 Naveen Jat Active EXP: 6 Nov"
+  - button "Actions for Naveen Jat"
+  - checkbox "Select Aditi Vaishnav"
+  - text: "#52 Aditi Vaishnav Active EXP: 23 Jan 2027"
+  - button "Actions for Aditi Vaishnav"
+  - checkbox "Select Shubham Mundra"
+  - text: "#53 Shubham Mundra Active EXP: 25 Jan 2027"
+  - button "Actions for Shubham Mundra"
+  - text: "#54 Vacant"
+  - link "Add":
+    - /url: /?seat=54
+  - text: "#55 Vacant"
+  - link "Add":
+    - /url: /?seat=55
+  - checkbox "Select Palak Agarwal"
+  - text: "#56 Palak Agarwal Fee due EXP: 11 Jan 2027"
+  - button "Actions for Palak Agarwal"
+  - text: "#57 Vacant"
+  - link "Add":
+    - /url: /?seat=57
+  - checkbox "Select Rahul Meghwal"
+  - text: "#58 Rahul Meghwal Active EXP: 26 Feb 2027"
+  - button "Actions for Rahul Meghwal"
+  - checkbox "Select Khushi Rawal"
+  - text: "#59 Khushi Rawal Active EXP: 8 Jan 2027"
+  - button "Actions for Khushi Rawal"
+  - checkbox "Select Jatin Maheshwari"
+  - text: "#60 Jatin Maheshwari Active EXP: 4 Nov"
+  - button "Actions for Jatin Maheshwari"
+  - checkbox "Select Bhoomika Shaktawat"
+  - text: "#61 Bhoomika Shaktawat Active EXP: 6 Jan 2027"
+  - button "Actions for Bhoomika Shaktawat"
+  - checkbox "Select Siddharth Nagar"
+  - text: "#62 Siddharth Nagar Active EXP: 22 Jan 2027"
+  - button "Actions for Siddharth Nagar"
+  - checkbox "Select Muskan Qureshi"
+  - text: "#63 Muskan Qureshi Fee due EXP: 9 Nov"
+  - button "Actions for Muskan Qureshi"
+  - checkbox "Select Pankaj Damor"
+  - text: "#64 Pankaj Damor Active EXP: 10 Jan 2027"
+  - button "Actions for Pankaj Damor"
+  - checkbox "Select Aishwarya Bohra"
+  - text: "#65 Aishwarya Bohra Active EXP: 4 Jul 2027"
+  - button "Actions for Aishwarya Bohra"
+  - checkbox "Select Nitesh Kumawat"
+  - text: "#66 Nitesh Kumawat Active EXP: 6 Dec"
+  - button "Actions for Nitesh Kumawat"
+  - checkbox "Select Vaishnavi Audichya"
+  - text: "#67 Vaishnavi Audichya Expiring soon EXP: 30 Oct"
+  - button "Actions for Vaishnavi Audichya"
+  - text: "#68 Vacant"
+  - link "Add":
+    - /url: /?seat=68
+  - text: "#69 Vacant"
+  - link "Add":
+    - /url: /?seat=69
+  - checkbox "Select Dhruv Sompura"
+  - text: "#70 Dhruv Sompura Expired EXP: 16 Oct"
+  - button "Actions for Dhruv Sompura"
+  - text: "#71 Vacant"
+  - link "Add":
+    - /url: /?seat=71
+  - checkbox "Select Kritika Vyas"
+  - text: "#72 Kritika Vyas Active EXP: 28 Nov"
+  - button "Actions for Kritika Vyas"
+  - text: "#73 Vacant"
+  - link "Add":
+    - /url: /?seat=73
+  - checkbox "Select Abhishek Charan"
+  - text: "#74 Abhishek Charan Active EXP: 6 Nov"
+  - button "Actions for Abhishek Charan"
+  - checkbox "Select Sanya Lodha"
+  - text: "#75 Sanya Lodha Active EXP: 6 Nov"
+  - button "Actions for Sanya Lodha"
+  - checkbox "Select Prateek Bapna"
+  - text: "#76 Prateek Bapna Active EXP: 6 Nov"
+  - button "Actions for Prateek Bapna"
+  - text: "#77 Vacant"
+  - link "Add":
+    - /url: /?seat=77
+  - checkbox "Select Isha Ranawat"
+  - text: "#78 Isha Ranawat Active EXP: 24 Nov"
+  - button "Actions for Isha Ranawat"
+  - checkbox "Select Gaurav Solanki"
+  - text: "#79 Gaurav Solanki Active EXP: 6 Nov"
+  - button "Actions for Gaurav Solanki"
+  - checkbox "Select Mahima Tak"
+  - text: "#80 Mahima Tak Active EXP: 20 Nov"
+  - button "Actions for Mahima Tak"
+  - checkbox "Select Vishal Banjara"
+  - text: "#81 Vishal Banjara Active EXP: 10 Nov"
+  - button "Actions for Vishal Banjara"
+  - checkbox "Select Aarushi Kumbhat"
+  - text: "#82 Aarushi Kumbhat Active EXP: 21 Nov"
+  - button "Actions for Aarushi Kumbhat"
+  - checkbox "Select Hemant Gehlot"
+  - text: "#83 Hemant Gehlot Active EXP: 12 Nov"
+  - button "Actions for Hemant Gehlot"
+  - checkbox "Select Riya Sukhwal"
+  - text: "#84 Riya Sukhwal Active EXP: 9 Jan 2027"
+  - button "Actions for Riya Sukhwal"
+  - checkbox "Select Kunal Dhakad"
+  - text: "#85 Kunal Dhakad Fee due EXP: 3 Dec"
+  - button "Actions for Kunal Dhakad"
+  - text: "#86 Vacant"
+  - link "Add":
+    - /url: /?seat=86
+  - text: "#87 Vacant"
+  - link "Add":
+    - /url: /?seat=87
+  - checkbox "Select Swati Ojha"
+  - text: "#88 Swati Ojha Expired EXP: 21 Sept"
+  - button "Actions for Swati Ojha"
+  - checkbox "Select Nakul Menaria"
+  - text: "#89 Nakul Menaria Expired EXP: 14 Oct"
+  - button "Actions for Nakul Menaria"
+  - checkbox "Select Pallavi Katara"
+  - text: "#90 Pallavi Katara Active EXP: 28 Dec"
+  - button "Actions for Pallavi Katara"
+  - text: "#91 Vacant"
+  - link "Add":
+    - /url: /?seat=91
+  - checkbox "Select Ayush Bagora"
+  - text: "#92 Ayush Bagora Active EXP: 26 Dec"
+  - button "Actions for Ayush Bagora"
+  - checkbox "Select Snehal Bhandari"
+  - text: "#93 Snehal Bhandari Active EXP: 26 Mar 2027"
+  - button "Actions for Snehal Bhandari"
+  - checkbox "Select Rajat Vyas"
+  - text: "#94 Rajat Vyas Active EXP: 18 Mar 2027"
+  - button "Actions for Rajat Vyas"
+  - checkbox "Select Trisha Chittora"
+  - text: "#95 Trisha Chittora Expired EXP: 20 Oct"
+  - button "Actions for Trisha Chittora"
+- navigation "Admin":
+  - link "Seats":
+    - /url: /
+  - link "Requests":
+    - /url: /requests
+  - link "Members":
+    - /url: /members
+  - link "Fees":
+    - /url: /payments
+  - link "Reports":
+    - /url: /analytics
+- region "Notifications"

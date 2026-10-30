@@ -14,6 +14,8 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import PageHeader from '@/components/layout/PageHeader';
 import { springUI, springQuick } from '@/lib/motion';
+import MembersLoadError from '@/components/seat/MembersLoadError';
+import AbsenceAlerts from '@/components/seat/AbsenceAlerts';
 
 const containerVariants = {
   initial: { opacity: 0, y: 10 },
@@ -39,7 +41,7 @@ export default function AttendancePage() {
   const { 
     todayStr, totalOccupied, presentToday, attendanceRateToday,
     markPresent, markAbsent, markAllPresent, isPresent, getLast30DaysData,
-    weeklySummary,
+    weeklySummary, history,
   } = useAttendance();
 
   const [view, setView] = useState<'today' | 'history'>('today');
@@ -117,6 +119,7 @@ export default function AttendancePage() {
             </div>
           }
         />
+        <MembersLoadError />
       </motion.div>
 
       {/* Weekly Summary Strip (per PRD §7.5) */}
@@ -150,6 +153,8 @@ export default function AttendancePage() {
           </Card>
         </motion.div>
       )}
+
+      {isHydrated && <AbsenceAlerts members={members} history={history} />}
 
       <AnimatePresence mode="wait">
         {view === 'today' ? (

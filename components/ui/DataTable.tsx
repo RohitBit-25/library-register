@@ -86,7 +86,7 @@ function DataTableRow<TData>({
         )}
       >
         {row.getVisibleCells().map((cell) => (
-          <td key={cell.id} className="py-4 px-6 border-none">
+          <td key={cell.id} className={cn('py-3 px-3 sm:py-4 sm:px-6 border-none', (cell.column.columnDef.meta as ColumnMeta | undefined)?.className)}>
             {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </td>
         ))}
@@ -115,6 +115,10 @@ function DataTableRow<TData>({
     </React.Fragment>
   );
 }
+
+/** Per-column options. `className` lands on the column's <th> and every <td>,
+ *  e.g. 'hidden sm:table-cell' to drop a column on phones. */
+type ColumnMeta = { className?: string };
 
 export function DataTable<TData, TValue>({
   columns,
@@ -174,7 +178,8 @@ export function DataTable<TData, TValue>({
                       <th
                         key={header.id}
                         className={cn(
-                          "px-6 py-4 font-medium whitespace-nowrap",
+                          "px-3 py-3 sm:px-6 sm:py-4 font-medium whitespace-nowrap",
+                          (header.column.columnDef.meta as ColumnMeta | undefined)?.className,
                           header.column.getCanSort() && "cursor-pointer select-none hover:bg-[var(--bg-base)]/80 transition-colors"
                         )}
                         onClick={header.column.getToggleSortingHandler()}

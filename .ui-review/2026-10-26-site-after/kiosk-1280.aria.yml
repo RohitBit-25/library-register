@@ -1,0 +1,8 @@
+- banner: Shree Gangaur Library Self check-in
+- main:
+  - heading "Check-in is locked" [level=1]
+  - paragraph: A librarian needs to sign in on this device once. After that it stays on this screen for students to use.
+  - link "Staff sign in ▶":
+    - /url: /admin/login?next=/kiosk
+- region "Notifications"
+- alert

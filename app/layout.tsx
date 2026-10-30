@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Tiro_Devanagari_Hindi } from "next/font/google";
+import { Cinzel, Geist, Geist_Mono, Instrument_Serif, Noto_Sans_Devanagari, Tiro_Devanagari_Hindi } from "next/font/google";
 import "./globals.css";
 import AppShell from "@/components/layout/AppShell";
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister";
@@ -18,6 +18,15 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+// Hindi in the UI face. The Devanagari subset only downloads when a page
+// actually shows Hindi (the student pages' हिंदी toggle).
+const notoDevanagari = Noto_Sans_Devanagari({
+  subsets: ["devanagari"],
+  weight: ["400", "600", "700"],
+  variable: "--font-noto-deva",
+  display: "swap",
+});
+
 // Geist does not cover Devanagari, so "श्री गणगौर" was falling
 // back to whatever the OS happened to have.
 const tiroDevanagari = Tiro_Devanagari_Hindi({
@@ -27,15 +36,39 @@ const tiroDevanagari = Tiro_Devanagari_Hindi({
   display: "swap",
 });
 
+// The emblem's lettering is a classical inscriptional serif; Cinzel matches
+// it. Brand lockups only (the name next to the emblem) — never body text.
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["500", "700"],
+  variable: "--font-cinzel",
+  display: "swap",
+});
+
+// High-contrast serif for the landing's large headings (design.md § Landing).
+// Roman only — headings are never italic.
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-instrument",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Shree Gangaur Study Library",
-  description: "Manage 95 library seats — registration, renewals, attendance, and analytics. Built for Gangaur Library.",
-  keywords: ["library", "seat management", "registration", "attendance"],
+  title: "Shree Gangaur Library · Kankroli, Rajsamand",
+  description: "95 reserved study desks in one cool, quiet hall at JK Circle, Kankroli. See free desks live, request yours, and pay at the desk by UPI or cash. Open 6 AM – 10 PM daily.",
+  keywords: ["Shree Gangaur Library", "study library", "Kankroli", "Rajsamand", "reading hall", "library seat"],
+  openGraph: {
+    title: "Shree Gangaur Library",
+    description: "95 reserved study desks in Kankroli, Rajsamand. See free desks live and request yours.",
+    type: "website",
+    locale: "en_IN",
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Library Register",
+    title: "Gangaur Library",
   },
 };
 
@@ -55,7 +88,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`h-full ${geist.variable} ${geistMono.variable} ${tiroDevanagari.variable}`}
+      className={`h-full ${geist.variable} ${geistMono.variable} ${notoDevanagari.variable} ${tiroDevanagari.variable} ${cinzel.variable} ${instrumentSerif.variable}`}
       suppressHydrationWarning
     >
       <head>

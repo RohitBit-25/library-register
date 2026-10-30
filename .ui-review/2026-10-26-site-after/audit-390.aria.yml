@@ -1,0 +1,45 @@
+- alert
+- banner:
+  - text: Shree Gangaur Library Staff desk
+  - button "Sign out"
+- main:
+  - heading "Activity log" [level=1]
+  - paragraph: Activity history and system logs for complete accountability.
+  - searchbox "Search the activity log"
+  - list "Activity log":
+    - listitem:
+      - text: Signed In
+      - paragraph: Admin (owner) signed in
+      - paragraph: 26 Oct, 6:52 pm
+    - listitem:
+      - text: Rejected Request Seat 16
+      - paragraph: Seat 16 request from Ekta Somani
+      - paragraph: 26 Oct, 6:52 pm
+    - listitem:
+      - text: Marked Paid Seat 12
+      - paragraph: "Seat 12: fee"
+      - paragraph: 26 Oct, 6:52 pm
+    - listitem:
+      - text: Renewed Member Seat 7
+      - paragraph: Seat 7 renewed for 3M
+      - paragraph: 26 Oct, 6:52 pm
+    - listitem:
+      - text: Vacated Seat Seat 61
+      - paragraph: Seat 61 was vacated.
+      - paragraph: 26 Oct, 6:52 pm
+    - listitem:
+      - text: Signed In
+      - paragraph: Rohit (owner) signed in
+      - paragraph: 26 Oct, 6:52 pm
+- navigation "Admin":
+  - link "Seats":
+    - /url: /
+  - link "Requests":
+    - /url: /requests
+  - link "Members":
+    - /url: /members
+  - link "Fees":
+    - /url: /payments
+  - link "Reports":
+    - /url: /analytics
+- region "Notifications"

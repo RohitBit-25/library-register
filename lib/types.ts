@@ -63,6 +63,8 @@ export interface SeatRequest {
   hasDocument?: boolean;
   status: 'pending' | 'approved' | 'rejected' | 'waitlisted';
   createdAt: string | Date;
+  /** When the status last changed (approval / rejection). */
+  updatedAt?: string | Date;
 }
 
 export type ToastType = 'success' | 'warning' | 'error';

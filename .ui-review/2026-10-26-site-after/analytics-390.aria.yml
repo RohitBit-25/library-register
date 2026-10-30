@@ -1,0 +1,129 @@
+- alert
+- banner:
+  - text: Shree Gangaur Library Staff desk
+  - button "Sign out"
+- main:
+  - heading "Analytics" [level=1]
+  - paragraph: Mon, 26 Oct, 2026
+  - button "Occupied seats 71":
+    - paragraph: Occupied seats
+    - paragraph: "71"
+  - button "Vacant seats 24":
+    - paragraph: Vacant seats
+    - paragraph: "24"
+  - button "Fee pending 7":
+    - paragraph: Fee pending
+    - paragraph: "7"
+  - button "Expired 6":
+    - paragraph: Expired
+    - paragraph: "6"
+  - heading "Fees" [level=2]
+  - text: at 700/mo base rate
+  - button "Outstanding ₹39,000 12 members owing":
+    - term: Outstanding
+    - definition: ₹39,000 12 members owing
+  - term: Collected (30d)
+  - definition: ₹42,500 25 payments · ₹40,600 this month
+  - term: Active plan value
+  - definition: ₹1,85,700 71 active memberships
+  - term: Monthly run rate
+  - definition: ₹44,317 all plans normalised per month
+  - heading "Alerts 15" [level=2]
+  - text: 88 Swati Ojha Expired 21 Sept 2026
+  - button "Renew"
+  - text: 21 Pooja Ameta Expired 11 Oct 2026
+  - button "Renew"
+  - text: 8 Kavya Menaria Expired 13 Oct 2026
+  - button "Renew"
+  - text: 89 Nakul Menaria Expired 14 Oct 2026
+  - button "Renew"
+  - text: 70 Dhruv Sompura Expired 16 Oct 2026
+  - button "Renew"
+  - text: 95 Trisha Chittora Expired 20 Oct 2026
+  - button "Renew"
+  - text: 32 Sakshi Joshi Fee not paid
+  - button "Mark paid"
+  - text: 35 Neha Bhanawat Fee not paid
+  - button "Mark paid"
+  - text: 46 Preeti Sanadhya Fee not paid
+  - button "Mark paid"
+  - text: 49 Tushar Bhavsar Fee not paid
+  - button "Mark paid"
+  - text: 56 Palak Agarwal Fee not paid
+  - button "Mark paid"
+  - text: 63 Muskan Qureshi Fee not paid
+  - button "Mark paid"
+  - text: 85 Kunal Dhakad Fee not paid
+  - button "Mark paid"
+  - text: 67 Vaishnavi Audichya Expires in 4 days
+  - button "Renew"
+  - text: 22 Harshvardhan Sisodiya Expires in 7 days
+  - button "Renew"
+  - heading "Membership Mix" [level=3]
+  - img
+  - text: 71 members 1 Month 7 members 3 Months 38 members 6 Months 21 members 1 Year 5 members
+  - heading "Daily Attendance" [level=3]
+  - text: last 30 days
+  - img
+  - text: 27 Sep Today
+  - paragraph: 30 of 30 days have records
+  - heading "Priority Members" [level=3]
+  - table:
+    - rowgroup:
+      - row "Seat Name Status":
+        - columnheader "Seat"
+        - columnheader "Name"
+        - columnheader "Status"
+    - rowgroup:
+      - row "88 Swati Ojha Expired":
+        - cell "88"
+        - cell "Swati Ojha"
+        - cell "Expired"
+      - row "21 Pooja Ameta Expired":
+        - cell "21"
+        - cell "Pooja Ameta"
+        - cell "Expired"
+      - row "8 Kavya Menaria Expired":
+        - cell "8"
+        - cell "Kavya Menaria"
+        - cell "Expired"
+      - row "89 Nakul Menaria Expired":
+        - cell "89"
+        - cell "Nakul Menaria"
+        - cell "Expired"
+      - row "70 Dhruv Sompura Expired":
+        - cell "70"
+        - cell "Dhruv Sompura"
+        - cell "Expired"
+      - row "95 Trisha Chittora Expired":
+        - cell "95"
+        - cell "Trisha Chittora"
+        - cell "Expired"
+      - row "32 Sakshi Joshi Fee due":
+        - cell "32"
+        - cell "Sakshi Joshi"
+        - cell "Fee due"
+      - row "35 Neha Bhanawat Fee due":
+        - cell "35"
+        - cell "Neha Bhanawat"
+        - cell "Fee due"
+      - row "46 Preeti Sanadhya Fee due":
+        - cell "46"
+        - cell "Preeti Sanadhya"
+        - cell "Fee due"
+      - row "49 Tushar Bhavsar Fee due":
+        - cell "49"
+        - cell "Tushar Bhavsar"
+        - cell "Fee due"
+- navigation "Admin":
+  - link "Seats":
+    - /url: /
+  - link "Requests":
+    - /url: /requests
+  - link "Members":
+    - /url: /members
+  - link "Fees":
+    - /url: /payments
+  - link "Reports":
+    - /url: /analytics
+- region "Notifications"

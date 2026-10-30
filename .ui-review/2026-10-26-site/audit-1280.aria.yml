@@ -1,0 +1,117 @@
+- alert
+- complementary:
+  - text: Shree Gangaur Library Staff desk
+  - navigation "Admin":
+    - paragraph: Desk
+    - list:
+      - listitem:
+        - link "Seats":
+          - /url: /
+      - listitem:
+        - link "Requests 2 pending":
+          - /url: /requests
+      - listitem:
+        - link "Members 12 with fees due":
+          - /url: /members
+      - listitem:
+        - link "Collections":
+          - /url: /payments
+      - listitem:
+        - link "Renewals":
+          - /url: /expiry
+      - listitem:
+        - link "Attendance":
+          - /url: /attendance
+    - paragraph: Records
+    - list:
+      - listitem:
+        - link "Analytics":
+          - /url: /analytics
+      - listitem:
+        - link "Activity log":
+          - /url: /audit
+      - listitem:
+        - link "Export":
+          - /url: /export
+    - paragraph: Setup
+    - list:
+      - listitem:
+        - link "Full floor plan":
+          - /url: /floorplan
+      - listitem:
+        - link "Staff":
+          - /url: /staff
+      - listitem:
+        - link "Check-in kiosk":
+          - /url: /kiosk
+  - paragraph: Admin
+  - paragraph: Mon, 26 Oct
+  - button "Sign out"
+- main:
+  - heading "Activity log" [level=1]
+  - paragraph: Activity history and system logs for complete accountability.
+  - searchbox "Search the activity log"
+  - table:
+    - rowgroup:
+      - row "Action Details Seat Time":
+        - columnheader "Action"
+        - columnheader "Details"
+        - columnheader "Seat"
+        - columnheader "Time"
+    - rowgroup:
+      - row "Signed In Admin (owner) signed in - 10/26/2026, 6:34:24 PM":
+        - cell "Signed In"
+        - cell "Admin (owner) signed in"
+        - cell "-"
+        - cell "10/26/2026, 6:34:24 PM"
+      - row "Signed In Admin (owner) signed in - 10/26/2026, 6:33:55 PM":
+        - cell "Signed In"
+        - cell "Admin (owner) signed in"
+        - cell "-"
+        - cell "10/26/2026, 6:33:55 PM"
+      - row "Signed In Admin (owner) signed in - 10/26/2026, 6:33:09 PM":
+        - cell "Signed In"
+        - cell "Admin (owner) signed in"
+        - cell "-"
+        - cell "10/26/2026, 6:33:09 PM"
+      - row "Signed In Admin (owner) signed in - 10/26/2026, 6:32:39 PM":
+        - cell "Signed In"
+        - cell "Admin (owner) signed in"
+        - cell "-"
+        - cell "10/26/2026, 6:32:39 PM"
+      - row "Signed In Admin (owner) signed in - 10/26/2026, 6:31:54 PM":
+        - cell "Signed In"
+        - cell "Admin (owner) signed in"
+        - cell "-"
+        - cell "10/26/2026, 6:31:54 PM"
+      - row "Signed In Admin (owner) signed in - 10/26/2026, 6:31:24 PM":
+        - cell "Signed In"
+        - cell "Admin (owner) signed in"
+        - cell "-"
+        - cell "10/26/2026, 6:31:24 PM"
+      - 'row "Rejected Request Seat 16 request from Ekta Somani #16 10/26/2026, 6:30:12 PM"':
+        - cell "Rejected Request"
+        - cell "Seat 16 request from Ekta Somani"
+        - cell "#16"
+        - cell "10/26/2026, 6:30:12 PM"
+      - 'row "Marked Paid Seat 12: fee #12 10/26/2026, 6:30:12 PM"':
+        - cell "Marked Paid"
+        - 'cell "Seat 12: fee"'
+        - cell "#12"
+        - cell "10/26/2026, 6:30:12 PM"
+      - 'row "Renewed Member Seat 7 renewed for 3M #07 10/26/2026, 6:30:12 PM"':
+        - cell "Renewed Member"
+        - cell "Seat 7 renewed for 3M"
+        - cell "#07"
+        - cell "10/26/2026, 6:30:12 PM"
+      - 'row "Vacated Seat Seat 61 was vacated. #61 10/26/2026, 6:30:12 PM"':
+        - cell "Vacated Seat"
+        - cell "Seat 61 was vacated."
+        - cell "#61"
+        - cell "10/26/2026, 6:30:12 PM"
+      - row "Signed In Rohit (owner) signed in - 10/26/2026, 6:30:12 PM":
+        - cell "Signed In"
+        - cell "Rohit (owner) signed in"
+        - cell "-"
+        - cell "10/26/2026, 6:30:12 PM"
+- region "Notifications"

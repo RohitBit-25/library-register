@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { MotionConfig } from 'framer-motion';
 import { PUBLIC_ROUTES } from '@/lib/routes';
+import RequestAlerts from '@/components/layout/RequestAlerts';
 
 // ─── Public routes ──────────────────────────────────────────────
 //
@@ -84,6 +85,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
       {/* withDues, not due: the badge means "how many owe money", and `due`
           now excludes members who are also expired (expired outranks it). */}
+      {isAdmin && <RequestAlerts />}
       {isAdmin && !isFullScreenMap && <Sidebar dueCount={stats.withDues} pendingRequests={pendingCount} />}
       {!isFullScreenMap && <TopBar />}
       <main 

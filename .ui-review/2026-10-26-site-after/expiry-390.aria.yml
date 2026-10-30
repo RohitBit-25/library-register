@@ -1,0 +1,98 @@
+- alert
+- banner:
+  - text: Shree Gangaur Library Staff desk
+  - button "Sign out"
+- main:
+  - heading "Renewals" [level=1]
+  - paragraph: 32 ending within 30 days, or already past.
+  - button "Show all 71 members"
+  - text: 6 Expired 0 Today 2 This Week 24 This Month
+  - textbox "Search seat, name..."
+  - table:
+    - rowgroup:
+      - row "Seat Member Actions":
+        - columnheader "Seat"
+        - columnheader "Member"
+        - columnheader "Actions"
+    - rowgroup:
+      - row "88 Swati Ojha 9298635387 35d overdue Send a WhatsApp reminder to Swati Ojha Renew seat 88 for another 3 Months Vacate seat 88 — membership expired":
+        - cell "88"
+        - cell "Swati Ojha 9298635387 35d overdue"
+        - cell "Send a WhatsApp reminder to Swati Ojha Renew seat 88 for another 3 Months Vacate seat 88 — membership expired":
+          - button "Send a WhatsApp reminder to Swati Ojha"
+          - button "Renew seat 88 for another 3 Months"
+          - button "Vacate seat 88 — membership expired"
+      - row "21 Pooja Ameta 9143207490 15d overdue Send a WhatsApp reminder to Pooja Ameta Renew seat 21 for another 3 Months Vacate seat 21 — membership expired":
+        - cell "21"
+        - cell "Pooja Ameta 9143207490 15d overdue"
+        - cell "Send a WhatsApp reminder to Pooja Ameta Renew seat 21 for another 3 Months Vacate seat 21 — membership expired":
+          - button "Send a WhatsApp reminder to Pooja Ameta"
+          - button "Renew seat 21 for another 3 Months"
+          - button "Vacate seat 21 — membership expired"
+      - row "8 Kavya Menaria 9990843582 13d overdue Send a WhatsApp reminder to Kavya Menaria Renew seat 8 for another 1 Year Vacate seat 8 — membership expired":
+        - cell "8"
+        - cell "Kavya Menaria 9990843582 13d overdue"
+        - cell "Send a WhatsApp reminder to Kavya Menaria Renew seat 8 for another 1 Year Vacate seat 8 — membership expired":
+          - button "Send a WhatsApp reminder to Kavya Menaria"
+          - button "Renew seat 8 for another 1 Year"
+          - button "Vacate seat 8 — membership expired"
+      - row "89 Nakul Menaria 9404985726 12d overdue Send a WhatsApp reminder to Nakul Menaria Renew seat 89 for another 6 Months Vacate seat 89 — membership expired":
+        - cell "89"
+        - cell "Nakul Menaria 9404985726 12d overdue"
+        - cell "Send a WhatsApp reminder to Nakul Menaria Renew seat 89 for another 6 Months Vacate seat 89 — membership expired":
+          - button "Send a WhatsApp reminder to Nakul Menaria"
+          - button "Renew seat 89 for another 6 Months"
+          - button "Vacate seat 89 — membership expired"
+      - row "70 Dhruv Sompura 9510085511 10d overdue Send a WhatsApp reminder to Dhruv Sompura Renew seat 70 for another 1 Year Vacate seat 70 — membership expired":
+        - cell "70"
+        - cell "Dhruv Sompura 9510085511 10d overdue"
+        - cell "Send a WhatsApp reminder to Dhruv Sompura Renew seat 70 for another 1 Year Vacate seat 70 — membership expired":
+          - button "Send a WhatsApp reminder to Dhruv Sompura"
+          - button "Renew seat 70 for another 1 Year"
+          - button "Vacate seat 70 — membership expired"
+      - row "95 Trisha Chittora 9411414283 6d overdue Send a WhatsApp reminder to Trisha Chittora Renew seat 95 for another 6 Months Vacate seat 95 — membership expired":
+        - cell "95"
+        - cell "Trisha Chittora 9411414283 6d overdue"
+        - cell "Send a WhatsApp reminder to Trisha Chittora Renew seat 95 for another 6 Months Vacate seat 95 — membership expired":
+          - button "Send a WhatsApp reminder to Trisha Chittora"
+          - button "Renew seat 95 for another 6 Months"
+          - button "Vacate seat 95 — membership expired"
+      - row "67 Vaishnavi Audichya 9971485329 4d left Send a WhatsApp reminder to Vaishnavi Audichya Renew seat 67 for another 3 Months":
+        - cell "67"
+        - cell "Vaishnavi Audichya 9971485329 4d left"
+        - cell "Send a WhatsApp reminder to Vaishnavi Audichya Renew seat 67 for another 3 Months":
+          - button "Send a WhatsApp reminder to Vaishnavi Audichya"
+          - button "Renew seat 67 for another 3 Months"
+      - row "22 Harshvardhan Sisodiya 9149732983 7d left Send a WhatsApp reminder to Harshvardhan Sisodiya Renew seat 22 for another 6 Months":
+        - cell "22"
+        - cell "Harshvardhan Sisodiya 9149732983 7d left"
+        - cell "Send a WhatsApp reminder to Harshvardhan Sisodiya Renew seat 22 for another 6 Months":
+          - button "Send a WhatsApp reminder to Harshvardhan Sisodiya"
+          - button "Renew seat 22 for another 6 Months"
+      - row "25 Divya Chouhan 9348608803 8d left Send a WhatsApp reminder to Divya Chouhan Renew seat 25 for another 6 Months":
+        - cell "25"
+        - cell "Divya Chouhan 9348608803 8d left"
+        - cell "Send a WhatsApp reminder to Divya Chouhan Renew seat 25 for another 6 Months":
+          - button "Send a WhatsApp reminder to Divya Chouhan"
+          - button "Renew seat 25 for another 6 Months"
+      - row "47 Ankit Choubisa 9459244346 8d left Send a WhatsApp reminder to Ankit Choubisa Renew seat 47 for another 6 Months":
+        - cell "47"
+        - cell "Ankit Choubisa 9459244346 8d left"
+        - cell "Send a WhatsApp reminder to Ankit Choubisa Renew seat 47 for another 6 Months":
+          - button "Send a WhatsApp reminder to Ankit Choubisa"
+          - button "Renew seat 47 for another 6 Months"
+  - text: Showing 1 to 10 of 32 entries
+  - button "Previous page" [disabled]
+  - button "Next page"
+- navigation "Admin":
+  - link "Seats":
+    - /url: /
+  - link "Requests":
+    - /url: /requests
+  - link "Members":
+    - /url: /members
+  - link "Fees":
+    - /url: /payments
+  - link "Reports":
+    - /url: /analytics
+- region "Notifications"

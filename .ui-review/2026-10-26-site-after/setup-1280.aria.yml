@@ -1,0 +1,120 @@
+- alert
+- complementary:
+  - text: Shree Gangaur Library Staff desk
+  - navigation "Admin":
+    - paragraph: Desk
+    - list:
+      - listitem:
+        - link "Seats":
+          - /url: /
+      - listitem:
+        - link "Requests 2 pending":
+          - /url: /requests
+      - listitem:
+        - link "Members 12 with fees due":
+          - /url: /members
+      - listitem:
+        - link "Collections":
+          - /url: /payments
+      - listitem:
+        - link "Renewals":
+          - /url: /expiry
+      - listitem:
+        - link "Attendance":
+          - /url: /attendance
+    - paragraph: Records
+    - list:
+      - listitem:
+        - link "Analytics":
+          - /url: /analytics
+      - listitem:
+        - link "Activity log":
+          - /url: /audit
+      - listitem:
+        - link "Export":
+          - /url: /export
+    - paragraph: Setup
+    - list:
+      - listitem:
+        - link "Full floor plan":
+          - /url: /floorplan
+      - listitem:
+        - link "Staff":
+          - /url: /staff
+      - listitem:
+        - link "Check-in kiosk":
+          - /url: /kiosk
+  - paragraph: Admin
+  - paragraph: Mon, 26 Oct
+  - button "Sign out"
+- main:
+  - heading "Request link & automation" [level=1]
+  - paragraph: Connect Google Forms for automated seat allotment and email notifications.
+  - heading "How It Works — Zero Manual Work" [level=2]
+  - text: Member scans QR Fills the form Script runs You get an email Portal active
+  - heading "Library Portal QR Code" [level=2]
+  - paragraph: Visitors scan this QR code to access your library app. They can view available seats, request a booking, and notify you instantly in the Requests dashboard. Allotments and tracking are handled entirely in the system.
+  - link "Open Portal":
+    - /url: http://localhost:3300
+  - button "Copy Link"
+  - link "WhatsApp":
+    - /url: https://wa.me/?text=Join%20our%20library!%20Scan%20our%20QR%20or%20click%20here%20to%20request%20a%20seat%3A%20http%3A%2F%2Flocalhost%3A3300
+  - button "Download PNG"
+  - paragraph: Print and place at the front desk. Users scan to request a seat.
+  - heading "Integration guide" [level=2]
+  - text: "1"
+  - heading "Create your Google Form" [level=3]
+  - paragraph:
+    - text: Go to
+    - link "Google Forms":
+      - /url: https://forms.google.com
+    - text: "and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:"
+  - list:
+    - listitem: Full Name
+    - listitem: Phone Number (Short answer)
+    - listitem: Join Date (Date)
+    - listitem: "Membership Duration (Dropdown: 1M, 3M, 6M, 1Y)"
+    - listitem: "Preferred Shift (Dropdown: Morning, Evening, Full Day)"
+    - listitem: "Fee Status (Dropdown: Paid, Due)"
+  - text: "2"
+  - heading "Link to Google Sheets" [level=3]
+  - paragraph:
+    - text: In your Google Form, click on
+    - strong: Responses
+    - text: ">"
+    - strong: Link to Sheets
+    - text: and create a new spreadsheet.
+  - text: "3"
+  - heading "Paste the Automation Code" [level=3]
+  - paragraph:
+    - text: Open your connected Google Sheet. Click on
+    - strong: Extensions
+    - text: ">"
+    - strong: Apps Script
+    - text: ". Delete all existing code and paste the following snippet:"
+  - text: Code.gs
+  - button "Copy code"
+  - code: "// ----------------------------------------------------- // Gangaur Library Seat Management - v2.0 // Next.js Web App Integration Script // ----------------------------------------------------- const ADMIN_EMAIL = \"admin@gangaurlibrary.com\"; // <-- CHANGE THIS function onFormSubmit(e) { try { var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet(); var lastRow = sheet.getLastRow(); // Read the newly submitted row var rowValues = sheet.getRange(lastRow, 1, 1, sheet.getLastColumn()).getValues()[0]; // Assumes columns based on standard setup: // A: Timestamp // B: Full Name // C: Phone Number // D: Join Date // E: Duration (1M / 3M / 6M / 1Y) // F: Preferred Shift // G: Status (Paid/Due) var timestamp = rowValues[0]; var name = rowValues[1]; var phone = String(rowValues[2]); var joinDate = new Date(rowValues[3] || timestamp); var duration = rowValues[4] || '1M'; var shift = rowValues[5] || 'Full Day'; var feeStatus = rowValues[6] || 'Due'; // 1. Duplicate Check if (isDuplicatePhone(sheet, phone, lastRow)) { sendAlertEmail(\"Duplicate Registration Attempt\", \"Someone tried to register with an existing phone: \" + phone); // Optional: Delete the duplicate row return; } // 2. Format Expiry Date var expiryDate = calculateExpiry(joinDate, duration); var formattedExpiry = Utilities.formatDate(expiryDate, Session.getScriptTimeZone(), \"yyyy-MM-dd\"); // Write Expiry back to column H sheet.getRange(lastRow, 8).setValue(formattedExpiry); // 3. Email Admin sendAdminNotification(name, phone, duration, shift, feeStatus, formattedExpiry); } catch (error) { sendAlertEmail(\"Library Form Script Error\", error.toString()); } } function calculateExpiry(joinDate, durationStr) { var ext = new Date(joinDate); if (durationStr === '1M') ext.setMonth(ext.getMonth() + 1); if (durationStr === '3M') ext.setMonth(ext.getMonth() + 3); if (durationStr === '6M') ext.setMonth(ext.getMonth() + 6); if (durationStr === '1Y') ext.setFullYear(ext.getFullYear() + 1); return ext; } function isDuplicatePhone(sheet, newPhone, lastRow) { if (lastRow <= 2) return false; var phoneColumn = sheet.getRange(2, 3, lastRow - 2, 1).getValues(); for (var i = 0; i < phoneColumn.length; i++) { if (String(phoneColumn[i][0]).replace(/\\D/g, '') === newPhone.replace(/\\D/g, '')) { return true; } } return false; } function sendAdminNotification(name, phone, duration, shift, fee, expiry) { var subject = \"New Library Member: \" + name; var body = \"<h3>New Member Registration</h3>\" + \"<table border='1' cellpadding='5' style='border-collapse: collapse;'>\" + \"<tr><td><b>Name</b></td><td>\" + name + \"</td></tr>\" + \"<tr><td><b>Phone</b></td><td>\" + phone + \"</td></tr>\" + \"<tr><td><b>Shift</b></td><td>\" + shift + \"</td></tr>\" + \"<tr><td><b>Duration</b></td><td>\" + duration + \"</td></tr>\" + \"<tr><td><b>Fee Status</b></td><td>\" + fee + \"</td></tr>\" + \"<tr><td><b>Expiry</b></td><td>\" + expiry + \"</td></tr>\" + \"</table>\" + \"<br><p>Please open your Library App and tap <b>Allot New Seat</b> to assign them to the register.</p>\"; MailApp.sendEmail({ to: ADMIN_EMAIL, subject: subject, htmlBody: body }); } function sendAlertEmail(subject, msg) { MailApp.sendEmail(ADMIN_EMAIL, \"[ALERT] \" + subject, msg); }"
+  - paragraph:
+    - strong: "Important:"
+    - text: Change the
+    - code: ADMIN_EMAIL
+    - text: at the top of the script to your own email address.
+  - text: "4"
+  - heading "Create the Submit Trigger" [level=3]
+  - paragraph:
+    - text: In Apps Script, click the
+    - strong: Clock icon (Triggers)
+    - text: "on the left side. Add a new trigger:"
+  - list:
+    - listitem:
+      - text: "Function to run:"
+      - strong: onFormSubmit
+    - listitem:
+      - text: "Event source:"
+      - strong: From spreadsheet
+    - listitem:
+      - text: "Event type:"
+      - strong: On form submit
+  - paragraph: Save the trigger and grant the required permissions when prompted by Google. You are all set!
+- region "Notifications"

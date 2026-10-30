@@ -57,7 +57,8 @@ export function useSeatRequests() {
   const { data: adminData, mutate: adminMutate } = useSWR<SeatRequest[]>(
     isAdmin ? '/api/requests' : null,
     fetcher,
-    { revalidateOnFocus: true }
+    // Polled so a new request reaches the desk without a reload (RequestAlerts).
+    { revalidateOnFocus: true, refreshInterval: 30_000 }
   );
 
   // User: fetch own requests by phone
@@ -122,19 +123,24 @@ export function useSeatRequests() {
 
   // ─── Lookup requests by phone (for My Requests page) ───────────
 
-  const lookupByPhone = useCallback(async (phone: string): Promise<SeatRequest[]> => {
-    if (!phone || phone.length < 10) return [];
+  // A failure is reported as a failure. It used to come back as [], which the
+  // page showed as "No requests for this number" — telling a student their
+  // request did not exist because the server was busy or rate-limited.
+  const lookupByPhone = useCallback(async (phone: string): Promise<
+    { ok: true; requests: SeatRequest[] } | { ok: false; status?: number }
+  > => {
+    if (!phone || phone.length < 10) return { ok: true, requests: [] };
     try {
       const res = await fetch(`/api/requests/my?phone=${encodeURIComponent(phone)}`);
-      if (!res.ok) return [];
+      if (!res.ok) return { ok: false, status: res.status };
       const data = await res.json();
       // Persist phone for future auto-lookups
       setStoredUserPhone(phone);
       // Also trigger SWR revalidation with the new phone
       userMutate();
-      return Array.isArray(data) ? data : [];
+      return { ok: true, requests: Array.isArray(data) ? data : [] };
     } catch {
-      return [];
+      return { ok: false };
     }
   }, [userMutate]);
 

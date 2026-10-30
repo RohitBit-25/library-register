@@ -1,0 +1,76 @@
+- banner:
+  - link "Shree Gangaur Library — home":
+    - /url: /landing
+    - text: Gangaur
+  - navigation "Main":
+    - link "My requests":
+      - /url: /my-requests
+- main:
+  - paragraph: Seats free 24 / 95
+  - heading "Your desk is waiting." [level=1]
+  - paragraph: 95 reserved desks in one cool, quiet hall in Rajsamand. Pick yours on the live seat plan and start tomorrow.
+  - link "Find my seat ▶":
+    - /url: /browse
+  - link "See fees":
+    - /url: "#fees"
+  - paragraph: रोज़ सुबह 6 से रात 10 बजे तक
+  - paragraph: Open 6 AM – 10 PM daily
+  - img "A student reading on a chair"
+  - heading "95 desks. One quiet hall." [level=2]
+  - img "Students studying at the library's wooden desks, with the Shree Gangaur Library sign"
+  - list "Facilities":
+    - listitem: AC hall
+    - listitem: High-speed Wi-Fi
+    - listitem: CCTV
+    - listitem: RO water
+    - listitem: Silent zone
+  - img "A single wooden study desk with a plant, a notebook and a blue chair"
+  - heading "One desk. All yours." [level=2]
+  - list:
+    - listitem: Reserved for you for your whole plan.
+    - listitem: Come for the morning, the evening, or the full day.
+    - listitem: You choose the exact desk — by the wall, near the AC, or at a shared table.
+  - link "See the seat plan ▶":
+    - /url: /browse
+  - heading "Pick your pass." [level=2]
+  - paragraph: From about ₹18 a day. One reserved desk for the whole plan — paid at the desk, by UPI or cash.
+  - link "1 Month pass, ₹700. Pick a seat":
+    - /url: /browse
+    - text: 1 Month ₹700 ₹700 a month · about ₹23 a day Pick a seat ▶
+  - link "3 Months pass, ₹1,900. Pick a seat":
+    - /url: /browse
+    - text: 3 Months ₹1,900 ₹633 a month · about ₹21 a day Pick a seat ▶
+  - link "6 Months pass, ₹3,600. Pick a seat":
+    - /url: /browse
+    - text: 6 Months ₹3,600 ₹600 a month · about ₹20 a day Pick a seat ▶
+  - link "1 Year pass, ₹6,600. Pick a seat":
+    - /url: /browse
+    - text: ★ Best value 1 Year ₹6,600 ₹550 a month · about ₹18 a day Pick a seat ▶
+  - heading "Joining takes a minute." [level=2]
+  - list:
+    - listitem: 1 ▸ Pick a green desk on the live seat plan.
+    - listitem: 2 ▸ Send your name and phone number. No account needed.
+    - listitem: 3 ▸ Pay at the desk by UPI or cash. The seat is yours.
+  - heading "Good to know" [level=2]
+  - term: Do I need an account?
+  - definition: No. Request a seat with your name and phone number, then check it any time under My requests.
+  - term: Timings?
+  - definition: Open from 6:00 AM to 10:00 PM, every day.
+  - term: Only mornings or evenings?
+  - definition: Yes. Choose morning, evening or full day when you request your seat.
+  - term: How do I pay?
+  - definition: At the desk, by UPI or cash. Nothing is charged on this website.
+  - heading "24 desks are free today." [level=2]
+  - link "Claim your desk ▶":
+    - /url: /browse
+  - img "A row of empty study desks with blue chairs"
+- contentinfo:
+  - paragraph: Shree Gangaur Library · श्री गणगौर
+  - paragraph: Rajsamand, Rajasthan · 6 AM – 10 PM daily
+  - navigation "Footer":
+    - link "Seats":
+      - /url: /browse
+    - link "My requests":
+      - /url: /my-requests
+- region "Notifications"
+- alert

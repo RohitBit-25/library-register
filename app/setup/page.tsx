@@ -1,16 +1,16 @@
 'use client';
 
+import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
-import { ExternalLink, ListChecks, Zap, ArrowRight, QrCode, Mail, FileText } from 'lucide-react';
+import { ArrowRight, QrCode, Armchair, Send, Inbox } from 'lucide-react';
 import QRCodePanel from '@/components/setup/QRCodePanel';
-import ScriptBlock from '@/components/setup/ScriptBlock';
 import PageHeader from '@/components/layout/PageHeader';
 import { springUI } from '@/lib/motion';
 
 const containerVariants: Variants = {
   initial: { opacity: 0, y: 10 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     y: 0,
     transition: { staggerChildren: 0.1 }
   }
@@ -21,9 +21,17 @@ const itemVariants: Variants = {
   animate: { opacity: 1, y: 0, transition: springUI }
 };
 
+/**
+ * The request link and its QR code.
+ *
+ * This page used to walk the owner through a Google Forms + Sheets + Apps
+ * Script setup that emailed submissions. The app's own request form replaced
+ * all of that — students request a desk on the live plan and it lands in
+ * Requests — so the guide described a flow nobody should build any more.
+ */
 export default function SetupPage() {
   return (
-    <motion.div 
+    <motion.div
       variants={containerVariants}
       initial="initial"
       animate="animate"
@@ -31,132 +39,40 @@ export default function SetupPage() {
     >
       <motion.div variants={itemVariants}>
         <PageHeader
-          title="Request link & automation"
-          icon={<Zap className="size-5" />}
-          subtitle="Connect Google Forms for automated seat allotment and email notifications."
+          title="Request link"
+          icon={<QrCode className="size-5" />}
+          subtitle="Print the QR for the front desk, or share the link — students request a desk from their phone."
         />
       </motion.div>
 
-      {/* Automation Flow Diagram */}
       <motion.div variants={itemVariants} className="mb-8">
-        <div className="card-base rounded-2xl border border-[var(--border-default)] bg-[var(--bg-glass)] p-6 overflow-hidden">
-          <h2 className="text-xs font-bold text-[var(--text-tertiary)] mb-5">
-            How It Works — Zero Manual Work
-          </h2>
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-xs)]">
+          <h2 className="mb-5 text-xs font-bold text-[var(--text-tertiary)]">How a request reaches you</h2>
+          <ol className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             {[
-              { icon: <QrCode className="size-5" />, label: 'Member scans QR', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
-              { icon: <FileText className="size-5" />, label: 'Fills the form', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
-              { icon: <Zap className="size-5" />, label: 'Script runs', color: 'bg-[var(--bg-muted)] text-[var(--text-secondary)]' },
-              { icon: <Mail className="size-5" />, label: 'You get an email', color: 'bg-[var(--saffron-50)] text-[var(--saffron-700)]' },
+              { icon: <QrCode className="size-5" />, label: 'Student scans the QR' },
+              { icon: <Armchair className="size-5" />, label: 'Picks a free desk' },
+              { icon: <Send className="size-5" />, label: 'Sends name, phone, payment' },
+              { icon: <Inbox className="size-5" />, label: 'You approve in Requests', accent: true },
             ].map((step, i) => (
-              <div key={i} className="flex items-center gap-3 sm:gap-4">
-                <div className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl ${step.color} border border-current/10`}>
+              <li key={step.label} className="flex items-center gap-3 sm:gap-4">
+                <div className={`flex flex-col items-center gap-2 rounded-xl border border-current/10 px-4 py-3 ${step.accent ? 'bg-[var(--saffron-50)] text-[var(--saffron-700)]' : 'bg-[var(--bg-muted)] text-[var(--text-secondary)]'}`}>
                   {step.icon}
-                  <span className="text-xs font-bold whitespace-nowrap">{step.label}</span>
+                  <span className="whitespace-nowrap text-xs font-bold">{step.label}</span>
                 </div>
-                {i < 3 && (
-                  <ArrowRight className="size-4 text-[var(--text-tertiary)] shrink-0 hidden sm:block" />
-                )}
-              </div>
+                {i < 3 && <ArrowRight className="hidden size-4 shrink-0 text-[var(--text-tertiary)] sm:block" aria-hidden="true" />}
+              </li>
             ))}
-          </div>
+          </ol>
+          <p className="mt-5 text-center text-sm text-[var(--text-secondary)]">
+            New requests ping you while the app is open and show on{' '}
+            <Link href="/requests" className="font-semibold text-[var(--text-primary)] underline underline-offset-4">Requests</Link>.
+          </p>
         </div>
       </motion.div>
 
-      {/* QR Code and Sharing Actions */}
       <motion.div variants={itemVariants}>
         <QRCodePanel />
-      </motion.div>
-
-      {/* Instruction Guide */}
-      <motion.div variants={itemVariants} className="mt-8">
-        <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-          <ListChecks className="size-5 text-[var(--sapphire-600)]" />
-          Integration guide
-        </h2>
-
-        <div className="space-y-4">
-          
-          {/* Step 1 */}
-          <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
-            <div className="flex items-start gap-3">
-              <div className="size-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
-                1
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-[var(--text-primary)]">Create your Google Form</h3>
-                <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  Go to <a href="https://forms.google.com" target="_blank" rel="noreferrer" className="text-[var(--sapphire-600)] hover:underline inline-flex items-center gap-1">Google Forms <ExternalLink className="size-4" /></a> and create a new form with the following Short Answer/Dropdown questions EXACTLY in this order:
-                </p>
-                <ol className="list-decimal list-inside mt-2 text-xs font-mono bg-[var(--bg-base)] border border-[var(--border-default)] p-3 rounded-lg text-[var(--text-tertiary)]">
-                  <li>Full Name</li>
-                  <li>Phone Number (Short answer)</li>
-                  <li>Join Date (Date)</li>
-                  <li>Membership Duration (Dropdown: 1M, 3M, 6M, 1Y)</li>
-                  <li>Preferred Shift (Dropdown: Morning, Evening, Full Day)</li>
-                  <li>Fee Status (Dropdown: Paid, Due)</li>
-                </ol>
-              </div>
-            </div>
-          </div>
-
-          {/* Step 2 */}
-          <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
-            <div className="flex items-start gap-3">
-              <div className="size-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
-                2
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-[var(--text-primary)]">Link to Google Sheets</h3>
-                <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  In your Google Form, click on <strong>Responses</strong> &gt; <strong>Link to Sheets</strong> and create a new spreadsheet.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
-            <div className="flex items-start gap-3">
-              <div className="size-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
-                3
-              </div>
-              <div className="w-full">
-                <h3 className="text-sm font-bold text-[var(--text-primary)]">Paste the Automation Code</h3>
-                <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  Open your connected Google Sheet. Click on <strong>Extensions</strong> &gt; <strong>Apps Script</strong>. Delete all existing code and paste the following snippet:
-                </p>
-                
-                <ScriptBlock />
-              </div>
-            </div>
-          </div>
-
-          {/* Step 4 */}
-          <div className="card-base p-5 rounded-xl shadow-sm" style={{ borderLeft: '3px solid var(--saffron-500)' }}>
-            <div className="flex items-start gap-3">
-              <div className="size-8 shrink-0 rounded-full bg-[var(--saffron-600)] text-[var(--text-inverse)] flex items-center justify-center font-bold text-sm shadow-sm">
-                4
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-[var(--text-primary)]">Create the Submit Trigger</h3>
-                <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  In Apps Script, click the <strong>Clock icon (Triggers)</strong> on the left side. Add a new trigger:
-                </p>
-                <ul className="list-disc list-inside mt-2 text-xs font-mono bg-[var(--bg-base)] border border-[var(--border-default)] p-3 rounded-lg text-[var(--text-tertiary)] leading-loose">
-                  <li>Function to run: <strong className="text-[var(--sapphire-600)]">onFormSubmit</strong></li>
-                  <li>Event source: <strong className="text-[var(--sapphire-600)]">From spreadsheet</strong></li>
-                  <li>Event type: <strong className="text-[var(--sapphire-600)]">On form submit</strong></li>
-                </ul>
-                <p className="text-xs text-[var(--text-secondary)] mt-3 italic">
-                  Save the trigger and grant the required permissions when prompted by Google. You are all set!
-                </p>
-              </div>
-            </div>
-          </div>
-
-        </div>
       </motion.div>
     </motion.div>
   );

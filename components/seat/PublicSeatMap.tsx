@@ -1,11 +1,12 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useMemo, type KeyboardEvent } from 'react';
 import { type Member } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { SeatMapContainer, SeatMapWrapper } from './SeatMap';
 import { Check } from 'lucide-react';
-import { seatRow } from '@/lib/layoutConfig';
+import { seatRow, nextSeatInDirection, type FaceDir } from '@/lib/layoutConfig';
+import { useLang } from '@/hooks/useLang';
 
 /**
  * The floor plan as a student sees it.
@@ -24,8 +25,10 @@ import { seatRow } from '@/lib/layoutConfig';
  * redacted, and this component would have nothing to show even if it were not.
  */
 
+const ARROWS: Record<string, FaceDir> = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
+
 function PublicSeatTileInner({
-  seat, vacant, selected, requested, onSelect, dimmed,
+  seat, vacant, selected, requested, onSelect, dimmed, tabStop, onArrow,
 }: {
   seat: number;
   vacant: boolean;
@@ -33,7 +36,11 @@ function PublicSeatTileInner({
   requested: boolean;
   onSelect: (seat: number) => void;
   dimmed: boolean;
+  /** The one desk in the plan that Tab lands on; arrows move from there. */
+  tabStop: boolean;
+  onArrow: (from: number, dir: FaceDir) => void;
 }) {
+  const { t } = useLang();
   const disabled = !vacant || requested || dimmed;
   const state = !vacant ? 'Booked' : requested ? 'Request pending' : 'Available — click to request';
 
@@ -43,13 +50,18 @@ function PublicSeatTileInner({
       type="button"
       data-seat={seat}
       onClick={() => !disabled && onSelect(seat)}
+      onKeyDown={(e: KeyboardEvent) => {
+        const dir = ARROWS[e.key];
+        if (dir) { e.preventDefault(); onArrow(seat, dir); }
+      }}
+      tabIndex={tabStop ? 0 : -1}
       disabled={disabled}
       aria-label={
         vacant
           ? requested
-            ? `Seat ${seat}, request already sent`
-            : `Seat ${seat}, available — tap to request`
-          : `Seat ${seat}, booked`
+            ? `Desk ${seat}, request already sent`
+            : `Desk ${seat}, ${seatRow(seat)}, free — tap to request`
+          : `Desk ${seat}, booked`
       }
       aria-pressed={selected}
       className={cn(
@@ -81,7 +93,7 @@ function PublicSeatTileInner({
           className="block origin-bottom whitespace-nowrap rounded-[var(--radius-sm)] bg-[var(--ink)] px-2.5 py-1.5 text-xs font-medium text-[var(--text-inverse)] opacity-0 shadow-[var(--shadow-md)] transition-opacity duration-150 group-hover/tip:opacity-100"
           style={{ transform: 'scale(calc(1 / var(--plan-scale, 1)))' }}
         >
-          Seat {seat} · {seatRow(seat)} · {state}
+          {t('Desk {n}', { n: seat })} · {t(seatRow(seat))} · {t(state)}
         </span>
       </span>
     )}
@@ -109,6 +121,18 @@ export default function PublicSeatMap({
   /** Read-only previews may shrink below the tap-target floor. */
   minScale?: number;
 }) {
+  // Roving tab stop: one Tab into the plan, arrow keys between free desks.
+  // Every free desk used to be its own Tab stop — 24 presses to get past it.
+  const enabled = useMemo(
+    () => members.filter((m) => m.vacant && !requestedSeats.has(m.seat) && !(isDimmed?.(m) ?? false)).map((m) => m.seat),
+    [members, requestedSeats, isDimmed],
+  );
+  const tabStop = selectedSeat !== null && enabled.includes(selectedSeat) ? selectedSeat : enabled[0];
+  const onArrow = (from: number, dir: FaceDir) => {
+    const next = nextSeatInDirection(from, dir, enabled);
+    if (next !== null) document.querySelector<HTMLButtonElement>(`button[data-seat="${next}"]`)?.focus();
+  };
+
   return (
     <SeatMapContainer fit={fit} scale={scale} frameless={frameless} minScale={minScale}>
       {members.map((m) => (
@@ -122,6 +146,8 @@ export default function PublicSeatMap({
                 requested={requestedSeats.has(m.seat)}
                 onSelect={onSelect}
                 dimmed={isDimmed?.(m) ?? false}
+                tabStop={m.seat === tabStop}
+                onArrow={onArrow}
               />
             </div>
           )}

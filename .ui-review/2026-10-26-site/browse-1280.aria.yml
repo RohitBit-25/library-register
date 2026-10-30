@@ -1,0 +1,130 @@
+- banner:
+  - link "Shree Gangaur Library — home":
+    - /url: /landing
+    - text: Shree Gangaur Library
+  - navigation "Main":
+    - link "Seats":
+      - /url: /browse
+    - link "Fees":
+      - /url: /landing#fees
+    - link "My requests":
+      - /url: /my-requests
+- main:
+  - heading "Pick a free desk" [level=1]
+  - paragraph: Free 24 / 95 Tap a green desk to request it.
+  - group "Shift":
+    - button "Any shift" [pressed]
+    - button "Morning"
+    - button "Evening"
+  - group "Zoom":
+    - button "Zoom out"
+    - button "Fit the whole room on screen"
+    - button "Zoom in"
+  - button "Seat 1, available — tap to request": "1"
+  - button "Seat 2, booked" [disabled]: "2"
+  - button "Seat 3, booked" [disabled]: "3"
+  - button "Seat 4, booked" [disabled]: "4"
+  - button "Seat 5, booked" [disabled]: "5"
+  - button "Seat 6, booked" [disabled]: "6"
+  - button "Seat 7, booked" [disabled]: "7"
+  - button "Seat 8, booked" [disabled]: "8"
+  - button "Seat 9, booked" [disabled]: "9"
+  - button "Seat 10, booked" [disabled]: "10"
+  - button "Seat 11, booked" [disabled]: "11"
+  - button "Seat 12, booked" [disabled]: "12"
+  - button "Seat 13, available — tap to request": "13"
+  - button "Seat 14, booked" [disabled]: "14"
+  - button "Seat 15, booked" [disabled]: "15"
+  - button "Seat 16, available — tap to request": "16"
+  - button "Seat 17, available — tap to request": "17"
+  - button "Seat 18, available — tap to request": "18"
+  - button "Seat 19, available — tap to request": "19"
+  - button "Seat 20, booked" [disabled]: "20"
+  - button "Seat 21, booked" [disabled]: "21"
+  - button "Seat 22, booked" [disabled]: "22"
+  - button "Seat 23, booked" [disabled]: "23"
+  - button "Seat 24, booked" [disabled]: "24"
+  - button "Seat 25, booked" [disabled]: "25"
+  - button "Seat 26, booked" [disabled]: "26"
+  - button "Seat 27, booked" [disabled]: "27"
+  - button "Seat 28, booked" [disabled]: "28"
+  - button "Seat 29, booked" [disabled]: "29"
+  - button "Seat 30, booked" [disabled]: "30"
+  - button "Seat 31, available — tap to request": "31"
+  - button "Seat 32, booked" [disabled]: "32"
+  - button "Seat 33, available — tap to request": "33"
+  - button "Seat 34, booked" [disabled]: "34"
+  - button "Seat 35, booked" [disabled]: "35"
+  - button "Seat 36, available — tap to request": "36"
+  - button "Seat 37, available — tap to request": "37"
+  - button "Seat 38, booked" [disabled]: "38"
+  - button "Seat 39, booked" [disabled]: "39"
+  - button "Seat 40, available — tap to request": "40"
+  - button "Seat 41, available — tap to request": "41"
+  - button "Seat 42, booked" [disabled]: "42"
+  - button "Seat 43, available — tap to request": "43"
+  - button "Seat 44, booked" [disabled]: "44"
+  - button "Seat 45, booked" [disabled]: "45"
+  - button "Seat 46, booked" [disabled]: "46"
+  - button "Seat 47, booked" [disabled]: "47"
+  - button "Seat 48, booked" [disabled]: "48"
+  - button "Seat 49, booked" [disabled]: "49"
+  - button "Seat 50, booked" [disabled]: "50"
+  - button "Seat 51, booked" [disabled]: "51"
+  - button "Seat 52, booked" [disabled]: "52"
+  - button "Seat 53, booked" [disabled]: "53"
+  - button "Seat 54, available — tap to request": "54"
+  - button "Seat 55, available — tap to request": "55"
+  - button "Seat 56, booked" [disabled]: "56"
+  - button "Seat 57, available — tap to request": "57"
+  - button "Seat 58, booked" [disabled]: "58"
+  - button "Seat 59, booked" [disabled]: "59"
+  - button "Seat 60, booked" [disabled]: "60"
+  - button "Seat 61, booked" [disabled]: "61"
+  - button "Seat 62, booked" [disabled]: "62"
+  - button "Seat 63, booked" [disabled]: "63"
+  - button "Seat 64, booked" [disabled]: "64"
+  - button "Seat 65, booked" [disabled]: "65"
+  - button "Seat 66, booked" [disabled]: "66"
+  - button "Seat 67, booked" [disabled]: "67"
+  - button "Seat 68, available — tap to request": "68"
+  - button "Seat 69, available — tap to request": "69"
+  - button "Seat 70, booked" [disabled]: "70"
+  - button "Seat 71, available — tap to request": "71"
+  - button "Seat 72, booked" [disabled]: "72"
+  - button "Seat 73, available — tap to request": "73"
+  - button "Seat 74, booked" [disabled]: "74"
+  - button "Seat 75, booked" [disabled]: "75"
+  - button "Seat 76, booked" [disabled]: "76"
+  - button "Seat 77, available — tap to request": "77"
+  - button "Seat 78, booked" [disabled]: "78"
+  - button "Seat 79, booked" [disabled]: "79"
+  - button "Seat 80, booked" [disabled]: "80"
+  - button "Seat 81, booked" [disabled]: "81"
+  - button "Seat 82, booked" [disabled]: "82"
+  - button "Seat 83, booked" [disabled]: "83"
+  - button "Seat 84, booked" [disabled]: "84"
+  - button "Seat 85, booked" [disabled]: "85"
+  - button "Seat 86, available — tap to request": "86"
+  - button "Seat 87, available — tap to request": "87"
+  - button "Seat 88, booked" [disabled]: "88"
+  - button "Seat 89, booked" [disabled]: "89"
+  - button "Seat 90, booked" [disabled]: "90"
+  - button "Seat 91, available — tap to request": "91"
+  - button "Seat 92, booked" [disabled]: "92"
+  - button "Seat 93, booked" [disabled]: "93"
+  - button "Seat 94, booked" [disabled]: "94"
+  - button "Seat 95, booked" [disabled]: "95"
+  - list "Legend":
+    - listitem: Available 24
+    - listitem: Selected
+    - listitem: Requested 0
+    - listitem: Booked 71
+  - complementary:
+    - heading "How it works" [level=2]
+    - list:
+      - listitem: 1 Pick a free seat Green seats are open. Use the shift filter if you only need mornings or evenings.
+      - listitem: 2 Send a request Your name and phone number. No account needed.
+      - listitem: 3 Pay and get allotted Pay by UPI or cash at the desk. The librarian confirms it and allots your seat — follow it under My requests.
+- region "Notifications"
+- alert

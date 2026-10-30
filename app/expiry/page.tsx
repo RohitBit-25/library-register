@@ -22,6 +22,7 @@ import { DataTable } from '@/components/ui/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { Tooltip } from '@/components/ui/Tooltip';
 import PageHeader from '@/components/layout/PageHeader';
+import MembersLoadError from '@/components/seat/MembersLoadError';
 
 /* ─── Urgency Stat Card ───────────────────────────────────────── */
 function UrgencyStat({
@@ -29,15 +30,29 @@ function UrgencyStat({
   label,
   iconBg,
   icon,
+  active,
+  onClick,
 }: {
   count: number;
   label: string;
   gradient: string;
   iconBg: string;
   icon: React.ReactNode;
+  /** Each card is also a filter — the grouping staff asked for, one tap away. */
+  active: boolean;
+  onClick: () => void;
 }) {
   return (
-    <div className="rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 flex items-center gap-3 min-w-0 shadow-[var(--shadow-xs)]">
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      aria-label={`${label}: ${count}. ${active ? 'Showing only these' : 'Show only these'}`}
+      className={cn(
+        'rounded-[var(--radius-lg)] border bg-[var(--bg-surface)] p-3 flex items-center gap-3 min-w-0 text-left shadow-[var(--shadow-xs)] cursor-pointer transition-ui',
+        active ? 'border-[var(--text-primary)] ring-1 ring-[var(--text-primary)]' : 'border-[var(--border-default)] hover:border-[var(--border-strong)]',
+      )}
+    >
       <div className={cn('size-9 rounded-xl flex items-center justify-center shrink-0', iconBg)}>
         {icon}
       </div>
@@ -49,11 +64,22 @@ function UrgencyStat({
           {label}
         </div>
       </div>
-    </div>
+    </button>
   );
 }
 
+type Bucket = 'expired' | 'today' | 'week' | 'month';
+const inBucket = (d: number, b: Bucket) =>
+  b === 'expired' ? d < 0 : b === 'today' ? d === 0 : b === 'week' ? d > 0 && d <= 7 : d > 7 && d <= 30;
+
 type ExpiryMember = Member & { daysLeft: number };
+
+const urgencyText = (d: number) => (d < 0 ? `${Math.abs(d)}d overdue` : d === 0 ? 'Today!' : `${d}d left`);
+const urgencyTone = (d: number) =>
+  d <= 0 ? 'bg-[var(--ruby-50)] text-[var(--ruby-600)]'
+  : d <= 7 ? 'bg-[var(--saffron-50)] text-[var(--saffron-700)]'
+  : d <= 30 ? 'bg-[var(--marigold-50)] text-[var(--marigold-700)]'
+  : 'bg-[var(--emerald-50)] text-[var(--emerald-600)]';
 
 export default function ExpiryPage() {
   const { members, vacate, renew } = useMembers();
@@ -78,10 +104,19 @@ export default function ExpiryPage() {
   // count the next thirty days. `showAll` keeps the full roster one click
   // away rather than removing it.
   const [showAll, setShowAll] = useState(false);
+  const [bucket, setBucket] = useState<Bucket | null>(null);
+  const toggleBucket = (b: Bucket) => { setBucket((cur) => (cur === b ? null : b)); setRemindAt(0); };
   const occupiedMembers = useMemo(
-    () => (showAll ? allOccupied : allOccupied.filter((m) => m.daysLeft <= HORIZON_DAYS)),
-    [allOccupied, showAll]
+    () => (bucket
+      ? allOccupied.filter((m) => inBucket(m.daysLeft, bucket))
+      : showAll ? allOccupied : allOccupied.filter((m) => m.daysLeft <= HORIZON_DAYS)),
+    [allOccupied, showAll, bucket]
   );
+
+  // One-tap reminders: a queue through the members on screen. Browsers allow
+  // one new tab per click, so each click opens the next chat.
+  const remindable = useMemo(() => occupiedMembers.filter((m) => m.phone && m.daysLeft <= 7), [occupiedMembers]);
+  const [remindAt, setRemindAt] = useState(0);
 
   const totalExpired = allOccupied.filter(m => m.daysLeft < 0).length;
   const totalToday = allOccupied.filter(m => m.daysLeft === 0).length;
@@ -176,12 +211,17 @@ export default function ExpiryPage() {
               {row.original.phone}
             </div>
           )}
+          {/* Phones drop the urgency column, so its verdict rides here. */}
+          <div className={cn('mt-1 inline-block rounded-md px-1.5 py-0.5 text-xs font-semibold sm:hidden', urgencyTone(row.original.daysLeft))}>
+            {urgencyText(row.original.daysLeft)}
+          </div>
         </div>
       ),
     },
     {
       accessorKey: 'daysLeft',
       header: 'Urgency / Status',
+      meta: { className: 'hidden sm:table-cell' },
       cell: ({ row }) => {
         const dLeft = row.original.daysLeft;
         const isExpired = dLeft < 0;
@@ -244,6 +284,7 @@ export default function ExpiryPage() {
     {
       accessorKey: 'expiry',
       header: 'Expiry Date',
+      meta: { className: 'hidden sm:table-cell' },
       cell: ({ row }) => (
         <span className="text-xs font-mono font-medium text-[var(--text-secondary)] whitespace-nowrap">
           {fmtDate(row.getValue('expiry'))}
@@ -271,14 +312,18 @@ export default function ExpiryPage() {
               className="flex h-8 cursor-pointer items-center gap-1.5 rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-2.5 text-xs font-bold text-[var(--emerald-600)] shadow-sm transition-ui hover:bg-[var(--emerald-100)] active:scale-95"
             >
               <RefreshCw className="size-4" aria-hidden="true" />
-              Renew
+              {/* Icon only on phones so the Vacate button fits; the
+                  aria-label still says "Renew seat N for …". */}
+              <span className="hidden sm:inline">Renew</span>
             </button>
           </Tooltip>
           <Tooltip content="Open seat — change plan or date">
             <button
               onClick={() => handleOpenSeat(row.original.seat)}
               aria-label={`Open seat ${row.original.seat} to change the plan`}
-              className="flex size-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] text-[var(--text-secondary)] shadow-sm transition-ui hover:bg-[var(--bg-overlay)] hover:text-[var(--text-primary)] active:scale-95"
+              // Phones: three buttons fit, four did not. Plan changes are one
+              // tap away there too — on the seat itself.
+              className="hidden sm:flex size-8 cursor-pointer items-center justify-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-muted)] text-[var(--text-secondary)] shadow-sm transition-ui hover:bg-[var(--bg-overlay)] hover:text-[var(--text-primary)] active:scale-95"
             >
               <SlidersHorizontal className="size-4" aria-hidden="true" />
             </button>
@@ -323,12 +368,15 @@ export default function ExpiryPage() {
           </button>
         }
       />
+      <MembersLoadError />
 
       {/* ── Urgency Summary Bar ──────────────────────────────────── */}
       <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-3">
         <UrgencyStat
           count={totalExpired}
           label="Expired"
+          active={bucket === 'expired'}
+          onClick={() => toggleBucket('expired')}
           gradient="from-[var(--ruby-500)] to-[var(--ruby-400)]"
           iconBg="bg-[var(--ruby-50)] text-[var(--ruby-600)]"
           icon={<Flame className="size-4" />}
@@ -336,6 +384,8 @@ export default function ExpiryPage() {
         <UrgencyStat
           count={totalToday}
           label="Today"
+          active={bucket === 'today'}
+          onClick={() => toggleBucket('today')}
           gradient="from-[var(--ruby-500)] to-[var(--ruby-400)]"
           iconBg="bg-[var(--ruby-50)] text-[var(--ruby-600)]"
           icon={<AlertTriangle className="size-4" />}
@@ -343,6 +393,8 @@ export default function ExpiryPage() {
         <UrgencyStat
           count={totalWeek}
           label="This Week"
+          active={bucket === 'week'}
+          onClick={() => toggleBucket('week')}
           gradient="from-[var(--saffron-500)] to-[var(--saffron-400)]"
           iconBg="bg-[var(--saffron-50)] text-[var(--saffron-700)]"
           icon={<Clock className="size-4" />}
@@ -350,11 +402,37 @@ export default function ExpiryPage() {
         <UrgencyStat
           count={totalMonth}
           label="This Month"
+          active={bucket === 'month'}
+          onClick={() => toggleBucket('month')}
           gradient="from-[var(--marigold-500)] to-[var(--marigold-400)]"
           iconBg="bg-[var(--marigold-50)] text-[var(--marigold-700)]"
           icon={<CalendarDays className="size-4" />}
         />
       </div>
+
+      {remindable.length > 0 && (
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              if (remindAt >= remindable.length) { setRemindAt(0); return; }
+              handleWhatsApp(remindable[remindAt]);
+              setRemindAt((i) => i + 1);
+            }}
+            className="inline-flex min-h-[40px] cursor-pointer items-center gap-2 rounded-xl border border-[var(--emerald-200)] bg-[var(--emerald-50)] px-4 text-sm font-bold text-[var(--emerald-700)] transition-ui hover:bg-[var(--emerald-100)]"
+          >
+            <MessageCircle className="size-4" aria-hidden="true" />
+            {remindAt === 0
+              ? `Remind ${remindable.length} on WhatsApp`
+              : remindAt < remindable.length
+                ? `Next: ${firstName(remindable[remindAt].name)} (${remindAt + 1} of ${remindable.length})`
+                : `All ${remindable.length} reminded — start again`}
+          </button>
+          <span className="text-xs text-[var(--text-tertiary)]">
+            Overdue or ending within 7 days, with a phone number. Each tap opens the next chat, message ready.
+          </span>
+        </div>
+      )}
 
       {/* ── Data Grid ───────────────────────────────────────────── */}
       <DataTable

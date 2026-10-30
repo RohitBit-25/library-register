@@ -52,7 +52,7 @@ function useIsPhone() {
 
 export default function FloorPlanPage() {
   const router = useRouter();
-  const { members, isLoading, update, vacate, renew, add } = useMembers();
+  const { members, isLoading, update, vacate, renew, add, move } = useMembers();
   const { addToast } = useToast();
   const isPhone = useIsPhone();
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
@@ -111,6 +111,10 @@ export default function FloorPlanPage() {
     renew(seat, joinDate, duration as '1M' | '3M' | '6M' | '1Y', (msg) => addToast('error', msg), amount);
     addToast('success', `Membership extended for Seat ${seat}`);
   };
+  const onMove = async (from: number, to: number) => {
+    if (await move(from, to, (msg) => addToast('error', msg))) addToast('success', `Moved seat ${from} to seat ${to}`);
+  };
+
   const onRemove = (seat: number) => {
     vacate(seat, (msg) => addToast('error', msg)).then((waiting) => {
       if (waiting.length) {
@@ -260,6 +264,8 @@ export default function FloorPlanPage() {
             onMarkDue={onMarkDue}
             onRenew={onRenew}
             onRemove={onRemove}
+            onMove={onMove}
+            vacantSeats={members.filter((m) => m.vacant).map((m) => m.seat)}
             onUpdate={onUpdate}
             isMobile={isPhone}
           />

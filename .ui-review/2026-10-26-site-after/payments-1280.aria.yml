@@ -1,0 +1,217 @@
+- alert
+- complementary:
+  - text: Shree Gangaur Library Staff desk
+  - navigation "Admin":
+    - paragraph: Desk
+    - list:
+      - listitem:
+        - link "Seats":
+          - /url: /
+      - listitem:
+        - link "Requests 2 pending":
+          - /url: /requests
+      - listitem:
+        - link "Members 12 with fees due":
+          - /url: /members
+      - listitem:
+        - link "Collections":
+          - /url: /payments
+      - listitem:
+        - link "Renewals":
+          - /url: /expiry
+      - listitem:
+        - link "Attendance":
+          - /url: /attendance
+    - paragraph: Records
+    - list:
+      - listitem:
+        - link "Analytics":
+          - /url: /analytics
+      - listitem:
+        - link "Activity log":
+          - /url: /audit
+      - listitem:
+        - link "Export":
+          - /url: /export
+    - paragraph: Setup
+    - list:
+      - listitem:
+        - link "Full floor plan":
+          - /url: /floorplan
+      - listitem:
+        - link "Staff":
+          - /url: /staff
+      - listitem:
+        - link "Check-in kiosk":
+          - /url: /kiosk
+  - paragraph: Admin
+  - paragraph: Mon, 26 Oct
+  - button "Sign out"
+- main:
+  - heading "Collections" [level=1]
+  - paragraph: Every fee recorded, with a receipt for each.
+  - button "Last 7 days"
+  - button "Last 30 days" [pressed]
+  - button "This month"
+  - button "Last 90 days"
+  - button "Export CSV"
+  - text: Collected
+  - paragraph: ₹42,500
+  - text: Cash
+  - paragraph: ₹9,500
+  - text: UPI
+  - paragraph: ₹33,000
+  - text: Payments
+  - paragraph: "25"
+  - list:
+    - listitem:
+      - text: "53"
+      - paragraph: Shubham Mundra
+      - paragraph: 25 Oct 2026 · 3 Months · UPI
+      - text: ₹1,900
+      - button "Receipt for Shubham Mundra, seat 53": Receipt
+    - listitem:
+      - text: "78"
+      - paragraph: Isha Ranawat
+      - paragraph: 24 Oct 2026 · 1 Month · UPI
+      - text: ₹700
+      - button "Receipt for Isha Ranawat, seat 78": Receipt
+    - listitem:
+      - text: "27"
+      - paragraph: Sneha Dangi
+      - paragraph: 22 Oct 2026 · 1 Month · UPI
+      - text: ₹700
+      - button "Receipt for Sneha Dangi, seat 27": Receipt
+    - listitem:
+      - text: "62"
+      - paragraph: Siddharth Nagar
+      - paragraph: 22 Oct 2026 · 3 Months · UPI
+      - text: ₹1,900
+      - button "Receipt for Siddharth Nagar, seat 62": Receipt
+    - listitem:
+      - text: "82"
+      - paragraph: Aarushi Kumbhat
+      - paragraph: 21 Oct 2026 · 1 Month · UPI
+      - text: ₹700
+      - button "Receipt for Aarushi Kumbhat, seat 82": Receipt
+    - listitem:
+      - text: "05"
+      - paragraph: Bhavesh Paliwal
+      - paragraph: 21 Oct 2026 · 3 Months · CASH
+      - text: ₹1,900
+      - button "Receipt for Bhavesh Paliwal, seat 5": Receipt
+    - listitem:
+      - text: "50"
+      - paragraph: Ridhima Pandya
+      - paragraph: 20 Oct 2026 · 3 Months · UPI
+      - text: ₹1,900
+      - button "Receipt for Ridhima Pandya, seat 50": Receipt
+    - listitem:
+      - text: "06"
+      - paragraph: Nikita Jain
+      - paragraph: 19 Oct 2026 · 1 Month · UPI
+      - text: ₹700
+      - button "Receipt for Nikita Jain, seat 6": Receipt
+    - listitem:
+      - text: "14"
+      - paragraph: Devendra Singh Chundawat
+      - paragraph: 18 Oct 2026 · 6 Months · UPI
+      - text: ₹3,600
+      - button "Receipt for Devendra Singh Chundawat, seat 14": Receipt
+    - listitem:
+      - text: "45"
+      - paragraph: Lokesh Teli
+      - paragraph: 15 Oct 2026 · 3 Months · CASH
+      - text: ₹1,900
+      - button "Receipt for Lokesh Teli, seat 45": Receipt
+    - listitem:
+      - text: "28"
+      - paragraph: Vikram Gurjar
+      - paragraph: 14 Oct 2026 · 3 Months · UPI
+      - text: ₹1,900
+      - button "Receipt for Vikram Gurjar, seat 28": Receipt
+    - listitem:
+      - text: "10"
+      - paragraph: Meenakshi Purohit
+      - paragraph: 11 Oct 2026 · 3 Months · UPI
+      - text: ₹1,900
+      - button "Receipt for Meenakshi Purohit, seat 10": Receipt
+    - listitem:
+      - text: "03"
+      - paragraph: Priya Rathore
+      - paragraph: 11 Oct 2026 · 1 Month · UPI
+      - text: ₹700
+      - button "Receipt for Priya Rathore, seat 3": Receipt
+    - listitem:
+      - text: "21"
+      - paragraph: Pooja Ameta
+      - paragraph: 11 Oct 2026 · 3 Months · CASH
+      - text: ₹1,900
+      - button "Receipt for Pooja Ameta, seat 21": Receipt
+    - listitem:
+      - text: "38"
+      - paragraph: Raghav Dashora
+      - paragraph: 11 Oct 2026 · 3 Months · CASH
+      - text: ₹1,900
+      - button "Receipt for Raghav Dashora, seat 38": Receipt
+    - listitem:
+      - text: "81"
+      - paragraph: Vishal Banjara
+      - paragraph: 10 Oct 2026 · 1 Month · UPI
+      - text: ₹700
+      - button "Receipt for Vishal Banjara, seat 81": Receipt
+    - listitem:
+      - text: "84"
+      - paragraph: Riya Sukhwal
+      - paragraph: 9 Oct 2026 · 3 Months · UPI
+      - text: ₹1,900
+      - button "Receipt for Riya Sukhwal, seat 84": Receipt
+    - listitem:
+      - text: "29"
+      - paragraph: Tanya Mehta
+      - paragraph: 9 Oct 2026 · 3 Months · UPI
+      - text: ₹1,900
+      - button "Receipt for Tanya Mehta, seat 29": Receipt
+    - listitem:
+      - text: "59"
+      - paragraph: Khushi Rawal
+      - paragraph: 8 Oct 2026 · 3 Months · UPI
+      - text: ₹1,900
+      - button "Receipt for Khushi Rawal, seat 59": Receipt
+    - listitem:
+      - text: "51"
+      - paragraph: Naveen Jat
+      - paragraph: 6 Oct 2026 · 1 Month · UPI
+      - text: ₹700
+      - button "Receipt for Naveen Jat, seat 51": Receipt
+    - listitem:
+      - text: "61"
+      - paragraph: Bhoomika Shaktawat
+      - paragraph: 6 Oct 2026 · 3 Months · UPI
+      - text: ₹1,900
+      - button "Receipt for Bhoomika Shaktawat, seat 61": Receipt
+    - listitem:
+      - text: "07"
+      - paragraph: Chandraprakash Rathore
+      - paragraph: 5 Oct 2026 · 3 Months · CASH
+      - text: ₹1,900
+      - button "Receipt for Chandraprakash Rathore, seat 7": Receipt
+    - listitem:
+      - text: "11"
+      - paragraph: Yash Kothari
+      - paragraph: 4 Oct 2026 · 3 Months · UPI
+      - text: ₹1,900
+      - button "Receipt for Yash Kothari, seat 11": Receipt
+    - listitem:
+      - text: "30"
+      - paragraph: Arjun Kalal
+      - paragraph: 1 Oct 2026 · 6 Months · UPI
+      - text: ₹3,600
+      - button "Receipt for Arjun Kalal, seat 30": Receipt
+    - listitem:
+      - text: "90"
+      - paragraph: Pallavi Katara
+      - paragraph: 28 Sept 2026 · 3 Months · UPI
+      - text: ₹1,900
+      - button "Receipt for Pallavi Katara, seat 90": Receipt
+- region "Notifications"

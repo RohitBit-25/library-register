@@ -5,21 +5,35 @@
  * its details are filled in here, so the page never shows a made-up phone
  * number, address or review.
  *
- *   phone:    '9876543210'                       → "Call" button
+ *   phones:   ['9876543210']                     → numbers listed + "Call" button
  *   whatsapp: '919876543210'  (country code, no +) → "WhatsApp us" button
- *   address:  'Near …, Rajsamand, Rajasthan 313324'
- *   mapsUrl:  'https://maps.app.goo.gl/…'        → "Open in Google Maps"
+ *   email:    'name@example.com'                 → email link
+ *   address:  'Near …, Rajsamand, Rajasthan'
+ *   mapsUrl:  'https://maps.app.goo.gl/…'        → "Map" button
  *   reviews:  [{ quote: '…', name: 'Priya M.', note: 'RAS aspirant' }]
+ *
+ * WhatsApp stays empty until the owner says which number takes WhatsApp.
  */
+const ADDRESS = 'Opposite Maniratna Restaurant, JK Circle, Station Road, Kankroli, Rajsamand, Rajasthan';
+
 export const SITE_INFO: {
-  phone?: string;
+  phones?: string[];
   whatsapp?: string;
+  email?: string;
   address?: string;
   mapsUrl?: string;
   reviews: { quote: string; name: string; note?: string }[];
 } = {
+  phones: ['9462672576', '9829230576'],
+  email: 'contact2shreegangaur@gmail.com',
+  address: ADDRESS,
+  // A Maps search for the address until the owner shares the pinned place link.
+  mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`Shree Gangaur Library, ${ADDRESS}`)}`,
   reviews: [],
 };
+
+/** "9462672576" → "94626 72576", the way numbers are read out in India. */
+export const fmtPhone = (p: string) => p.replace(/^(\d{5})(\d{5})$/, '$1 $2');
 
 /**
  * The one account every fee is paid into. The staff Add member QR used to

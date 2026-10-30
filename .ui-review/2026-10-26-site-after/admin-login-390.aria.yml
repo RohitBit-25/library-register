@@ -1,0 +1,19 @@
+- main:
+  - link "Back to the library":
+    - /url: /landing
+  - text: Shree Gangaur Library Staff desk
+  - heading "Sign in" [level=1]
+  - paragraph: Your name and PIN, so the activity log records who did what.
+  - text: Your name
+  - textbox "Your name":
+    - /placeholder: As the owner added you
+  - text: Your PIN
+  - textbox "Your PIN":
+    - /placeholder: ••••
+  - button "Sign in" [disabled]
+  - paragraph:
+    - text: Students do not need to sign in.
+    - link "Find a seat":
+      - /url: /browse
+- region "Notifications"
+- alert

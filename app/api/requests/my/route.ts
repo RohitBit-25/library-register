@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
  * `transactionId`, `userName`, or `message`: that turned a guessable 10-digit
  * number into a bulk PII and identity-document lookup.
  */
-const PUBLIC_FIELDS = 'seat status createdAt joinDate duration shift paymentMode';
+const PUBLIC_FIELDS = 'seat status createdAt updatedAt joinDate duration shift paymentMode';
 
 /** Lookups per caller per hour. A student checks their own status a handful
  *  of times; a script walking the 10-digit phone space needs thousands. */

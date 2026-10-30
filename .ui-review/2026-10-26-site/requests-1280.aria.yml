@@ -1,0 +1,64 @@
+- alert
+- complementary:
+  - text: Shree Gangaur Library Staff desk
+  - navigation "Admin":
+    - paragraph: Desk
+    - list:
+      - listitem:
+        - link "Seats":
+          - /url: /
+      - listitem:
+        - link "Requests 2 pending":
+          - /url: /requests
+      - listitem:
+        - link "Members 12 with fees due":
+          - /url: /members
+      - listitem:
+        - link "Collections":
+          - /url: /payments
+      - listitem:
+        - link "Renewals":
+          - /url: /expiry
+      - listitem:
+        - link "Attendance":
+          - /url: /attendance
+    - paragraph: Records
+    - list:
+      - listitem:
+        - link "Analytics":
+          - /url: /analytics
+      - listitem:
+        - link "Activity log":
+          - /url: /audit
+      - listitem:
+        - link "Export":
+          - /url: /export
+    - paragraph: Setup
+    - list:
+      - listitem:
+        - link "Full floor plan":
+          - /url: /floorplan
+      - listitem:
+        - link "Staff":
+          - /url: /staff
+      - listitem:
+        - link "Check-in kiosk":
+          - /url: /kiosk
+  - paragraph: Admin
+  - paragraph: Mon, 26 Oct
+  - button "Sign out"
+- main:
+  - heading "Requests 2 new" [level=1]
+  - paragraph: Review and verify payments for seat requests.
+  - button "Pending 2"
+  - button "Waitlist 1"
+  - button "Approved"
+  - button "Rejected 1"
+  - button "All 4"
+  - text: "1 Mansi Dadhich Pending Seat #1 9784512360 26 Oct 2026 3 Months · Morning 26 Oct 2026 UPI Payment Paid ₹1,900 Ref: T2508131147 Preparing for RAS mains, need a morning seat near a window."
+  - button "Approve and allot"
+  - button "Reject"
+  - text: "13 Yuvraj Shaktawat Pending Seat #13 9928374615 28 Oct 2026 6 Months · Full Day 26 Oct 2026 Cash Payment Verify cash received at counter"
+  - button "Approve and allot"
+  - button "Reject"
+- region "Notifications"

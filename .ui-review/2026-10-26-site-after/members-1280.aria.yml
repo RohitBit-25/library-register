@@ -1,0 +1,1572 @@
+- alert
+- complementary:
+  - text: Shree Gangaur Library Staff desk
+  - navigation "Admin":
+    - paragraph: Desk
+    - list:
+      - listitem:
+        - link "Seats":
+          - /url: /
+      - listitem:
+        - link "Requests 2 pending":
+          - /url: /requests
+      - listitem:
+        - link "Members 12 with fees due":
+          - /url: /members
+      - listitem:
+        - link "Collections":
+          - /url: /payments
+      - listitem:
+        - link "Renewals":
+          - /url: /expiry
+      - listitem:
+        - link "Attendance":
+          - /url: /attendance
+    - paragraph: Records
+    - list:
+      - listitem:
+        - link "Analytics":
+          - /url: /analytics
+      - listitem:
+        - link "Activity log":
+          - /url: /audit
+      - listitem:
+        - link "Export":
+          - /url: /export
+    - paragraph: Setup
+    - list:
+      - listitem:
+        - link "Full floor plan":
+          - /url: /floorplan
+      - listitem:
+        - link "Staff":
+          - /url: /staff
+      - listitem:
+        - link "Check-in kiosk":
+          - /url: /kiosk
+  - paragraph: Admin
+  - paragraph: Mon, 26 Oct
+  - button "Sign out"
+- main:
+  - heading "Members" [level=1]
+  - paragraph: 71 members · 24 vacant
+  - searchbox "Search members by name, phone or seat"
+  - button "All"
+  - button "Active"
+  - button "Expiring"
+  - button "Expired"
+  - button "Fee Due"
+  - button "Vacant"
+  - button "Morning"
+  - button "Evening"
+  - table:
+    - rowgroup:
+      - row "Select every member in this list Seat Name Phone Joined Dur. Expiry Status":
+        - columnheader "Select every member in this list":
+          - checkbox "Select every member in this list"
+        - columnheader "Seat"
+        - columnheader "Name"
+        - columnheader "Phone"
+        - columnheader "Joined"
+        - columnheader "Dur."
+        - columnheader "Expiry"
+        - columnheader "Status"
+        - columnheader
+    - rowgroup:
+      - row "1 Copy seat number 1 (Vacant) — — — — Allot seat 1":
+        - cell
+        - cell "1 Copy seat number 1":
+          - text: "1"
+          - button "Copy seat number 1"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 1":
+          - link "Allot seat 1":
+            - /url: /?seat=1
+            - text: Add
+        - cell
+      - row "Select Aarav Sharma 2 Copy seat number 2 Aarav Sharma 9315442699 Copy phone number for Aarav Sharma 21 Sept 3M 21 Dec Active Actions for Aarav Sharma":
+        - cell "Select Aarav Sharma":
+          - checkbox "Select Aarav Sharma"
+        - cell "2 Copy seat number 2":
+          - text: "2"
+          - button "Copy seat number 2"
+        - cell "Aarav Sharma"
+        - cell "9315442699 Copy phone number for Aarav Sharma":
+          - text: "9315442699"
+          - button "Copy phone number for Aarav Sharma"
+        - cell "21 Sept"
+        - cell "3M"
+        - cell "21 Dec"
+        - cell "Active"
+        - cell "Actions for Aarav Sharma":
+          - button "Actions for Aarav Sharma"
+      - row "Select Priya Rathore 3 Copy seat number 3 Priya Rathore 9784423566 Copy phone number for Priya Rathore 11 Oct 1M 11 Nov Active Actions for Priya Rathore":
+        - cell "Select Priya Rathore":
+          - checkbox "Select Priya Rathore"
+        - cell "3 Copy seat number 3":
+          - text: "3"
+          - button "Copy seat number 3"
+        - cell "Priya Rathore"
+        - cell "9784423566 Copy phone number for Priya Rathore":
+          - text: "9784423566"
+          - button "Copy phone number for Priya Rathore"
+        - cell "11 Oct"
+        - cell "1M"
+        - cell "11 Nov"
+        - cell "Active"
+        - cell "Actions for Priya Rathore":
+          - button "Actions for Priya Rathore"
+      - row "Select Om Vyas 4 Copy seat number 4 Om Vyas 9685718918 Copy phone number for Om Vyas 18 Aug 3M 18 Nov Active Actions for Om Vyas":
+        - cell "Select Om Vyas":
+          - checkbox "Select Om Vyas"
+        - cell "4 Copy seat number 4":
+          - text: "4"
+          - button "Copy seat number 4"
+        - cell "Om Vyas"
+        - cell "9685718918 Copy phone number for Om Vyas":
+          - text: "9685718918"
+          - button "Copy phone number for Om Vyas"
+        - cell "18 Aug"
+        - cell "3M"
+        - cell "18 Nov"
+        - cell "Active"
+        - cell "Actions for Om Vyas":
+          - button "Actions for Om Vyas"
+      - row "Select Bhavesh Paliwal 5 Copy seat number 5 Bhavesh Paliwal 9522500491 Copy phone number for Bhavesh Paliwal 21 Oct 3M 21 Jan 2027 Active Actions for Bhavesh Paliwal":
+        - cell "Select Bhavesh Paliwal":
+          - checkbox "Select Bhavesh Paliwal"
+        - cell "5 Copy seat number 5":
+          - text: "5"
+          - button "Copy seat number 5"
+        - cell "Bhavesh Paliwal"
+        - cell "9522500491 Copy phone number for Bhavesh Paliwal":
+          - text: "9522500491"
+          - button "Copy phone number for Bhavesh Paliwal"
+        - cell "21 Oct"
+        - cell "3M"
+        - cell "21 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Bhavesh Paliwal":
+          - button "Actions for Bhavesh Paliwal"
+      - row "Select Nikita Jain 6 Copy seat number 6 Nikita Jain 9845823756 Copy phone number for Nikita Jain 19 Oct 1M 19 Nov Active Actions for Nikita Jain":
+        - cell "Select Nikita Jain":
+          - checkbox "Select Nikita Jain"
+        - cell "6 Copy seat number 6":
+          - text: "6"
+          - button "Copy seat number 6"
+        - cell "Nikita Jain"
+        - cell "9845823756 Copy phone number for Nikita Jain":
+          - text: "9845823756"
+          - button "Copy phone number for Nikita Jain"
+        - cell "19 Oct"
+        - cell "1M"
+        - cell "19 Nov"
+        - cell "Active"
+        - cell "Actions for Nikita Jain":
+          - button "Actions for Nikita Jain"
+      - row "Select Chandraprakash Rathore 7 Copy seat number 7 Chandraprakash Rathore 9129064095 Copy phone number for Chandraprakash Rathore 5 Oct 3M 5 Jan 2027 Active Actions for Chandraprakash Rathore":
+        - cell "Select Chandraprakash Rathore":
+          - checkbox "Select Chandraprakash Rathore"
+        - cell "7 Copy seat number 7":
+          - text: "7"
+          - button "Copy seat number 7"
+        - cell "Chandraprakash Rathore"
+        - cell "9129064095 Copy phone number for Chandraprakash Rathore":
+          - text: "9129064095"
+          - button "Copy phone number for Chandraprakash Rathore"
+        - cell "5 Oct"
+        - cell "3M"
+        - cell "5 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Chandraprakash Rathore":
+          - button "Actions for Chandraprakash Rathore"
+      - row "Select Kavya Menaria 8 Copy seat number 8 Kavya Menaria 9990843582 Copy phone number for Kavya Menaria 13 Oct 2025 1Y 13 Oct Expired Actions for Kavya Menaria":
+        - cell "Select Kavya Menaria":
+          - checkbox "Select Kavya Menaria"
+        - cell "8 Copy seat number 8":
+          - text: "8"
+          - button "Copy seat number 8"
+        - cell "Kavya Menaria"
+        - cell "9990843582 Copy phone number for Kavya Menaria":
+          - text: "9990843582"
+          - button "Copy phone number for Kavya Menaria"
+        - cell "13 Oct 2025"
+        - cell "1Y"
+        - cell "13 Oct"
+        - cell "Expired"
+        - cell "Actions for Kavya Menaria":
+          - button "Actions for Kavya Menaria"
+      - row "Select Rohit Suthar 9 Copy seat number 9 Rohit Suthar 9864310264 Copy phone number for Rohit Suthar 16 Sept 3M 16 Dec Active Actions for Rohit Suthar":
+        - cell "Select Rohit Suthar":
+          - checkbox "Select Rohit Suthar"
+        - cell "9 Copy seat number 9":
+          - text: "9"
+          - button "Copy seat number 9"
+        - cell "Rohit Suthar"
+        - cell "9864310264 Copy phone number for Rohit Suthar":
+          - text: "9864310264"
+          - button "Copy phone number for Rohit Suthar"
+        - cell "16 Sept"
+        - cell "3M"
+        - cell "16 Dec"
+        - cell "Active"
+        - cell "Actions for Rohit Suthar":
+          - button "Actions for Rohit Suthar"
+      - row "Select Meenakshi Purohit 10 Copy seat number 10 Meenakshi Purohit 9472798621 Copy phone number for Meenakshi Purohit 11 Oct 3M 11 Jan 2027 Active Actions for Meenakshi Purohit":
+        - cell "Select Meenakshi Purohit":
+          - checkbox "Select Meenakshi Purohit"
+        - cell "10 Copy seat number 10":
+          - text: "10"
+          - button "Copy seat number 10"
+        - cell "Meenakshi Purohit"
+        - cell "9472798621 Copy phone number for Meenakshi Purohit":
+          - text: "9472798621"
+          - button "Copy phone number for Meenakshi Purohit"
+        - cell "11 Oct"
+        - cell "3M"
+        - cell "11 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Meenakshi Purohit":
+          - button "Actions for Meenakshi Purohit"
+      - row "Select Yash Kothari 11 Copy seat number 11 Yash Kothari 9184778618 Copy phone number for Yash Kothari 4 Oct 3M 4 Jan 2027 Active Actions for Yash Kothari":
+        - cell "Select Yash Kothari":
+          - checkbox "Select Yash Kothari"
+        - cell "11 Copy seat number 11":
+          - text: "11"
+          - button "Copy seat number 11"
+        - cell "Yash Kothari"
+        - cell "9184778618 Copy phone number for Yash Kothari":
+          - text: "9184778618"
+          - button "Copy phone number for Yash Kothari"
+        - cell "4 Oct"
+        - cell "3M"
+        - cell "4 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Yash Kothari":
+          - button "Actions for Yash Kothari"
+      - row "Select Ishita Trivedi 12 Copy seat number 12 Ishita Trivedi 9900004485 Copy phone number for Ishita Trivedi 24 Sept 3M 24 Dec Active Actions for Ishita Trivedi":
+        - cell "Select Ishita Trivedi":
+          - checkbox "Select Ishita Trivedi"
+        - cell "12 Copy seat number 12":
+          - text: "12"
+          - button "Copy seat number 12"
+        - cell "Ishita Trivedi"
+        - cell "9900004485 Copy phone number for Ishita Trivedi":
+          - text: "9900004485"
+          - button "Copy phone number for Ishita Trivedi"
+        - cell "24 Sept"
+        - cell "3M"
+        - cell "24 Dec"
+        - cell "Active"
+        - cell "Actions for Ishita Trivedi":
+          - button "Actions for Ishita Trivedi"
+      - row "13 Copy seat number 13 (Vacant) — — — — Allot seat 13":
+        - cell
+        - cell "13 Copy seat number 13":
+          - text: "13"
+          - button "Copy seat number 13"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 13":
+          - link "Allot seat 13":
+            - /url: /?seat=13
+            - text: Add
+        - cell
+      - row "Select Devendra Singh Chundawat 14 Copy seat number 14 Devendra Singh Chundawat 9236024797 Copy phone number for Devendra Singh Chundawat 18 Oct 6M 18 Apr 2027 Active Actions for Devendra Singh Chundawat":
+        - cell "Select Devendra Singh Chundawat":
+          - checkbox "Select Devendra Singh Chundawat"
+        - cell "14 Copy seat number 14":
+          - text: "14"
+          - button "Copy seat number 14"
+        - cell "Devendra Singh Chundawat"
+        - cell "9236024797 Copy phone number for Devendra Singh Chundawat":
+          - text: "9236024797"
+          - button "Copy phone number for Devendra Singh Chundawat"
+        - cell "18 Oct"
+        - cell "6M"
+        - cell "18 Apr 2027"
+        - cell "Active"
+        - cell "Actions for Devendra Singh Chundawat":
+          - button "Actions for Devendra Singh Chundawat"
+      - row "Select Anjali Bhatt 15 Copy seat number 15 Anjali Bhatt 9614831030 Copy phone number for Anjali Bhatt 17 Jul 6M 17 Jan 2027 Active Actions for Anjali Bhatt":
+        - cell "Select Anjali Bhatt":
+          - checkbox "Select Anjali Bhatt"
+        - cell "15 Copy seat number 15":
+          - text: "15"
+          - button "Copy seat number 15"
+        - cell "Anjali Bhatt"
+        - cell "9614831030 Copy phone number for Anjali Bhatt":
+          - text: "9614831030"
+          - button "Copy phone number for Anjali Bhatt"
+        - cell "17 Jul"
+        - cell "6M"
+        - cell "17 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Anjali Bhatt":
+          - button "Actions for Anjali Bhatt"
+      - row "16 Copy seat number 16 (Vacant) — — — — Allot seat 16":
+        - cell
+        - cell "16 Copy seat number 16":
+          - text: "16"
+          - button "Copy seat number 16"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 16":
+          - link "Allot seat 16":
+            - /url: /?seat=16
+            - text: Add
+        - cell
+      - row "17 Copy seat number 17 (Vacant) — — — — Allot seat 17":
+        - cell
+        - cell "17 Copy seat number 17":
+          - text: "17"
+          - button "Copy seat number 17"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 17":
+          - link "Allot seat 17":
+            - /url: /?seat=17
+            - text: Add
+        - cell
+      - row "18 Copy seat number 18 (Vacant) — — — — Allot seat 18":
+        - cell
+        - cell "18 Copy seat number 18":
+          - text: "18"
+          - button "Copy seat number 18"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 18":
+          - link "Allot seat 18":
+            - /url: /?seat=18
+            - text: Add
+        - cell
+      - row "19 Copy seat number 19 (Vacant) — — — — Allot seat 19":
+        - cell
+        - cell "19 Copy seat number 19":
+          - text: "19"
+          - button "Copy seat number 19"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 19":
+          - link "Allot seat 19":
+            - /url: /?seat=19
+            - text: Add
+        - cell
+      - row "Select Karan Salvi 20 Copy seat number 20 Karan Salvi 9260898637 Copy phone number for Karan Salvi 10 Sept 3M 10 Dec Active Actions for Karan Salvi":
+        - cell "Select Karan Salvi":
+          - checkbox "Select Karan Salvi"
+        - cell "20 Copy seat number 20":
+          - text: "20"
+          - button "Copy seat number 20"
+        - cell "Karan Salvi"
+        - cell "9260898637 Copy phone number for Karan Salvi":
+          - text: "9260898637"
+          - button "Copy phone number for Karan Salvi"
+        - cell "10 Sept"
+        - cell "3M"
+        - cell "10 Dec"
+        - cell "Active"
+        - cell "Actions for Karan Salvi":
+          - button "Actions for Karan Salvi"
+      - row "Select Pooja Ameta 21 Copy seat number 21 Pooja Ameta 9143207490 Copy phone number for Pooja Ameta 11 Jul 3M 11 Oct Expired Actions for Pooja Ameta":
+        - cell "Select Pooja Ameta":
+          - checkbox "Select Pooja Ameta"
+        - cell "21 Copy seat number 21":
+          - text: "21"
+          - button "Copy seat number 21"
+        - cell "Pooja Ameta"
+        - cell "9143207490 Copy phone number for Pooja Ameta":
+          - text: "9143207490"
+          - button "Copy phone number for Pooja Ameta"
+        - cell "11 Jul"
+        - cell "3M"
+        - cell "11 Oct"
+        - cell "Expired"
+        - cell "Actions for Pooja Ameta":
+          - button "Actions for Pooja Ameta"
+      - row "Select Harshvardhan Sisodiya 22 Copy seat number 22 Harshvardhan Sisodiya 9149732983 Copy phone number for Harshvardhan Sisodiya 2 May 6M 2 Nov Expiring soon Actions for Harshvardhan Sisodiya":
+        - cell "Select Harshvardhan Sisodiya":
+          - checkbox "Select Harshvardhan Sisodiya"
+        - cell "22 Copy seat number 22":
+          - text: "22"
+          - button "Copy seat number 22"
+        - cell "Harshvardhan Sisodiya"
+        - cell "9149732983 Copy phone number for Harshvardhan Sisodiya":
+          - text: "9149732983"
+          - button "Copy phone number for Harshvardhan Sisodiya"
+        - cell "2 May"
+        - cell "6M"
+        - cell "2 Nov"
+        - cell "Expiring soon"
+        - cell "Actions for Harshvardhan Sisodiya":
+          - button "Actions for Harshvardhan Sisodiya"
+      - row "Select Ritika Nagda 23 Copy seat number 23 Ritika Nagda 9608230570 Copy phone number for Ritika Nagda 5 Sept 6M 5 Mar 2027 Active Actions for Ritika Nagda":
+        - cell "Select Ritika Nagda":
+          - checkbox "Select Ritika Nagda"
+        - cell "23 Copy seat number 23":
+          - text: "23"
+          - button "Copy seat number 23"
+        - cell "Ritika Nagda"
+        - cell "9608230570 Copy phone number for Ritika Nagda":
+          - text: "9608230570"
+          - button "Copy phone number for Ritika Nagda"
+        - cell "5 Sept"
+        - cell "6M"
+        - cell "5 Mar 2027"
+        - cell "Active"
+        - cell "Actions for Ritika Nagda":
+          - button "Actions for Ritika Nagda"
+      - row "Select Sahil Khatri 24 Copy seat number 24 Sahil Khatri 9973938692 Copy phone number for Sahil Khatri 8 Aug 3M 8 Nov Active Actions for Sahil Khatri":
+        - cell "Select Sahil Khatri":
+          - checkbox "Select Sahil Khatri"
+        - cell "24 Copy seat number 24":
+          - text: "24"
+          - button "Copy seat number 24"
+        - cell "Sahil Khatri"
+        - cell "9973938692 Copy phone number for Sahil Khatri":
+          - text: "9973938692"
+          - button "Copy phone number for Sahil Khatri"
+        - cell "8 Aug"
+        - cell "3M"
+        - cell "8 Nov"
+        - cell "Active"
+        - cell "Actions for Sahil Khatri":
+          - button "Actions for Sahil Khatri"
+      - row "Select Divya Chouhan 25 Copy seat number 25 Divya Chouhan 9348608803 Copy phone number for Divya Chouhan 3 May 6M 3 Nov Active Actions for Divya Chouhan":
+        - cell "Select Divya Chouhan":
+          - checkbox "Select Divya Chouhan"
+        - cell "25 Copy seat number 25":
+          - text: "25"
+          - button "Copy seat number 25"
+        - cell "Divya Chouhan"
+        - cell "9348608803 Copy phone number for Divya Chouhan":
+          - text: "9348608803"
+          - button "Copy phone number for Divya Chouhan"
+        - cell "3 May"
+        - cell "6M"
+        - cell "3 Nov"
+        - cell "Active"
+        - cell "Actions for Divya Chouhan":
+          - button "Actions for Divya Chouhan"
+      - row "Select Manish Lohar 26 Copy seat number 26 Manish Lohar 9785226083 Copy phone number for Manish Lohar 19 May 6M 19 Nov Active Actions for Manish Lohar":
+        - cell "Select Manish Lohar":
+          - checkbox "Select Manish Lohar"
+        - cell "26 Copy seat number 26":
+          - text: "26"
+          - button "Copy seat number 26"
+        - cell "Manish Lohar"
+        - cell "9785226083 Copy phone number for Manish Lohar":
+          - text: "9785226083"
+          - button "Copy phone number for Manish Lohar"
+        - cell "19 May"
+        - cell "6M"
+        - cell "19 Nov"
+        - cell "Active"
+        - cell "Actions for Manish Lohar":
+          - button "Actions for Manish Lohar"
+      - row "Select Sneha Dangi 27 Copy seat number 27 Sneha Dangi 9225031196 Copy phone number for Sneha Dangi 22 Oct 1M 22 Nov Active Actions for Sneha Dangi":
+        - cell "Select Sneha Dangi":
+          - checkbox "Select Sneha Dangi"
+        - cell "27 Copy seat number 27":
+          - text: "27"
+          - button "Copy seat number 27"
+        - cell "Sneha Dangi"
+        - cell "9225031196 Copy phone number for Sneha Dangi":
+          - text: "9225031196"
+          - button "Copy phone number for Sneha Dangi"
+        - cell "22 Oct"
+        - cell "1M"
+        - cell "22 Nov"
+        - cell "Active"
+        - cell "Actions for Sneha Dangi":
+          - button "Actions for Sneha Dangi"
+      - row "Select Vikram Gurjar 28 Copy seat number 28 Vikram Gurjar 9763088953 Copy phone number for Vikram Gurjar 14 Oct 3M 14 Jan 2027 Active Actions for Vikram Gurjar":
+        - cell "Select Vikram Gurjar":
+          - checkbox "Select Vikram Gurjar"
+        - cell "28 Copy seat number 28":
+          - text: "28"
+          - button "Copy seat number 28"
+        - cell "Vikram Gurjar"
+        - cell "9763088953 Copy phone number for Vikram Gurjar":
+          - text: "9763088953"
+          - button "Copy phone number for Vikram Gurjar"
+        - cell "14 Oct"
+        - cell "3M"
+        - cell "14 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Vikram Gurjar":
+          - button "Actions for Vikram Gurjar"
+      - row "Select Tanya Mehta 29 Copy seat number 29 Tanya Mehta 9496139526 Copy phone number for Tanya Mehta 9 Oct 3M 9 Jan 2027 Active Actions for Tanya Mehta":
+        - cell "Select Tanya Mehta":
+          - checkbox "Select Tanya Mehta"
+        - cell "29 Copy seat number 29":
+          - text: "29"
+          - button "Copy seat number 29"
+        - cell "Tanya Mehta"
+        - cell "9496139526 Copy phone number for Tanya Mehta":
+          - text: "9496139526"
+          - button "Copy phone number for Tanya Mehta"
+        - cell "9 Oct"
+        - cell "3M"
+        - cell "9 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Tanya Mehta":
+          - button "Actions for Tanya Mehta"
+      - row "Select Arjun Kalal 30 Copy seat number 30 Arjun Kalal 9625934326 Copy phone number for Arjun Kalal 1 Oct 6M 1 Apr 2027 Active Actions for Arjun Kalal":
+        - cell "Select Arjun Kalal":
+          - checkbox "Select Arjun Kalal"
+        - cell "30 Copy seat number 30":
+          - text: "30"
+          - button "Copy seat number 30"
+        - cell "Arjun Kalal"
+        - cell "9625934326 Copy phone number for Arjun Kalal":
+          - text: "9625934326"
+          - button "Copy phone number for Arjun Kalal"
+        - cell "1 Oct"
+        - cell "6M"
+        - cell "1 Apr 2027"
+        - cell "Active"
+        - cell "Actions for Arjun Kalal":
+          - button "Actions for Arjun Kalal"
+      - row "31 Copy seat number 31 (Vacant) — — — — Allot seat 31":
+        - cell
+        - cell "31 Copy seat number 31":
+          - text: "31"
+          - button "Copy seat number 31"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 31":
+          - link "Allot seat 31":
+            - /url: /?seat=31
+            - text: Add
+        - cell
+      - row "Select Sakshi Joshi 32 Copy seat number 32 Sakshi Joshi 9278850283 Copy phone number for Sakshi Joshi 27 Aug 3M 27 Nov Fee due Actions for Sakshi Joshi":
+        - cell "Select Sakshi Joshi":
+          - checkbox "Select Sakshi Joshi"
+        - cell "32 Copy seat number 32":
+          - text: "32"
+          - button "Copy seat number 32"
+        - cell "Sakshi Joshi"
+        - cell "9278850283 Copy phone number for Sakshi Joshi":
+          - text: "9278850283"
+          - button "Copy phone number for Sakshi Joshi"
+        - cell "27 Aug"
+        - cell "3M"
+        - cell "27 Nov"
+        - cell "Fee due"
+        - cell "Actions for Sakshi Joshi":
+          - button "Actions for Sakshi Joshi"
+      - row "33 Copy seat number 33 (Vacant) — — — — Allot seat 33":
+        - cell
+        - cell "33 Copy seat number 33":
+          - text: "33"
+          - button "Copy seat number 33"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 33":
+          - link "Allot seat 33":
+            - /url: /?seat=33
+            - text: Add
+        - cell
+      - row "Select Deepak Regar 34 Copy seat number 34 Deepak Regar 9126434028 Copy phone number for Deepak Regar 2 Jul 6M 2 Jan 2027 Active Actions for Deepak Regar":
+        - cell "Select Deepak Regar":
+          - checkbox "Select Deepak Regar"
+        - cell "34 Copy seat number 34":
+          - text: "34"
+          - button "Copy seat number 34"
+        - cell "Deepak Regar"
+        - cell "9126434028 Copy phone number for Deepak Regar":
+          - text: "9126434028"
+          - button "Copy phone number for Deepak Regar"
+        - cell "2 Jul"
+        - cell "6M"
+        - cell "2 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Deepak Regar":
+          - button "Actions for Deepak Regar"
+      - row "Select Neha Bhanawat 35 Copy seat number 35 Neha Bhanawat 9286203026 Copy phone number for Neha Bhanawat 6 May 6M 6 Nov Fee due Actions for Neha Bhanawat":
+        - cell "Select Neha Bhanawat":
+          - checkbox "Select Neha Bhanawat"
+        - cell "35 Copy seat number 35":
+          - text: "35"
+          - button "Copy seat number 35"
+        - cell "Neha Bhanawat"
+        - cell "9286203026 Copy phone number for Neha Bhanawat":
+          - text: "9286203026"
+          - button "Copy phone number for Neha Bhanawat"
+        - cell "6 May"
+        - cell "6M"
+        - cell "6 Nov"
+        - cell "Fee due"
+        - cell "Actions for Neha Bhanawat":
+          - button "Actions for Neha Bhanawat"
+      - row "36 Copy seat number 36 (Vacant) — — — — Allot seat 36":
+        - cell
+        - cell "36 Copy seat number 36":
+          - text: "36"
+          - button "Copy seat number 36"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 36":
+          - link "Allot seat 36":
+            - /url: /?seat=36
+            - text: Add
+        - cell
+      - row "37 Copy seat number 37 (Vacant) — — — — Allot seat 37":
+        - cell
+        - cell "37 Copy seat number 37":
+          - text: "37"
+          - button "Copy seat number 37"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 37":
+          - link "Allot seat 37":
+            - /url: /?seat=37
+            - text: Add
+        - cell
+      - row "Select Raghav Dashora 38 Copy seat number 38 Raghav Dashora 9571131515 Copy phone number for Raghav Dashora 11 Oct 3M 11 Jan 2027 Active Actions for Raghav Dashora":
+        - cell "Select Raghav Dashora":
+          - checkbox "Select Raghav Dashora"
+        - cell "38 Copy seat number 38":
+          - text: "38"
+          - button "Copy seat number 38"
+        - cell "Raghav Dashora"
+        - cell "9571131515 Copy phone number for Raghav Dashora":
+          - text: "9571131515"
+          - button "Copy phone number for Raghav Dashora"
+        - cell "11 Oct"
+        - cell "3M"
+        - cell "11 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Raghav Dashora":
+          - button "Actions for Raghav Dashora"
+      - row "Select Simran Kaur Bhatia 39 Copy seat number 39 Simran Kaur Bhatia 9732827949 Copy phone number for Simran Kaur Bhatia 30 Aug 3M 30 Nov Active Actions for Simran Kaur Bhatia":
+        - cell "Select Simran Kaur Bhatia":
+          - checkbox "Select Simran Kaur Bhatia"
+        - cell "39 Copy seat number 39":
+          - text: "39"
+          - button "Copy seat number 39"
+        - cell "Simran Kaur Bhatia"
+        - cell "9732827949 Copy phone number for Simran Kaur Bhatia":
+          - text: "9732827949"
+          - button "Copy phone number for Simran Kaur Bhatia"
+        - cell "30 Aug"
+        - cell "3M"
+        - cell "30 Nov"
+        - cell "Active"
+        - cell "Actions for Simran Kaur Bhatia":
+          - button "Actions for Simran Kaur Bhatia"
+      - row "40 Copy seat number 40 (Vacant) — — — — Allot seat 40":
+        - cell
+        - cell "40 Copy seat number 40":
+          - text: "40"
+          - button "Copy seat number 40"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 40":
+          - link "Allot seat 40":
+            - /url: /?seat=40
+            - text: Add
+        - cell
+      - row "41 Copy seat number 41 (Vacant) — — — — Allot seat 41":
+        - cell
+        - cell "41 Copy seat number 41":
+          - text: "41"
+          - button "Copy seat number 41"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 41":
+          - link "Allot seat 41":
+            - /url: /?seat=41
+            - text: Add
+        - cell
+      - row "Select Mohit Sen 42 Copy seat number 42 Mohit Sen 9517853644 Copy phone number for Mohit Sen 28 Aug 3M 28 Nov Active Actions for Mohit Sen":
+        - cell "Select Mohit Sen":
+          - checkbox "Select Mohit Sen"
+        - cell "42 Copy seat number 42":
+          - text: "42"
+          - button "Copy seat number 42"
+        - cell "Mohit Sen"
+        - cell "9517853644 Copy phone number for Mohit Sen":
+          - text: "9517853644"
+          - button "Copy phone number for Mohit Sen"
+        - cell "28 Aug"
+        - cell "3M"
+        - cell "28 Nov"
+        - cell "Active"
+        - cell "Actions for Mohit Sen":
+          - button "Actions for Mohit Sen"
+      - row "43 Copy seat number 43 (Vacant) — — — — Allot seat 43":
+        - cell
+        - cell "43 Copy seat number 43":
+          - text: "43"
+          - button "Copy seat number 43"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 43":
+          - link "Allot seat 43":
+            - /url: /?seat=43
+            - text: Add
+        - cell
+      - row "Select Anushka Soni 44 Copy seat number 44 Anushka Soni 9452225971 Copy phone number for Anushka Soni 21 Aug 3M 21 Nov Active Actions for Anushka Soni":
+        - cell "Select Anushka Soni":
+          - checkbox "Select Anushka Soni"
+        - cell "44 Copy seat number 44":
+          - text: "44"
+          - button "Copy seat number 44"
+        - cell "Anushka Soni"
+        - cell "9452225971 Copy phone number for Anushka Soni":
+          - text: "9452225971"
+          - button "Copy phone number for Anushka Soni"
+        - cell "21 Aug"
+        - cell "3M"
+        - cell "21 Nov"
+        - cell "Active"
+        - cell "Actions for Anushka Soni":
+          - button "Actions for Anushka Soni"
+      - row "Select Lokesh Teli 45 Copy seat number 45 Lokesh Teli 9396711754 Copy phone number for Lokesh Teli 15 Oct 3M 15 Jan 2027 Active Actions for Lokesh Teli":
+        - cell "Select Lokesh Teli":
+          - checkbox "Select Lokesh Teli"
+        - cell "45 Copy seat number 45":
+          - text: "45"
+          - button "Copy seat number 45"
+        - cell "Lokesh Teli"
+        - cell "9396711754 Copy phone number for Lokesh Teli":
+          - text: "9396711754"
+          - button "Copy phone number for Lokesh Teli"
+        - cell "15 Oct"
+        - cell "3M"
+        - cell "15 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Lokesh Teli":
+          - button "Actions for Lokesh Teli"
+      - row "Select Preeti Sanadhya 46 Copy seat number 46 Preeti Sanadhya 9221964711 Copy phone number for Preeti Sanadhya 7 Aug 3M 7 Nov Fee due Actions for Preeti Sanadhya":
+        - cell "Select Preeti Sanadhya":
+          - checkbox "Select Preeti Sanadhya"
+        - cell "46 Copy seat number 46":
+          - text: "46"
+          - button "Copy seat number 46"
+        - cell "Preeti Sanadhya"
+        - cell "9221964711 Copy phone number for Preeti Sanadhya":
+          - text: "9221964711"
+          - button "Copy phone number for Preeti Sanadhya"
+        - cell "7 Aug"
+        - cell "3M"
+        - cell "7 Nov"
+        - cell "Fee due"
+        - cell "Actions for Preeti Sanadhya":
+          - button "Actions for Preeti Sanadhya"
+      - row "Select Ankit Choubisa 47 Copy seat number 47 Ankit Choubisa 9459244346 Copy phone number for Ankit Choubisa 3 May 6M 3 Nov Active Actions for Ankit Choubisa":
+        - cell "Select Ankit Choubisa":
+          - checkbox "Select Ankit Choubisa"
+        - cell "47 Copy seat number 47":
+          - text: "47"
+          - button "Copy seat number 47"
+        - cell "Ankit Choubisa"
+        - cell "9459244346 Copy phone number for Ankit Choubisa":
+          - text: "9459244346"
+          - button "Copy phone number for Ankit Choubisa"
+        - cell "3 May"
+        - cell "6M"
+        - cell "3 Nov"
+        - cell "Active"
+        - cell "Actions for Ankit Choubisa":
+          - button "Actions for Ankit Choubisa"
+      - row "Select Gauri Shrimali 48 Copy seat number 48 Gauri Shrimali 9999364638 Copy phone number for Gauri Shrimali 4 Nov 2025 1Y 4 Nov Active Actions for Gauri Shrimali":
+        - cell "Select Gauri Shrimali":
+          - checkbox "Select Gauri Shrimali"
+        - cell "48 Copy seat number 48":
+          - text: "48"
+          - button "Copy seat number 48"
+        - cell "Gauri Shrimali"
+        - cell "9999364638 Copy phone number for Gauri Shrimali":
+          - text: "9999364638"
+          - button "Copy phone number for Gauri Shrimali"
+        - cell "4 Nov 2025"
+        - cell "1Y"
+        - cell "4 Nov"
+        - cell "Active"
+        - cell "Actions for Gauri Shrimali":
+          - button "Actions for Gauri Shrimali"
+      - row "Select Tushar Bhavsar 49 Copy seat number 49 Tushar Bhavsar 9681500768 Copy phone number for Tushar Bhavsar 24 Aug 6M 24 Feb 2027 Fee due Actions for Tushar Bhavsar":
+        - cell "Select Tushar Bhavsar":
+          - checkbox "Select Tushar Bhavsar"
+        - cell "49 Copy seat number 49":
+          - text: "49"
+          - button "Copy seat number 49"
+        - cell "Tushar Bhavsar"
+        - cell "9681500768 Copy phone number for Tushar Bhavsar":
+          - text: "9681500768"
+          - button "Copy phone number for Tushar Bhavsar"
+        - cell "24 Aug"
+        - cell "6M"
+        - cell "24 Feb 2027"
+        - cell "Fee due"
+        - cell "Actions for Tushar Bhavsar":
+          - button "Actions for Tushar Bhavsar"
+      - row "Select Ridhima Pandya 50 Copy seat number 50 Ridhima Pandya 9118127629 Copy phone number for Ridhima Pandya 20 Oct 3M 20 Jan 2027 Active Actions for Ridhima Pandya":
+        - cell "Select Ridhima Pandya":
+          - checkbox "Select Ridhima Pandya"
+        - cell "50 Copy seat number 50":
+          - text: "50"
+          - button "Copy seat number 50"
+        - cell "Ridhima Pandya"
+        - cell "9118127629 Copy phone number for Ridhima Pandya":
+          - text: "9118127629"
+          - button "Copy phone number for Ridhima Pandya"
+        - cell "20 Oct"
+        - cell "3M"
+        - cell "20 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Ridhima Pandya":
+          - button "Actions for Ridhima Pandya"
+      - row "Select Naveen Jat 51 Copy seat number 51 Naveen Jat 9618998351 Copy phone number for Naveen Jat 6 Oct 1M 6 Nov Active Actions for Naveen Jat":
+        - cell "Select Naveen Jat":
+          - checkbox "Select Naveen Jat"
+        - cell "51 Copy seat number 51":
+          - text: "51"
+          - button "Copy seat number 51"
+        - cell "Naveen Jat"
+        - cell "9618998351 Copy phone number for Naveen Jat":
+          - text: "9618998351"
+          - button "Copy phone number for Naveen Jat"
+        - cell "6 Oct"
+        - cell "1M"
+        - cell "6 Nov"
+        - cell "Active"
+        - cell "Actions for Naveen Jat":
+          - button "Actions for Naveen Jat"
+      - row "Select Aditi Vaishnav 52 Copy seat number 52 Aditi Vaishnav 9521698752 Copy phone number for Aditi Vaishnav 23 Jul 6M 23 Jan 2027 Active Actions for Aditi Vaishnav":
+        - cell "Select Aditi Vaishnav":
+          - checkbox "Select Aditi Vaishnav"
+        - cell "52 Copy seat number 52":
+          - text: "52"
+          - button "Copy seat number 52"
+        - cell "Aditi Vaishnav"
+        - cell "9521698752 Copy phone number for Aditi Vaishnav":
+          - text: "9521698752"
+          - button "Copy phone number for Aditi Vaishnav"
+        - cell "23 Jul"
+        - cell "6M"
+        - cell "23 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Aditi Vaishnav":
+          - button "Actions for Aditi Vaishnav"
+      - row "Select Shubham Mundra 53 Copy seat number 53 Shubham Mundra 9439734494 Copy phone number for Shubham Mundra 25 Oct 3M 25 Jan 2027 Active Actions for Shubham Mundra":
+        - cell "Select Shubham Mundra":
+          - checkbox "Select Shubham Mundra"
+        - cell "53 Copy seat number 53":
+          - text: "53"
+          - button "Copy seat number 53"
+        - cell "Shubham Mundra"
+        - cell "9439734494 Copy phone number for Shubham Mundra":
+          - text: "9439734494"
+          - button "Copy phone number for Shubham Mundra"
+        - cell "25 Oct"
+        - cell "3M"
+        - cell "25 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Shubham Mundra":
+          - button "Actions for Shubham Mundra"
+      - row "54 Copy seat number 54 (Vacant) — — — — Allot seat 54":
+        - cell
+        - cell "54 Copy seat number 54":
+          - text: "54"
+          - button "Copy seat number 54"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 54":
+          - link "Allot seat 54":
+            - /url: /?seat=54
+            - text: Add
+        - cell
+      - row "55 Copy seat number 55 (Vacant) — — — — Allot seat 55":
+        - cell
+        - cell "55 Copy seat number 55":
+          - text: "55"
+          - button "Copy seat number 55"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 55":
+          - link "Allot seat 55":
+            - /url: /?seat=55
+            - text: Add
+        - cell
+      - row "Select Palak Agarwal 56 Copy seat number 56 Palak Agarwal 9105311927 Copy phone number for Palak Agarwal 11 Oct 3M 11 Jan 2027 Fee due Actions for Palak Agarwal":
+        - cell "Select Palak Agarwal":
+          - checkbox "Select Palak Agarwal"
+        - cell "56 Copy seat number 56":
+          - text: "56"
+          - button "Copy seat number 56"
+        - cell "Palak Agarwal"
+        - cell "9105311927 Copy phone number for Palak Agarwal":
+          - text: "9105311927"
+          - button "Copy phone number for Palak Agarwal"
+        - cell "11 Oct"
+        - cell "3M"
+        - cell "11 Jan 2027"
+        - cell "Fee due"
+        - cell "Actions for Palak Agarwal":
+          - button "Actions for Palak Agarwal"
+      - row "57 Copy seat number 57 (Vacant) — — — — Allot seat 57":
+        - cell
+        - cell "57 Copy seat number 57":
+          - text: "57"
+          - button "Copy seat number 57"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 57":
+          - link "Allot seat 57":
+            - /url: /?seat=57
+            - text: Add
+        - cell
+      - row "Select Rahul Meghwal 58 Copy seat number 58 Rahul Meghwal 9204312288 Copy phone number for Rahul Meghwal 26 Aug 6M 26 Feb 2027 Active Actions for Rahul Meghwal":
+        - cell "Select Rahul Meghwal":
+          - checkbox "Select Rahul Meghwal"
+        - cell "58 Copy seat number 58":
+          - text: "58"
+          - button "Copy seat number 58"
+        - cell "Rahul Meghwal"
+        - cell "9204312288 Copy phone number for Rahul Meghwal":
+          - text: "9204312288"
+          - button "Copy phone number for Rahul Meghwal"
+        - cell "26 Aug"
+        - cell "6M"
+        - cell "26 Feb 2027"
+        - cell "Active"
+        - cell "Actions for Rahul Meghwal":
+          - button "Actions for Rahul Meghwal"
+      - row "Select Khushi Rawal 59 Copy seat number 59 Khushi Rawal 9851409268 Copy phone number for Khushi Rawal 8 Oct 3M 8 Jan 2027 Active Actions for Khushi Rawal":
+        - cell "Select Khushi Rawal":
+          - checkbox "Select Khushi Rawal"
+        - cell "59 Copy seat number 59":
+          - text: "59"
+          - button "Copy seat number 59"
+        - cell "Khushi Rawal"
+        - cell "9851409268 Copy phone number for Khushi Rawal":
+          - text: "9851409268"
+          - button "Copy phone number for Khushi Rawal"
+        - cell "8 Oct"
+        - cell "3M"
+        - cell "8 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Khushi Rawal":
+          - button "Actions for Khushi Rawal"
+      - row "Select Jatin Maheshwari 60 Copy seat number 60 Jatin Maheshwari 9381331217 Copy phone number for Jatin Maheshwari 4 Aug 3M 4 Nov Active Actions for Jatin Maheshwari":
+        - cell "Select Jatin Maheshwari":
+          - checkbox "Select Jatin Maheshwari"
+        - cell "60 Copy seat number 60":
+          - text: "60"
+          - button "Copy seat number 60"
+        - cell "Jatin Maheshwari"
+        - cell "9381331217 Copy phone number for Jatin Maheshwari":
+          - text: "9381331217"
+          - button "Copy phone number for Jatin Maheshwari"
+        - cell "4 Aug"
+        - cell "3M"
+        - cell "4 Nov"
+        - cell "Active"
+        - cell "Actions for Jatin Maheshwari":
+          - button "Actions for Jatin Maheshwari"
+      - row "Select Bhoomika Shaktawat 61 Copy seat number 61 Bhoomika Shaktawat 9423978984 Copy phone number for Bhoomika Shaktawat 6 Oct 3M 6 Jan 2027 Active Actions for Bhoomika Shaktawat":
+        - cell "Select Bhoomika Shaktawat":
+          - checkbox "Select Bhoomika Shaktawat"
+        - cell "61 Copy seat number 61":
+          - text: "61"
+          - button "Copy seat number 61"
+        - cell "Bhoomika Shaktawat"
+        - cell "9423978984 Copy phone number for Bhoomika Shaktawat":
+          - text: "9423978984"
+          - button "Copy phone number for Bhoomika Shaktawat"
+        - cell "6 Oct"
+        - cell "3M"
+        - cell "6 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Bhoomika Shaktawat":
+          - button "Actions for Bhoomika Shaktawat"
+      - row "Select Siddharth Nagar 62 Copy seat number 62 Siddharth Nagar 9477481356 Copy phone number for Siddharth Nagar 22 Oct 3M 22 Jan 2027 Active Actions for Siddharth Nagar":
+        - cell "Select Siddharth Nagar":
+          - checkbox "Select Siddharth Nagar"
+        - cell "62 Copy seat number 62":
+          - text: "62"
+          - button "Copy seat number 62"
+        - cell "Siddharth Nagar"
+        - cell "9477481356 Copy phone number for Siddharth Nagar":
+          - text: "9477481356"
+          - button "Copy phone number for Siddharth Nagar"
+        - cell "22 Oct"
+        - cell "3M"
+        - cell "22 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Siddharth Nagar":
+          - button "Actions for Siddharth Nagar"
+      - row "Select Muskan Qureshi 63 Copy seat number 63 Muskan Qureshi 9250062620 Copy phone number for Muskan Qureshi 9 Aug 3M 9 Nov Fee due Actions for Muskan Qureshi":
+        - cell "Select Muskan Qureshi":
+          - checkbox "Select Muskan Qureshi"
+        - cell "63 Copy seat number 63":
+          - text: "63"
+          - button "Copy seat number 63"
+        - cell "Muskan Qureshi"
+        - cell "9250062620 Copy phone number for Muskan Qureshi":
+          - text: "9250062620"
+          - button "Copy phone number for Muskan Qureshi"
+        - cell "9 Aug"
+        - cell "3M"
+        - cell "9 Nov"
+        - cell "Fee due"
+        - cell "Actions for Muskan Qureshi":
+          - button "Actions for Muskan Qureshi"
+      - row "Select Pankaj Damor 64 Copy seat number 64 Pankaj Damor 9826666105 Copy phone number for Pankaj Damor 10 Jul 6M 10 Jan 2027 Active Actions for Pankaj Damor":
+        - cell "Select Pankaj Damor":
+          - checkbox "Select Pankaj Damor"
+        - cell "64 Copy seat number 64":
+          - text: "64"
+          - button "Copy seat number 64"
+        - cell "Pankaj Damor"
+        - cell "9826666105 Copy phone number for Pankaj Damor":
+          - text: "9826666105"
+          - button "Copy phone number for Pankaj Damor"
+        - cell "10 Jul"
+        - cell "6M"
+        - cell "10 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Pankaj Damor":
+          - button "Actions for Pankaj Damor"
+      - row "Select Aishwarya Bohra 65 Copy seat number 65 Aishwarya Bohra 9751598853 Copy phone number for Aishwarya Bohra 4 Jul 1Y 4 Jul 2027 Active Actions for Aishwarya Bohra":
+        - cell "Select Aishwarya Bohra":
+          - checkbox "Select Aishwarya Bohra"
+        - cell "65 Copy seat number 65":
+          - text: "65"
+          - button "Copy seat number 65"
+        - cell "Aishwarya Bohra"
+        - cell "9751598853 Copy phone number for Aishwarya Bohra":
+          - text: "9751598853"
+          - button "Copy phone number for Aishwarya Bohra"
+        - cell "4 Jul"
+        - cell "1Y"
+        - cell "4 Jul 2027"
+        - cell "Active"
+        - cell "Actions for Aishwarya Bohra":
+          - button "Actions for Aishwarya Bohra"
+      - row "Select Nitesh Kumawat 66 Copy seat number 66 Nitesh Kumawat 9302609241 Copy phone number for Nitesh Kumawat 6 Sept 3M 6 Dec Active Actions for Nitesh Kumawat":
+        - cell "Select Nitesh Kumawat":
+          - checkbox "Select Nitesh Kumawat"
+        - cell "66 Copy seat number 66":
+          - text: "66"
+          - button "Copy seat number 66"
+        - cell "Nitesh Kumawat"
+        - cell "9302609241 Copy phone number for Nitesh Kumawat":
+          - text: "9302609241"
+          - button "Copy phone number for Nitesh Kumawat"
+        - cell "6 Sept"
+        - cell "3M"
+        - cell "6 Dec"
+        - cell "Active"
+        - cell "Actions for Nitesh Kumawat":
+          - button "Actions for Nitesh Kumawat"
+      - row "Select Vaishnavi Audichya 67 Copy seat number 67 Vaishnavi Audichya 9971485329 Copy phone number for Vaishnavi Audichya 30 Jul 3M 30 Oct Expiring soon Actions for Vaishnavi Audichya":
+        - cell "Select Vaishnavi Audichya":
+          - checkbox "Select Vaishnavi Audichya"
+        - cell "67 Copy seat number 67":
+          - text: "67"
+          - button "Copy seat number 67"
+        - cell "Vaishnavi Audichya"
+        - cell "9971485329 Copy phone number for Vaishnavi Audichya":
+          - text: "9971485329"
+          - button "Copy phone number for Vaishnavi Audichya"
+        - cell "30 Jul"
+        - cell "3M"
+        - cell "30 Oct"
+        - cell "Expiring soon"
+        - cell "Actions for Vaishnavi Audichya":
+          - button "Actions for Vaishnavi Audichya"
+      - row "68 Copy seat number 68 (Vacant) — — — — Allot seat 68":
+        - cell
+        - cell "68 Copy seat number 68":
+          - text: "68"
+          - button "Copy seat number 68"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 68":
+          - link "Allot seat 68":
+            - /url: /?seat=68
+            - text: Add
+        - cell
+      - row "69 Copy seat number 69 (Vacant) — — — — Allot seat 69":
+        - cell
+        - cell "69 Copy seat number 69":
+          - text: "69"
+          - button "Copy seat number 69"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 69":
+          - link "Allot seat 69":
+            - /url: /?seat=69
+            - text: Add
+        - cell
+      - row "Select Dhruv Sompura 70 Copy seat number 70 Dhruv Sompura 9510085511 Copy phone number for Dhruv Sompura 16 Oct 2025 1Y 16 Oct Expired Actions for Dhruv Sompura":
+        - cell "Select Dhruv Sompura":
+          - checkbox "Select Dhruv Sompura"
+        - cell "70 Copy seat number 70":
+          - text: "70"
+          - button "Copy seat number 70"
+        - cell "Dhruv Sompura"
+        - cell "9510085511 Copy phone number for Dhruv Sompura":
+          - text: "9510085511"
+          - button "Copy phone number for Dhruv Sompura"
+        - cell "16 Oct 2025"
+        - cell "1Y"
+        - cell "16 Oct"
+        - cell "Expired"
+        - cell "Actions for Dhruv Sompura":
+          - button "Actions for Dhruv Sompura"
+      - row "71 Copy seat number 71 (Vacant) — — — — Allot seat 71":
+        - cell
+        - cell "71 Copy seat number 71":
+          - text: "71"
+          - button "Copy seat number 71"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 71":
+          - link "Allot seat 71":
+            - /url: /?seat=71
+            - text: Add
+        - cell
+      - row "Select Kritika Vyas 72 Copy seat number 72 Kritika Vyas 9997837067 Copy phone number for Kritika Vyas 28 May 6M 28 Nov Active Actions for Kritika Vyas":
+        - cell "Select Kritika Vyas":
+          - checkbox "Select Kritika Vyas"
+        - cell "72 Copy seat number 72":
+          - text: "72"
+          - button "Copy seat number 72"
+        - cell "Kritika Vyas"
+        - cell "9997837067 Copy phone number for Kritika Vyas":
+          - text: "9997837067"
+          - button "Copy phone number for Kritika Vyas"
+        - cell "28 May"
+        - cell "6M"
+        - cell "28 Nov"
+        - cell "Active"
+        - cell "Actions for Kritika Vyas":
+          - button "Actions for Kritika Vyas"
+      - row "73 Copy seat number 73 (Vacant) — — — — Allot seat 73":
+        - cell
+        - cell "73 Copy seat number 73":
+          - text: "73"
+          - button "Copy seat number 73"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 73":
+          - link "Allot seat 73":
+            - /url: /?seat=73
+            - text: Add
+        - cell
+      - row "Select Abhishek Charan 74 Copy seat number 74 Abhishek Charan 9332518768 Copy phone number for Abhishek Charan 6 Aug 3M 6 Nov Active Actions for Abhishek Charan":
+        - cell "Select Abhishek Charan":
+          - checkbox "Select Abhishek Charan"
+        - cell "74 Copy seat number 74":
+          - text: "74"
+          - button "Copy seat number 74"
+        - cell "Abhishek Charan"
+        - cell "9332518768 Copy phone number for Abhishek Charan":
+          - text: "9332518768"
+          - button "Copy phone number for Abhishek Charan"
+        - cell "6 Aug"
+        - cell "3M"
+        - cell "6 Nov"
+        - cell "Active"
+        - cell "Actions for Abhishek Charan":
+          - button "Actions for Abhishek Charan"
+      - row "Select Sanya Lodha 75 Copy seat number 75 Sanya Lodha 9541694808 Copy phone number for Sanya Lodha 6 Nov 2025 1Y 6 Nov Active Actions for Sanya Lodha":
+        - cell "Select Sanya Lodha":
+          - checkbox "Select Sanya Lodha"
+        - cell "75 Copy seat number 75":
+          - text: "75"
+          - button "Copy seat number 75"
+        - cell "Sanya Lodha"
+        - cell "9541694808 Copy phone number for Sanya Lodha":
+          - text: "9541694808"
+          - button "Copy phone number for Sanya Lodha"
+        - cell "6 Nov 2025"
+        - cell "1Y"
+        - cell "6 Nov"
+        - cell "Active"
+        - cell "Actions for Sanya Lodha":
+          - button "Actions for Sanya Lodha"
+      - row "Select Prateek Bapna 76 Copy seat number 76 Prateek Bapna 9955031183 Copy phone number for Prateek Bapna 6 May 6M 6 Nov Active Actions for Prateek Bapna":
+        - cell "Select Prateek Bapna":
+          - checkbox "Select Prateek Bapna"
+        - cell "76 Copy seat number 76":
+          - text: "76"
+          - button "Copy seat number 76"
+        - cell "Prateek Bapna"
+        - cell "9955031183 Copy phone number for Prateek Bapna":
+          - text: "9955031183"
+          - button "Copy phone number for Prateek Bapna"
+        - cell "6 May"
+        - cell "6M"
+        - cell "6 Nov"
+        - cell "Active"
+        - cell "Actions for Prateek Bapna":
+          - button "Actions for Prateek Bapna"
+      - row "77 Copy seat number 77 (Vacant) — — — — Allot seat 77":
+        - cell
+        - cell "77 Copy seat number 77":
+          - text: "77"
+          - button "Copy seat number 77"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 77":
+          - link "Allot seat 77":
+            - /url: /?seat=77
+            - text: Add
+        - cell
+      - row "Select Isha Ranawat 78 Copy seat number 78 Isha Ranawat 9174414455 Copy phone number for Isha Ranawat 24 Oct 1M 24 Nov Active Actions for Isha Ranawat":
+        - cell "Select Isha Ranawat":
+          - checkbox "Select Isha Ranawat"
+        - cell "78 Copy seat number 78":
+          - text: "78"
+          - button "Copy seat number 78"
+        - cell "Isha Ranawat"
+        - cell "9174414455 Copy phone number for Isha Ranawat":
+          - text: "9174414455"
+          - button "Copy phone number for Isha Ranawat"
+        - cell "24 Oct"
+        - cell "1M"
+        - cell "24 Nov"
+        - cell "Active"
+        - cell "Actions for Isha Ranawat":
+          - button "Actions for Isha Ranawat"
+      - row "Select Gaurav Solanki 79 Copy seat number 79 Gaurav Solanki 9497537279 Copy phone number for Gaurav Solanki 6 Aug 3M 6 Nov Active Actions for Gaurav Solanki":
+        - cell "Select Gaurav Solanki":
+          - checkbox "Select Gaurav Solanki"
+        - cell "79 Copy seat number 79":
+          - text: "79"
+          - button "Copy seat number 79"
+        - cell "Gaurav Solanki"
+        - cell "9497537279 Copy phone number for Gaurav Solanki":
+          - text: "9497537279"
+          - button "Copy phone number for Gaurav Solanki"
+        - cell "6 Aug"
+        - cell "3M"
+        - cell "6 Nov"
+        - cell "Active"
+        - cell "Actions for Gaurav Solanki":
+          - button "Actions for Gaurav Solanki"
+      - row "Select Mahima Tak 80 Copy seat number 80 Mahima Tak 9609304177 Copy phone number for Mahima Tak 20 May 6M 20 Nov Active Actions for Mahima Tak":
+        - cell "Select Mahima Tak":
+          - checkbox "Select Mahima Tak"
+        - cell "80 Copy seat number 80":
+          - text: "80"
+          - button "Copy seat number 80"
+        - cell "Mahima Tak"
+        - cell "9609304177 Copy phone number for Mahima Tak":
+          - text: "9609304177"
+          - button "Copy phone number for Mahima Tak"
+        - cell "20 May"
+        - cell "6M"
+        - cell "20 Nov"
+        - cell "Active"
+        - cell "Actions for Mahima Tak":
+          - button "Actions for Mahima Tak"
+      - row "Select Vishal Banjara 81 Copy seat number 81 Vishal Banjara 9872040820 Copy phone number for Vishal Banjara 10 Oct 1M 10 Nov Active Actions for Vishal Banjara":
+        - cell "Select Vishal Banjara":
+          - checkbox "Select Vishal Banjara"
+        - cell "81 Copy seat number 81":
+          - text: "81"
+          - button "Copy seat number 81"
+        - cell "Vishal Banjara"
+        - cell "9872040820 Copy phone number for Vishal Banjara":
+          - text: "9872040820"
+          - button "Copy phone number for Vishal Banjara"
+        - cell "10 Oct"
+        - cell "1M"
+        - cell "10 Nov"
+        - cell "Active"
+        - cell "Actions for Vishal Banjara":
+          - button "Actions for Vishal Banjara"
+      - row "Select Aarushi Kumbhat 82 Copy seat number 82 Aarushi Kumbhat 9171429717 Copy phone number for Aarushi Kumbhat 21 Oct 1M 21 Nov Active Actions for Aarushi Kumbhat":
+        - cell "Select Aarushi Kumbhat":
+          - checkbox "Select Aarushi Kumbhat"
+        - cell "82 Copy seat number 82":
+          - text: "82"
+          - button "Copy seat number 82"
+        - cell "Aarushi Kumbhat"
+        - cell "9171429717 Copy phone number for Aarushi Kumbhat":
+          - text: "9171429717"
+          - button "Copy phone number for Aarushi Kumbhat"
+        - cell "21 Oct"
+        - cell "1M"
+        - cell "21 Nov"
+        - cell "Active"
+        - cell "Actions for Aarushi Kumbhat":
+          - button "Actions for Aarushi Kumbhat"
+      - row "Select Hemant Gehlot 83 Copy seat number 83 Hemant Gehlot 9220829224 Copy phone number for Hemant Gehlot 12 Aug 3M 12 Nov Active Actions for Hemant Gehlot":
+        - cell "Select Hemant Gehlot":
+          - checkbox "Select Hemant Gehlot"
+        - cell "83 Copy seat number 83":
+          - text: "83"
+          - button "Copy seat number 83"
+        - cell "Hemant Gehlot"
+        - cell "9220829224 Copy phone number for Hemant Gehlot":
+          - text: "9220829224"
+          - button "Copy phone number for Hemant Gehlot"
+        - cell "12 Aug"
+        - cell "3M"
+        - cell "12 Nov"
+        - cell "Active"
+        - cell "Actions for Hemant Gehlot":
+          - button "Actions for Hemant Gehlot"
+      - row "Select Riya Sukhwal 84 Copy seat number 84 Riya Sukhwal 9267241096 Copy phone number for Riya Sukhwal 9 Oct 3M 9 Jan 2027 Active Actions for Riya Sukhwal":
+        - cell "Select Riya Sukhwal":
+          - checkbox "Select Riya Sukhwal"
+        - cell "84 Copy seat number 84":
+          - text: "84"
+          - button "Copy seat number 84"
+        - cell "Riya Sukhwal"
+        - cell "9267241096 Copy phone number for Riya Sukhwal":
+          - text: "9267241096"
+          - button "Copy phone number for Riya Sukhwal"
+        - cell "9 Oct"
+        - cell "3M"
+        - cell "9 Jan 2027"
+        - cell "Active"
+        - cell "Actions for Riya Sukhwal":
+          - button "Actions for Riya Sukhwal"
+      - row "Select Kunal Dhakad 85 Copy seat number 85 Kunal Dhakad 9712903428 Copy phone number for Kunal Dhakad 3 Sept 3M 3 Dec Fee due Actions for Kunal Dhakad":
+        - cell "Select Kunal Dhakad":
+          - checkbox "Select Kunal Dhakad"
+        - cell "85 Copy seat number 85":
+          - text: "85"
+          - button "Copy seat number 85"
+        - cell "Kunal Dhakad"
+        - cell "9712903428 Copy phone number for Kunal Dhakad":
+          - text: "9712903428"
+          - button "Copy phone number for Kunal Dhakad"
+        - cell "3 Sept"
+        - cell "3M"
+        - cell "3 Dec"
+        - cell "Fee due"
+        - cell "Actions for Kunal Dhakad":
+          - button "Actions for Kunal Dhakad"
+      - row "86 Copy seat number 86 (Vacant) — — — — Allot seat 86":
+        - cell
+        - cell "86 Copy seat number 86":
+          - text: "86"
+          - button "Copy seat number 86"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 86":
+          - link "Allot seat 86":
+            - /url: /?seat=86
+            - text: Add
+        - cell
+      - row "87 Copy seat number 87 (Vacant) — — — — Allot seat 87":
+        - cell
+        - cell "87 Copy seat number 87":
+          - text: "87"
+          - button "Copy seat number 87"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 87":
+          - link "Allot seat 87":
+            - /url: /?seat=87
+            - text: Add
+        - cell
+      - row "Select Swati Ojha 88 Copy seat number 88 Swati Ojha 9298635387 Copy phone number for Swati Ojha 21 Jun 3M 21 Sept Expired Actions for Swati Ojha":
+        - cell "Select Swati Ojha":
+          - checkbox "Select Swati Ojha"
+        - cell "88 Copy seat number 88":
+          - text: "88"
+          - button "Copy seat number 88"
+        - cell "Swati Ojha"
+        - cell "9298635387 Copy phone number for Swati Ojha":
+          - text: "9298635387"
+          - button "Copy phone number for Swati Ojha"
+        - cell "21 Jun"
+        - cell "3M"
+        - cell "21 Sept"
+        - cell "Expired"
+        - cell "Actions for Swati Ojha":
+          - button "Actions for Swati Ojha"
+      - row "Select Nakul Menaria 89 Copy seat number 89 Nakul Menaria 9404985726 Copy phone number for Nakul Menaria 14 Apr 6M 14 Oct Expired Actions for Nakul Menaria":
+        - cell "Select Nakul Menaria":
+          - checkbox "Select Nakul Menaria"
+        - cell "89 Copy seat number 89":
+          - text: "89"
+          - button "Copy seat number 89"
+        - cell "Nakul Menaria"
+        - cell "9404985726 Copy phone number for Nakul Menaria":
+          - text: "9404985726"
+          - button "Copy phone number for Nakul Menaria"
+        - cell "14 Apr"
+        - cell "6M"
+        - cell "14 Oct"
+        - cell "Expired"
+        - cell "Actions for Nakul Menaria":
+          - button "Actions for Nakul Menaria"
+      - row "Select Pallavi Katara 90 Copy seat number 90 Pallavi Katara 9478399637 Copy phone number for Pallavi Katara 28 Sept 3M 28 Dec Active Actions for Pallavi Katara":
+        - cell "Select Pallavi Katara":
+          - checkbox "Select Pallavi Katara"
+        - cell "90 Copy seat number 90":
+          - text: "90"
+          - button "Copy seat number 90"
+        - cell "Pallavi Katara"
+        - cell "9478399637 Copy phone number for Pallavi Katara":
+          - text: "9478399637"
+          - button "Copy phone number for Pallavi Katara"
+        - cell "28 Sept"
+        - cell "3M"
+        - cell "28 Dec"
+        - cell "Active"
+        - cell "Actions for Pallavi Katara":
+          - button "Actions for Pallavi Katara"
+      - row "91 Copy seat number 91 (Vacant) — — — — Allot seat 91":
+        - cell
+        - cell "91 Copy seat number 91":
+          - text: "91"
+          - button "Copy seat number 91"
+        - cell "(Vacant)"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "—"
+        - cell "Allot seat 91":
+          - link "Allot seat 91":
+            - /url: /?seat=91
+            - text: Add
+        - cell
+      - row "Select Ayush Bagora 92 Copy seat number 92 Ayush Bagora 9186122942 Copy phone number for Ayush Bagora 26 Sept 3M 26 Dec Active Actions for Ayush Bagora":
+        - cell "Select Ayush Bagora":
+          - checkbox "Select Ayush Bagora"
+        - cell "92 Copy seat number 92":
+          - text: "92"
+          - button "Copy seat number 92"
+        - cell "Ayush Bagora"
+        - cell "9186122942 Copy phone number for Ayush Bagora":
+          - text: "9186122942"
+          - button "Copy phone number for Ayush Bagora"
+        - cell "26 Sept"
+        - cell "3M"
+        - cell "26 Dec"
+        - cell "Active"
+        - cell "Actions for Ayush Bagora":
+          - button "Actions for Ayush Bagora"
+      - row "Select Snehal Bhandari 93 Copy seat number 93 Snehal Bhandari 9109559178 Copy phone number for Snehal Bhandari 26 Sept 6M 26 Mar 2027 Active Actions for Snehal Bhandari":
+        - cell "Select Snehal Bhandari":
+          - checkbox "Select Snehal Bhandari"
+        - cell "93 Copy seat number 93":
+          - text: "93"
+          - button "Copy seat number 93"
+        - cell "Snehal Bhandari"
+        - cell "9109559178 Copy phone number for Snehal Bhandari":
+          - text: "9109559178"
+          - button "Copy phone number for Snehal Bhandari"
+        - cell "26 Sept"
+        - cell "6M"
+        - cell "26 Mar 2027"
+        - cell "Active"
+        - cell "Actions for Snehal Bhandari":
+          - button "Actions for Snehal Bhandari"
+      - row "Select Rajat Vyas 94 Copy seat number 94 Rajat Vyas 9586658421 Copy phone number for Rajat Vyas 18 Sept 6M 18 Mar 2027 Active Actions for Rajat Vyas":
+        - cell "Select Rajat Vyas":
+          - checkbox "Select Rajat Vyas"
+        - cell "94 Copy seat number 94":
+          - text: "94"
+          - button "Copy seat number 94"
+        - cell "Rajat Vyas"
+        - cell "9586658421 Copy phone number for Rajat Vyas":
+          - text: "9586658421"
+          - button "Copy phone number for Rajat Vyas"
+        - cell "18 Sept"
+        - cell "6M"
+        - cell "18 Mar 2027"
+        - cell "Active"
+        - cell "Actions for Rajat Vyas":
+          - button "Actions for Rajat Vyas"
+      - row "Select Trisha Chittora 95 Copy seat number 95 Trisha Chittora 9411414283 Copy phone number for Trisha Chittora 20 Apr 6M 20 Oct Expired Actions for Trisha Chittora":
+        - cell "Select Trisha Chittora":
+          - checkbox "Select Trisha Chittora"
+        - cell "95 Copy seat number 95":
+          - text: "95"
+          - button "Copy seat number 95"
+        - cell "Trisha Chittora"
+        - cell "9411414283 Copy phone number for Trisha Chittora":
+          - text: "9411414283"
+          - button "Copy phone number for Trisha Chittora"
+        - cell "20 Apr"
+        - cell "6M"
+        - cell "20 Oct"
+        - cell "Expired"
+        - cell "Actions for Trisha Chittora":
+          - button "Actions for Trisha Chittora"
+- region "Notifications"
