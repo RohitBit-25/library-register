@@ -6,7 +6,7 @@ import { useLang } from '@/hooks/useLang';
 import { cn } from '@/lib/utils';
 
 /* Pixel scenes for "Joining takes a minute", drawn on a 24×24 grid so they
-   sit with the owner's pixel art and stay crisp at any size. */
+   stay crisp at any size. */
 
 const PAL: Record<string, string> = {
   K: '#2B1A0E', C: '#FFFAF3', W: '#FFFFFF', P: '#F6E9D6', B: '#C9813F', D: '#A9652B',

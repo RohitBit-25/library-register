@@ -42,48 +42,40 @@ fees are computed, never typed. Real-world details (phone, WhatsApp,
 address/map, reviews, photos) live in `lib/siteInfo.ts` / `lib/photos.ts` and
 their sections stay hidden until filled.
 
-## Landing: Royal crest (2026-10-30)
-The owner supplied a navy-and-gold emblem (`public/brand/emblem.png`, cut from
-"Shree Ganguar Library Emblem.png" — the artwork misspells the name, so only
-the emblem is used and the name is always real text) and chose the **Royal
-crest** direction for `/landing`. The other student pages keep the pixel
-identity above; the landing keeps the pixel art as framed illustrations.
+## Landing: Royal crest (restored 2026-10-30)
+History, so it isn't repeated: the first crest version had a tilted stack of
+cards (pixel art + emblem) and a floating chip in the hero; the owner said it
+looked AI-generated. A "Print" broadsheet replaced it the same day, and the
+owner asked for the navy-and-gold crest back, improved. What changed: the
+tilted cards and the glossy 3D desk render are gone; the imagery is four
+risograph-style prints made for the page (`public/landing/print/`:
+hall-morning, hall-night, desk, rajsamand-lake — Higgsfield Z Image; captions
+never claim they are photos of the actual hall).
 
-- **Colour:** navy `--brand-navy` grounds (hero, passes, contact); cream
-  `--warm-bg` reads; gold (`--brand-gold-light` rules and fills, `--brand-gold`
-  24px+ lettering, `--brand-gold-deep` small text). Text on navy uses
-  `--crest-on-navy` / `--crest-on-navy-2`. One radial gold glow is allowed,
-  behind the emblem only.
-- **Type:** Instrument Serif (`font-editorial`, roman only) for large headings,
-  set big and tight; Geist for everything else; Cinzel (`font-brand`, digits
-  from Geist — Cinzel's 1 reads as I) only in the name lockup; Tiro for
-  Devanagari lines.
-- **Shapes (2026-10-30, after the owner found the first crest pass flat):**
-  rounded, layered, physical — the high-end-visual-design skill's rules.
-  Cards are double bezels (`.bezel` tray + `.bezel-core`, 2rem radius);
-  buttons are pills with the arrow in its own circle (`.pill-btn`,
-  `components/landing/PillLink`); small pill labels (`.eyebrow`) above
-  section headings; a faint fixed film grain (`.grain`).
-- **Navigation:** the landing has its own floating glass pill
-  (`components/landing/IslandNav`) with a full-screen sheet on phones; the
-  other student pages keep `UnifiedHeader`.
-- **Motion (play once on view, off under reduced motion):** sections fade up
-  and sharpen (`.reveal`, staggered by `--i`, `--ease-premium`); the emblem
-  rises (anime.js clip reveal); the free-desk count runs up; the day bar fills;
-  icons drop in; facilities drift past in a marquee; step scenes act out
-  their step.
+- **Colour:** navy `#0B2141` / navy-deep, gold-light `#E3B455` (fills and
+  type on navy only), gold `#A86F1C` / gold-deep for small text on cream,
+  cream `#FFFAF3`. `--crest-on-navy` / `-2` for text on navy.
+- **Type:** Instrument Serif (`font-editorial`) for display and figures,
+  Geist for text, Cinzel only in the emblem lockup (the emblem's name is typed
+  — the artwork misspells it "Ganguar"). Brand Digits keeps "1" readable.
+- **Devices:** island nav pill; double-bezel cards (`.bezel` / `.bezel-core`);
+  pill buttons with the arrow in its own circle (`PillLink`); eyebrow pills;
+  pointer spotlight rims on cards; one facility marquee under the hero.
+- **Never:** tilted or stacked cards, floating chips over images, 3D/glossy
+  renders next to the prints, purple gradients, invented numbers.
+- **Motion:** fade-up reveals (`.reveal`), the live count runs up, the day bar
+  fills, desks on the live map light from the entrance, pixel step scenes play
+  once (`steps()` easing). All off under reduced motion.
 
 ## Macrostructure family
-- Marketing (`/landing`): **Crest** — editorial split hero on navy (large
-  serif promise, live count chip, pills; hall art and emblem card laid over
-  each other) with a facility marquee; an asymmetric bento of the hall (art,
-  one desk, the day 6 AM–10 PM, facilities, your desk, today's count); navy
-  passes as bezel cards (best value in gold); three pixel step scenes; visit
-  card beside the FAQ; closing row of desks. Added 2026-10-30: a live hall
-  map (`LiveHall` — every desk drawn from `lib/layoutConfig` coordinates, gold
-  where free, one link to the plan), an "every pass includes" strip, cursor
-  spotlight rims on bezel cards (`data-spotlight`), pointer parallax on the
-  hero cards, and the landing's own navy footer (`LandingFooter`).
+- Marketing (`/landing`): **Crest** — island nav; editorial split hero on
+  navy (headline, two pills, live count | one framed morning print, set
+  straight); facility marquee; hall bento (night print, one desk, a day at
+  Gangaur, in the hall, desk print, today's count); the live room map
+  (`LiveHall`, real coordinates, gold = free); passes on navy with the
+  best-value card in gold and an "every pass includes" strip; three pixel
+  step scenes; lake print + visit card beside the FAQ; closing count; navy
+  footer.
 - Public app (`/browse`, `/my-requests`, `/kiosk`): the plan or form is the page.
 - Admin: **Workbench** — page title + one line of context, then the working
   surface (plan, table, form). No hero, no enrichment.

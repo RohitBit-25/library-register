@@ -34,17 +34,14 @@ export default function FindSeatBar({ watchId, free }: { watchId: string; free: 
     <>
       <div
         className={cn(
-          'fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 rounded-full bg-[var(--brand-navy)]/90 p-1.5 shadow-[0_20px_50px_-20px_rgb(11_33_65/0.7)] backdrop-blur-xl transition-transform duration-500 ease-[var(--ease-premium)] md:hidden',
-          show ? 'translate-y-0' : 'translate-y-[calc(100%+2rem)]',
+          'fixed inset-x-0 bottom-0 z-40 border-t border-[var(--brand-navy)]/10 bg-[var(--warm-bg)]/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 transition-transform duration-300 ease-[var(--ease-premium)] md:hidden',
+          show ? 'translate-y-0' : 'translate-y-full',
         )}
         aria-hidden={!show}
         inert={!show}
       >
         <div className="flex items-center gap-3">
-          <Link
-            href="/browse"
-            className="pill-btn pill-btn--gold group flex-1 justify-between"
-          >
+          <Link href="/browse" className="pill-btn pill-btn--navy group flex-1 justify-between">
             <span>{t('Find my seat')}{free !== null && free > 0 ? ` · ${t('{n} free', { n: free })}` : ''}</span>
             <span className="pill-btn__icon" aria-hidden="true"><ArrowUpRight className="size-[18px]" strokeWidth={1.5} /></span>
           </Link>
@@ -52,7 +49,7 @@ export default function FindSeatBar({ watchId, free }: { watchId: string; free: 
             <a
               href={wa}
               aria-label="Message the library on WhatsApp"
-              className="pill-btn pill-btn--ghost-light size-[52px] shrink-0 justify-center p-0"
+              className="pill-btn pill-btn--ghost-dark size-12 shrink-0 justify-center px-0"
             >
               <MessageCircle className="size-6" aria-hidden="true" />
             </a>
@@ -63,7 +60,7 @@ export default function FindSeatBar({ watchId, free }: { watchId: string; free: 
       {wa && (
         <a
           href={wa}
-          className="pill-btn pill-btn--navy fixed bottom-6 right-6 z-40 hidden pr-6 md:inline-flex"
+          className="pill-btn pill-btn--gold fixed bottom-6 right-6 z-40 hidden md:inline-flex"
         >
           <MessageCircle className="size-5" aria-hidden="true" />
           {t('WhatsApp us')}

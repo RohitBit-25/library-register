@@ -355,6 +355,7 @@
     --brand-gold-light: #E3B455; /* rays and glints, never text */
     --brand-gold-hover: #EDC56B;
     --ease-premium: cubic-bezier(0.32, 0.72, 0, 1);
+
     --brand-navy-deep:  #071833;
     --crest-on-navy:    #F6EEDF; /* 13.9:1 on brand-navy */
     --crest-on-navy-2:  #C9BDA8; /*  8.7:1 on brand-navy */
@@ -902,16 +903,22 @@
   [data-reveal]:not([data-revealed]) .rv { opacity: 0; }
 }
 
-/* The crest's glow, and the glint on the arch's finial. */
-.brand-glow { background: radial-gradient(circle, rgb(227 180 85 / 0.34) 0%, rgb(227 180 85 / 0.12) 38%, transparent 68%); }
-.brand-glint {
-  background: var(--brand-gold-light);
-  clip-path: polygon(50% 0, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0 50%, 42% 42%);
+
+/* Heavy fade-up on scroll (hooks/useRevealOnce sets data-revealed). Only when
+   scripting runs and motion is welcome; everyone else sees the finished page. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .reveal {
+    transition: opacity 800ms var(--ease-premium), transform 800ms var(--ease-premium);
+    transition-delay: calc(var(--i, 0) * 90ms);
+  }
+  [data-reveal]:not([data-revealed]) .reveal { opacity: 0; transform: translateY(28px); }
 }
-@media (prefers-reduced-motion: no-preference) {
-  [data-revealed] .brand-glow { animation: brand-breathe 7s ease-in-out 3s infinite; }
+
+/* Film grain over the landing — fixed and inert so it never repaints on scroll. */
+.grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 45; opacity: 0.05; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-@keyframes brand-breathe { 50% { opacity: 0.6; } }
 
 /* === CREST (landing, design.md § Landing: Royal crest) ===
    In the components layer so Tailwind utilities (hidden, px-0…) can override. */
@@ -961,19 +968,6 @@
   }
   .eyebrow--light { color: var(--brand-gold-light); box-shadow: inset 0 0 0 1px rgb(227 180 85 / 0.4); background: rgb(227 180 85 / 0.08); }
   .eyebrow--dark { color: var(--brand-gold-deep); box-shadow: inset 0 0 0 1px rgb(168 111 28 / 0.35); background: rgb(168 111 28 / 0.06); }
-
-  /* A gold double frame around pixel artwork. */
-  .crest-frame { border: 2px solid var(--brand-gold); outline: 1px solid var(--brand-gold); outline-offset: 5px; }
-}
-
-/* Heavy fade-up on scroll (hooks/useRevealOnce sets data-revealed). Only when
-   scripting runs and motion is welcome; everyone else sees the finished page. */
-@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
-  .reveal {
-    transition: opacity 900ms var(--ease-premium), transform 900ms var(--ease-premium), filter 900ms var(--ease-premium);
-    transition-delay: calc(var(--i, 0) * 110ms);
-  }
-  [data-reveal]:not([data-revealed]) .reveal { opacity: 0; transform: translateY(48px); filter: blur(8px); }
 }
 
 /* Facilities drift past under the hero. Doubled list, so the loop is seamless. */
@@ -985,44 +979,12 @@
 .live-dot { position: relative; }
 .live-dot::after { content: ''; position: absolute; inset: 0; border-radius: 9999px; background: inherit; animation: live-ping 2.2s var(--ease-premium) infinite; }
 @keyframes live-ping { 70%, 100% { transform: scale(2.6); opacity: 0; } }
-
 @media (prefers-reduced-motion: reduce) {
   .marquee, .live-dot::after { animation: none; }
 }
 
-/* Film grain over the landing — fixed and inert so it never repaints on scroll. */
-.grain {
-  position: fixed; inset: 0; pointer-events: none; z-index: 45; opacity: 0.05; mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-/* The opening-hours bar: sunrise gold into night navy. The one linear
-   gradient on the landing — it is the day, not decoration. */
+/* The opening-hours bar: sunrise gold into night navy — it is the day, not decoration. */
 .day-fill { background: linear-gradient(90deg, var(--brand-gold-light), var(--brand-gold) 55%, var(--brand-navy)); }
-
-/* Cinzel draws "1" like a capital I ("I MONTH"). Brand lettering takes its
-   digits from Geist instead, so every number in a Cinzel heading reads plainly.
-   public/fonts/geist-latin.woff2 is Geist (OFL), digits only via unicode-range. */
-@font-face {
-  font-family: 'Brand Digits';
-  src: url('/fonts/geist-latin.woff2') format('woff2');
-  font-weight: 100 900;
-  font-display: swap;
-  unicode-range: U+0030-0039;
-}
-
-/* Island nav sheet (components/landing/IslandNav): the bars fold into an X,
-   the links rise in one by one. */
-@media (prefers-reduced-motion: no-preference) {
-  .island-overlay[data-state='open'] { animation: island-fade 450ms var(--ease-premium); }
-  .island-link { animation: island-rise 800ms var(--ease-premium) both; animation-delay: calc(140ms + var(--i, 0) * 80ms); }
-  .island-x span:first-child { animation: island-x1 600ms var(--ease-premium) both; }
-  .island-x span:last-child { animation: island-x2 600ms var(--ease-premium) both; }
-}
-@keyframes island-fade { from { opacity: 0; } }
-@keyframes island-rise { from { opacity: 0; translate: 0 48px; } }
-@keyframes island-x1 { from { rotate: 0deg; translate: 0 -4px; } }
-@keyframes island-x2 { from { rotate: 0deg; translate: 0 4px; } }
 
 /* Hero light: warm gold from the top right, deep blue from the bottom left. */
 .hero-aura-gold { background: radial-gradient(circle, rgb(227 180 85 / 0.2), transparent 65%); }
@@ -1040,12 +1002,16 @@
 }
 @media (hover: hover) { [data-spotlight]:hover::after { opacity: 1; } }
 
-/* Hero cards drift a little against the pointer (CrestHero sets --px/--py, -1…1). */
-@media (min-width: 768px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .parallax { transition: translate 700ms var(--ease-premium); }
-  .parallax-1 { translate: calc(var(--px, 0) * -12px) calc(var(--py, 0) * -9px); }
-  .parallax-2 { translate: calc(var(--px, 0) * 16px) calc(var(--py, 0) * 12px); }
-  .parallax-3 { translate: calc(var(--px, 0) * 26px) calc(var(--py, 0) * 18px); }
+/* Island nav sheet (components/landing/IslandNav): the bars fold into an X,
+   the links rise in one by one. */
+@media (prefers-reduced-motion: no-preference) {
+  .island-overlay[data-state='open'] { animation: island-fade 450ms var(--ease-premium); }
+  .island-link { animation: island-rise 800ms var(--ease-premium) both; animation-delay: calc(140ms + var(--i, 0) * 80ms); }
+  .island-x span:first-child { animation: island-x1 600ms var(--ease-premium) both; }
+  .island-x span:last-child { animation: island-x2 600ms var(--ease-premium) both; }
 }
-
+@keyframes island-fade { from { opacity: 0; } }
+@keyframes island-rise { from { opacity: 0; translate: 0 48px; } }
+@keyframes island-x1 { from { rotate: 0deg; translate: 0 -4px; } }
+@keyframes island-x2 { from { rotate: 0deg; translate: 0 4px; } }
 

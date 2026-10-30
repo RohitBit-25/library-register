@@ -1,10 +1,10 @@
 'use client';
 
-/* Hallmark · pre-emit critique: P5 H5 E4 S5 R4 V5
- * Hallmark · macrostructure: Crest (bespoke) — editorial split hero · asymmetric bento · bezel cards
- * genre: luxury-heritage · tone: royal, warm · vibe: editorial luxury (high-end-visual-design)
- * theme: custom — owner's emblem (navy #0B2141 · gold #E3B455/#A86F1C · cream #FFFAF3) · Instrument Serif + Geist (+ Cinzel lockup)
- * nav: island pill (IslandNav) · footer: PublicFooter (shared) · design.md § Landing: Royal crest */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R4 V5
+ * Hallmark · macrostructure: Crest (bespoke) — editorial split hero · asymmetric bento · live room map · bezel passes
+ * genre: luxury-heritage · tone: royal, warm · theme: custom — owner's emblem (navy #0B2141 · gold #E3B455/#A86F1C ·
+ *   cream #FFFAF3) · Instrument Serif + Geist (+ Cinzel lockup) · imagery: risograph prints made for the page
+ * nav: island pill (IslandNav) · footer: LandingFooter · design.md § Landing: Royal crest */
 
 import { useEffect, useMemo } from 'react';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ import { ArrowUpRight, Check } from 'lucide-react';
 import { useMembers } from '@/hooks/useMembers';
 import { formatINR, monthlyValue, planPrice, PLAN_MONTHS } from '@/lib/pricing';
 import { PHOTOS } from '@/lib/photos';
-import { SITE_INFO, fmtPhone } from '@/lib/siteInfo';
+import { ADDRESS_PARTS, SITE_INFO, fmtPhone } from '@/lib/siteInfo';
 import { SEAT_COUNT } from '@/lib/layoutConfig';
 import { cn } from '@/lib/utils';
 import FindSeatBar from '@/components/pixel/FindSeatBar';
@@ -21,10 +21,10 @@ import StepScenes from '@/components/pixel/StepScenes';
 import IslandNav from '@/components/landing/IslandNav';
 import CrestHero from '@/components/landing/CrestHero';
 import HallBento from '@/components/landing/HallBento';
-import PillLink from '@/components/landing/PillLink';
-import Reveal from '@/components/landing/Reveal';
 import LiveHall from '@/components/landing/LiveHall';
 import LandingFooter from '@/components/landing/LandingFooter';
+import PillLink from '@/components/landing/PillLink';
+import Reveal from '@/components/landing/Reveal';
 import { useLang } from '@/hooks/useLang';
 
 /** Every figure comes from lib/pricing.ts — no rupee amount is written here. */
@@ -49,6 +49,34 @@ const FAQ = [
 
 // True of every pass: the same desk promise and the hall's own facilities.
 const INCLUDED = ['A reserved desk', 'Your choice of shift', 'AC hall', 'High-speed Wi-Fi', 'RO water', 'CCTV'];
+
+// What Google shows for the library in local search. Real details only, from lib/siteInfo.ts.
+const LISTING = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Library',
+  name: 'Shree Gangaur Library',
+  description: `${SEAT_COUNT} reserved study desks in one AC, quiet hall. Pay at the desk by UPI or cash.`,
+  image: '/opengraph-image.png',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: ADDRESS_PARTS.street,
+    addressLocality: ADDRESS_PARTS.town,
+    addressRegion: ADDRESS_PARTS.state,
+    addressCountry: 'IN',
+  },
+  telephone: SITE_INFO.phones?.map((p) => `+91 ${fmtPhone(p)}`),
+  email: SITE_INFO.email,
+  hasMap: SITE_INFO.mapsUrl,
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    opens: '06:00',
+    closes: '22:00',
+  },
+  priceRange: `${formatINR(planPrice('1M'))}–${formatINR(planPrice('1Y'))}`,
+  currenciesAccepted: 'INR',
+  paymentAccepted: 'Cash, UPI',
+});
 
 const display = 'font-editorial text-[clamp(2.8rem,7vw,5.5rem)] leading-[0.95] tracking-[-0.02em] [overflow-wrap:anywhere]';
 const stagger = (i: number) => ({ '--i': i }) as React.CSSProperties;
@@ -79,6 +107,7 @@ export default function LandingPage() {
   return (
     <div className="relative flex min-h-dvh flex-col bg-[var(--warm-bg)] text-[var(--warm-ink)]">
       <a href="#main" className="sr-only z-50 rounded-full bg-[var(--brand-gold-light)] px-5 py-3 font-semibold text-[var(--brand-navy)] focus:not-sr-only focus:fixed focus:left-4 focus:top-4">{t('Skip to content')}</a>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: LISTING }} />
       <div className="grain" aria-hidden="true" />
       <IslandNav />
 
@@ -116,10 +145,10 @@ export default function LandingPage() {
                         {best && <span className="rounded-full bg-[var(--brand-navy)] px-3 py-1 text-xs font-bold text-[var(--crest-on-navy)]">{t('★ Best value')}</span>}
                       </div>
                       <span className="mt-10 font-editorial text-[3.6rem] leading-none tabular">{formatINR(planPrice(duration))}</span>
-                      <span className={cn('mt-3 text-sm tabular', best ? 'text-[var(--brand-navy)]/75' : 'text-[var(--crest-on-navy-2)]')}>
+                      <span className={cn('mt-3 text-sm tabular mb-10', best ? 'text-[var(--brand-navy)]/75' : 'text-[var(--crest-on-navy-2)]')}>
                         {t('{m} a month · about ₹{d} a day', { m: formatINR(monthlyValue(duration)), d: perDay(duration) })}
                       </span>
-                      <span className="mt-10 flex items-center justify-between border-t border-current/15 pt-5 text-base font-semibold">
+                      <span className="mt-auto flex items-center justify-between border-t border-current/15 pt-5 text-base font-semibold">
                         {t('Pick a seat')}
                         <span className={cn('pill-btn__icon transition-transform duration-500 ease-[var(--ease-premium)] group-hover:translate-x-1 group-hover:-translate-y-px', best ? 'bg-[var(--brand-navy)] text-[var(--crest-on-navy)]' : 'bg-[var(--brand-gold-light)] text-[var(--brand-navy)]')} aria-hidden="true">
                           <ArrowUpRight className="size-[18px]" strokeWidth={1.5} />
@@ -182,23 +211,26 @@ export default function LandingPage() {
           <div className="mx-auto grid max-w-[1240px] gap-12 px-4 py-24 sm:px-6 lg:grid-cols-12 lg:py-32">
             {contact && (
               <div className="reveal bezel lg:col-span-5" style={stagger(0)}>
-                <div className="bezel-core h-full bg-[var(--brand-navy)] p-8 text-[var(--crest-on-navy)] sm:p-10">
-                  <span className="flex size-20 items-center justify-center rounded-full bg-[var(--warm-bg)] shadow-[0_0_0_2px_var(--brand-gold),0_0_0_6px_var(--brand-navy),0_0_0_7px_var(--brand-gold-light)]">
-                    <Image src="/brand/emblem.png" alt="" width={897} height={606} sizes="60px" className="mt-1 h-auto w-[72%]" />
-                  </span>
-                  <h2 className="mt-8 font-editorial text-[2.6rem] leading-none">{t('Come and see the hall')}</h2>
-                  {SITE_INFO.address && <p className="mt-4 text-[15px] leading-relaxed text-[var(--crest-on-navy-2)]">{SITE_INFO.address}</p>}
-                  {/* Numbers written out too: many visitors copy them into WhatsApp. */}
-                  <p className="mt-4 flex flex-wrap gap-x-5 text-[15px] font-semibold">
-                    {SITE_INFO.phones?.map((p) => (
-                      <a key={p} href={`tel:+91${p}`} className="inline-flex min-h-[44px] items-center tabular hover:text-[var(--brand-gold-light)]">{fmtPhone(p)}</a>
-                    ))}
-                  </p>
-                  {SITE_INFO.email && <a href={`mailto:${SITE_INFO.email}`} className="inline-flex min-h-[44px] items-center break-all text-[15px] text-[var(--crest-on-navy-2)] hover:text-[var(--brand-gold-light)]">{SITE_INFO.email}</a>}
-                  <div className="mt-8 flex flex-wrap gap-3">
-                    {SITE_INFO.whatsapp && <PillLink href={`https://wa.me/${SITE_INFO.whatsapp}`}>WhatsApp</PillLink>}
-                    {SITE_INFO.phones?.[0] && <PillLink href={`tel:+91${SITE_INFO.phones[0]}`} tone={SITE_INFO.whatsapp ? 'ghost-light' : 'gold'}>{t('Call')}</PillLink>}
-                    {SITE_INFO.mapsUrl && <PillLink href={SITE_INFO.mapsUrl} tone="ghost-light">{t('Map')}</PillLink>}
+                <div className="bezel-core h-full bg-[var(--brand-navy)] text-[var(--crest-on-navy)]">
+                  <figure className="relative">
+                    <Image src="/landing/print/rajsamand-lake.webp" alt="An illustration of Rajsamand lake at sunset, with white marble pavilions along the shore" width={1874} height={955} sizes="(min-width: 1024px) 480px, 100vw" className="aspect-[16/9] w-full object-cover" />
+                    <figcaption className="absolute bottom-3 left-4 rounded-full bg-[var(--brand-navy-deep)]/85 px-3 py-1 text-xs font-semibold">{t('Rajsamand lake, Kankroli.')}</figcaption>
+                  </figure>
+                  <div className="p-8 sm:p-10">
+                    <h2 className="font-editorial text-[2.6rem] leading-none">{t('Come and see the hall')}</h2>
+                    {SITE_INFO.address && <p className="mt-4 text-[15px] leading-relaxed text-[var(--crest-on-navy-2)]">{SITE_INFO.address}</p>}
+                    {/* Numbers written out too: many visitors copy them into WhatsApp. */}
+                    <p className="mt-4 flex flex-wrap gap-x-5 text-[15px] font-semibold">
+                      {SITE_INFO.phones?.map((p) => (
+                        <a key={p} href={`tel:+91${p}`} className="inline-flex min-h-[44px] items-center tabular hover:text-[var(--brand-gold-light)]">{fmtPhone(p)}</a>
+                      ))}
+                    </p>
+                    {SITE_INFO.email && <a href={`mailto:${SITE_INFO.email}`} className="inline-flex min-h-[44px] items-center break-all text-[15px] text-[var(--crest-on-navy-2)] hover:text-[var(--brand-gold-light)]">{SITE_INFO.email}</a>}
+                    <div className="mt-8 flex flex-wrap gap-3">
+                      {SITE_INFO.whatsapp && <PillLink href={`https://wa.me/${SITE_INFO.whatsapp}`}>WhatsApp</PillLink>}
+                      {SITE_INFO.phones?.[0] && <PillLink href={`tel:+91${SITE_INFO.phones[0]}`} tone={SITE_INFO.whatsapp ? 'ghost-light' : 'gold'}>{t('Call')}</PillLink>}
+                      {SITE_INFO.mapsUrl && <PillLink href={SITE_INFO.mapsUrl} tone="ghost-light">{t('Map')}</PillLink>}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -218,8 +250,8 @@ export default function LandingPage() {
           </div>
         </Reveal>
 
-        {/* ── Closing: a row of empty desks, waiting ── */}
-        <Reveal className="overflow-hidden bg-[var(--warm-band)] pt-24 lg:pt-32">
+        {/* ── Closing: the live count, once more ── */}
+        <Reveal className="bg-[var(--warm-band)] py-24 lg:py-32">
           <div className="mx-auto max-w-[1240px] px-4 text-center sm:px-6">
             <h2 className={cn(display, 'reveal mx-auto max-w-[16ch] text-[var(--brand-navy)]')} style={stagger(0)}>
               {isLoading || free === 0 ? t('Your desk is waiting.') : t('{free} desks are free today.', { free })}
@@ -228,19 +260,9 @@ export default function LandingPage() {
               <PillLink href="/browse" tone="navy">{t('Claim your desk')}</PillLink>
             </div>
           </div>
-          <Image
-            src="/landing/desks-row.png"
-            alt="A row of empty study desks with blue chairs"
-            width={2112}
-            height={744}
-            sizes="(min-width: 1240px) 1160px, 100vw"
-            className="reveal relative mx-auto mt-16 h-auto w-full max-w-[1160px] px-4"
-            style={stagger(2)}
-          />
         </Reveal>
       </main>
 
-      {/* Room for the phone action bar, so it never covers the footer. */}
       <div className="bg-[var(--brand-navy-deep)] pb-24 md:pb-0"><LandingFooter /></div>
       <FindSeatBar watchId="hero-cta" free={isLoading || loadFailed ? null : free} />
     </div>

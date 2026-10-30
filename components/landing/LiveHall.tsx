@@ -53,7 +53,7 @@ export default function LiveHall({ freeSeats, live }: { freeSeats: Set<number>; 
               <dd className="mt-1 font-editorial text-[3.4rem] leading-none tabular text-[var(--warm-ink-3)]">{live ? SEATS.length - free : '—'}</dd>
             </div>
           </dl>
-          <PillLink href="/browse" tone="navy" className="reveal mt-9" >{t('Open the seat plan')}</PillLink>
+          <PillLink href="/browse" tone="navy" className="reveal mt-9">{t('Open the seat plan')}</PillLink>
         </div>
 
         <div className="reveal bezel min-w-0 lg:col-span-7" data-spotlight style={{ '--i': 2 } as React.CSSProperties}>
@@ -63,7 +63,6 @@ export default function LiveHall({ freeSeats, live }: { freeSeats: Set<number>; 
             className="bezel-core block bg-[var(--brand-navy)] p-4 focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-gold)] sm:p-6"
           >
             <svg viewBox={`0 0 ${ROOM.WIDTH} ${ROOM.HEIGHT}`} className="h-auto w-full" aria-hidden="true">
-              {/* walls, with the entrance gap at the bottom */}
               <path
                 d={`M ${DOOR.cx - DOOR.w / 2} ${ROOM.HEIGHT - 10} H 10 V 10 H ${ROOM.WIDTH - 10} V ${ROOM.HEIGHT - 10} H ${DOOR.cx + DOOR.w / 2}`}
                 fill="none" stroke="var(--crest-on-navy)" strokeOpacity={0.22} strokeWidth={6}

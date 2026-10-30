@@ -35,8 +35,8 @@ function LangToggle({ onNavy = false }: { onNavy?: boolean }) {
 }
 
 /**
- * The landing's navigation: a glass pill floating above the page. On phones
- * the menu button opens a full-screen sheet whose links rise in one by one.
+ * The landing's navigation: a pill floating above the page. On phones the
+ * menu button opens a full-screen sheet whose links rise in one by one.
  */
 export default function IslandNav() {
   const { t } = useLang();

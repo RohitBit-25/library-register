@@ -29,7 +29,7 @@ function Card({ className, core, i, children }: { className?: string; core?: str
 }
 
 /**
- * The hall, in an asymmetric bento: the big picture, what a desk means, the
+ * The hall, in an asymmetric bento: the hall at night, what a desk means, the
  * day from 6 AM to 10 PM, what the hall has, your desk, and today's count.
  */
 export default function HallBento({ free, live }: { free: number; live: boolean }) {
@@ -52,9 +52,19 @@ export default function HallBento({ free, live }: { free: number; live: boolean 
       </h2>
 
       <div className="mt-16 grid grid-cols-1 gap-5 lg:grid-cols-12">
-        {/* The big picture */}
-        <Card i={1} className="lg:col-span-7 lg:row-span-2" core="bg-[var(--brand-navy)] p-3">
-          <Image src="/landing/hall.png" alt="" width={1536} height={1024} sizes="(min-width: 1024px) 700px, 100vw" className="h-full w-full rounded-[1.1rem] object-cover" />
+        {/* The same hall at night */}
+        <Card i={1} className="lg:col-span-7 lg:row-span-2" core="relative bg-[var(--brand-navy)]">
+          <Image
+            src="/landing/print/hall-night.webp"
+            alt="An illustration of the hall at night: desk lamps glowing, stars and a crescent moon in the arched windows"
+            width={1878}
+            height={961}
+            sizes="(min-width: 1024px) 700px, 100vw"
+            className="h-full min-h-[280px] w-full object-cover"
+          />
+          <p className="absolute bottom-0 left-0 right-0 bg-[var(--brand-navy-deep)]/85 px-6 py-4 text-sm font-semibold text-[var(--crest-on-navy)]">
+            {t('10:00 PM — last lamps out.')}
+          </p>
         </Card>
 
         {/* One desk, all yours */}
@@ -104,9 +114,9 @@ export default function HallBento({ free, live }: { free: number; live: boolean 
         </Card>
 
         {/* Your desk */}
-        <Card i={5} className="lg:col-span-4" core="flex flex-col bg-[var(--warm-band)] p-5">
-          <Image src="/landing/desk.png" alt="A single wooden study desk with a plant, a notebook and a blue chair" width={1536} height={1024} sizes="(min-width: 1024px) 380px, 100vw" className="h-auto w-full" />
-          <p className="mt-auto pt-3 text-center text-sm font-semibold text-[var(--brand-navy)]">{t('Your own desk, for the whole plan')}</p>
+        <Card i={5} className="lg:col-span-4" core="flex flex-col bg-[var(--brand-navy)]">
+          <Image src="/landing/print/desk.webp" alt="An illustration of one study desk under a lamp: an open notebook, exam books, a highlighter, a glass of chai" width={1787} height={1195} sizes="(min-width: 1024px) 380px, 100vw" className="aspect-[4/3] w-full object-cover" />
+          <p className="px-6 py-4 text-center text-sm font-semibold text-[var(--crest-on-navy)]">{t('Your own desk, for the whole plan')}</p>
         </Card>
 
         {/* Today */}

@@ -14,7 +14,9 @@
  *
  * WhatsApp stays empty until the owner says which number takes WhatsApp.
  */
-const ADDRESS = 'Opposite Maniratna Restaurant, JK Circle, Station Road, Kankroli, Rajsamand, Rajasthan';
+// Split as well as joined so search engines get the street and town apart.
+export const ADDRESS_PARTS = { street: 'Opposite Maniratna Restaurant, JK Circle, Station Road', town: 'Kankroli', district: 'Rajsamand', state: 'Rajasthan' };
+const ADDRESS = Object.values(ADDRESS_PARTS).join(', ');
 
 export const SITE_INFO: {
   phones?: string[];

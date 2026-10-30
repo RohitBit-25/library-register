@@ -2,11 +2,12 @@
 
 import Image from 'next/image';
 import { Clock3 } from 'lucide-react';
-import { animate, createTimeline } from 'animejs';
+import { animate } from 'animejs';
 import PillLink from '@/components/landing/PillLink';
 import { useRevealOnce } from '@/hooks/useRevealOnce';
 import { useLang } from '@/hooks/useLang';
 import { SEAT_COUNT } from '@/lib/layoutConfig';
+import { cn } from '@/lib/utils';
 
 // The library's own claims, each with its pixel icon (made in Canva, public/landing/icons).
 export const FACILITIES = [
@@ -20,54 +21,34 @@ export const FACILITIES = [
 const stagger = (i: number) => ({ '--i': i }) as React.CSSProperties;
 
 /**
- * Editorial split on navy: the promise in a large serif, the live count, and
- * on the right the hall and the emblem as two framed cards laid one over the
- * other. The emblem rises like its own sun; the count runs up to today's number.
+ * Editorial split on navy: the promise in a large serif and the live count;
+ * on the right one framed print of the hall at sunrise, captioned like a
+ * plate. One image, set straight — no stacked or tilted cards.
  */
 export default function CrestHero({ free, total, isLoading, loadFailed }: { free: number; total: number; isLoading: boolean; loadFailed: boolean }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const live = !isLoading && !loadFailed;
 
+  // The live count runs up once, the first time it is seen.
   const ref = useRevealOnce<HTMLElement>((root) => {
-    const emblem = root.querySelector<HTMLElement>('[data-emblem]');
     const count = root.querySelector<HTMLElement>('[data-count]');
-    const sunrise = { p: 100 };
-    if (emblem) emblem.style.clipPath = 'inset(100% 0 0 0)';
-    const tl = createTimeline({ defaults: { ease: 'inOut(2)' } })
-      .add(sunrise, {
-        p: 0, duration: 1500,
-        onUpdate: () => { if (emblem) emblem.style.clipPath = `inset(${sunrise.p}% 0 0 0)`; },
-        onComplete: () => { if (emblem) emblem.style.clipPath = ''; },
-      }, 650)
-      .add(root.querySelectorAll('[data-glint]'), { opacity: [0, 1, 0], scale: [0, 1.3, 0.5], rotate: [0, 90], duration: 800 }, 1900);
-    let counter: ReturnType<typeof animate> | undefined;
-    if (count && live && free > 0) {
-      const n = { v: 0 };
-      counter = animate(n, { v: free, duration: 1400, delay: 700, ease: 'out(4)', modifier: Math.round, onUpdate: () => { count.textContent = String(n.v); } });
-    }
-    return () => { tl.pause(); counter?.pause(); if (emblem) emblem.style.clipPath = ''; if (count) count.textContent = live ? String(free) : '—'; };
+    if (!count || !live || free === 0) return;
+    const n = { v: 0 };
+    const a = animate(n, { v: free, duration: 1400, delay: 600, ease: 'out(4)', modifier: Math.round, onUpdate: () => { count.textContent = String(n.v); } });
+    return () => { a.pause(); count.textContent = String(free); };
   });
 
   return (
-    <section
-      ref={ref}
-      data-reveal
-      onPointerMove={(e) => {
-        if (e.pointerType !== 'mouse') return;
-        const r = e.currentTarget.getBoundingClientRect();
-        e.currentTarget.style.setProperty('--px', (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
-        e.currentTarget.style.setProperty('--py', (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
-      }}
-      className="relative isolate overflow-hidden bg-[var(--brand-navy)] text-[var(--crest-on-navy)]"
-    >
+    <section ref={ref} data-reveal className="relative isolate overflow-hidden bg-[var(--brand-navy)] text-[var(--crest-on-navy)]">
       <span className="hero-aura-gold pointer-events-none absolute -right-40 -top-40 -z-10 size-[720px] rounded-full" aria-hidden="true" />
       <span className="hero-aura-deep pointer-events-none absolute -bottom-60 -left-40 -z-10 size-[640px] rounded-full" aria-hidden="true" />
 
-      <div className="mx-auto grid min-h-[100dvh] max-w-[1240px] items-center gap-16 px-4 pb-12 pt-32 sm:px-6 md:pt-40 lg:grid-cols-12 lg:gap-10">
-        <div className="min-w-0 lg:col-span-7">
+      <div className="mx-auto grid min-h-[100dvh] max-w-[1240px] items-center gap-12 px-4 pb-12 pt-32 sm:px-6 md:pt-40 lg:grid-cols-12 lg:gap-12">
+        <div className="min-w-0 lg:col-span-6">
           <p className="reveal eyebrow eyebrow--light" style={stagger(0)}>{t('Kankroli · Rajsamand')}</p>
-          <h1 className="reveal mt-7 font-editorial text-[clamp(3.4rem,9.5vw,7.4rem)] leading-[0.9] tracking-[-0.02em] [overflow-wrap:anywhere]" style={stagger(1)}>
-            {t('Your desk')}<br /><span className="text-[var(--brand-gold-light)]">{t('is waiting.')}</span>
+          {/* Hindi runs about twice as long, and its vowel marks need room above and below. */}
+          <h1 className={cn('reveal mt-7 font-editorial tracking-[-0.02em] [overflow-wrap:anywhere]', lang === 'hi' ? 'text-[clamp(2.4rem,5vw,3.8rem)] leading-[1.15]' : 'text-[clamp(3.4rem,8.5vw,7rem)] leading-[0.9]')} style={stagger(1)}>
+            {t('Your desk')}<br /><span className={cn('text-[var(--brand-gold-light)]', lang === 'hi' && 'inline-block [text-wrap:balance]')}>{t('is waiting.')}</span>
           </h1>
           <p className="reveal mt-8 max-w-[44ch] text-lg leading-relaxed text-[var(--crest-on-navy-2)]" style={stagger(2)}>
             {t('{n} reserved desks in one cool, quiet hall in Rajsamand. Pick yours on the live seat plan and start tomorrow.', { n: SEAT_COUNT })}
@@ -77,46 +58,43 @@ export default function CrestHero({ free, total, isLoading, loadFailed }: { free
             <PillLink href="#fees" tone="ghost-light">{t('See fees')}</PillLink>
           </div>
 
-          {/* The live number, in its own small tray. */}
-          <div className="reveal bezel bezel--dark mt-10 inline-flex rounded-full p-1.5" style={stagger(4)} aria-live="polite">
-            <span className="flex items-center gap-3 rounded-full bg-[var(--brand-navy-deep)] py-2.5 pl-4 pr-5 text-sm shadow-[inset_0_1px_1px_rgb(246_238_223/0.12)]">
-              {live ? (
-                <>
-                  <span className="live-dot size-2.5 shrink-0 rounded-full bg-[var(--px-hud-text)]" aria-hidden="true" />
-                  <span data-count className="font-editorial text-2xl leading-none tabular text-[var(--brand-gold-light)]">{free}</span>
-                  <span className="text-[var(--crest-on-navy)]">{t('desks free right now · of {total}', { total })}</span>
-                </>
-              ) : (
-                <span className="text-[var(--crest-on-navy-2)]">{isLoading ? t('Loading…') : t('{n} desks · live count unavailable', { n: SEAT_COUNT })}</span>
-              )}
-            </span>
-          </div>
+          {/* The live number, set as a line of type under a gold rule. */}
+          <p className="reveal mt-10 flex max-w-[30rem] items-baseline gap-3 border-t border-[var(--brand-gold-light)]/40 pt-5" style={stagger(4)} aria-live="polite">
+            {live ? (
+              <>
+                <span className="live-dot size-2.5 shrink-0 translate-y-[-3px] rounded-full bg-[var(--px-hud-text)]" aria-hidden="true" />
+                <span data-count className="font-editorial text-[2.6rem] leading-none tabular text-[var(--brand-gold-light)]">{free}</span>
+                <span className="text-[15px] text-[var(--crest-on-navy)]">{t('desks free right now · of {total}', { total })}</span>
+              </>
+            ) : (
+              <span className="text-[15px] text-[var(--crest-on-navy-2)]">{isLoading ? t('Loading…') : t('{n} desks · live count unavailable', { n: SEAT_COUNT })}</span>
+            )}
+          </p>
         </div>
 
-        {/* Two framed cards, one laid over the other. Flat and stacked on phones. */}
-        <div className="relative -mt-8 min-w-0 md:mt-0 md:h-[540px] lg:col-span-5">
-          <figure className="reveal parallax parallax-1 bezel bezel--dark hidden md:absolute md:right-0 md:top-0 md:block md:w-[86%] md:rotate-[3deg]" style={stagger(2)}>
+        {/* One framed print of the hall at sunrise. */}
+        <figure className="reveal min-w-0 lg:col-span-6" style={stagger(2)}>
+          <div className="bezel bezel--dark">
             <div className="bezel-core bezel-core--dark p-2">
-              <Image src="/landing/hall.png" alt="Students studying at the library's wooden desks, with the Shree Gangaur Library sign" width={1536} height={1024} priority sizes="(min-width: 1024px) 460px, 100vw" className="h-auto w-full rounded-[1.1rem]" />
-            </div>
-          </figure>
-
-          <div className="reveal parallax parallax-2 bezel absolute bottom-0 left-0 hidden w-[62%] -rotate-[2deg] md:block" style={stagger(4)}>
-            <div className="bezel-core relative flex flex-col items-center bg-[var(--warm-bg)] px-6 pb-6 pt-8">
-              <Image data-emblem src="/brand/emblem.png" alt="The Shree Gangaur Library emblem" width={897} height={606} sizes="260px" className="h-auto w-[82%]" />
-              <span data-glint className="brand-glint pointer-events-none absolute left-1/2 top-[7%] size-7 -translate-x-1/2 opacity-0" aria-hidden="true" />
-              <p className="mt-5 font-brand text-sm font-bold tracking-[0.28em] text-[var(--brand-navy)]">SHREE GANGAUR</p>
-              <p className="mt-1 font-devanagari text-base text-[var(--brand-gold-deep)]">श्री गणगौर लाइब्रेरी</p>
+              <Image
+                src="/landing/print/hall-morning.webp"
+                alt="An illustration of a quiet reading hall at sunrise: students at wooden desks with lamps, light falling through tall arched windows"
+                width={1913}
+                height={992}
+                priority
+                sizes="(min-width: 1024px) 590px, 100vw"
+                className="aspect-[4/3] w-full rounded-[1.1rem] object-cover object-[64%_50%]"
+              />
             </div>
           </div>
-
-          <p className="reveal parallax parallax-3 bezel bezel--dark mt-4 inline-flex rounded-full p-1 md:absolute md:bottom-16 md:right-2 md:mt-0 md:rotate-[4deg]" style={stagger(6)}>
-            <span className="flex items-center gap-2 rounded-full bg-[var(--brand-navy-deep)] px-4 py-2 text-sm font-semibold">
+          <figcaption className="mt-4 flex flex-wrap items-center justify-between gap-3 px-2 text-sm text-[var(--crest-on-navy-2)]">
+            <span>{t('6:00 AM — the hall opens.')}</span>
+            <span className="flex items-center gap-2 font-semibold text-[var(--crest-on-navy)]">
               <Clock3 className="size-4 text-[var(--brand-gold-light)]" strokeWidth={1.5} aria-hidden="true" />
               {t('Open 6 AM – 10 PM daily')}
             </span>
-          </p>
-        </div>
+          </figcaption>
+        </figure>
       </div>
 
       {/* Facilities drift past along the bottom edge. */}
