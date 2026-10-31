@@ -970,25 +970,17 @@
   .eyebrow--dark { color: var(--brand-gold-deep); box-shadow: inset 0 0 0 1px rgb(168 111 28 / 0.35); background: rgb(168 111 28 / 0.06); }
 }
 
-/* Facilities drift past under the hero. Doubled list, so the loop is seamless. */
-.marquee { display: flex; width: max-content; animation: marquee 38s linear infinite; }
-.marquee:hover { animation-play-state: paused; }
-@keyframes marquee { to { transform: translateX(-50%); } }
-
 /* The live dot breathes. */
 .live-dot { position: relative; }
 .live-dot::after { content: ''; position: absolute; inset: 0; border-radius: 9999px; background: inherit; animation: live-ping 2.2s var(--ease-premium) infinite; }
 @keyframes live-ping { 70%, 100% { transform: scale(2.6); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  .marquee, .live-dot::after { animation: none; }
+  .live-dot::after { animation: none; }
 }
 
 /* The opening-hours bar: sunrise gold into night navy — it is the day, not decoration. */
 .day-fill { background: linear-gradient(90deg, var(--brand-gold-light), var(--brand-gold) 55%, var(--brand-navy)); }
 
-/* Hero light: warm gold from the top right, deep blue from the bottom left. */
-.hero-aura-gold { background: radial-gradient(circle, rgb(227 180 85 / 0.2), transparent 65%); }
-.hero-aura-deep { background: radial-gradient(circle, rgb(36 67 155 / 0.35), transparent 65%); }
 
 /* Spotlight rim: a gold glow that follows the pointer around a bezel's tray.
    --mx/--my are set by the landing's pointermove handler (hover devices only). */

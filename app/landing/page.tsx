@@ -114,7 +114,7 @@ export default function LandingPage() {
       <IslandNav />
 
       <main id="main" className="flex-1">
-        <CrestHero free={free} total={total} isLoading={isLoading} loadFailed={loadFailed} />
+        <CrestHero free={free} total={total} isLoading={isLoading} loadFailed={loadFailed} fromPerDay={perDay(BEST_VALUE)} />
 
         <HallBento free={free} live={live} />
 
@@ -192,9 +192,9 @@ export default function LandingPage() {
               <div className="reveal bezel lg:col-span-5" style={stagger(0)}>
                 <div className="bezel-core h-full bg-[var(--brand-navy)] text-[var(--crest-on-navy)]">
                   <figure className="relative">
-                    {/* The real door, from the library's Google Maps listing — so visitors know it when they arrive. */}
-                    <Image src="/photos/entrance-night.webp" alt="The entrance of Shree Gangaur Library at night: the lit श्री गणगौर LIBRARY sign above a few steps" width={1200} height={1600} sizes="(min-width: 1024px) 480px, 100vw" className="aspect-[4/3] w-full object-cover object-[50%_54%]" />
-                    <figcaption className="absolute bottom-3 left-4 rounded-full bg-[var(--brand-navy-deep)]/85 px-3 py-1 text-xs font-semibold">{t('Our entrance at JK Circle')}</figcaption>
+                    {/* The real door, from the library's Google listing — so visitors know it when they arrive. */}
+                    <Image src="/photos/entrance-night.webp" alt="The entrance of Shree Gangaur Library at night: the lit श्री गणगौर LIBRARY sign above a few steps" width={1600} height={2133} sizes="(min-width: 1024px) 480px, 100vw" className="aspect-[4/3] w-full object-cover object-[50%_54%]" />
+                    <figcaption className="absolute bottom-3 left-4 rounded-full bg-[var(--brand-navy-deep)]/85 px-3 py-1 text-xs font-semibold">{t('Our door at JK Circle, Kankroli')}</figcaption>
                   </figure>
                   <div className="p-8 sm:p-10">
                     <h2 className="font-editorial text-[2.6rem] leading-none">{t('Come and see the hall')}</h2>
@@ -207,7 +207,7 @@ export default function LandingPage() {
                     </p>
                     {SITE_INFO.email && <a href={`mailto:${SITE_INFO.email}`} className="inline-flex min-h-[44px] items-center break-all text-[15px] text-[var(--crest-on-navy-2)] hover:text-[var(--brand-gold-light)]">{SITE_INFO.email}</a>}
                     <div className="mt-8 flex flex-wrap gap-3">
-                      {SITE_INFO.whatsapp && <PillLink href={`https://wa.me/${SITE_INFO.whatsapp}`}>WhatsApp</PillLink>}
+                      {SITE_INFO.whatsapp && <PillLink href={SITE_INFO.whatsapp}>WhatsApp</PillLink>}
                       {SITE_INFO.phones?.[0] && <PillLink href={`tel:+91${SITE_INFO.phones[0]}`} tone={SITE_INFO.whatsapp ? 'ghost-light' : 'gold'}>{t('Call')}</PillLink>}
                       {SITE_INFO.mapsUrl && <PillLink href={SITE_INFO.mapsUrl} tone="ghost-light">{t('Map')}</PillLink>}
                       {SITE_INFO.instagram && <PillLink href={SITE_INFO.instagram} tone="ghost-light">Instagram</PillLink>}

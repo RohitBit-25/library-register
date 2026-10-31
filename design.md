@@ -60,7 +60,8 @@ never claim they are photos of the actual hall).
   — the artwork misspells it "Ganguar"). Brand Digits keeps "1" readable.
 - **Devices:** island nav pill; double-bezel cards (`.bezel` / `.bezel-core`);
   pill buttons with the arrow in its own circle (`PillLink`); eyebrow pills;
-  pointer spotlight rims on cards; one facility marquee under the hero.
+  pointer spotlight rims on cards. The hero has no frame, glow, badge or
+  ticker: a real photograph and type only (owner: "not AI generated").
 - **Never:** tilted or stacked cards, floating chips over images, 3D/glossy
   renders next to the prints, purple gradients, invented numbers.
 - **Motion:** fade-up reveals (`.reveal`), the live count runs up, the day bar
@@ -68,12 +69,16 @@ never claim they are photos of the actual hall).
   once (`steps()` easing). All off under reduced motion.
 
 ## Macrostructure family
-- Marketing (`/landing`): **Crest** — island nav; editorial split hero on
-  navy (headline, two pills, live count | one framed morning print, set
-  straight); facility marquee; hall bento (night print, one desk, a day at
+- Marketing (`/landing`): **Crest** — island nav; the hero is a silent loop of
+  the real aisle (`public/video/hall-aisle.mp4`, pause button, still under
+  reduced motion), bleeding off the right edge (on top on phones), with a
+  React Bits BlurText headline,
+  the headline, one gold pill + a plain "See fees" link, and three plain facts
+  under a rule (free now · 6–10 · from ₹/day); hall bento (night print, one desk, a day at
   Gangaur, in the hall, desk print, today's count); the real hall (`RealHall`:
-  9:16 stills from the library's Instagram reels in a staggered filmstrip,
-  swipeable on phones, then real Google review quotes); the live room map
+  a students-at-work clip beside the library's own photos in a React Bits
+  Masonry wall with lightbox, 2 columns on phones / 3 on desktop, then real
+  Google review quotes); the visit card shows the real night entrance photo; the live room map
   (`LiveHall`, real coordinates, gold = free); passes on navy with the
   best-value card in gold and an "every pass includes" strip; three pixel
   step scenes; lake print + visit card beside the FAQ; closing count; navy
@@ -236,3 +241,9 @@ From `npx ui-skills` (ui-skills.com), run on 2026-10-24:
 - Also installed: `fixing-accessibility`, `fixing-motion-performance`,
   `fixing-metadata`, `improve-ui`.
 
+
+## React Bits (2026-10-31)
+Vendored in `components/reactbits/` (MIT, from the TS + Tailwind registry): BlurText
+(hero headline) and Masonry (real-hall gallery). Imports point at packages already
+installed (framer-motion, lucide-react); local changes are commented in each file.
+Use only calm components: no tilted cards, spinning galleries or tickers.

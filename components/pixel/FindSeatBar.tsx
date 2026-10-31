@@ -28,7 +28,7 @@ export default function FindSeatBar({ watchId, free }: { watchId: string; free: 
     return () => io.disconnect();
   }, [watchId]);
 
-  const wa = SITE_INFO.whatsapp ? `https://wa.me/${SITE_INFO.whatsapp}` : null;
+  const wa = SITE_INFO.whatsapp ?? null;
 
   return (
     <>

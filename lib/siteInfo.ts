@@ -6,14 +6,13 @@
  * number, address or review.
  *
  *   phones:   ['9876543210']                     → numbers listed + "Call" button
- *   whatsapp: '919876543210'  (country code, no +) → "WhatsApp us" button
+ *   whatsapp: 'https://wa.me/…'                   → "WhatsApp us" buttons (a full wa.me link)
  *   email:    'name@example.com'                 → email link
  *   address:  'Near …, Rajsamand, Rajasthan'
  *   mapsUrl:  'https://maps.app.goo.gl/…'        → "Map" button
  *   instagram:'https://www.instagram.com/…'      → Instagram links
  *   reviews:  [{ quote: '…', name: 'Priya M.', note: 'RAS aspirant' }]
  *
- * WhatsApp stays empty until the owner says which number takes WhatsApp.
  */
 // Split as well as joined so search engines get the street and town apart.
 export const ADDRESS_PARTS = { street: 'Opposite Maniratna Restaurant, JK Circle, Station Road', town: 'Kankroli', district: 'Rajsamand', state: 'Rajasthan' };
@@ -31,6 +30,8 @@ export const SITE_INFO: {
 } = {
   phones: ['9462672576', '9829230576'],
   email: 'contact2shreegangaur@gmail.com',
+  // The library's WhatsApp message link (shared by the owner); opens a chat with the library.
+  whatsapp: 'https://wa.me/message/FWYM7Q3NTL2XN1',
   address: ADDRESS,
   // The library's own pinned place (shared by the owner); it opens श्री गणगौर Library on Google Maps.
   mapsUrl: 'https://maps.app.goo.gl/VboJs7eJcBXo3CYL9',
