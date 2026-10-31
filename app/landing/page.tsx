@@ -16,7 +16,7 @@ import { ADDRESS_PARTS, SITE_INFO, fmtPhone } from '@/lib/siteInfo';
 import { SEAT_COUNT } from '@/lib/layoutConfig';
 import { cn } from '@/lib/utils';
 import FindSeatBar from '@/components/pixel/FindSeatBar';
-import StepScenes from '@/components/pixel/StepScenes';
+import StepShots from '@/components/landing/StepShots';
 import IslandNav from '@/components/landing/IslandNav';
 import CrestHero from '@/components/landing/CrestHero';
 import HallBento from '@/components/landing/HallBento';
@@ -178,11 +178,11 @@ export default function LandingPage() {
           </div>
         </Reveal>
 
-        {/* ── How to join: three pixel scenes ── */}
+        {/* ── How to join: three real screens from the app ── */}
         <Reveal className="mx-auto max-w-[1240px] px-4 py-24 sm:px-6 lg:py-36">
           <p className="reveal eyebrow eyebrow--dark" style={stagger(0)}>{t('Three steps')}</p>
           <h2 className={cn(display, 'reveal mt-6 text-[var(--brand-navy)]')} style={stagger(1)}>{t('Joining takes a minute.')}</h2>
-          <StepScenes className="mt-16" />
+          <StepShots className="mt-16" />
         </Reveal>
 
         {/* ── Visit, beside the plain answers ── */}

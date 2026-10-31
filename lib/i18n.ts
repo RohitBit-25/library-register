@@ -58,6 +58,9 @@ const HI: Record<string, string> = {
   'live count unavailable': 'लाइव गिनती अभी उपलब्ध नहीं',
   'Open': 'खुला',
   'AM to PM, daily': 'सुबह से रात, रोज़',
+  'Pick a green desk': 'हरी डेस्क चुनें',
+  'Send your details': 'अपनी जानकारी भेजें',
+  'Pay at the desk': 'डेस्क पर भुगतान करें',
   'From': 'शुरुआत',
   'a day': 'प्रति दिन',
   '{n} reserved desks in one cool, quiet hall in Rajsamand. Pick yours on the live seat plan and start tomorrow.':

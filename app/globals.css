@@ -970,12 +970,18 @@
   .eyebrow--dark { color: var(--brand-gold-deep); box-shadow: inset 0 0 0 1px rgb(168 111 28 / 0.35); background: rgb(168 111 28 / 0.06); }
 }
 
+/* "Tap here" on the step screenshots: a gold ring that breathes like the live dot. */
+.tap-ring { position: absolute; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 9999px;
+  border: 3px solid var(--brand-gold-light); box-shadow: 0 0 0 4px rgb(11 33 65 / 0.22); pointer-events: none; }
+.tap-ring::after { content: ''; position: absolute; inset: -3px; border-radius: inherit; border: 3px solid var(--brand-gold-light);
+  animation: live-ping 2.2s var(--ease-premium) infinite; }
+
 /* The live dot breathes. */
 .live-dot { position: relative; }
 .live-dot::after { content: ''; position: absolute; inset: 0; border-radius: 9999px; background: inherit; animation: live-ping 2.2s var(--ease-premium) infinite; }
 @keyframes live-ping { 70%, 100% { transform: scale(2.6); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  .live-dot::after { animation: none; }
+  .live-dot::after, .tap-ring::after { animation: none; }
 }
 
 /* The opening-hours bar: sunrise gold into night navy — it is the day, not decoration. */
