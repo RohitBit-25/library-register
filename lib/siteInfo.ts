@@ -10,6 +10,7 @@
  *   email:    'name@example.com'                 → email link
  *   address:  'Near …, Rajsamand, Rajasthan'
  *   mapsUrl:  'https://maps.app.goo.gl/…'        → "Map" button
+ *   instagram:'https://www.instagram.com/…'      → Instagram links
  *   reviews:  [{ quote: '…', name: 'Priya M.', note: 'RAS aspirant' }]
  *
  * WhatsApp stays empty until the owner says which number takes WhatsApp.
@@ -24,14 +25,23 @@ export const SITE_INFO: {
   email?: string;
   address?: string;
   mapsUrl?: string;
+  instagram?: string;
+  geo?: { lat: number; lng: number };
   reviews: { quote: string; name: string; note?: string }[];
 } = {
   phones: ['9462672576', '9829230576'],
   email: 'contact2shreegangaur@gmail.com',
   address: ADDRESS,
-  // A Maps search for the address until the owner shares the pinned place link.
-  mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`Shree Gangaur Library, ${ADDRESS}`)}`,
-  reviews: [],
+  // The library's own pinned place (shared by the owner); it opens श्री गणगौर Library on Google Maps.
+  mapsUrl: 'https://maps.app.goo.gl/VboJs7eJcBXo3CYL9',
+  geo: { lat: 25.0441995, lng: 73.9009279 },
+  instagram: 'https://www.instagram.com/shri_gangaur_library/',
+  // Real Google reviews, as the library shared them on its Instagram (September 2025).
+  reviews: [
+    { quote: 'Good library with fully new accommodations! Everything is fantastic for the students. A quiet and happy environment.', name: 'Thomas P.', note: 'Google review' },
+    { quote: 'A great spot to study! The atmosphere is quiet and peaceful, perfect for focused learning.', name: 'Surbhi M.', note: 'Google review' },
+    { quote: 'Owner is very polite, and the price is reasonable in Kankroli compared to other libraries.', name: 'Sita D.', note: 'Google review' },
+  ],
 };
 
 /** "9462672576" → "94626 72576", the way numbers are read out in India. */

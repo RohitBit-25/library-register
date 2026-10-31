@@ -71,7 +71,9 @@ never claim they are photos of the actual hall).
 - Marketing (`/landing`): **Crest** — island nav; editorial split hero on
   navy (headline, two pills, live count | one framed morning print, set
   straight); facility marquee; hall bento (night print, one desk, a day at
-  Gangaur, in the hall, desk print, today's count); the live room map
+  Gangaur, in the hall, desk print, today's count); the real hall (`RealHall`:
+  9:16 stills from the library's Instagram reels in a staggered filmstrip,
+  swipeable on phones, then real Google review quotes); the live room map
   (`LiveHall`, real coordinates, gold = free); passes on navy with the
   best-value card in gold and an "every pass includes" strip; three pixel
   step scenes; lake print + visit card beside the FAQ; closing count; navy

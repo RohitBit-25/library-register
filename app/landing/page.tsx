@@ -12,7 +12,6 @@ import Image from 'next/image';
 import { ArrowUpRight, Check } from 'lucide-react';
 import { useMembers } from '@/hooks/useMembers';
 import { formatINR, monthlyValue, planPrice, PLAN_MONTHS } from '@/lib/pricing';
-import { PHOTOS } from '@/lib/photos';
 import { ADDRESS_PARTS, SITE_INFO, fmtPhone } from '@/lib/siteInfo';
 import { SEAT_COUNT } from '@/lib/layoutConfig';
 import { cn } from '@/lib/utils';
@@ -22,6 +21,7 @@ import IslandNav from '@/components/landing/IslandNav';
 import CrestHero from '@/components/landing/CrestHero';
 import HallBento from '@/components/landing/HallBento';
 import LiveHall from '@/components/landing/LiveHall';
+import RealHall from '@/components/landing/RealHall';
 import LandingFooter from '@/components/landing/LandingFooter';
 import PillLink from '@/components/landing/PillLink';
 import Reveal from '@/components/landing/Reveal';
@@ -67,6 +67,8 @@ const LISTING = JSON.stringify({
   telephone: SITE_INFO.phones?.map((p) => `+91 ${fmtPhone(p)}`),
   email: SITE_INFO.email,
   hasMap: SITE_INFO.mapsUrl,
+  ...(SITE_INFO.geo && { geo: { '@type': 'GeoCoordinates', latitude: SITE_INFO.geo.lat, longitude: SITE_INFO.geo.lng } }),
+  sameAs: [SITE_INFO.instagram, SITE_INFO.mapsUrl].filter(Boolean),
   openingHoursSpecification: {
     '@type': 'OpeningHoursSpecification',
     dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
@@ -115,6 +117,8 @@ export default function LandingPage() {
         <CrestHero free={free} total={total} isLoading={isLoading} loadFailed={loadFailed} />
 
         <HallBento free={free} live={live} />
+
+        <RealHall />
 
         <LiveHall freeSeats={freeSeats} live={live} />
 
@@ -181,31 +185,6 @@ export default function LandingPage() {
           <StepScenes className="mt-16" />
         </Reveal>
 
-        {/* ── Photos and reviews: only once real ones are filled in ── */}
-        {PHOTOS.length > 0 && (
-          <section className="mx-auto max-w-[1240px] px-4 pb-24 sm:px-6">
-            <div className="grid gap-5 md:grid-cols-3">
-              {PHOTOS.slice(0, 3).map((p) => (
-                <figure key={p.src} className="bezel"><div className="bezel-core relative aspect-[4/3]"><Image src={p.src} alt={p.alt} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" /></div></figure>
-              ))}
-            </div>
-          </section>
-        )}
-        {SITE_INFO.reviews.length > 0 && (
-          <section className="mx-auto max-w-[1240px] px-4 pb-24 sm:px-6">
-            <div className="grid gap-5 md:grid-cols-3">
-              {SITE_INFO.reviews.slice(0, 3).map((r) => (
-                <figure key={r.name} className="bezel">
-                  <div className="bezel-core p-7">
-                    <blockquote className="font-editorial text-2xl leading-snug text-[var(--brand-navy)]">“{r.quote}”</blockquote>
-                    <figcaption className="mt-4 text-sm font-semibold">{r.name}{r.note && <span className="text-[var(--warm-ink-3)]"> · {r.note}</span>}</figcaption>
-                  </div>
-                </figure>
-              ))}
-            </div>
-          </section>
-        )}
-
         {/* ── Visit, beside the plain answers ── */}
         <Reveal className="border-t border-[var(--brand-navy)]/10 bg-[var(--bg-surface)]">
           <div className="mx-auto grid max-w-[1240px] gap-12 px-4 py-24 sm:px-6 lg:grid-cols-12 lg:py-32">
@@ -213,8 +192,9 @@ export default function LandingPage() {
               <div className="reveal bezel lg:col-span-5" style={stagger(0)}>
                 <div className="bezel-core h-full bg-[var(--brand-navy)] text-[var(--crest-on-navy)]">
                   <figure className="relative">
-                    <Image src="/landing/print/rajsamand-lake.webp" alt="An illustration of Rajsamand lake at sunset, with white marble pavilions along the shore" width={1874} height={955} sizes="(min-width: 1024px) 480px, 100vw" className="aspect-[16/9] w-full object-cover" />
-                    <figcaption className="absolute bottom-3 left-4 rounded-full bg-[var(--brand-navy-deep)]/85 px-3 py-1 text-xs font-semibold">{t('Rajsamand lake, Kankroli.')}</figcaption>
+                    {/* The real door, from the library's Google Maps listing — so visitors know it when they arrive. */}
+                    <Image src="/photos/entrance-night.webp" alt="The entrance of Shree Gangaur Library at night: the lit श्री गणगौर LIBRARY sign above a few steps" width={1200} height={1600} sizes="(min-width: 1024px) 480px, 100vw" className="aspect-[4/3] w-full object-cover object-[50%_54%]" />
+                    <figcaption className="absolute bottom-3 left-4 rounded-full bg-[var(--brand-navy-deep)]/85 px-3 py-1 text-xs font-semibold">{t('Our entrance at JK Circle')}</figcaption>
                   </figure>
                   <div className="p-8 sm:p-10">
                     <h2 className="font-editorial text-[2.6rem] leading-none">{t('Come and see the hall')}</h2>
@@ -230,6 +210,7 @@ export default function LandingPage() {
                       {SITE_INFO.whatsapp && <PillLink href={`https://wa.me/${SITE_INFO.whatsapp}`}>WhatsApp</PillLink>}
                       {SITE_INFO.phones?.[0] && <PillLink href={`tel:+91${SITE_INFO.phones[0]}`} tone={SITE_INFO.whatsapp ? 'ghost-light' : 'gold'}>{t('Call')}</PillLink>}
                       {SITE_INFO.mapsUrl && <PillLink href={SITE_INFO.mapsUrl} tone="ghost-light">{t('Map')}</PillLink>}
+                      {SITE_INFO.instagram && <PillLink href={SITE_INFO.instagram} tone="ghost-light">Instagram</PillLink>}
                     </div>
                   </div>
                 </div>

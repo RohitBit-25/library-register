@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Clock3, Mail, MapPin, Phone } from 'lucide-react';
+import { Camera, Clock3, Mail, MapPin, Phone } from 'lucide-react';
 import BrandLockup from '@/components/brand/BrandLockup';
 import { SITE_INFO, fmtPhone } from '@/lib/siteInfo';
 import { useLang } from '@/hooks/useLang';
@@ -28,7 +28,11 @@ export default function LandingFooter() {
         </div>
 
         <ul className="space-y-4 md:col-span-4" aria-label={t('Visit')}>
-          {SITE_INFO.address && <li className={row}><MapPin className={icon} strokeWidth={1.5} aria-hidden="true" /><span>{SITE_INFO.address}</span></li>}
+          {SITE_INFO.address && (
+            <li className={row}><MapPin className={icon} strokeWidth={1.5} aria-hidden="true" />
+              {SITE_INFO.mapsUrl ? <a href={SITE_INFO.mapsUrl} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--brand-gold-light)]">{SITE_INFO.address}</a> : <span>{SITE_INFO.address}</span>}
+            </li>
+          )}
           <li className={row}><Clock3 className={icon} strokeWidth={1.5} aria-hidden="true" /><span>{t('Open 6 AM – 10 PM daily')}</span></li>
           {SITE_INFO.phones?.length ? (
             <li className={row}>
@@ -40,6 +44,9 @@ export default function LandingFooter() {
           ) : null}
           {SITE_INFO.email && (
             <li className={row}><Mail className={icon} strokeWidth={1.5} aria-hidden="true" /><a href={`mailto:${SITE_INFO.email}`} className="inline-flex min-h-[24px] items-center break-all hover:text-[var(--brand-gold-light)]">{SITE_INFO.email}</a></li>
+          )}
+          {SITE_INFO.instagram && (
+            <li className={row}><Camera className={icon} strokeWidth={1.5} aria-hidden="true" /><a href={SITE_INFO.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[24px] items-center hover:text-[var(--brand-gold-light)]">@shri_gangaur_library</a></li>
           )}
         </ul>
 
